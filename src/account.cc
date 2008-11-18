@@ -1,5 +1,5 @@
-/** 
-    \file headers.hh precompiled headers for QMoney
+/*
+    account.cc: the thread creating necessary thumbnails 
     Copyright 2008 by Vincent Fourmond
 
     This program is free software; you can redistribute it and/or modify
@@ -15,20 +15,6 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef __HEADERS_HH
-#define __HEADERS_HH
 
-#include <QApplication>
-#include <QMainWindow>
-
-#include <QDate>
-#include <QString>
-
-// SQL-related stuff:
-
-#include <QSqlDatabase>
-#include <QSqlQuery>
-#include <QSqlError>
-#include <QSqlResult>
-
-#endif
+#include <headers.hh>
+#include <account.hh>
