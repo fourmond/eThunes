@@ -19,11 +19,14 @@
 */
 
 #include <headers.hh>
+#include <mainwin.hh>
 
 
 int main(int argc, char ** argv)
 {
   QApplication main(argc, argv);
+  MainWin win;
   main.setApplicationName("QMoney");
+  win.show();
   main.exec();
 }

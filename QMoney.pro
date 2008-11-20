@@ -16,6 +16,6 @@ PRECOMPILED_HEADER = src/headers.hh
 # QMAKE_LFLAGS += -pg
 
 # Input files
-SOURCES += src/qmain.cc src/account.cc
+SOURCES += src/qmain.cc src/account.cc src/mainwin.cc src/actions.cc
 
-HEADERS += src/account.hh
+HEADERS += src/account.hh src/mainwin.hh src/actions.hh

@@ -1,5 +1,5 @@
 /** 
-    \file headers.hh precompiled headers for QMoney
+    \file actions.hh a hash storing actions conveniently
     Copyright 2008 by Vincent Fourmond
 
     This program is free software; you can redistribute it and/or modify
@@ -15,31 +15,22 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef __HEADERS_HH
-#define __HEADERS_HH
 
+#ifndef __ACTIONS_HH
+#define __ACTIONS_HH
 
-#include <QApplication>
-#include <QSettings>
-
-// Main GUI Classse
-#include <QMainWindow>
-#include <QMenu>
-#include <QMenuBar>
-#include <QStatusBar>
-
-// Non-GUI objects
-#include <QDate>
-#include <QString>
-
-// Templates
-#include <QHash>
-
-// SQL-related stuff:
-
-#include <QSqlDatabase>
-#include <QSqlQuery>
-#include <QSqlError>
-#include <QSqlResult>
+class ActionsHash : public QHash<QString, QAction *> {
+public:
+  /// Adds an action with the given attributes
+  QAction * addAction(QObject * owner,
+		      QString codename, QString text,
+		      const QObject * receiver, const char * member,
+		      const QKeySequence & shortcut = 0,
+		      QString tooltip = QString());
+  
+  QAction * addAction(QString codename, QAction * action, 
+		      const QKeySequence & shortcut = 0,
+		      QString tooltip = QString());
+};
 
 #endif

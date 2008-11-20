@@ -1,5 +1,6 @@
 /** 
-    \file headers.hh precompiled headers for QMoney
+    \file mainwin.hh 
+    Main window for QMoney
     Copyright 2008 by Vincent Fourmond
 
     This program is free software; you can redistribute it and/or modify
@@ -15,31 +16,34 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef __HEADERS_HH
-#define __HEADERS_HH
+
+#ifndef __MAINWIN_HH
+#define __MAINWIN_HH
+
+#include <actions.hh>
+
+class MainWin : public QMainWindow {
+
+  Q_OBJECT;
+
+  /// Sets up the actions usable within this window
+  void setupActions();
+  void setupMenus();
+  void setupFrame();
+
+  // yet unimplemented...
+  void loadSettings();
+  void saveSettings();
+
+  /// A hash storing all actions, with reasonable code-like
+  /// names.
+  ActionsHash actions;
 
 
-#include <QApplication>
-#include <QSettings>
-
-// Main GUI Classse
-#include <QMainWindow>
-#include <QMenu>
-#include <QMenuBar>
-#include <QStatusBar>
-
-// Non-GUI objects
-#include <QDate>
-#include <QString>
-
-// Templates
-#include <QHash>
-
-// SQL-related stuff:
-
-#include <QSqlDatabase>
-#include <QSqlQuery>
-#include <QSqlError>
-#include <QSqlResult>
+public:
+  MainWin();
+  ~MainWin();
+  
+};
 
 #endif
