@@ -43,7 +43,7 @@ void MainWin::setupFrame()
 
 void MainWin::setupActions()
 {
-  /// Quitting...
+  // Quitting...
   actions.addAction(this, "quit", tr("&Quit"),
 		    this, SLOT(close()),
 		    QKeySequence(tr("Ctrl+Q")),

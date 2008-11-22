@@ -1,5 +1,6 @@
-/*
-    account.cc: Collection of objects that represent an account.
+/** 
+    \file ofximport.hh
+    A simple way to import OFX 'downloads' from banks.
     Copyright 2008 by Vincent Fourmond
 
     This program is free software; you can redistribute it and/or modify
@@ -16,5 +17,17 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <headers.hh>
+
+#ifndef __OFXIMPORT_HH
+#define __OFXIMPORT_HH
+
 #include <account.hh>
+
+/// An import from an OFX 'download'
+class OFXImport {
+public:
+
+};
+
+
+#endif

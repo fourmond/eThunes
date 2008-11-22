@@ -1,5 +1,5 @@
 /*
-    account.cc: Collection of objects that represent an account.
+    ofximport.cc: A simple way to import OFX 'downloads' from banks.
     Copyright 2008 by Vincent Fourmond
 
     This program is free software; you can redistribute it and/or modify
@@ -17,4 +17,4 @@
 */
 
 #include <headers.hh>
-#include <account.hh>
+#include <ofximport.hh>
