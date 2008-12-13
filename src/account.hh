@@ -119,6 +119,13 @@ public:
 
   /// @}
 
+  Transaction();
+
+  /// Dump debug output about the transaction to the given stream
+  void dump(QIODevice *);
+
+  void dump(QTextStream & stream);
+
 };
 
 #endif
