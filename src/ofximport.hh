@@ -26,6 +26,14 @@
 /// An import from an OFX 'download'
 class OFXImport {
 public:
+  QList<Transaction> transactions;
+  AccountSet accounts;
+
+  /// Import the contents of a OFX file as an OFXImport.
+  static OFXImport importFromFile(QString file);
+
+  /// Import the contents of a OFX file as an OFXImport.
+  static OFXImport importFromFile(QIODevice * stream);
 
 };
 

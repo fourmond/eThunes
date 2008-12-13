@@ -20,13 +20,19 @@
 
 #include <headers.hh>
 #include <mainwin.hh>
+#include <account.hh>
+#include <ofximport.hh>
 
 
 int main(int argc, char ** argv)
 {
   QApplication main(argc, argv);
   MainWin win;
+  
   main.setApplicationName("QMoney");
   win.show();
-  main.exec();
+  if(argc > 1)
+    OFXImport::importFromFile(argv[1]);
+  else
+    main.exec();
 }

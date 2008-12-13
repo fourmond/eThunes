@@ -31,9 +31,12 @@
 // Non-GUI objects
 #include <QDate>
 #include <QString>
+#include <QFile>
+#include <QTextStream>
 
 // Templates
 #include <QHash>
+#include <QList>
 
 // SQL-related stuff:
 

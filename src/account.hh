@@ -64,6 +64,12 @@ public:
   QString publicName;
 };
 
+/// A set of accounts.
+class AccountSet {
+public:
+  QHash<QString, Account> accounts;
+};
+
 /// Represents one transaction in a bank account.
 /// Members are public for ease of use
 class Transaction {
