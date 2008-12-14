@@ -62,12 +62,14 @@ public:
 
   /// The user-given name for the account.
   QString publicName;
-};
 
-/// A set of accounts.
-class AccountSet {
-public:
-  QHash<QString, Account> accounts;
+  /// Returns a name for the account, based on publicName if available
+  /// or on accountID if that isn't the case.
+  QString name();
+
+  /// Returns true if the given Account object is the same account
+  /// as this one.
+  int isSameAccount(const Account & ac) const;
 };
 
 /// Represents one transaction in a bank account.
@@ -100,9 +102,9 @@ public:
   /// The check number, if applicable. 0 means no number.
   int checkNumber;
 
-  /// The name of the account. An empty string means that the transaction
-  /// is not valid.
-  QString account;
+  /// The account of the transaction. NULL means no account, ie the
+  /// transaction is invalid.
+  Account * account;
 
   /// @}
 

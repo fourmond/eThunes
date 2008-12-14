@@ -19,6 +19,13 @@
 #include <headers.hh>
 #include <account.hh>
 
+QString Account::name()
+{
+  if(publicName.isEmpty())
+    return accountID();
+  return publicName;
+}
+
 void Transaction::dump(QIODevice * dev)
 {
   QTextStream stream(dev);
@@ -30,6 +37,10 @@ void Transaction::dump(QTextStream & stream)
   stream << "Transaction: \"" << name << "\" of "
 	 << amount/100.0 << " (" 
 	 << date.toString("dd/MM/yyyy") << ")" << endl;
+  if(account)
+    stream << " -> account: " << account->name() << endl;
+  else
+    stream << " -> no valid account" << endl;
   if(! memo.isEmpty())
     stream << " -> memo: \"" << memo << "\"" << endl;
   if(checkNumber)
@@ -38,6 +49,8 @@ void Transaction::dump(QTextStream & stream)
 
 Transaction::Transaction() :
   amount(0),
-  checkNumber(0)
+  checkNumber(0),
+  account(NULL),
+  locked(1)
 {
 }

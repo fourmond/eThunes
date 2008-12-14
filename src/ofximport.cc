@@ -52,6 +52,10 @@ OFXImport OFXImport::importFromFile(QIODevice * stream)
 
   Transaction * currentTransaction = NULL;
 
+  Account * currentAccount = NULL;
+
+  OFXImport retVal;
+
   while(1) {
     line = stream->readLine();
     if(line.isEmpty())
@@ -68,9 +72,14 @@ OFXImport OFXImport::importFromFile(QIODevice * stream)
     if(tagRE.indexIn(line) == 0) {
       // debug << "Tag: " << tagRE.cap(1) << endl;
       // Now, we look what is the tag
-      if(tagRE.cap(1).compare("STMTTRN", Qt::CaseInsensitive) == 0)
+
+      // First, transaction-related tags:
+      if(tagRE.cap(1).compare("STMTTRN", Qt::CaseInsensitive) == 0) {
 	// Beginning of a transaction
-	currentTransaction = new Transaction;
+	retVal.transactions.append(Transaction());
+	currentTransaction = & (retVal.transactions.last());
+	currentTransaction->account = currentAccount;
+      }
       else if(tagRE.cap(1).compare("DTPOSTED", Qt::CaseInsensitive) == 0) {
 	// The date of the transaction
 	if(currentTransaction) {
@@ -101,17 +110,43 @@ OFXImport OFXImport::importFromFile(QIODevice * stream)
 	  // Quite naive, but it really should work most of the times...
 	  currentTransaction->amount = tagRE.cap(2).toDouble() * 100;
       }
+      
+      // Now, account-related tags
+      else if(tagRE.cap(1).compare("BANKACCTFROM", Qt::CaseInsensitive) == 0) {
+	retVal.accounts.append(Account());
+	currentAccount = & (retVal.accounts.last());
+      }
+      else if(tagRE.cap(1).compare("BANKID", Qt::CaseInsensitive) == 0) {
+	if(currentAccount)
+	  currentAccount->bankID = tagRE.cap(2).trimmed();
+      }
+      else if(tagRE.cap(1).compare("BRANCHID", Qt::CaseInsensitive) == 0) {
+	if(currentAccount)
+	  currentAccount->branchID = tagRE.cap(2).trimmed();
+      }
+      else if(tagRE.cap(1).compare("ACCTID", Qt::CaseInsensitive) == 0) {
+	if(currentAccount)
+	  currentAccount->accountNumber = tagRE.cap(2).trimmed();
+      }
+      else if(tagRE.cap(1).compare("ACCTTYPE", Qt::CaseInsensitive) == 0) {
+	if(currentAccount) {
+	  if(tagRE.cap(2).trimmed().compare("SAVINGS", 
+					    Qt::CaseInsensitive) == 0)
+	    currentAccount->type = Account::Savings;
+	}
+      }
+
+      
     }
     else if(endOfTagRE.indexIn(line) == 0) {
       // Now, we look what is the tag we've just finished to parse...
       if(endOfTagRE.cap(1).compare("STMTTRN", Qt::CaseInsensitive) == 0) {
-	if(currentTransaction) {
-	  currentTransaction->dump(debug);
-	  delete currentTransaction;
+	if(currentTransaction)
 	  currentTransaction = NULL;
-	}
       }
     }
   }
-  return OFXImport();
+  for(int i = 0; i < retVal.transactions.count(); i++)
+    retVal.transactions[i].dump(debug);
+  return retVal;
 }

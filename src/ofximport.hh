@@ -27,7 +27,7 @@
 class OFXImport {
 public:
   QList<Transaction> transactions;
-  AccountSet accounts;
+  QList<Account> accounts;
 
   /// Import the contents of a OFX file as an OFXImport.
   static OFXImport importFromFile(QString file);
