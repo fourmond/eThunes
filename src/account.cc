@@ -28,7 +28,8 @@ void Transaction::dump(QIODevice * dev)
 void Transaction::dump(QTextStream & stream)
 {
   stream << "Transaction: \"" << name << "\" of "
-	 << amount/100.0 << endl;
+	 << amount/100.0 << " (" 
+	 << date.toString("dd/MM/yyyy") << ")" << endl;
   if(! memo.isEmpty())
     stream << " -> memo: \"" << memo << "\"" << endl;
   if(checkNumber)

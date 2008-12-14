@@ -71,7 +71,7 @@ OFXImport OFXImport::importFromFile(QIODevice * stream)
       if(tagRE.cap(1).compare("STMTTRN", Qt::CaseInsensitive) == 0)
 	// Beginning of a transaction
 	currentTransaction = new Transaction;
-      else if(tagRE.cap(1).compare("DTPOSTER", Qt::CaseInsensitive) == 0) {
+      else if(tagRE.cap(1).compare("DTPOSTED", Qt::CaseInsensitive) == 0) {
 	// The date of the transaction
 	if(currentTransaction) {
 	  if(dateRE.indexIn(tagRE.cap(2)) >= 0)
