@@ -73,7 +73,24 @@ public:
 };
 
 /// Represents one transaction in a bank account.
-/// Members are public for ease of use
+/// Members are public for ease of use.
+///
+/// \todo We are missing several attributes:
+/// 
+/// \li first, it would be interesting to add tags in addition to
+///   categories, to be able to estimate the cost of something in a
+///   way orthogonal to caterogies. Typical use: "Trip to Venice" ?
+///   
+/// \li second, we need means to "subdivise" an atomic transaction into
+///   several parts, because it often is the case that one bill falls
+///   into several categories (this could be modified without
+///   unlocking)
+///   
+/// \li third, it would be interesting to save somewhere the "origin" of
+///   the transaction: does it come straight from the bank or has it
+///   been entered manually (or modified manually) ? This would allow
+///   to "enter" transactions manually and then check them against web
+///   download ?
 class Transaction {
 public:
 

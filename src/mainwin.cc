@@ -47,7 +47,7 @@ void MainWin::setupActions()
   actions.addAction(this, "quit", tr("&Quit"),
 		    this, SLOT(close()),
 		    QKeySequence(tr("Ctrl+Q")),
-		    tr("Exit from QCam"));
+		    tr("Exit from QMoney"));
 }
 
 void MainWin::setupMenus()
