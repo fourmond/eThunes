@@ -5,9 +5,7 @@ TEMPLATE = app
 CONFIG += precompile_header debug
 INCLUDEPATH += . src
 
-VERSION = 0.1
-
-QT += sql
+VERSION = 0.0
 
 PRECOMPILED_HEADER = src/headers.hh
 
@@ -17,7 +15,7 @@ PRECOMPILED_HEADER = src/headers.hh
 
 # Input files
 SOURCES += src/qmain.cc src/account.cc src/mainwin.cc src/actions.cc \
-	src/ofximport.cc
+	src/ofximport.cc src/transaction-list-model.cc
 
 HEADERS += src/account.hh src/mainwin.hh src/actions.hh \
-	src/ofximport.hh
+	src/ofximport.hh src/transaction-list-model.hh

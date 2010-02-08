@@ -17,6 +17,9 @@
 */
 
 #include <headers.hh>
+#include <account.hh>
+#include <ofximport.hh>
+#include <transaction-list-model.hh>
 #include <mainwin.hh>
 
 MainWin::MainWin()
@@ -34,11 +37,28 @@ MainWin::~MainWin()
   saveSettings();
 }
 
+OFXImport import;
 
 void MainWin::setupFrame()
 {
   // We want a status bar anyway...
   statusBar();
+
+  // And now, small fun:
+  QTreeView * view = new QTreeView(this);
+  setCentralWidget(view);
+  
+  /// \todo: here, I beg for segfaults (the import's accounts go out
+  /// of scope when the function finishes) !
+  ///
+  /// \todo maybe use a static hash for storing accounts based on
+  /// their unique names ?
+  import = OFXImport::importFromFile("test.ofx");
+  QList<Transaction> list = import.transactions;
+
+  TransactionListModel * model = new TransactionListModel(list);
+  view->setModel(model);
+  view->setRootIndex(model->index(0,0));
 }
 
 void MainWin::setupActions()

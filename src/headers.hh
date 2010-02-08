@@ -38,11 +38,8 @@
 #include <QHash>
 #include <QList>
 
-// SQL-related stuff:
-
-#include <QSqlDatabase>
-#include <QSqlQuery>
-#include <QSqlError>
-#include <QSqlResult>
+// Item-model stuff
+#include <QAbstractItemModel>
+#include <QTreeView>
 
 #endif
