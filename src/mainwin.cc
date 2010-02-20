@@ -16,6 +16,54 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+/**
+   \mainpage Projects for QMoney
+
+   There are several things I would like to do with this program.
+
+   \section todo-banking Banking side
+
+   First, it is important to go on with the banking part. The most
+   important work on that side is:
+   
+   \li provide a kind of delegate class that will handle proxying raw
+   account data into something viewable/editable by a ModelView
+   instance.
+
+   \li provide data persistence, through XML output (easy to diff,
+   check into VCS).
+   
+   \li provide categories, subcategories and tags, and, following
+   statistics of all kinds
+
+   \li provide support for multiple accounts (easy, in principle)
+
+   \section todo-admin Administration
+
+   I want to turn this program into something more generally useful
+   for performing administration tasks of households (but possibly
+   small-scale businesses ?). This would be a storage place for bills,
+   certificates, and all kinds of electronic documents (PDF ?). It would:
+
+   \li retrieve automatically bills, payments and the like, using
+   HTTP(S) and appropriate Regex-like parsers (with automatic
+   notifications of items found).
+   
+   \li organise them into folders easy to browse (both in the
+   underlying physical FS and in the way to present the data).
+
+   \li This would require finding a way to make sure we don't download
+   the contents twice.
+
+   \li Maybe it would be nice to display the HTML page to the user
+   when the program fails to find something on it ?
+
+   \li This requires as well to design few various HTTP groping
+   classes that will look for patterns in very specific things.
+
+   
+*/
+
 #include <headers.hh>
 #include <account.hh>
 #include <ofximport.hh>
