@@ -29,6 +29,8 @@ class TransactionListModel : public QAbstractItemModel {
   /// \todo This is no accessor, and doesn't care for
   /// modifications. The final type should be a QObject child with
   /// appropriate signaling mechanism.
+  ///
+  /// \todo We simply should use an Account instead of this.
   QList<Transaction> transactions;
 
 protected:

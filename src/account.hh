@@ -21,11 +21,9 @@
 #ifndef __ACCOUNT_HH
 #define __ACCOUNT_HH
 
-/// Represents informations about an account. Does not in itself
-/// contain transactional data.
-///
-/// This class corresponds more-or-less to the header in an OFX
-/// file.
+class Transaction;
+
+/// Represents informations about an account.
 class Account {
 public:
 
@@ -59,6 +57,16 @@ public:
   };
 
   /// @}
+
+  /// The transactions of the account, ordered by date (0 = most
+  /// ancient transaction), so that the computation of the balance is
+  /// possible
+  QList<Transaction> transactions;
+
+  /// Import the given list of transactions into the current
+  /// account. It does reorder the transaction list so that they are
+  /// sorted by date.
+  int importTransactions(QList<Transaction> transactions);
 
   /// The user-given name for the account.
   QString publicName;
@@ -134,7 +142,24 @@ public:
   int locked;
 
   /// The main category. Empty means no category.
+  ///
+  /// \todo Provide a way to automatically select the category based
+  /// on regular expressions, or other kinds of "filters" (a bit like
+  /// the mail filters ?)
   QString category;
+
+  /// @}
+
+  /// \name Internal attributes
+  ///
+  /// @{
+
+  /// The balance of the corresponding account after the transaction
+  /// has been performed.
+  int balance;
+
+  /// balance only has a meaning when this parameter isn't false.
+  bool balanceMeaningful;
 
   /// @}
 
@@ -144,6 +169,9 @@ public:
   void dump(QIODevice *);
 
   void dump(QTextStream & stream);
+
+  /// Implements the comparison for sorting. Based on the date.
+  bool operator<(const Transaction & t) { return date < t.date;};
 
 };
 

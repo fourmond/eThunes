@@ -51,6 +51,7 @@ Transaction::Transaction() :
   amount(0),
   checkNumber(0),
   account(NULL),
-  locked(1)
+  locked(1),
+  balanceMeaningful(false)
 {
 }
