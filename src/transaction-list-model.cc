@@ -70,7 +70,7 @@ int TransactionListModel::rowCount(const QModelIndex & index) const
 
 int TransactionListModel::columnCount(const QModelIndex & /*index*/) const
 {  
-  return 4;
+  return 5;
 }
 
 QVariant TransactionListModel::data(const QModelIndex& index, int role) const
@@ -85,6 +85,7 @@ QVariant TransactionListModel::data(const QModelIndex& index, int role) const
     case 1: return QVariant(t->name);
     case 2: return QVariant(t->amount * 0.01);
     case 3: return QVariant(t->memo);
+    case 4: return QVariant(t->balance * 0.01);
     default:
       return QVariant();
     }

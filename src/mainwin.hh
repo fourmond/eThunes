@@ -20,6 +20,7 @@
 #ifndef __MAINWIN_HH
 #define __MAINWIN_HH
 
+#include <account.hh>
 #include <actions.hh>
 
 class MainWin : public QMainWindow {
@@ -39,6 +40,7 @@ class MainWin : public QMainWindow {
   /// names.
   ActionsHash actions;
 
+  Account account;
 
 public:
   MainWin();

@@ -1,6 +1,6 @@
 /*
-    account.cc: Collection of objects that represent an account.
-    Copyright 2008 by Vincent Fourmond
+    account.cc: The Account class
+    Copyright 2008, 2010 by Vincent Fourmond
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -26,3 +26,17 @@ QString Account::name()
   return publicName;
 }
 
+
+int Account::importTransactions(TransactionList t)
+{
+  /// \todo Here, add checks for duplicates. Or somehow before ?
+  t = t.sublist(*this);
+  for(int i = 0; i < t.size(); i++)
+    t[i].account = this;
+  transactions.append(t);
+  // Now, we sort and update the balance
+  transactions.sortByDate();
+  transactions.computeBalance();
+  
+  return t.size();
+}

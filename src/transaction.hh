@@ -127,6 +127,9 @@ public:
 class TransactionList : public QList<Transaction> {
 public:
 
+  TransactionList() {;};
+  TransactionList(const  QList<Transaction> & l) : QList<Transaction>(l) {;};
+
   /// Sorts the list according to the transaction date.
   void sortByDate();
 
