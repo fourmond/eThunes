@@ -18,14 +18,14 @@
 
 #include <headers.hh>
 #include <account.hh>
-#include <transaction-list-model.hh>
+#include <account-model.hh>
 
-TransactionListModel::TransactionListModel(QList<Transaction> t) :
+AccountModel::AccountModel(QList<Transaction> t) :
   transactions(t)
 {
 }
 
-const Transaction * TransactionListModel::indexedTransaction(QModelIndex index) const
+const Transaction * AccountModel::indexedTransaction(QModelIndex index) const
 {
   if(index.isValid() && index.internalId() >= 0 && 
      index.internalId() < transactions.count() )
@@ -33,7 +33,7 @@ const Transaction * TransactionListModel::indexedTransaction(QModelIndex index) 
   return NULL;
 }
 
-QModelIndex TransactionListModel::index(int row, int column, 
+QModelIndex AccountModel::index(int row, int column, 
 					const QModelIndex & parent) const
 {
   // printf("Index: %d %d %d\n", row, column, parent.internalId());
@@ -43,7 +43,7 @@ QModelIndex TransactionListModel::index(int row, int column,
     return createIndex(row, column, -1);
 }
 
-QModelIndex TransactionListModel::parent(const QModelIndex & index) const
+QModelIndex AccountModel::parent(const QModelIndex & index) const
 {
   // printf("Parent: %d %d %d\n", index.row(), index.column(), index.internalId());
   if(index.isValid()) {
@@ -56,7 +56,7 @@ QModelIndex TransactionListModel::parent(const QModelIndex & index) const
     return QModelIndex();
 }
 
-int TransactionListModel::rowCount(const QModelIndex & index) const
+int AccountModel::rowCount(const QModelIndex & index) const
 {
   // printf("row: %d %d %d\n", index.row(), index.column(), index.internalId());
   if(index.isValid()) {
@@ -68,12 +68,12 @@ int TransactionListModel::rowCount(const QModelIndex & index) const
   return 0;
 }
 
-int TransactionListModel::columnCount(const QModelIndex & /*index*/) const
+int AccountModel::columnCount(const QModelIndex & /*index*/) const
 {  
   return 5;
 }
 
-QVariant TransactionListModel::data(const QModelIndex& index, int role) const
+QVariant AccountModel::data(const QModelIndex& index, int role) const
 {
   // printf("data: %d %d %d\n", index.row(), index.column(), index.internalId());
   const Transaction *t = indexedTransaction(index);

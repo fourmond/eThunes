@@ -18,12 +18,12 @@
 */
 
 
-#ifndef __TRANSACTION_LIST_MODEL_HH
-#define __TRANSACTION_LIST_MODEL_HH
+#ifndef __ACCOUNT_MODEL_HH
+#define __ACCOUNT_MODEL_HH
 
 /// Class in charge of organising the data of a list of Transaction
 /// objects into something viewable with a Tree or Table view.
-class TransactionListModel : public QAbstractItemModel {
+class AccountModel : public QAbstractItemModel {
   /// List of transactions:
   ///
   /// \todo This is no accessor, and doesn't care for
@@ -40,7 +40,7 @@ protected:
   
 public:
   /// The transactions to be displayed.
-  TransactionListModel(QList<Transaction> transactions);
+  AccountModel(QList<Transaction> transactions);
 
 
   virtual QModelIndex index(int row, int column, 

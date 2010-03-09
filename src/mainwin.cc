@@ -67,7 +67,7 @@
 #include <headers.hh>
 #include <account.hh>
 #include <ofximport.hh>
-#include <transaction-list-model.hh>
+#include <account-model.hh>
 #include <mainwin.hh>
 
 MainWin::MainWin()
@@ -97,8 +97,8 @@ void MainWin::setupFrame()
   QTreeView * view = new QTreeView(this);
   setCentralWidget(view);
 
-  TransactionListModel * model = 
-    new TransactionListModel(account.transactions);
+  AccountModel * model = 
+    new AccountModel(account.transactions);
   view->setModel(model);
   view->setRootIndex(model->index(0,0));
 }
