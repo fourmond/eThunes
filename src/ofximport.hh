@@ -24,6 +24,13 @@
 #include <account.hh>
 
 /// An import from an OFX 'download'
+///
+/// \todo This class should parse the balance information, very
+/// important to check that the things are done properly.
+///
+/// \todo Maybe this class should have an ancestor that would be
+/// common to all the ways to import banking information, although for
+/// now I'll stick to OFX.
 class OFXImport {
 public:
   QList<Transaction> transactions;

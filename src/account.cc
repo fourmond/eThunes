@@ -26,32 +26,3 @@ QString Account::name()
   return publicName;
 }
 
-void Transaction::dump(QIODevice * dev)
-{
-  QTextStream stream(dev);
-  dump(stream);
-}
-
-void Transaction::dump(QTextStream & stream)
-{
-  stream << "Transaction: \"" << name << "\" of "
-	 << amount/100.0 << " (" 
-	 << date.toString("dd/MM/yyyy") << ")" << endl;
-  if(account)
-    stream << " -> account: " << account->name() << endl;
-  else
-    stream << " -> no valid account" << endl;
-  if(! memo.isEmpty())
-    stream << " -> memo: \"" << memo << "\"" << endl;
-  if(checkNumber)
-    stream << " -> check number: " << checkNumber << endl;
-}
-
-Transaction::Transaction() :
-  amount(0),
-  checkNumber(0),
-  account(NULL),
-  locked(1),
-  balanceMeaningful(false)
-{
-}
