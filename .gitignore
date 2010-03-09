@@ -1,0 +1,13 @@
+# -*- mode: conf; -*-
+
+# Backup files:
+*~
+*.bak
+
+# Generated files:
+*.o
+*.gch
+QMoney
+Makefile
+moc_*.cpp
+doc/
