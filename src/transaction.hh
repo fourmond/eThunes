@@ -42,6 +42,7 @@ class Account;
 ///   been entered manually (or modified manually) ? This would allow
 ///   to "enter" transactions manually and then check them against web
 ///   download ?
+///
 class Transaction {
 public:
 
@@ -114,20 +115,29 @@ public:
   void dump(QTextStream & stream);
 
   /// Implements the comparison for sorting. Based on the date.
-  bool operator<(const Transaction & t) { return date < t.date;};
+  bool operator<(const Transaction & t) const { return date < t.date;};
 
 };
 
+/// \todo We should provide a function that can easily check for
+/// duplicates. Tough one, though, if it is possible that twice the
+/// same transaction happens on the same day. It should be possible to
+/// do that across two TransactionList, where one would have potential
+/// duplicates marked using a boolean value of some kind.
 class TransactionList : public QList<Transaction> {
 public:
 
   /// Sorts the list according to the transaction date.
-  void sort();
+  void sortByDate();
 
   /// Returns a sublist in the same order as this one containing only
   /// transactions dealing with the given account (as per
   /// Account.isSameAccount()).
   TransactionList sublist(const Account & account);
+
+  /// Compute the balance for each element of the list. Does not sort
+  /// the list beforehand. You'll have to do it yourself.
+  void computeBalance(int initialBalance = 0);
 };
 
 #endif

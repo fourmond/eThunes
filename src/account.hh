@@ -71,12 +71,12 @@ public:
   /// The transactions of the account, ordered by date (0 = most
   /// ancient transaction), so that the computation of the balance is
   /// possible
-  QList<Transaction> transactions;
+  TransactionList transactions;
 
   /// Import the given list of transactions into the current
   /// account. It does reorder the transaction list so that they are
-  /// sorted by date.
-  int importTransactions(QList<Transaction> transactions);
+  /// sorted by date. 
+  int importTransactions(TransactionList transactions);
 
   /// The user-given name for the account.
   QString publicName;

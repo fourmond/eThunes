@@ -58,3 +58,21 @@ TransactionList TransactionList::sublist(const Account &ac)
       retval << at(i);
   return retval;
 }
+
+void TransactionList::sortByDate()
+{
+  qSort(*this);
+}
+
+void TransactionList::computeBalance(int balance)
+{
+  /// \todo Maybe there should be a way to check the balance, through
+  /// a checkBalance function ?
+  for(int i = 0; i< size(); i++) {
+    Transaction & t = this->operator[](i); // Rather inelegant, I
+					   // find...
+    balance += t.amount;
+    t.balance = balance;
+    t.balanceMeaningful = true;
+  }
+}
