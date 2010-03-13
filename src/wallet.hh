@@ -1,5 +1,5 @@
 /** 
-    \file portfolio.hh
+    \file wallet.hh
     Class representing a collection of accounts.
     Copyright 2010 by Vincent Fourmond
 
@@ -18,22 +18,22 @@
 */
 
 
-#ifndef __PORTFOLIO_HH
-#define __PORTFOLIO_HH
+#ifndef __WALLET_HH
+#define __WALLET_HH
 
 #include <account.hh>
 #include <ofximport.hh>
 
 /// This class represents a collection of accounts. Presumably, there
-/// should be only one Portfolio instance in a running program,
-/// althoug I shouldn't rely on this assumption.
-class Portfolio {
+/// should be only one Wallet instance in a running program, although
+/// I probably shouldn't rely on this assumption.
+class Wallet {
 public:
-  /// The accounts held into the portfolio.
+  /// The accounts held within the wallet.
   QList<Account> accounts;
 
   /// Import all the contents of an OFX import or something similar
-  /// into the portfolio. That means import the accounts and the
+  /// into the wallet. That means import the accounts and the
   /// transactions if necessary.
   void importAccountData(const OFXImport & data);
 };
