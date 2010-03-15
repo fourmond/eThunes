@@ -27,6 +27,9 @@
 /// This class represents a collection of accounts. Presumably, there
 /// should be only one Wallet instance in a running program, although
 /// I probably shouldn't rely on this assumption.
+///
+/// \todo maybe this should be a Q_OBJECT sending signals when
+/// information has changed ?
 class Wallet {
 public:
   /// The accounts held within the wallet.

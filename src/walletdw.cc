@@ -16,9 +16,58 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <headers.hh>
 #include <walletdw.hh>
+
+WalletDW::WalletDW(Wallet * w) : wallet(w)
+{
+  QVBoxLayout * layout = new QVBoxLayout(this);
+  summary = new QLabel();
+  layout->addWidget(summary);
+
+  // The button for importing something into the wallet
+  QPushButton * bt = new QPushButton(tr("Import OFX"));
+  layout->addWidget(bt);
+  connect(bt, SIGNAL(clicked()), SLOT(fileImportDialog()));
+
+  // We introduce contents into the summary.
+  updateSummary();
+}
+
+void WalletDW::updateSummary()
+{
+  QString text = QString("<strong>") + tr("Wallet") + "</strong>\n<p>";
+  QString cellStyle = " style='padding-right: 20px'";
+  
+  text += "<table>\n";
+  text += QString("<tr><th" + cellStyle +">%1</th><th>%2</th></tr>\n").
+    arg(tr("Account")).arg("Balance");
+  for(int i = 0; i < wallet->accounts.size(); i++) {
+    Account * ac = &wallet->accounts[i];
+    text += QString("<tr><td" + cellStyle +"><a href='account://%1'>").
+      arg(i) + QString("%1</a></td><td>%2</td></tr>\n").
+      arg(ac->name()).arg(ac->balance() * 0.01);
+  }
+  text += "</table>\n";
+  
+  summary->setText(text);
+}
 
 WalletDW::~WalletDW()
 {
   
+}
+
+void WalletDW::fileImportDialog()
+{
+  QString file = 
+    QFileDialog::getOpenFileName(this, 
+				 tr("Select file to import"),
+				 QString(),
+				 tr("OFX files (*.ofx)"));
+  if(file.isEmpty())
+    return;
+  OFXImport import = OFXImport::importFromFile(file);
+  wallet->importAccountData(import);
+  updateSummary();
 }

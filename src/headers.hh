@@ -27,6 +27,12 @@
 #include <QMenu>
 #include <QMenuBar>
 #include <QStatusBar>
+#include <QLabel>
+#include <QVBoxLayout>
+#include <QPushButton>
+
+// Dialogs and the like
+#include <QFileDialog>
 
 // Non-GUI objects
 #include <QDate>

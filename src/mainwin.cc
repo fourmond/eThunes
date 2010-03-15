@@ -72,6 +72,9 @@
 
 MainWin::MainWin()
 {
+  /// \todo here change !
+  wallet = new Wallet();
+  
   setupFrame();
   setupActions();
   setupMenus();
@@ -83,24 +86,28 @@ MainWin::~MainWin()
 {
   // We save the settings
   saveSettings();
+  if(wallet)
+    delete wallet;
 }
 
 void MainWin::setupFrame()
 {
   // We want a status bar anyway...
   statusBar();
-  OFXImport import = OFXImport::importFromFile("test.ofx");
-  account = import.accounts[0];
-  account.importTransactions(import.transactions);
+  // OFXImport import = OFXImport::importFromFile("test.ofx");
+  // account = import.accounts[0];
+  // account.importTransactions(import.transactions);
 
-  // And now, small fun:
-  QTreeView * view = new QTreeView(this);
-  setCentralWidget(view);
+  // // And now, small fun:
+  // QTreeView * view = new QTreeView(this);
+  // setCentralWidget(view);
 
-  AccountModel * model = 
-    new AccountModel(account.transactions);
-  view->setModel(model);
-  view->setRootIndex(model->index(0,0));
+  // AccountModel * model = 
+  //   new AccountModel(account.transactions);
+  // view->setModel(model);
+  // view->setRootIndex(model->index(0,0));
+  walletDW = new WalletDW(wallet);
+  setCentralWidget(walletDW);
 }
 
 void MainWin::setupActions()

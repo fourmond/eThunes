@@ -90,6 +90,9 @@ public:
   int isSameAccount(const Account & ac) const { 
     return ac.accountID() == accountID();
   };
+
+  /// Returns the current balance, in cents
+  int balance() const { return transactions.last().balance; };
 };
 
 #endif

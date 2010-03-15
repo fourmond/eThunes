@@ -21,5 +21,16 @@
 
 void Wallet::importAccountData(const OFXImport & data)
 {
-  /// \todo This would be nice to write this function rather soon...
+  for(int i = 0; i < data.accounts.size(); i++) {
+    Account * ac = 0;
+    int j = 0;
+    for(; j < accounts.size(); j++)
+      if(accounts[j].isSameAccount(data.accounts[i]))
+	ac = &accounts[j];
+    if(! ac) {
+      accounts.append(data.accounts[i]);
+      ac = &accounts[j];
+    }
+    ac->importTransactions(data.transactions);
+  }
 }

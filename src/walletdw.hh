@@ -21,14 +21,29 @@
 #define __WALLETDW_HH
 
 #include <dashboardwidget.hh>
+#include <wallet.hh>
 
 class WalletDW : public DashboardWidget {
 
   Q_OBJECT;
 
+  /// The wallet whose contents we should display.
+  Wallet * wallet;
+
+  /// The QLabel object displaying the rich text.
+  QLabel * summary;
+
 public:
-  WalletDW();
+  WalletDW(Wallet * w);
   virtual ~WalletDW();
+
+public slots:
+  /// Updates the summary; should be called whenever the status of the
+  /// wallet has changed somehow.
+  void updateSummary();
+
+  /// Fires up a dialog box to import a given file into the wallet.
+  void fileImportDialog();
   
 };
 

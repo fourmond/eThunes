@@ -20,8 +20,10 @@
 #ifndef __MAINWIN_HH
 #define __MAINWIN_HH
 
-#include <account.hh>
 #include <actions.hh>
+
+#include <wallet.hh>
+#include <walletdw.hh>
 
 class MainWin : public QMainWindow {
 
@@ -40,8 +42,12 @@ class MainWin : public QMainWindow {
   /// names.
   ActionsHash actions;
 
-  Account account;
+  /// The Wallet
+  Wallet * wallet;
 
+  /// The widget to view its contents
+  WalletDW * walletDW;
+  
 public:
   MainWin();
   ~MainWin();
