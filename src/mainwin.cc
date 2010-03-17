@@ -106,8 +106,13 @@ void MainWin::setupFrame()
   //   new AccountModel(account.transactions);
   // view->setModel(model);
   // view->setRootIndex(model->index(0,0));
+
   walletDW = new WalletDW(wallet);
-  setCentralWidget(walletDW);
+
+  navigationWidget = new NavigationWidget();
+  navigationWidget->addTab(walletDW, tr("Dashboard"));
+
+  setCentralWidget(navigationWidget);
 }
 
 void MainWin::setupActions()

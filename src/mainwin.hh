@@ -25,6 +25,8 @@
 #include <wallet.hh>
 #include <walletdw.hh>
 
+#include <navigationwidget.hh>
+
 class MainWin : public QMainWindow {
 
   Q_OBJECT;
@@ -47,6 +49,9 @@ class MainWin : public QMainWindow {
 
   /// The widget to view its contents
   WalletDW * walletDW;
+
+  /// The navigation widget
+  NavigationWidget * navigationWidget;
   
 public:
   MainWin();

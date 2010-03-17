@@ -1,6 +1,7 @@
 /** 
-    \file headers.hh precompiled headers for QMoney
-    Copyright 2008 by Vincent Fourmond
+    \file navigationwidget.hh
+    The widget handling the tab-based navigation.
+    Copyright 2010 by Vincent Fourmond
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -15,41 +16,20 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef __HEADERS_HH
-#define __HEADERS_HH
 
+#ifndef __NAVIGATIONWIDGET_HH
+#define __NAVIGATIONWIDGET_HH
 
-#include <QApplication>
-#include <QSettings>
+/// This class will handle a firefox-like navigation. The trick is
+/// about the opening of the new pages; where and how are the new
+/// widgets created ? This is not trivial, for now.
+class NavigationWidget : public QTabWidget {
 
-// Main GUI Classse
-#include <QMainWindow>
-#include <QMenu>
-#include <QMenuBar>
-#include <QStatusBar>
-#include <QLabel>
-#include <QVBoxLayout>
-#include <QPushButton>
+  Q_OBJECT;
 
-#include <QTabBar>
-#include <QTabWidget>
-
-
-// Dialogs and the like
-#include <QFileDialog>
-
-// Non-GUI objects
-#include <QDate>
-#include <QString>
-#include <QFile>
-#include <QTextStream>
-
-// Templates
-#include <QHash>
-#include <QList>
-
-// Item-model stuff
-#include <QAbstractItemModel>
-#include <QTreeView>
+public:
+  virtual ~NavigationWidget();
+  
+};
 
 #endif

@@ -115,6 +115,9 @@ public:
   void dump(QTextStream & stream);
 
   /// Implements the comparison for sorting. Based on the date.
+  /// 
+  /// \todo implement a full sort so that two slightly different items
+  /// won't be equal
   bool operator<(const Transaction & t) const { return date < t.date;};
 
 };
