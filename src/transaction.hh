@@ -43,6 +43,10 @@ class Account;
 ///   to "enter" transactions manually and then check them against web
 ///   download ?
 ///
+///
+/// \todo When the whole "bill" things is implemented, it would
+/// probably be very interesting to be able to link a given bill to
+/// its corresponding transaction, and vice versa.
 class Transaction {
 public:
 
@@ -118,7 +122,7 @@ public:
   /// 
   /// \todo implement a full sort so that two slightly different items
   /// won't be equal
-  bool operator<(const Transaction & t) const { return date < t.date;};
+  bool operator<(const Transaction & t) const;
 
 };
 
@@ -144,6 +148,12 @@ public:
   /// Compute the balance for each element of the list. Does not sort
   /// the list beforehand. You'll have to do it yourself.
   void computeBalance(int initialBalance = 0);
+
+  /// Removes the transactions in this list which are already present
+  /// in the other list. Returns the number of duplicates removed.
+  ///
+  /// Both lists \b must be sorted !
+  int removeDuplicates(const TransactionList & other);
 };
 
 #endif

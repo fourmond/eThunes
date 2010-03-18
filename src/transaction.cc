@@ -50,6 +50,19 @@ Transaction::Transaction() :
 {
 }
 
+bool Transaction::operator<(const Transaction & t) const
+{ 
+  if(date != t.date)
+    return date < t.date;
+  else if(name != t.name)
+    return name < t.name;
+  else if(amount != t.amount)
+    return amount < t.amount;
+  /// \todo maybe look at other ones ?
+  return true;			// By default, but they really should
+				// be equal by that time!
+}
+
 TransactionList TransactionList::sublist(const Account &ac)
 {
   TransactionList retval;
@@ -75,4 +88,18 @@ void TransactionList::computeBalance(int balance)
     t.balance = balance;
     t.balanceMeaningful = true;
   }
+}
+
+int TransactionList::removeDuplicates(const TransactionList & other)
+{
+  // We first make sure that we are starting around the same dates.
+  int i = 0, j = 0;
+  if(first().date < other.first().date) {
+    while(i <  size() && at(i).date < other.first().date)
+      i++;
+    if(i == size())
+      return 0;			// No duplicates for sure
+  }
+  // To be continued...
+
 }

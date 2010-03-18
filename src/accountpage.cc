@@ -1,5 +1,5 @@
 /*
-    navigationpage.cc: Implementation of NavigationPage
+    accountpage.cc: Implementation of AccountPage
     Copyright 2010 by Vincent Fourmond
 
     This program is free software; you can redistribute it and/or modify
@@ -33,6 +33,7 @@ AccountPage::AccountPage(Account * ac) : account(ac)
   model = new AccountModel(account->transactions);
   view->setModel(model);
   view->setRootIndex(model->index(0,0));
+  view->setRootIsDecorated(false);
 }
 
 AccountPage::~AccountPage()

@@ -62,8 +62,8 @@ OFXImport OFXImport::importFromFile(QIODevice * stream)
       break;
     if(readingHeader) {
       if(headerRE.indexIn(line) == 0) {
-	debug << "Header tag: " << headerRE.cap(1)
-	      << " -> " << headerRE.cap(2) << endl;
+	// debug << "Header tag: " << headerRE.cap(1)
+	//       << " -> " << headerRE.cap(2) << endl;
 	continue;
       }
       else
