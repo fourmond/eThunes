@@ -17,8 +17,32 @@
 */
 
 #include <headers.hh>
-#include <navigationpage.hh>
+#include <accountpage.hh>
 
-NavigationPage::~NavigationPage()
+AccountPage::AccountPage(Account * ac) : account(ac)
 {
+  QVBoxLayout * layout = new QVBoxLayout(this);
+  
+  accountSummary = new QLabel("Account !");
+  layout->addWidget(accountSummary);
+  
+  view = new QTreeView(this);
+  layout->addWidget(view);
+
+  /// \todo Won't do
+  model = new AccountModel(account->transactions);
+  view->setModel(model);
+  view->setRootIndex(model->index(0,0));
+}
+
+AccountPage::~AccountPage()
+{
+  /// \todo Here, delete quite a few things.
+}
+
+QString AccountPage::pageTitle()
+{
+  if(account)
+    return account->name();
+  return tr("??");
 }

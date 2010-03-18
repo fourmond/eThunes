@@ -25,6 +25,7 @@ NavigationWidget * NavigationWidget::theWidget = 0;
 NavigationWidget::NavigationWidget()
 {
   theWidget = this;
+  setTabsClosable(true);
 }
 
 NavigationWidget::~NavigationWidget()
@@ -35,9 +36,11 @@ NavigationWidget::~NavigationWidget()
 }
 
 
-void NavigationWidget::openUpNewPage(NavigationPage * page)
+void NavigationWidget::openUpNewPage(NavigationPage * page, bool gotoPage)
 {
   theWidget->addPage(page);
+  if(gotoPage)
+    theWidget->setCurrentWidget(page);
 }
 
 /// \todo Probably a lot of bookkeeping could go inside here. (check

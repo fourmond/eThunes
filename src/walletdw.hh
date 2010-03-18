@@ -44,6 +44,9 @@ public slots:
 
   /// Fires up a dialog box to import a given file into the wallet.
   void fileImportDialog();
+
+  /// Called internally when a link is clicked
+  void showURL(const QString & link);
   
 };
 

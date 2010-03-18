@@ -146,7 +146,9 @@ OFXImport OFXImport::importFromFile(QIODevice * stream)
       }
     }
   }
-  for(int i = 0; i < retVal.transactions.count(); i++)
-    retVal.transactions[i].dump(debug);
+  // We don't need debug output now, it seems we're actually getting
+  // fine !
+  // for(int i = 0; i < retVal.transactions.count(); i++)
+  // retVal.transactions[i].dump(debug);
   return retVal;
 }

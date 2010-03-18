@@ -43,7 +43,7 @@ public:
   void addPage(NavigationPage * page);
 
   /// Adds a page to the last opened NavigationWidget
-  static void openUpNewPage(NavigationPage * page);
+  static void openUpNewPage(NavigationPage * page, bool gotoPage = true);
 };
 
 #endif

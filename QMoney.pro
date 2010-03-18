@@ -18,9 +18,10 @@ SOURCES += src/qmain.cc src/account.cc src/mainwin.cc src/actions.cc \
 	src/ofximport.cc src/account-model.cc \
 	src/transaction.cc src/wallet.cc src/dashboardwidget.cc \
 	src/walletdw.cc src/navigationwidget.cc \
-	src/navigationpage.cc
+	src/navigationpage.cc src/accountpage.cc
 
 HEADERS += src/account.hh src/mainwin.hh src/actions.hh \
 	src/ofximport.hh src/account-model.hh \
 	src/transaction.hh src/wallet.hh src/dashboardwidget.hh	\
-	src/walletdw.hh src/navigationwidget.hh	src/navigationpage.hh
+	src/walletdw.hh src/navigationwidget.hh	\
+	src/navigationpage.hh src/accountpage.hh
