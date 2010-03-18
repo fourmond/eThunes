@@ -1,5 +1,5 @@
 /*
-    navigationwidget.cc: Implementation of NavigationWidget
+    navigationpage.cc: Implementation of NavigationPage
     Copyright 2010 by Vincent Fourmond
 
     This program is free software; you can redistribute it and/or modify
@@ -17,33 +17,9 @@
 */
 
 #include <headers.hh>
-#include <navigationwidget.hh>
+#include <navigationpage.hh>
 
-
-NavigationWidget * NavigationWidget::theWidget = 0;
-
-NavigationWidget::NavigationWidget()
+NavigationPage::~NavigationPage()
 {
-  theWidget = this;
 }
 
-NavigationWidget::~NavigationWidget()
-{
-  // Unregister the widget if necessary
-  if(theWidget == this)
-    theWidget = 0;
-}
-
-
-void NavigationWidget::openUpNewPage(NavigationPage * page)
-{
-  theWidget->addPage(page);
-}
-
-/// \todo Probably a lot of bookkeeping could go inside here. (check
-/// for duplicates, shift names, setup buttons for closing the
-/// tabs...) Although maybe not?
-void NavigationWidget::addPage(NavigationPage * page)
-{
-  addTab(page, page->pageTitle());
-}

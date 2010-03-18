@@ -20,6 +20,8 @@
 #ifndef __NAVIGATIONWIDGET_HH
 #define __NAVIGATIONWIDGET_HH
 
+#include <navigationpage.hh>
+
 /// This class will handle a firefox-like navigation. The trick is
 /// about the opening of the new pages; where and how are the new
 /// widgets created ? This is not trivial, for now.
@@ -27,9 +29,21 @@ class NavigationWidget : public QTabWidget {
 
   Q_OBJECT;
 
+  static NavigationWidget * theWidget;
+
 public:
+
+  /// Creates a NavigationWidget and registers it at the last one opened.
+  NavigationWidget();
   virtual ~NavigationWidget();
-  
+
+  /// Adds a page to the NavigationWidget
+  /// 
+  /// \todo many interesting things to be done at a later time.
+  void addPage(NavigationPage * page);
+
+  /// Adds a page to the last opened NavigationWidget
+  static void openUpNewPage(NavigationPage * page);
 };
 
 #endif
