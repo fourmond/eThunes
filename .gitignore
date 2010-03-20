@@ -11,3 +11,6 @@ QMoney
 Makefile
 moc_*.cpp
 doc/
+
+# Private files
+*.ofx
