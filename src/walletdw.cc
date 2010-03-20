@@ -35,6 +35,10 @@ WalletDW::WalletDW(Wallet * w) : wallet(w)
   layout->addWidget(bt);
   connect(bt, SIGNAL(clicked()), SLOT(fileImportDialog()));
 
+  bt = new QPushButton(tr("Test Serial"));
+  layout->addWidget(bt);
+  connect(bt, SIGNAL(clicked()), SLOT(testSerialization()));
+
   // We introduce contents into the summary.
   updateSummary();
 }
@@ -88,4 +92,14 @@ void WalletDW::showURL(const QString & link)
   int id = link.toInt();
   AccountPage * page = new AccountPage(&wallet->accounts[id]);
   NavigationWidget::openUpNewPage(page);
+}
+
+void WalletDW::testSerialization()
+{
+  for(int i = 0; i < wallet->accounts.size(); i++) {
+    Account * ac = &wallet->accounts[i];
+    SerializationAccessor * accessor = ac->serializationAccessor();
+    accessor->dumpValues();
+    delete accessor;
+  }
 }

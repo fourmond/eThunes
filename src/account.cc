@@ -40,3 +40,11 @@ int Account::importTransactions(TransactionList t)
   
   return t.size();
 }
+
+SerializationAccessor * Account::serializationAccessor()
+{
+  SerializationAccessor * ac = new SerializationAccessor(this);
+  ac->addSimpleAttribute("number", 
+			 new SerializationItemScalar<QString>(&accountNumber));
+  return ac;
+}

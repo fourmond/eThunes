@@ -21,6 +21,7 @@
 #ifndef __ACCOUNT_HH
 #define __ACCOUNT_HH
 
+#include <serializable.hh>
 #include <transaction.hh>
 
 /// Represents informations about an account.
@@ -34,7 +35,7 @@
 /// \todo Maybe this class and all the other ones should join a Money
 /// namespace of some kind when the program sees the birth of the new
 /// functionalities ?
-class Account {
+class Account : public Serializable {
 public:
 
   /// \name Bank-given attributes
@@ -93,6 +94,10 @@ public:
 
   /// Returns the current balance, in cents
   int balance() const { return transactions.last().balance; };
+
+  /// Implementation of the Serialization accessor
+  virtual SerializationAccessor * serializationAccessor();
+
 };
 
 #endif

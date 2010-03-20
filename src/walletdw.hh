@@ -47,6 +47,9 @@ public slots:
 
   /// Called internally when a link is clicked
   void showURL(const QString & link);
+
+  /// Temporary slot to test serizalization
+  void testSerialization();
   
 };
 
