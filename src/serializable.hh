@@ -30,7 +30,16 @@ class Serializable;
 /// \todo Some information, such as:
 /// 
 /// \li can this information be a XML attribute or it should be a
-/// full-blown node ? 
+/// full-blown node ?
+///
+/// \todo it would be interesting to a have template accessor-based
+/// serializers, using pointers to member functions, see
+/// http://www.parashift.com/c++-faq-lite/pointers-to-members.html
+///
+/// This might lift the need for callbacks.
+///
+/// Meanwhile, callbacks could use "pointer-to-members" with a
+/// template stuff.
 class SerializationItem {
 public:
   /// Sets the value from a String
