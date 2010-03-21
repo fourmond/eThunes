@@ -97,12 +97,14 @@ void SerializationAccessor::writeXML(QXmlStreamWriter * writer,
   QHashIterator<QString, SerializationItem *> i(simpleAttributes);
   while (i.hasNext()) {
     i.next();
+    /// \todo put this function in SerializationItem
     writer->writeTextElement(i.key(), i.value()->valueToString());
   }
 
   QHashIterator<QString, SerializationList *> j(serializableLists);
   while (j.hasNext()) {
     j.next();
+    /// \todo put this function in SerializationList
     for(int i = 0; i < j.value()->listSize();i++) {
       j.value()->at(i)->writeXML(writer, j.key());
     }
@@ -110,6 +112,30 @@ void SerializationAccessor::writeXML(QXmlStreamWriter * writer,
 
   writer->writeEndElement();
 }
+
+
+// Implementation of the XML reading
+void SerializationAccessor::readXML(QXmlStreamReader * reader)
+{
+  // Not that easy, I find.
+  /// \todo attributes parsing, if I come to that
+  while(!reader->atEnd()) {
+    reader->readNext();
+    // Fail on non-start element !
+    
+
+    /// \todo write the pendants of the write attributes as read attributes too.
+  }
+
+  // while (!xml.atEnd()) {
+  //        xml.readNext();
+  //        //... // do processing
+  //  }
+  //  if (xml.hasError()) {
+  //        ... // do error handling
+  //  } 
+}
+
 
 void Serializable::writeXML(QXmlStreamWriter * writer, QString name)
 {

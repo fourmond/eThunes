@@ -54,5 +54,6 @@
 
 // XML-related classes
 #include <QXmlStreamWriter>
+#include <QXmlStreamReader>
 
 #endif

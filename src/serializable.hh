@@ -188,7 +188,14 @@ public:
   /// been started using QXmlStreamWriter::writeStartDocument.
   ///
   /// \p name is the element name as it should appear in the file.
+  ///
+  /// \todo XML attributes for certain tags.
   void writeXML(QXmlStreamWriter * writer, QString name);
+
+  /// Read from a QXmlStreamReader and sets the target. This function
+  /// assumes that the current token is the StartElement token whose
+  /// name is the one given as second argument to writeXML.
+  void readXML(QXmlStreamReader * reader);
 };
 
 /// All classes that should be serialized at some point should include

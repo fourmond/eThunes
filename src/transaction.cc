@@ -72,6 +72,11 @@ SerializationAccessor * Transaction::serializationAccessor()
 			 new SerializationItemScalar<int>(&amount));
   ac->addSimpleAttribute("date", 
 			 new SerializationItemScalar<QDate>(&date));
+  ac->addSimpleAttribute("name", 
+			 new SerializationItemScalar<QString>(&name));
+  ac->addSimpleAttribute("memo", 
+			 new SerializationItemScalar<QString>(&memo));
+
   return ac;
 }
 
