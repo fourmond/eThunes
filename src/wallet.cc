@@ -34,3 +34,12 @@ void Wallet::importAccountData(const OFXImport & data)
     ac->importTransactions(data.transactions);
   }
 }
+
+
+SerializationAccessor * Wallet::serializationAccessor()
+{
+  SerializationAccessor * ac = new SerializationAccessor(this);
+  ac->addSerializableList("account", 
+			  new SerializationQList<Account>(&accounts));
+  return ac;
+}

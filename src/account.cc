@@ -48,7 +48,7 @@ SerializationAccessor * Account::serializationAccessor()
 			 new SerializationItemScalar<QString>(&accountNumber));
 
   // Now, we try the list stuff...
-  ac->addSerializableList("transactions", 
+  ac->addSerializableList("transaction", 
 			  new SerializationQList<Transaction>(&transactions));
   return ac;
 }

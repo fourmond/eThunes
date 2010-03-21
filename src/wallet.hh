@@ -21,6 +21,7 @@
 #ifndef __WALLET_HH
 #define __WALLET_HH
 
+#include <serializable.hh>
 #include <account.hh>
 #include <ofximport.hh>
 
@@ -30,7 +31,7 @@
 ///
 /// \todo maybe this should be a Q_OBJECT sending signals when
 /// information has changed ?
-class Wallet {
+class Wallet : public Serializable {
 public:
   /// The accounts held within the wallet.
   QList<Account> accounts;
@@ -39,6 +40,8 @@ public:
   /// into the wallet. That means import the accounts and the
   /// transactions if necessary.
   void importAccountData(const OFXImport & data);
+
+  virtual SerializationAccessor * serializationAccessor();
 };
 
 #endif

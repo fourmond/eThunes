@@ -101,11 +101,8 @@ void WalletDW::testSerialization()
   QXmlStreamWriter w(&file);
   w.setAutoFormatting(true);
   w.writeStartDocument();
-  for(int i = 0; i < wallet->accounts.size(); i++) {
-    Account * ac = &wallet->accounts[i];
-    SerializationAccessor * accessor = ac->serializationAccessor();
-    accessor->writeXML(&w, "account");
-    delete accessor;
-  }
+  SerializationAccessor * accessor = wallet->serializationAccessor();
+  accessor->writeXML(&w, "wallet");
+  delete accessor;
   w.writeEndDocument();
 }
