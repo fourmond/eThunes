@@ -201,6 +201,17 @@ public:
   /// A subclass will return an appropriate SerializationAccessor
   /// object to set/get its data using a unique interface.
   virtual SerializationAccessor * serializationAccessor() = 0;
+
+  /// \name Saving/loading functions
+  ///
+  /// Functions to save/load Serializable objects from various
+  /// sources.
+  /// @{
+  
+  /// Writes the Serializable object into the writer as name.
+  virtual void writeXML(QXmlStreamWriter * writer, QString name);
+  
+  /// @}
 };
 
 #endif

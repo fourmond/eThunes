@@ -100,6 +100,7 @@ void WalletDW::testSerialization()
   file.open(stdout, QIODevice::WriteOnly);
   QXmlStreamWriter w(&file);
   w.setAutoFormatting(true);
+  w.setAutoFormattingIndent(2);
   w.writeStartDocument();
   SerializationAccessor * accessor = wallet->serializationAccessor();
   accessor->writeXML(&w, "wallet");

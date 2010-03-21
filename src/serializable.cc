@@ -104,12 +104,16 @@ void SerializationAccessor::writeXML(QXmlStreamWriter * writer,
   while (j.hasNext()) {
     j.next();
     for(int i = 0; i < j.value()->listSize();i++) {
-      SerializationAccessor * ac = j.value()->
-	at(i)->serializationAccessor();
-      ac->writeXML(writer, j.key());
-      delete ac;
+      j.value()->at(i)->writeXML(writer, j.key());
     }
   }
 
   writer->writeEndElement();
+}
+
+void Serializable::writeXML(QXmlStreamWriter * writer, QString name)
+{
+  SerializationAccessor * ac = serializationAccessor();
+  ac->writeXML(writer, name);
+  delete ac;
 }
