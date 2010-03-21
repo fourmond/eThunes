@@ -63,6 +63,21 @@ bool Transaction::operator<(const Transaction & t) const
 				// be equal by that time!
 }
 
+
+
+SerializationAccessor * Transaction::serializationAccessor()
+{
+  SerializationAccessor * ac = new SerializationAccessor(this);
+  ac->addSimpleAttribute("amount", 
+			 new SerializationItemScalar<int>(&amount));
+  ac->addSimpleAttribute("date", 
+			 new SerializationItemScalar<QDate>(&date));
+  return ac;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+
 TransactionList TransactionList::sublist(const Account &ac)
 {
   TransactionList retval;
@@ -103,3 +118,5 @@ int TransactionList::removeDuplicates(const TransactionList & other)
   // To be continued...
 
 }
+
+

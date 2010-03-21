@@ -45,11 +45,29 @@ SerializationAccessor::~SerializationAccessor()
   
 }
 
-/// \todo raise exception when already exists.
+
+void SerializationList::dumpAllValues()
+{
+  for(int i = 0; i < listSize(); i++) {
+    SerializationAccessor * ac = at(i)->serializationAccessor();
+    ac->dumpValues();
+    delete ac;
+  }
+}
+
+/// \todo raise exception when name already exists (in
+/// simpleAttributes or elsewhere)
 void SerializationAccessor::addSimpleAttribute(QString name, 
-						  SerializationItem * ser)
+					       SerializationItem * ser)
 {
   simpleAttributes[name] = ser;
+}
+
+/// \todo raise exception when name already exists.
+void SerializationAccessor::addSerializableList(QString name, 
+						SerializationList* ser)
+{
+  serializableLists[name] = ser;
 }
 
 void SerializationAccessor::dumpValues()
@@ -60,5 +78,12 @@ void SerializationAccessor::dumpValues()
   while (i.hasNext()) {
     i.next();
     o << i.key() << " : " << i.value()->valueToString() << endl;
+  }
+
+  QHashIterator<QString, SerializationList *> j(serializableLists);
+  while (j.hasNext()) {
+    j.next();
+    o << "List attribute: " << j.key() << endl;
+    j.value()->dumpAllValues();
   }
 }

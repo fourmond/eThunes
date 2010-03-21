@@ -21,6 +21,8 @@
 #ifndef __TRANSACTION_HH
 #define __TRANSACTION_HH
 
+#include <serializable.hh>
+
 class Account;
 
 /// Represents one transaction in a bank account.
@@ -47,7 +49,7 @@ class Account;
 /// \todo When the whole "bill" things is implemented, it would
 /// probably be very interesting to be able to link a given bill to
 /// its corresponding transaction, and vice versa.
-class Transaction {
+class Transaction : public Serializable {
 public:
 
   /// \name Bank-given attributes
@@ -123,6 +125,8 @@ public:
   /// \todo implement a full sort so that two slightly different items
   /// won't be equal
   bool operator<(const Transaction & t) const;
+
+  virtual SerializationAccessor * serializationAccessor();
 
 };
 
