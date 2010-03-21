@@ -96,10 +96,16 @@ void WalletDW::showURL(const QString & link)
 
 void WalletDW::testSerialization()
 {
+  QFile file;
+  file.open(stdout, QIODevice::WriteOnly);
+  QXmlStreamWriter w(&file);
+  w.setAutoFormatting(true);
+  w.writeStartDocument();
   for(int i = 0; i < wallet->accounts.size(); i++) {
     Account * ac = &wallet->accounts[i];
     SerializationAccessor * accessor = ac->serializationAccessor();
-    accessor->dumpValues();
+    accessor->writeXML(&w, "account");
     delete accessor;
   }
+  w.writeEndDocument();
 }

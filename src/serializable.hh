@@ -174,6 +174,12 @@ public:
   /// Function used for debugging: dump the values of the target to
   /// standard output.
   void dumpValues();
+
+  /// Write to a QXmlStreamWriter. It assumes that the document has
+  /// been started using QXmlStreamWriter::writeStartDocument.
+  ///
+  /// \p name is the element name as it should appear in the file.
+  void writeXML(QXmlStreamWriter * writer, QString name);
 };
 
 /// All classes that should be serialized at some point should include
@@ -185,7 +191,7 @@ public:
   ///
   /// A subclass will return an appropriate SerializationAccessor
   /// object to set/get its data using a unique interface.
-  virtual SerializationAccessor * serializationAccessor();
+  virtual SerializationAccessor * serializationAccessor() = 0;
 };
 
 #endif

@@ -7,6 +7,8 @@ INCLUDEPATH += . src
 
 VERSION = 0.0
 
+QT += xml
+
 PRECOMPILED_HEADER = src/headers.hh
 
 # Following lines for profiling

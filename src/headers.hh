@@ -52,4 +52,7 @@
 #include <QAbstractItemModel>
 #include <QTreeView>
 
+// XML-related classes
+#include <QXmlStreamWriter>
+
 #endif

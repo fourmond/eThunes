@@ -87,3 +87,29 @@ void SerializationAccessor::dumpValues()
     j.value()->dumpAllValues();
   }
 }
+
+
+// Implementation of the XML writing
+void SerializationAccessor::writeXML(QXmlStreamWriter * writer, 
+				     QString name)
+{
+  writer->writeStartElement(name);
+  QHashIterator<QString, SerializationItem *> i(simpleAttributes);
+  while (i.hasNext()) {
+    i.next();
+    writer->writeTextElement(i.key(), i.value()->valueToString());
+  }
+
+  QHashIterator<QString, SerializationList *> j(serializableLists);
+  while (j.hasNext()) {
+    j.next();
+    for(int i = 0; i < j.value()->listSize();i++) {
+      SerializationAccessor * ac = j.value()->
+	at(i)->serializationAccessor();
+      ac->writeXML(writer, j.key());
+      delete ac;
+    }
+  }
+
+  writer->writeEndElement();
+}
