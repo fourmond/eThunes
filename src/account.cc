@@ -44,11 +44,11 @@ int Account::importTransactions(TransactionList t)
 SerializationAccessor * Account::serializationAccessor()
 {
   SerializationAccessor * ac = new SerializationAccessor(this);
-  ac->addSimpleAttribute("number", 
-			 new SerializationItemScalar<QString>(&accountNumber));
+  ac->addAttribute("number", 
+		   new SerializationItemScalar<QString>(&accountNumber));
 
   // Now, we try the list stuff...
-  ac->addSerializableList("transaction", 
-			  new SerializationQList<Transaction>(&transactions));
+  ac->addAttribute("transaction", 
+		   new SerializationQList<Transaction>(&transactions));
   return ac;
 }

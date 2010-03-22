@@ -39,7 +39,7 @@ void Wallet::importAccountData(const OFXImport & data)
 SerializationAccessor * Wallet::serializationAccessor()
 {
   SerializationAccessor * ac = new SerializationAccessor(this);
-  ac->addSerializableList("account", 
-			  new SerializationQList<Account>(&accounts));
+  ac->addAttribute("account", 
+		   new SerializationQList<Account>(&accounts));
   return ac;
 }

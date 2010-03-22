@@ -28,6 +28,42 @@ QString SerializationItem::valueToString()
   return valueToVariant().toString();
 }
 
+void SerializationItem::writeXML(const QString & name, 
+				 QXmlStreamWriter * writer)
+{
+  writer->writeTextElement(name, valueToString());
+}
+
+void SerializationItem::readXML(QXmlStreamReader * reader)
+{
+  reader->readNext();
+  if(! reader->isCharacters()) {
+    fprintf(stderr, "Problem with reading attribute\n");
+    return;
+  }
+  setFromString(reader->text().toString());
+  reader->readNext();
+  if(! reader->isEndElement()) {
+    fprintf(stderr, "Expecting end\n");
+    return;
+  }
+}
+
+
+void SerializationList::readXML(QXmlStreamReader * reader)
+{
+  augment();
+  at(listSize() - 1)->readXML(reader);
+}
+
+void SerializationList::writeXML(const QString & name, 
+				 QXmlStreamWriter * writer)
+{
+  for(int i = 0; i < listSize();i++) {
+    at(i)->writeXML(name, writer);
+  }
+}
+
 
 SerializationAccessor * Serializable::serializationAccessor()
 {
@@ -36,13 +72,13 @@ SerializationAccessor * Serializable::serializationAccessor()
 
 SerializationAccessor::~SerializationAccessor()
 {
-  QHashIterator<QString, SerializationItem *> i(simpleAttributes);
+  QHashIterator<QString, SerializationAttribute *> i(attributes);
   while (i.hasNext()) {
      i.next();
-     delete i.value();
+     if(i.value()->shouldBeDeleted())
+       delete i.value();
   }
-  simpleAttributes.clear();
-  
+  attributes.clear();
 }
 
 
@@ -57,35 +93,30 @@ void SerializationList::dumpAllValues()
 
 /// \todo raise exception when name already exists (in
 /// simpleAttributes or elsewhere)
-void SerializationAccessor::addSimpleAttribute(QString name, 
-					       SerializationItem * ser)
+void SerializationAccessor::addAttribute(QString name, 
+					 SerializationAttribute * ser)
 {
-  simpleAttributes[name] = ser;
+  attributes[name] = ser;
 }
 
-/// \todo raise exception when name already exists.
-void SerializationAccessor::addSerializableList(QString name, 
-						SerializationList* ser)
-{
-  serializableLists[name] = ser;
-}
 
 void SerializationAccessor::dumpValues()
 {
   QTextStream o(stdout);
-  o << "Dumping values for object: " << target << endl;
-  QHashIterator<QString, SerializationItem *> i(simpleAttributes);
-  while (i.hasNext()) {
-    i.next();
-    o << i.key() << " : " << i.value()->valueToString() << endl;
-  }
+  o << "It is currently unsupported to dump to stdout" << endl;
+  // o << "Dumping values for object: " << target << endl;
+  // QHashIterator<QString, SerializationItem *> i(simpleAttributes);
+  // while (i.hasNext()) {
+  //   i.next();
+  //   o << i.key() << " : " << i.value()->valueToString() << endl;
+  // }
 
-  QHashIterator<QString, SerializationList *> j(serializableLists);
-  while (j.hasNext()) {
-    j.next();
-    o << "List attribute: " << j.key() << endl;
-    j.value()->dumpAllValues();
-  }
+  // QHashIterator<QString, SerializationList *> j(serializableLists);
+  // while (j.hasNext()) {
+  //   j.next();
+  //   o << "List attribute: " << j.key() << endl;
+  //   j.value()->dumpAllValues();
+  // }
 }
 
 
@@ -94,20 +125,10 @@ void SerializationAccessor::writeXML(QXmlStreamWriter * writer,
 				     QString name)
 {
   writer->writeStartElement(name);
-  QHashIterator<QString, SerializationItem *> i(simpleAttributes);
+  QHashIterator<QString, SerializationAttribute *> i(attributes);
   while (i.hasNext()) {
     i.next();
-    /// \todo put this function in SerializationItem
-    writer->writeTextElement(i.key(), i.value()->valueToString());
-  }
-
-  QHashIterator<QString, SerializationList *> j(serializableLists);
-  while (j.hasNext()) {
-    j.next();
-    /// \todo put this function in SerializationList
-    for(int i = 0; i < j.value()->listSize();i++) {
-      j.value()->at(i)->writeXML(writer, j.key());
-    }
+    i.value()->writeXML(i.key(), writer);
   }
 
   writer->writeEndElement();
@@ -119,27 +140,41 @@ void SerializationAccessor::readXML(QXmlStreamReader * reader)
 {
   // Not that easy, I find.
   /// \todo attributes parsing, if I come to that
+  ///
+  /// \todo Make it throw appropriate exceptions later on.
   while(!reader->atEnd()) {
     reader->readNext();
-    // Fail on non-start element !
+    if(! reader->isStartElement()) {
+      fprintf(stderr, "We have trouble !\n");
+      return;
+    }
     
+    // Now, find the elements.
+    SerializationAttribute * attr = 
+      attributes.value(reader->name().toString(), 0);
+    if(! attr) {
+      fprintf(stderr, "Unkown attribute: %s !\n", 
+	      (const char*)reader->name().toString().toLocal8Bit());
+      return;
+    }
+    // So dreadfully simple !!!
+    attr->readXML(reader);
 
-    /// \todo write the pendants of the write attributes as read attributes too.
   }
 
-  // while (!xml.atEnd()) {
-  //        xml.readNext();
-  //        //... // do processing
-  //  }
-  //  if (xml.hasError()) {
-  //        ... // do error handling
-  //  } 
 }
 
 
-void Serializable::writeXML(QXmlStreamWriter * writer, QString name)
+void Serializable::writeXML(const QString & name, QXmlStreamWriter * writer)
 {
   SerializationAccessor * ac = serializationAccessor();
   ac->writeXML(writer, name);
+  delete ac;
+}
+
+void Serializable::readXML(QXmlStreamReader * reader)
+{
+  SerializationAccessor * ac = serializationAccessor();
+  ac->readXML(reader);
   delete ac;
 }

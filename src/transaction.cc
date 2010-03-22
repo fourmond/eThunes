@@ -68,14 +68,14 @@ bool Transaction::operator<(const Transaction & t) const
 SerializationAccessor * Transaction::serializationAccessor()
 {
   SerializationAccessor * ac = new SerializationAccessor(this);
-  ac->addSimpleAttribute("amount", 
-			 new SerializationItemScalar<int>(&amount));
-  ac->addSimpleAttribute("date", 
-			 new SerializationItemScalar<QDate>(&date));
-  ac->addSimpleAttribute("name", 
-			 new SerializationItemScalar<QString>(&name));
-  ac->addSimpleAttribute("memo", 
-			 new SerializationItemScalar<QString>(&memo));
+  ac->addAttribute("amount", 
+		   new SerializationItemScalar<int>(&amount));
+  ac->addAttribute("date", 
+		   new SerializationItemScalar<QDate>(&date));
+  ac->addAttribute("name", 
+		   new SerializationItemScalar<QString>(&name));
+  ac->addAttribute("memo", 
+		   new SerializationItemScalar<QString>(&memo));
 
   return ac;
 }

@@ -22,6 +22,46 @@
 
 class Serializable;
 
+/// This class handles the very basic thing which we expect from a
+/// serializable item: to be able to read and write itself from XML.
+class SerializationAttribute {
+public:
+
+  ///\name XML-related functions
+  ///
+  /// Functions used to read/write attributes
+  ///
+  /// \todo maybe add the possibility for an attribute to be saved as
+  /// an XML attribute and not as text ? (a virtual function)
+  ///
+  /// @{
+  
+  /// Writes the contents of the element to the QXmlStreamWriter
+  virtual void writeXML(const QString & name, QXmlStreamWriter * writer) = 0;
+
+  /// Reads from the given XML stream into the attributes. It assumes
+  /// that the reader is at the startElement stuff.
+  virtual void readXML(QXmlStreamReader * reader) = 0;
+  
+  /// @}
+
+  // ///\name Console-related functions
+  // ///
+  // /// Functions used to write attributes unformatted to the console
+  // /// @{
+
+  // /// Dumps the contents of the attribute to the console.
+  // virtual void dumpAttribute() { ; };
+
+  virtual ~SerializationAttribute() { ;};
+
+  /// Whether the SerializationAccessor should automatically free the
+  /// attribute or not. For most cases, it should free it, but
+  /// sometimes (when directly using children of Serializable),
+  /// results could be catastrophic...
+  virtual bool shouldBeDeleted() { return true;};
+};
+
 /// This class describes a single simple item (attribute) to be
 /// serialized. Its implementation subclasses should probably use a
 /// pointer to set/get data from QString/QVariant (but of course that
@@ -40,7 +80,7 @@ class Serializable;
 ///
 /// Meanwhile, callbacks could use "pointer-to-members" with a
 /// template stuff.
-class SerializationItem {
+class SerializationItem : public SerializationAttribute {
 public:
   /// Sets the value from a String
   virtual void setFromString(const QString & str);
@@ -52,6 +92,13 @@ public:
 
   /// It is important to have a virtual destructor... (even if empty)
   virtual ~SerializationItem() {;};
+
+  /// Writes the contents of the element to the QXmlStreamWriter
+  virtual void writeXML(const QString & name, QXmlStreamWriter * writer);
+
+  /// Reads from the given XML stream into the attributes. It assumes
+  /// that the reader is at the startElement stuff.
+  virtual void readXML(QXmlStreamReader * reader);
 };
 
 
@@ -72,7 +119,7 @@ public:
 };
 
 /// This abstract class describes a list of Serializable objects.
-class SerializationList {
+class SerializationList : public SerializationAttribute {
 public:
 
   /// \name Getter functions
@@ -105,6 +152,17 @@ public:
   /// Simply augment the size of the list by one:
   virtual void augment() = 0;
   /// @}
+
+
+  /// Writes the contents of the element to the QXmlStreamWriter
+  virtual void writeXML(const QString & name, QXmlStreamWriter * writer);
+
+  /// Reads from the given XML stream into the attributes. It assumes
+  /// that the reader is at the startElement stuff. It only reads
+  /// *one* element of the list, but that doesn't matter, as it can be
+  /// called hundreds of times ;-)...
+  virtual void readXML(QXmlStreamReader * reader);
+
   
 };
 
@@ -155,22 +213,12 @@ public:
   /// Generic pointer to the target.
   void * target;
 
-  /// This hash holds simple attributes, to be set using
-  /// addSimpleAttribute.
-  QHash<QString, SerializationItem *> simpleAttributes;
+  /// This hash holds all the attributes, whether they be simple
+  /// objects or complex attributes.
+  QHash<QString, SerializationAttribute *> attributes;
 
-  /// This hash contains the sublists of Serializable objects, to be
-  /// set using addSerializableList.
-  QHash<QString, SerializationList*> serializableLists;
-
-
-  /// Adds a simple attribute for the object. The SerializationItem
-  /// will be destroyed by SerializationAccessor.
-  void addSimpleAttribute(QString name, SerializationItem * ser);
-
-  /// Adds as an "attribute" an object describing a list of
-  /// Serializable items.
-  void addSerializableList(QString name, SerializationList* ser);
+  /// Adds an attribute for this object.
+  void addAttribute(QString name, SerializationAttribute * ser);
 
 
   /// Creates a SerizalizationAccessor object for the given target
@@ -200,7 +248,10 @@ public:
 
 /// All classes that should be serialized at some point should include
 /// this class in their ancestry. It shouldn't contain data.
-class Serializable {
+///
+/// It is a child of SerializationAttribute in order to make it
+/// dreadfull easy to embed complex in attributes ;-)...
+class Serializable : public SerializationAttribute {
 public:
   /// This function should be reimplemented in children, as it
   /// provides the way for the object to be serialized.
@@ -216,9 +267,17 @@ public:
   /// @{
   
   /// Writes the Serializable object into the writer as name.
-  virtual void writeXML(QXmlStreamWriter * writer, QString name);
+  virtual void writeXML(const QString & name, QXmlStreamWriter * writer);
+
+
+  /// Reads the Serializable object from the reader.
+  virtual void readXML(QXmlStreamReader * reader);
   
   /// @}
+
+  /// Serializable object definitely should *not* be free by
+  /// default...
+  virtual bool shouldBeDeleted() { return false;};
 };
 
 #endif
