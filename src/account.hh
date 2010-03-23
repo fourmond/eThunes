@@ -98,6 +98,12 @@ public:
   /// Implementation of the Serialization accessor
   virtual SerializationAccessor * serializationAccessor();
 
+  /// Sanitizes the account, by ensuring the transactions belong to
+  /// this account and computing the balance
+  ///
+  /// \todo Maybe this should be a slot, one day...
+  void sanitizeAccount();
+
 };
 
 #endif

@@ -104,8 +104,7 @@ void TransactionList::computeBalance(int balance)
   /// \todo Maybe there should be a way to check the balance, through
   /// a checkBalance function ?
   for(int i = 0; i< size(); i++) {
-    Transaction & t = this->operator[](i); // Rather inelegant, I
-					   // find...
+    Transaction & t = operator[](i); // Rather inelegant, I find...
     balance += t.amount;
     t.balance = balance;
     t.balanceMeaningful = true;
@@ -126,4 +125,19 @@ int TransactionList::removeDuplicates(const TransactionList & other)
 
 }
 
+void TransactionList::sanitizeList(Account * ac)
+{
+  for(int i = 0; i < size(); i++) {
+    if(at(i).account) {
+      if(at(i).account == ac || at(i).account->isSameAccount(*ac))
+	operator[](i).account = ac;
+      else {
+	removeAt(i); i--;
+      }
+    }
+    else {
+      operator[](i).account = ac;
+    }
+  }
+}
 

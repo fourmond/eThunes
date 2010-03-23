@@ -100,6 +100,10 @@ SerializationAccessor::~SerializationAccessor()
        delete i.value();
   }
   attributes.clear();
+  // Now delete callbacks
+  for(int i = 0; i < callbacks.size(); i++)
+      delete callbacks[i];
+  callbacks.clear();
 }
 
 
@@ -167,6 +171,8 @@ void SerializationAccessor::readXML(QXmlStreamReader * reader)
     readNextToken(reader);
 
     if(reader->isEndElement()) {
+      // Run the callbacks
+      runCallbacks();
       // Perfect, we have finished out job ;-)...
       return;
     }

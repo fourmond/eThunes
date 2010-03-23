@@ -162,7 +162,9 @@ public:
   /// Makes sure the list only contains references to the given
   /// account, by removing all accounts that point to some different
   /// account, and setting NULL values to the given pointer.
-  void ensureBelongToAccount(Account * ac);
+  ///
+  /// \todo There will probably be more cleanup to do around this.
+  void sanitizeList(Account * ac);
 };
 
 #endif
