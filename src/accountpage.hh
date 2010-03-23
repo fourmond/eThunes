@@ -49,6 +49,10 @@ public:
   virtual QString pageTitle();
   
   virtual ~AccountPage();
+
+public slots:
+  /// Updates the summary of the account
+  void updateAccountSummary();
   
 };
 

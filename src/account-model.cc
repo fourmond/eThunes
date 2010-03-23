@@ -73,19 +73,37 @@ int AccountModel::columnCount(const QModelIndex & /*index*/) const
   return 5;
 }
 
+QVariant AccountModel::headerData(int section, Qt::Orientation orientation, 
+				  int role) const 
+{
+  if(role == Qt::DisplayRole) {
+    switch(section) {
+    case 0: return QVariant(tr("Date"));
+    case 1: return QVariant(tr("Amount"));
+    case 2: return QVariant(tr("Balance"));
+    case 3: return QVariant(tr("Name"));
+    case 4: return QVariant(tr("Memo"));
+    default:
+      return QVariant();
+    }
+  }
+  else
+    return QVariant();
+}
+
+
 QVariant AccountModel::data(const QModelIndex& index, int role) const
 {
-  // printf("data: %d %d %d\n", index.row(), index.column(), index.internalId());
   const Transaction *t = indexedTransaction(index);
   if(! t)
     return QVariant();
   if(role == Qt::DisplayRole) {
     switch(index.column()) {
     case 0: return QVariant(t->date);
-    case 1: return QVariant(t->name);
-    case 2: return QVariant(t->amount * 0.01);
-    case 3: return QVariant(t->memo);
-    case 4: return QVariant(t->balance * 0.01);
+    case 1: return QVariant(t->amount * 0.01);
+    case 2: return QVariant(t->balance * 0.01);
+    case 3: return QVariant(t->name);
+    case 4: return QVariant(t->memo);
     default:
       return QVariant();
     }

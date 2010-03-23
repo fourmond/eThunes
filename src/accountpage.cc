@@ -23,8 +23,9 @@ AccountPage::AccountPage(Account * ac) : account(ac)
 {
   QVBoxLayout * layout = new QVBoxLayout(this);
   
-  accountSummary = new QLabel("Account !");
+  accountSummary = new QLabel();
   layout->addWidget(accountSummary);
+  updateAccountSummary();
   
   view = new QTreeView(this);
   layout->addWidget(view);
@@ -46,4 +47,12 @@ QString AccountPage::pageTitle()
   if(account)
     return account->name();
   return tr("??");
+}
+
+void AccountPage::updateAccountSummary()
+{
+  accountSummary->setText(tr("<strong>Account: </strong> %1<br>"
+			     "<strong>Balance: </strong> %2<br>").
+			  arg(account->name()).
+			  arg(account->balance() * 0.01 ));
 }

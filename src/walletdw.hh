@@ -33,6 +33,9 @@ class WalletDW : public DashboardWidget {
   /// The QLabel object displaying the rich text.
   QLabel * summary;
 
+  /// The last filename used for saving
+  QString lastFilename;
+
 public:
   WalletDW(Wallet * w);
   virtual ~WalletDW();
@@ -48,11 +51,13 @@ public slots:
   /// Called internally when a link is clicked
   void showURL(const QString & link);
 
-  /// Temporary slot to test serizalization
-  void testSerialization();
+  /// Saves the Wallet as a file.
+  ///
+  /// \todo Save (not as) too...
+  void save();
 
-  /// Temporary slot to test serizalization
-  void testSerializationLoad();
+  /// Loads a file
+  void load();
   
 };
 

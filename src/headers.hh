@@ -29,6 +29,7 @@
 #include <QStatusBar>
 #include <QLabel>
 #include <QVBoxLayout>
+#include <QHBoxLayout>
 #include <QPushButton>
 
 #include <QTabBar>

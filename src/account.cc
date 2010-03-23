@@ -54,9 +54,6 @@ SerializationAccessor * Account::serializationAccessor()
   // Now, we try the list stuff...
   ac->addAttribute("transaction", 
 		   new SerializationQList<Transaction>(&transactions));
-  ac->
-    addCallback(new SerializationMethodCallback<Account>(this, 
-							 &Account::sanitizeAccount));
   return ac;
 }
 
@@ -64,4 +61,9 @@ void Account::sanitizeAccount()
 {
   transactions.sanitizeList(this);
   transactions.computeBalance();
+}
+
+void Account::clearContents()
+{
+  transactions.clear();
 }

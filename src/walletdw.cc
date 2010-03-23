@@ -30,18 +30,24 @@ WalletDW::WalletDW(Wallet * w) : wallet(w)
   connect(summary, SIGNAL(linkActivated(const QString &)), 
 	  SLOT(showURL(const QString &)));
 
+  // A button bar at the bottom for importing/saving/loading.
+
+  QHBoxLayout * hl = new QHBoxLayout();
   // The button for importing something into the wallet
   QPushButton * bt = new QPushButton(tr("Import OFX"));
-  layout->addWidget(bt);
+  hl->addWidget(bt);
   connect(bt, SIGNAL(clicked()), SLOT(fileImportDialog()));
 
-  bt = new QPushButton(tr("Test Serial"));
-  layout->addWidget(bt);
-  connect(bt, SIGNAL(clicked()), SLOT(testSerialization()));
+  bt = new QPushButton(tr("Save"));
+  hl->addWidget(bt);
+  connect(bt, SIGNAL(clicked()), SLOT(save()));
 
-  bt = new QPushButton(tr("Test Serial Load"));
-  layout->addWidget(bt);
-  connect(bt, SIGNAL(clicked()), SLOT(testSerializationLoad()));
+  bt = new QPushButton(tr("Load"));
+  hl->addWidget(bt);
+  connect(bt, SIGNAL(clicked()), SLOT(load()));
+
+  layout->addLayout(hl);
+
 
   // We introduce contents into the summary.
   updateSummary();
@@ -98,25 +104,32 @@ void WalletDW::showURL(const QString & link)
   NavigationWidget::openUpNewPage(page);
 }
 
-void WalletDW::testSerialization()
+void WalletDW::save()
 {
-  QFile file("test-output.xml");
-  file.open(QIODevice::WriteOnly);
-  QXmlStreamWriter w(&file);
-  w.setAutoFormatting(true);
-  w.setAutoFormattingIndent(2);
-  w.writeStartDocument();
-  wallet->writeXML("wallet", &w);
-  w.writeEndDocument();
+  if(lastFilename.isEmpty()) {
+    lastFilename = 
+      QFileDialog::getSaveFileName(this, 
+				   tr("Save wallet as"),
+				   QString(),
+				   tr("XML wallet files (*.xml)"));
+    if(lastFilename.isEmpty())
+      return;
+  }
+  wallet->saveToFile(lastFilename);
 }
 
-void WalletDW::testSerializationLoad()
+void WalletDW::load()
 {
-  QFile file("test-output.xml");
-  file.open(QIODevice::ReadOnly);
-  QXmlStreamReader w(&file);
-  while(! w.isStartElement() && ! w.atEnd())
-    w.readNext();
-  wallet->readXML(&w);
+  QString file = 
+    QFileDialog::getOpenFileName(this, 
+				 tr("Select wallet to load"),
+				 QString(),
+				 tr("XML wallet files (*.xml)"));
+  if(file.isEmpty())
+    return;
+  wallet->loadFromFile(file);
+  /// \todo: here, we should find a way to invalidate all the windows
+  /// that depend on this.
+		       
   updateSummary();
 }

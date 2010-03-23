@@ -123,35 +123,6 @@ public:
   };
 };
 
-/// Definition of a callback to be called at loading/saving time
-class SerializationCallback {
-public:
-  /// The only function of the class: call the callback
-  virtual void call() = 0;
-};
-
-/// Call a member of a class
-template<class T>
-class SerializationMethodCallback : public SerializationCallback {
-  /// The target instance of class T.
-  T * target;
-
-  /// A convenience type for calling the member
-  typedef void (T::*CallbackFunction)();
-  
-  /// The target member function:
-  CallbackFunction member;
-  
-public:
-  SerializationMethodCallback(T * t, CallbackFunction m) : 
-    target(t), member(m) {;};
-
-  /// The only function of the class: call the callback
-  virtual void call() { (target->*member)();};
-};
-
-
-
 /// This abstract class describes a list of Serializable objects.
 class SerializationList : public SerializationAttribute {
 public:
@@ -242,18 +213,10 @@ public:
 /// since it doesn't make sense to use
 /// SerializationItem::setFromString on objects/lists/hashes...
 class SerializationAccessor {
-  /// Callback list
-  QList<SerializationCallback *> callbacks;
-
-protected:
-  /// Runs alls the registered callbacks 
-  void runCallbacks() { for(int i = 0; i < callbacks.size(); i++)
-      callbacks[i]->call();
-  };
 public:
 
   /// Generic pointer to the target ? 
-  void * target;
+  Serializable * target;
 
   /// This hash holds all the attributes, whether they be simple
   /// objects or complex attributes.
@@ -262,13 +225,8 @@ public:
   /// Adds an attribute for this object.
   void addAttribute(QString name, SerializationAttribute * ser);
 
-  /// Adds a callback for this object.
-  void addCallback(SerializationCallback * c) { callbacks << c ;};
-
-
   /// Creates a SerizalizationAccessor object for the given target
-  /// (not compulsory, at least for now).
-  SerializationAccessor(void * t = NULL) { target = t;};
+  SerializationAccessor(Serializable * t) { target = t;};
 
   /// Frees the SerializationItem objects referenced by this object.
   ~SerializationAccessor();
@@ -307,6 +265,22 @@ public:
   /// A subclass will return an appropriate SerializationAccessor
   /// object to set/get its data using a unique interface.
   virtual SerializationAccessor * serializationAccessor() = 0;
+
+  /// \name Loading hooks
+  ///
+  /// Functions called at some time in the calling process, to ensure
+  /// the attributes are in a well-defined state.
+  /// @{
+
+  /// This hook is called before the loading, to prepare it (and in
+  /// particular, to clean attributes that should be empty)
+  virtual void prepareSerializationRead() {;}; 
+
+  /// This hook is called after the loading, to ensure all "derived
+  /// attributes" are setup properly.
+  virtual void finishedSerializationRead() {;}; 
+
+  /// @}
 
   /// \name Saving/loading functions
   ///

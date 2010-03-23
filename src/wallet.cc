@@ -43,3 +43,31 @@ SerializationAccessor * Wallet::serializationAccessor()
 		   new SerializationQList<Account>(&accounts));
   return ac;
 }
+
+void Wallet::saveToFile(QString fileName)
+{
+  QFile file(fileName);
+  file.open(QIODevice::WriteOnly);
+  QXmlStreamWriter w(&file);
+  w.setAutoFormatting(true);
+  w.setAutoFormattingIndent(2);
+  w.writeStartDocument();
+  writeXML("wallet", &w);
+  w.writeEndDocument();
+}
+
+
+void Wallet::loadFromFile(QString fileName)
+{
+  QFile file(fileName);
+  file.open(QIODevice::ReadOnly);
+  QXmlStreamReader w(&file);
+  while(! w.isStartElement() && ! w.atEnd())
+    w.readNext();
+  readXML(&w);
+}
+
+void Wallet::clearContents()
+{
+  accounts.clear();
+}

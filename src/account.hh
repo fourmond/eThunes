@@ -104,6 +104,12 @@ public:
   /// \todo Maybe this should be a slot, one day...
   void sanitizeAccount();
 
+  /// Clears the contents of the account.
+  void clearContents();
+
+  // Serialize reimplementation
+  virtual void prepareSerializationRead() { clearContents();};
+  virtual void finishedSerializationRead() { sanitizeAccount();}; 
 };
 
 #endif
