@@ -29,10 +29,14 @@ QString Account::name()
 
 int Account::importTransactions(TransactionList t)
 {
-  /// \todo Here, add checks for duplicates. Or somehow before ?
+  // Here, we implicitly assume that the transaction list is sorted.
   t = t.sublist(*this);
   for(int i = 0; i < t.size(); i++)
     t[i].account = this;
+  t.sortByDate();
+  //  int dups = 
+  t.removeDuplicates(transactions);
+  // printf("%d duplicates were removed out of %d !!\n", dups, dups + t.size());
   transactions.append(t);
   // Now, we sort and update the balance
   transactions.sortByDate();

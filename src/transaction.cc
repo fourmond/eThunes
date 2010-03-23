@@ -63,6 +63,13 @@ bool Transaction::operator<(const Transaction & t) const
 				// be equal by that time!
 }
 
+bool Transaction::operator==(const Transaction & t) const
+{ 
+  return (date == t.date) &&
+    (name == t.name) && (amount == t.amount) && (memo == t.memo) && 
+    (! account || !t.account || account->isSameAccount(*t.account)) ;
+}
+
 
 
 SerializationAccessor * Transaction::serializationAccessor()
@@ -114,15 +121,23 @@ void TransactionList::computeBalance(int balance)
 int TransactionList::removeDuplicates(const TransactionList & other)
 {
   // We first make sure that we are starting around the same dates.
+  // We remind here that the list must be sorted !
   int i = 0, j = 0;
-  if(first().date < other.first().date) {
-    while(i <  size() && at(i).date < other.first().date)
-      i++;
-    if(i == size())
-      return 0;			// No duplicates for sure
-  }
-  // To be continued...
+  int retval = 0;
 
+  while(i < size() && j < other.size()) {
+    if(at(i) == other.at(j)) {
+      removeAt(i);
+      retval++;
+    }
+    else {
+      if(other.at(j) < at(i))
+	j++;
+      else
+	i++; 
+    }
+  }
+  return retval;
 }
 
 void TransactionList::sanitizeList(Account * ac)

@@ -126,6 +126,8 @@ public:
   /// won't be equal
   bool operator<(const Transaction & t) const;
 
+  bool operator==(const Transaction & t) const;
+
   virtual SerializationAccessor * serializationAccessor();
 
 };
