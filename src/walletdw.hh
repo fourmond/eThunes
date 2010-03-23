@@ -45,7 +45,8 @@ public slots:
   /// wallet has changed somehow.
   void updateSummary();
 
-  /// Fires up a dialog box to import a given file into the wallet.
+  /// Fires up a dialog box to import a given file (or more !) into
+  /// the wallet.
   void fileImportDialog();
 
   /// Called internally when a link is clicked

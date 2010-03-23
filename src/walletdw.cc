@@ -83,15 +83,17 @@ WalletDW::~WalletDW()
 
 void WalletDW::fileImportDialog()
 {
-  QString file = 
-    QFileDialog::getOpenFileName(this, 
-				 tr("Select file to import"),
-				 QString(),
-				 tr("OFX files (*.ofx)"));
-  if(file.isEmpty())
+  QStringList files = 
+    QFileDialog::getOpenFileNames(this, 
+				  tr("Select files to import"),
+				  QString(),
+				  tr("OFX files (*.ofx)"));
+  if(! files.size())
     return;
-  OFXImport import = OFXImport::importFromFile(file);
-  wallet->importAccountData(import);
+  for(int i = 0; i < files.size(); i++) {
+    OFXImport import = OFXImport::importFromFile(files[i]);
+    wallet->importAccountData(import);
+  }
   updateSummary();
 }
 
