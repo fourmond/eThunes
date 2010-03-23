@@ -100,8 +100,8 @@ QVariant AccountModel::data(const QModelIndex& index, int role) const
   if(role == Qt::DisplayRole) {
     switch(index.column()) {
     case 0: return QVariant(t->date);
-    case 1: return QVariant(t->amount * 0.01);
-    case 2: return QVariant(t->balance * 0.01);
+    case 1: return QVariant(Transaction::formatAmount(t->amount));
+    case 2: return QVariant(Transaction::formatAmount(t->balance));
     case 3: return QVariant(t->name);
     case 4: return QVariant(t->memo);
     default:

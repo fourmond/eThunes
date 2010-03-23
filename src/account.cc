@@ -50,6 +50,14 @@ SerializationAccessor * Account::serializationAccessor()
   SerializationAccessor * ac = new SerializationAccessor(this);
   ac->addAttribute("number", 
 		   new SerializationItemScalar<QString>(&accountNumber));
+  ac->addAttribute("public-name", 
+		   new SerializationItemScalar<QString>(&publicName));
+  ac->addAttribute("bank-id", 
+		   new SerializationItemScalar<QString>(&bankID));
+  ac->addAttribute("branch-id", 
+		   new SerializationItemScalar<QString>(&branchID));
+  ac->addAttribute("type", 
+		   new SerializationItemScalar<int>((int*)(&type)));
 
   // Now, we try the list stuff...
   ac->addAttribute("transaction", 

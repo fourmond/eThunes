@@ -61,16 +61,16 @@ void WalletDW::updateSummary()
   
   text += "<table>\n";
   text += QString("<tr><th" + cellStyle +">%1</th><th>%2</th></tr>\n").
-    arg(tr("Account")).arg("Balance");
+    arg(tr("Account")).arg(tr("Balance"));
   for(int i = 0; i < wallet->accounts.size(); i++) {
     Account * ac = &wallet->accounts[i];
     text += QString("<tr><td" + cellStyle +"><a href='%1'>").
-      arg(i) + QString("%1</a></td><td>%2</td></tr>\n").
-      arg(ac->name()).arg(ac->balance() * 0.01);
+      arg(i) + QString("%1</a></td><td align='right'>%2</td></tr>\n").
+      arg(ac->name()).arg(Transaction::formatAmount(ac->balance()));
     totalBalance += ac->balance();
   }
   text += (QString("<tr><td>") + tr("Total") + "</td><td>%1</td></tr>\n").
-    arg(totalBalance * 0.01);
+    arg(Transaction::formatAmount(totalBalance));
   text += "</table>\n";
   
   summary->setText(text);

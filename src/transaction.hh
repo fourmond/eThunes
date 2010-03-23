@@ -130,6 +130,11 @@ public:
 
   virtual SerializationAccessor * serializationAccessor();
 
+  /// A global function to format amount
+  static inline QString formatAmount(int amount) {
+    return QString("%1").arg(amount * 0.01, 0, 'f',2);
+  };
+
 };
 
 /// \todo We should provide a function that can easily check for
