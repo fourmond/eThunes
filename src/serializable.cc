@@ -20,6 +20,10 @@
 
 /// Reads tokens in the stream reader until a non-whitespace one is
 /// found.
+///
+/// \todo The downside of this approach is that we can't save pure
+/// whitespace, unless it is written as CDATA. (then make writeXML
+/// write CDATA if non-empty whitespace and here check for CDATA...)
 inline void readNextToken(QXmlStreamReader * reader)
 {
   do {
