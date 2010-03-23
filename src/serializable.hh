@@ -42,6 +42,8 @@ public:
   /// Reads from the given XML stream into the attributes. It assumes
   /// that the reader is at the startElement stuff.
   virtual void readXML(QXmlStreamReader * reader) = 0;
+
+public:
   
   /// @}
 
@@ -238,11 +240,14 @@ public:
   /// \p name is the element name as it should appear in the file.
   ///
   /// \todo XML attributes for certain tags.
-  void writeXML(QXmlStreamWriter * writer, QString name);
+  void writeXML(const QString & name, QXmlStreamWriter * writer);
 
   /// Read from a QXmlStreamReader and sets the target. This function
   /// assumes that the current token is the StartElement token whose
   /// name is the one given as second argument to writeXML.
+  ///
+  /// It is expected that the final state of the reader is the element
+  /// *just after* the EndElement
   void readXML(QXmlStreamReader * reader);
 };
 

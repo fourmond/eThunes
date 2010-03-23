@@ -18,6 +18,16 @@
 
 #include <serializable.hh>
 
+/// Reads tokens in the stream reader until a non-whitespace one is
+/// found.
+inline void readNextToken(QXmlStreamReader * reader)
+{
+  do {
+    reader->readNext();
+  }
+  while(reader->isWhitespace() && (! reader->atEnd()));
+}
+
 void SerializationItem::setFromString(const QString & v)
 {
   setFromVariant(v);
@@ -36,13 +46,20 @@ void SerializationItem::writeXML(const QString & name,
 
 void SerializationItem::readXML(QXmlStreamReader * reader)
 {
-  reader->readNext();
-  if(! reader->isCharacters()) {
-    fprintf(stderr, "Problem with reading attribute\n");
+  readNextToken(reader);
+  if(reader->isCharacters()) {
+    setFromString(reader->text().toString());
+    readNextToken(reader);
+  }
+  else if(reader->isEndElement()) {
+    setFromString(QString());
+  }
+  else {
+    fprintf(stderr, "Problem with reading attribute at line %ld\n",
+	    (long) reader->lineNumber());
     return;
   }
-  setFromString(reader->text().toString());
-  reader->readNext();
+
   if(! reader->isEndElement()) {
     fprintf(stderr, "Expecting end\n");
     return;
@@ -121,8 +138,8 @@ void SerializationAccessor::dumpValues()
 
 
 // Implementation of the XML writing
-void SerializationAccessor::writeXML(QXmlStreamWriter * writer, 
-				     QString name)
+void SerializationAccessor::writeXML(const QString & name, 
+				     QXmlStreamWriter * writer )
 {
   writer->writeStartElement(name);
   QHashIterator<QString, SerializationAttribute *> i(attributes);
@@ -143,12 +160,19 @@ void SerializationAccessor::readXML(QXmlStreamReader * reader)
   ///
   /// \todo Make it throw appropriate exceptions later on.
   while(!reader->atEnd()) {
-    reader->readNext();
-    if(! reader->isStartElement()) {
-      fprintf(stderr, "We have trouble !\n");
+    readNextToken(reader);
+
+    if(reader->isEndElement()) {
+      // Perfect, we have finished out job ;-)...
       return;
     }
-    
+
+    if(! reader->isStartElement()) {
+      fprintf(stderr, "We have trouble at line %ld\n", 
+	      (long) reader->lineNumber());
+      return;
+    }
+   
     // Now, find the elements.
     SerializationAttribute * attr = 
       attributes.value(reader->name().toString(), 0);
@@ -159,7 +183,6 @@ void SerializationAccessor::readXML(QXmlStreamReader * reader)
     }
     // So dreadfully simple !!!
     attr->readXML(reader);
-
   }
 
 }
@@ -168,7 +191,7 @@ void SerializationAccessor::readXML(QXmlStreamReader * reader)
 void Serializable::writeXML(const QString & name, QXmlStreamWriter * writer)
 {
   SerializationAccessor * ac = serializationAccessor();
-  ac->writeXML(writer, name);
+  ac->writeXML(name, writer);
   delete ac;
 }
 

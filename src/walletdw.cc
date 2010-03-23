@@ -39,6 +39,10 @@ WalletDW::WalletDW(Wallet * w) : wallet(w)
   layout->addWidget(bt);
   connect(bt, SIGNAL(clicked()), SLOT(testSerialization()));
 
+  bt = new QPushButton(tr("Test Serial Load"));
+  layout->addWidget(bt);
+  connect(bt, SIGNAL(clicked()), SLOT(testSerializationLoad()));
+
   // We introduce contents into the summary.
   updateSummary();
 }
@@ -96,14 +100,23 @@ void WalletDW::showURL(const QString & link)
 
 void WalletDW::testSerialization()
 {
-  QFile file;
-  file.open(stdout, QIODevice::WriteOnly);
+  QFile file("test-output.xml");
+  file.open(QIODevice::WriteOnly);
   QXmlStreamWriter w(&file);
   w.setAutoFormatting(true);
   w.setAutoFormattingIndent(2);
   w.writeStartDocument();
-  SerializationAccessor * accessor = wallet->serializationAccessor();
-  accessor->writeXML(&w, "wallet");
-  delete accessor;
+  wallet->writeXML("wallet", &w);
   w.writeEndDocument();
+}
+
+void WalletDW::testSerializationLoad()
+{
+  QFile file("test-output.xml");
+  file.open(QIODevice::ReadOnly);
+  QXmlStreamReader w(&file);
+  while(! w.isStartElement() && ! w.atEnd())
+    w.readNext();
+  wallet->readXML(&w);
+  updateSummary();
 }

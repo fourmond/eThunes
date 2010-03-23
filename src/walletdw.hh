@@ -50,6 +50,9 @@ public slots:
 
   /// Temporary slot to test serizalization
   void testSerialization();
+
+  /// Temporary slot to test serizalization
+  void testSerializationLoad();
   
 };
 
