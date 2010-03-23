@@ -37,7 +37,7 @@ void Transaction::dump(QTextStream & stream)
     stream << " -> no valid account" << endl;
   if(! memo.isEmpty())
     stream << " -> memo: \"" << memo << "\"" << endl;
-  if(checkNumber)
+  if(! checkNumber.isEmpty())
     stream << " -> check number: " << checkNumber << endl;
 }
 
@@ -76,6 +76,8 @@ SerializationAccessor * Transaction::serializationAccessor()
 		   new SerializationItemScalar<QString>(&name));
   ac->addAttribute("memo", 
 		   new SerializationItemScalar<QString>(&memo));
+  ac->addAttribute("check-number", 
+		   new SerializationItemScalar<QString>(&checkNumber));
 
   return ac;
 }

@@ -102,7 +102,7 @@ OFXImport OFXImport::importFromFile(QIODevice * stream)
       else if(tagRE.cap(1).compare("CHECKNUM", Qt::CaseInsensitive) == 0) {
 	// The date of the transaction
 	if(currentTransaction)
-	  currentTransaction->checkNumber = tagRE.cap(2).toInt();
+	  currentTransaction->checkNumber = tagRE.cap(2).trimmed();
       }
       else if(tagRE.cap(1).compare("TRNAMT", Qt::CaseInsensitive) == 0) {
 	// The date of the transaction

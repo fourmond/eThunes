@@ -74,8 +74,8 @@ public:
   /// The date of the transaction
   QDate date;
 
-  /// The check number, if applicable. 0 means no number.
-  int checkNumber;
+  /// The check number, if applicable
+  QString checkNumber;
 
   /// The account of the transaction. NULL means no account, ie the
   /// transaction is invalid.
@@ -158,6 +158,11 @@ public:
   ///
   /// Both lists \b must be sorted !
   int removeDuplicates(const TransactionList & other);
+
+  /// Makes sure the list only contains references to the given
+  /// account, by removing all accounts that point to some different
+  /// account, and setting NULL values to the given pointer.
+  void ensureBelongToAccount(Account * ac);
 };
 
 #endif
