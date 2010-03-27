@@ -45,7 +45,12 @@ QString SerializationItem::valueToString()
 void SerializationItem::writeXML(const QString & name, 
 				 QXmlStreamWriter * writer)
 {
-  writer->writeTextElement(name, valueToString());
+  // We don't write if empty ? Seems reasonable ?
+  /// \todo Maybe make that customizable using virtual functions again
+  /// !
+  QString value = valueToString();
+  if(! value.isEmpty())
+     writer->writeTextElement(name, value);
 }
 
 void SerializationItem::readXML(QXmlStreamReader * reader)
