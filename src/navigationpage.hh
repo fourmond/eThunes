@@ -32,7 +32,7 @@ public:
   virtual QString pageTitle() = 0;
   
   virtual ~NavigationPage();
-  
+
 };
 
 #endif

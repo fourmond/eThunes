@@ -19,6 +19,9 @@
 #include <headers.hh>
 #include <accountpage.hh>
 
+
+QHash<Account *, AccountPage *> AccountPage::accountPages;
+
 AccountPage::AccountPage(Account * ac) : account(ac)
 {
   QVBoxLayout * layout = new QVBoxLayout(this);
@@ -55,4 +58,11 @@ void AccountPage::updateAccountSummary()
 			     "<strong>Balance: </strong> %2<br>").
 			  arg(account->name()).
 			  arg(account->balance() * 0.01 ));
+}
+
+AccountPage * AccountPage::getAccountPage(Account * account)
+{
+  if(! accountPages.contains(account))
+    accountPages[account] = new AccountPage(account);
+  return accountPages[account];
 }

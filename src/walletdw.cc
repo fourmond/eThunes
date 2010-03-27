@@ -102,8 +102,8 @@ void WalletDW::fileImportDialog()
 void WalletDW::showURL(const QString & link)
 {
   int id = link.toInt();
-  AccountPage * page = new AccountPage(&wallet->accounts[id]);
-  NavigationWidget::openUpNewPage(page);
+  AccountPage * page = AccountPage::getAccountPage(&wallet->accounts[id]);
+  NavigationWidget::gotoPage(page);
 }
 
 void WalletDW::save()

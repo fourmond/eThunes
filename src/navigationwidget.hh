@@ -31,6 +31,14 @@ class NavigationWidget : public QTabWidget {
 
   static NavigationWidget * theWidget;
 
+  /// The button at the top right to close tabs.
+  QToolButton * closeTab;
+
+protected slots:
+  /// Internally used when the tab is changed. Could be used to change
+  /// the name ???? (well, no, I think)
+  void tabChanged();
+
 public:
 
   /// Creates a NavigationWidget and registers it at the last one opened.
@@ -44,6 +52,22 @@ public:
 
   /// Adds a page to the last opened NavigationWidget
   static void openUpNewPage(NavigationPage * page, bool gotoPage = true);
+
+  /// Goto the given page in the last opened NavigationWidget, or
+  /// create it if it doesn't exist yet.
+  static void gotoPage(NavigationPage * page);
+
+
+  /// Gets the current NavigationPage
+  /// Commented out as dangerous for now.
+  // 
+  // NavigationPage * currentPage() const { return 
+  //     static_cast<NavigationPage *>(currentWidget());}  ;
+
+public slots:
+  /// Closes the current tab. Won't work for the first tab.
+  void closeCurrentTab();
+
 };
 
 #endif

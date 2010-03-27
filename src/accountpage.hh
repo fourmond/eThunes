@@ -41,6 +41,10 @@ class AccountPage : public NavigationPage {
   /// A label displaying summary information
   QLabel * accountSummary;
 
+  /// A correspondance Account* -> AccountPage
+  static QHash<Account *, AccountPage *> accountPages;
+  
+  
 public:
   
   AccountPage(Account * a);
@@ -53,7 +57,10 @@ public:
 public slots:
   /// Updates the summary of the account
   void updateAccountSummary();
-  
+
+  /// Returns the AccountPage for the given account, or create it if
+  /// it doesn't exist yet.
+  static AccountPage * getAccountPage(Account * account);
 };
 
 #endif
