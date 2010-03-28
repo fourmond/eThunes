@@ -43,4 +43,10 @@ public:
   Category();
 };
 
+
+// class CategoryList : public QList<Category> {
+// public:
+//   /// Returns the Category with the given name, or NULL
+//   Category * namedCategory(QString name);
+// };
 #endif

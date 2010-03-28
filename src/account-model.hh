@@ -1,5 +1,5 @@
 /** 
-    \file transaction-list-model.hh
+    \file account-model.hh
     An item model providing transaction data
     Copyright 2010 by Vincent Fourmond
 
@@ -36,11 +36,21 @@ class AccountModel : public QAbstractItemModel {
 protected:
   /// Returns the transaction corresponding to the index, or NULL if
   /// invalid or root.
-  const Transaction * indexedTransaction(QModelIndex index) const;
+  Transaction * indexedTransaction(QModelIndex index) const;
   
 public:
   /// The transactions to be displayed.
   AccountModel(QList<Transaction> transactions);
+
+  enum {
+    DateColumn,
+    AmountColumn,
+    BalanceColumn,
+    CategoryColumn,
+    NameColumn,
+    MemoColumn,
+    LastColumn
+  };
 
 
   virtual QModelIndex index(int row, int column, 
@@ -57,6 +67,10 @@ public:
   virtual QVariant headerData(int section, Qt::Orientation orientation, 
 			      int role) const ;
 
+  virtual Qt::ItemFlags flags(const QModelIndex & index) const;
+
+  virtual bool setData(const QModelIndex & index, const QVariant & value, 
+		       int role = Qt::EditRole);  
 };
 
 #endif

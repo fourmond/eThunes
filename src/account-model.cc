@@ -1,5 +1,5 @@
 /*
-    transaction-list-model.cc: model for transaction lists
+    account-model.cc: model for transaction lists
     Copyright 2010 by Vincent Fourmond
 
     This program is free software; you can redistribute it and/or modify
@@ -25,11 +25,11 @@ AccountModel::AccountModel(QList<Transaction> t) :
 {
 }
 
-const Transaction * AccountModel::indexedTransaction(QModelIndex index) const
+Transaction * AccountModel::indexedTransaction(QModelIndex index) const
 {
   if(index.isValid() && index.internalId() >= 0 && 
      index.internalId() < transactions.count() )
-    return &transactions[index.internalId()];
+    return const_cast<Transaction *>(&transactions[index.internalId()]);
   return NULL;
 }
 
@@ -70,7 +70,7 @@ int AccountModel::rowCount(const QModelIndex & index) const
 
 int AccountModel::columnCount(const QModelIndex & /*index*/) const
 {  
-  return 5;
+  return LastColumn;
 }
 
 QVariant AccountModel::headerData(int section, Qt::Orientation orientation, 
@@ -78,11 +78,12 @@ QVariant AccountModel::headerData(int section, Qt::Orientation orientation,
 {
   if(role == Qt::DisplayRole) {
     switch(section) {
-    case 0: return QVariant(tr("Date"));
-    case 1: return QVariant(tr("Amount"));
-    case 2: return QVariant(tr("Balance"));
-    case 3: return QVariant(tr("Name"));
-    case 4: return QVariant(tr("Memo"));
+    case DateColumn: return QVariant(tr("Date"));
+    case AmountColumn: return QVariant(tr("Amount"));
+    case BalanceColumn: return QVariant(tr("Balance"));
+    case NameColumn: return QVariant(tr("Name"));
+    case MemoColumn: return QVariant(tr("Memo"));
+    case CategoryColumn: return QVariant(tr("Category"));
     default:
       return QVariant();
     }
@@ -99,15 +100,43 @@ QVariant AccountModel::data(const QModelIndex& index, int role) const
     return QVariant();
   if(role == Qt::DisplayRole) {
     switch(index.column()) {
-    case 0: return QVariant(t->date);
-    case 1: return QVariant(Transaction::formatAmount(t->amount));
-    case 2: return QVariant(Transaction::formatAmount(t->balance));
-    case 3: return QVariant(t->name);
-    case 4: return QVariant(t->memo);
+    case DateColumn: return QVariant(t->date);
+    case AmountColumn: return QVariant(Transaction::formatAmount(t->amount));
+    case BalanceColumn: return QVariant(Transaction::formatAmount(t->balance));
+    case NameColumn: return QVariant(t->name);
+    case CategoryColumn: return QVariant(t->category);
+    case MemoColumn: if(!t->memo.isEmpty())
+	return QVariant(t->memo);
+      else if(!t->checkNumber.isEmpty())
+	return QVariant(tr("Check: %1").arg(t->checkNumber));
     default:
       return QVariant();
     }
   }
   else
     return QVariant();
+}
+
+Qt::ItemFlags AccountModel::flags(const QModelIndex & index) const
+{
+  if(index.isValid()) {
+    switch(index.column()) {
+    case CategoryColumn: return Qt::ItemIsSelectable|
+	Qt::ItemIsEnabled|Qt::ItemIsEditable;
+    default: return Qt::ItemIsSelectable|
+	Qt::ItemIsEnabled;
+    }
+  }
+  return 0;
+}
+
+bool AccountModel::setData(const QModelIndex & index, const QVariant & value, 
+			   int role)
+{
+  Transaction *t = indexedTransaction(index);
+  if(index.column() == CategoryColumn && t && role == Qt::EditRole) {
+    t->category = value.toString();
+    return true;
+  }
+  return false;
 }

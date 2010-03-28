@@ -22,6 +22,7 @@
 #define __WALLET_HH
 
 #include <serializable.hh>
+#include <category.hh>
 #include <account.hh>
 #include <ofximport.hh>
 
@@ -32,9 +33,16 @@
 /// \todo maybe this should be a Q_OBJECT sending signals when
 /// information has changed ?
 class Wallet : public Serializable {
+
 public:
   /// The accounts held within the wallet.
   QList<Account> accounts;
+
+  // /// The top-level categories of the wallet
+  // QList<Category> categories;
+
+  /// Returns the Category object corresponding to the given name.
+  Category * namedCategory(QString name);
 
   /// Import all the contents of an OFX import or something similar
   /// into the wallet. That means import the accounts and the

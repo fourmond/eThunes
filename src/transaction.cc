@@ -85,6 +85,8 @@ SerializationAccessor * Transaction::serializationAccessor()
 		   new SerializationItemScalar<QString>(&memo));
   ac->addAttribute("check-number", 
 		   new SerializationItemScalar<QString>(&checkNumber));
+  ac->addAttribute("category", 
+		   new SerializationItemScalar<QString>(&category));
 
   return ac;
 }
