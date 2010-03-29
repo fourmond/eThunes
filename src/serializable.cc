@@ -49,8 +49,12 @@ void SerializationItem::writeXML(const QString & name,
   /// \todo Maybe make that customizable using virtual functions again
   /// !
   QString value = valueToString();
-  if(! value.isEmpty())
-     writer->writeTextElement(name, value);
+  if(! value.isEmpty()) {
+    if( isXMLAttribute()) 
+      writer->writeAttribute(name, value);
+    else
+      writer->writeTextElement(name, value);
+  }
 }
 
 void SerializationItem::readXML(QXmlStreamReader * reader)
@@ -151,11 +155,21 @@ void SerializationAccessor::writeXML(const QString & name,
 				     QXmlStreamWriter * writer )
 {
   writer->writeStartElement(name);
+  QStringList trueAttributes; // = XML attributes
+  QStringList otherAttributes; // = more complex ones ?
   QHashIterator<QString, SerializationAttribute *> i(attributes);
   while (i.hasNext()) {
     i.next();
-    i.value()->writeXML(i.key(), writer);
+    if(i.value()->isXMLAttribute())
+      trueAttributes << i.key();
+    else
+      otherAttributes << i.key();
   }
+
+  for(int i = 0; i < trueAttributes.size(); i++)
+    attributes.value(trueAttributes[i])->writeXML(trueAttributes[i], writer);
+  for(int i = 0; i < otherAttributes.size(); i++)
+    attributes.value(otherAttributes[i])->writeXML(otherAttributes[i], writer);
 
   writer->writeEndElement();
 }
@@ -169,6 +183,32 @@ void SerializationAccessor::readXML(QXmlStreamReader * reader)
   /// \todo Make it throw appropriate exceptions later on.
   if(target)
     target->prepareSerializationRead();
+
+  if(! reader->isStartElement()) {
+    fprintf(stderr, "We have trouble at line %ld: we should be at a start element\n", 
+	    (long) reader->lineNumber());
+    return;
+  }
+  
+  // First, we read the attributes
+  {
+    // This is a scope for the lazy guy...
+    const QXmlStreamAttributes & attr =  reader->attributes();
+    for(int i = 0; i < attr.size(); i++) {
+      SerializationAttribute * a = 
+	attributes.value(attr[i].name().toString(), 0);
+	
+      if(a && a->isXMLAttribute())
+	a->readFromString(attr[i].value().toString());
+      else 
+	fprintf(stderr, "Unexpected XML attribute: '%s' = '%s' at line %ld %p\n", 
+		(const char*) attr[i].name().toString().toLocal8Bit(),
+		(const char*) attr[i].value().toString().toLocal8Bit(),
+		(long) reader->lineNumber(), a);
+    }
+  }
+
+  // Now, we read the inner part
   while(!reader->atEnd()) {
     readNextToken(reader);
 
@@ -178,11 +218,8 @@ void SerializationAccessor::readXML(QXmlStreamReader * reader)
       return;
     }
 
-    if(! reader->isStartElement()) {
-      fprintf(stderr, "We have trouble at line %ld\n", 
-	      (long) reader->lineNumber());
-      return;
-    }
+
+    // Then, find the elements:
    
     // Now, find the elements.
     SerializationAttribute * attr = 

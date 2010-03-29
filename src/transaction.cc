@@ -48,6 +48,7 @@ Transaction::Transaction() :
   locked(1),
   balanceMeaningful(false)
 {
+  category = NULL;
 }
 
 bool Transaction::operator<(const Transaction & t) const
@@ -76,17 +77,17 @@ SerializationAccessor * Transaction::serializationAccessor()
 {
   SerializationAccessor * ac = new SerializationAccessor(this);
   ac->addAttribute("amount", 
-		   new SerializationItemScalar<int>(&amount));
+		   new SerializationItemScalar<int>(&amount, true));
   ac->addAttribute("date", 
-		   new SerializationItemScalar<QDate>(&date));
+		   new SerializationItemScalar<QDate>(&date, true));
   ac->addAttribute("name", 
 		   new SerializationItemScalar<QString>(&name));
   ac->addAttribute("memo", 
 		   new SerializationItemScalar<QString>(&memo));
   ac->addAttribute("check-number", 
 		   new SerializationItemScalar<QString>(&checkNumber));
-  ac->addAttribute("category", 
-		   new SerializationItemScalar<QString>(&category));
+  // ac->addAttribute("category", 
+  // 		   new SerializationItemScalar<QString>(&category));
 
   return ac;
 }

@@ -46,6 +46,15 @@ public:
   /// that the reader is at the startElement stuff.
   virtual void readXML(QXmlStreamReader * reader) = 0;
 
+  /// Whether the given attribute could be written as XML attribute
+  virtual bool isXMLAttribute() { return false;};
+
+  /// Reads from String. Must be reimplemented if isXMLAttribute can
+  /// return true.
+  virtual void readFromString(const QString &) {
+    return;
+  };
+
 public:
   
   /// @}
@@ -65,6 +74,7 @@ public:
   /// sometimes (when directly using children of Serializable),
   /// results could be catastrophic...
   virtual bool shouldBeDeleted() { return true;};
+
 };
 
 /// This class describes a single simple item (attribute) to be
@@ -86,6 +96,9 @@ public:
 /// Meanwhile, callbacks could use "pointer-to-members" with a
 /// template stuff.
 class SerializationItem : public SerializationAttribute {
+protected:
+  ///  Can be used as XML attribute
+  bool isAttribute;
 public:
   /// Sets the value from a String
   virtual void setFromString(const QString & str);
@@ -104,6 +117,13 @@ public:
   /// Reads from the given XML stream into the attributes. It assumes
   /// that the reader is at the startElement stuff.
   virtual void readXML(QXmlStreamReader * reader);
+
+  virtual bool isXMLAttribute() { return isAttribute;};
+
+  /// To deal well with XML attributes
+  virtual void readFromString(const QString & str) {
+    setFromString(str);
+  };
 };
 
 
@@ -113,7 +133,10 @@ template <typename T>
 class SerializationItemScalar : public SerializationItem {
   T * target;
 public:
-  SerializationItemScalar<T>(T * t) {target = t;};
+  SerializationItemScalar<T>(T * t, bool attr = false) {
+    target = t;
+    isAttribute = attr;
+  };
   virtual void setFromVariant(const QVariant & v) {
     *target = v.value<T>();
   };
@@ -194,6 +217,77 @@ public:
   
 };
 
+/// This abstract class describes a QString-based hash of objects:
+class SerializationHash : public SerializationAttribute {
+
+  /// The name to be used as 'XML' attribute name for the key ?
+  /// Careful, this key isn't saved ! The serialized stuff needs to
+  /// take care of that !
+  QString keyName;
+public:
+
+  /// \name Getter functions
+  ///
+  /// Functions to get information about the state of the list/dump
+  /// its contents
+  ///
+  /// @{
+
+  /// Returns the list of keys
+  virtual QStringList keys() = 0;
+
+  /// Returns the named element
+  virtual Serializable * value(const QString & key) = 0;
+  
+  /// @}
+
+  /// \name Setter functions
+  ///
+  /// Functions to change the state of the list.
+  ///
+  /// @{
+
+  /// Sets the named element
+  virtual void insert(const QString & key, Serializable * el) = 0;
+
+  /// @}
+
+  /// Writes the element to the writer.
+  ///
+  /// \warning It does not write the key, the Serializable item must
+  /// do it itself !!
+  virtual void writeXML(const QString & name, QXmlStreamWriter * writer);
+
+  /// Reads from the given XML stream into the attributes. It assumes
+  /// that the reader is at the startElement stuff. It only reads
+  /// *one* element of the hash. 
+  virtual void readXML(QXmlStreamReader * reader);
+  
+};
+
+
+/// This template class deals with the specific case of QList of
+/// children of Serializable (but not pointers).
+template <class T>
+class SerializationQHash : public SerializationHash {
+  QHash<QString, T> * target;
+public:
+  SerializationQHash(QHash<QString, T> * t, QString kn = "name") { 
+    target = t;
+    keyName = kn;
+  };
+  
+  virtual QStringList keys() { return target->keys();};
+
+  virtual Serializable * value(const QString &key) { 
+    return &target->value(key);
+  };
+
+  virtual void insert(const QString & key, Serializable * el) {
+    target->insert(key, *static_cast<T*>(el));
+  };
+ 
+};
 
 
 
