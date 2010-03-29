@@ -104,7 +104,7 @@ QVariant AccountModel::data(const QModelIndex& index, int role) const
     case AmountColumn: return QVariant(Transaction::formatAmount(t->amount));
     case BalanceColumn: return QVariant(Transaction::formatAmount(t->balance));
     case NameColumn: return QVariant(t->name);
-    case CategoryColumn: return QVariant(t->category);
+    // case CategoryColumn: return QVariant(t->category);
     case MemoColumn: if(!t->memo.isEmpty())
 	return QVariant(t->memo);
       else if(!t->checkNumber.isEmpty())
@@ -135,7 +135,7 @@ bool AccountModel::setData(const QModelIndex & index, const QVariant & value,
 {
   Transaction *t = indexedTransaction(index);
   if(index.column() == CategoryColumn && t && role == Qt::EditRole) {
-    t->category = value.toString();
+    // t->category = value.toString();
     return true;
   }
   return false;

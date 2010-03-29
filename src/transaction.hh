@@ -22,6 +22,7 @@
 #define __TRANSACTION_HH
 
 #include <serializable.hh>
+#include <category.hh>
 
 class Account;
 
@@ -96,7 +97,7 @@ public:
   /// \todo Provide a way to automatically select the category based
   /// on regular expressions, or other kinds of "filters" (a bit like
   /// the mail filters ?)
-  QString category;
+  Category * category;
 
   /// @}
 
