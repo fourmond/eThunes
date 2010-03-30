@@ -46,6 +46,10 @@ WalletDW::WalletDW(Wallet * w) : wallet(w)
   hl->addWidget(bt);
   connect(bt, SIGNAL(clicked()), SLOT(load()));
 
+  bt = new QPushButton(tr("New category"));
+  hl->addWidget(bt);
+  connect(bt, SIGNAL(clicked()), SLOT(tempNewCategory()));
+
   layout->addLayout(hl);
 
 
@@ -134,4 +138,15 @@ void WalletDW::load()
   /// that depend on this.
 		       
   updateSummary();
+}
+
+void WalletDW::tempNewCategory()
+{
+  QString nc = QInputDialog::getText(this, "New category !", "New category");
+  if(! nc.isEmpty()) {
+    QTextStream o(stderr);
+    wallet->categories.namedSubCategory(nc, true);
+    o << "Current categories:" << endl;
+    wallet->categories.dumpContents();
+  }
 }

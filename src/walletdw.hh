@@ -59,6 +59,9 @@ public slots:
 
   /// Loads a file
   void load();
+
+  /// temporary
+  void tempNewCategory();
   
 };
 

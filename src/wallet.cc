@@ -41,6 +41,8 @@ SerializationAccessor * Wallet::serializationAccessor()
   SerializationAccessor * ac = new SerializationAccessor(this);
   ac->addAttribute("account", 
 		   new SerializationQList<Account>(&accounts));
+  ac->addAttribute("category", 
+		   new SerializationQHash<Category>(&categories));
   return ac;
 }
 

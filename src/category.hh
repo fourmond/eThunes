@@ -23,13 +23,15 @@
 
 #include <serializable.hh>
 
+class CategoryHash;
+
 /// This class represents a Category; these are hierarchical objects
 /// to which transactions can belong (but that isn't compulsory). A
 /// transaction can only belong to one Category.
 class Category : public Serializable {
 public:
   /// Sub-categories
-  QList<Category> subCategories;
+  CategoryHash * subCategories;
 
   /// The parent of this category, or NULL if toplevel
   Category * parent;
@@ -41,12 +43,25 @@ public:
   QString fullName();
 
   Category();
+
+  virtual SerializationAccessor * serializationAccessor();
+
+  virtual ~Category();
 };
 
+/// A hash of Category, knowing that they sho
+class CategoryHash : public QHash<QString, Category> {
+public:
+  /// Returns a pointer to the named (sub) category, or NULL if it
+  /// does not exist.
+  ///
+  /// On the other hand, if create is true, it is created even if it
+  /// does not exist.
+  Category * namedSubCategory(const QString &name, bool create = false);
 
-// class CategoryList : public QList<Category> {
-// public:
-//   /// Returns the Category with the given name, or NULL
-//   Category * namedCategory(QString name);
-// };
+  /// Dumps the contents of the hash
+  void dumpContents(QString prefix = "");
+  
+};
+
 #endif

@@ -38,8 +38,8 @@ public:
   /// The accounts held within the wallet.
   QList<Account> accounts;
 
-  // /// The top-level categories of the wallet
-  // QList<Category> categories;
+  /// The top-level categories of the wallet
+  CategoryHash categories;
 
   /// Returns the Category object corresponding to the given name.
   Category * namedCategory(QString name);

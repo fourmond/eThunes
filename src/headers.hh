@@ -39,6 +39,7 @@
 
 // Dialogs and the like
 #include <QFileDialog>
+#include <QInputDialog>
 
 // Non-GUI objects
 #include <QDate>

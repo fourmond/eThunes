@@ -249,3 +249,25 @@ void Serializable::readXML(QXmlStreamReader * reader)
   ac->readXML(reader);
   delete ac;
 }
+
+/// A small reminder: this function is called at the start element
+void SerializationHash::readXML(QXmlStreamReader * reader)
+{
+  const QXmlStreamAttributes & attr = reader->attributes();
+  if(! attr.hasAttribute(keyName)) {
+    fprintf(stderr, "Missing attribute %s for hash\n",
+	    (const char*) keyName.toLocal8Bit());
+    return;
+  }
+  QString key = attr.value(keyName).toString();
+  newElement(key);
+  value(key)->readXML(reader);
+}
+
+void SerializationHash::writeXML(const QString & name, 
+				 QXmlStreamWriter * writer)
+{
+  QStringList k = keys();
+  for(int i = 0; i < k.size();i++)
+    value(k[i])->writeXML(name, writer);
+}

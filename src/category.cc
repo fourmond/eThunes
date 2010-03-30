@@ -22,11 +22,71 @@
 Category::Category()
 {
   parent = 0;
+  subCategories = new CategoryHash();
+  printf("Initialization taking place for %p\n", this);
 }
+
+#define CategorySeparator "::"
 
 QString Category::fullName()
 {
   if(! parent)
     return name;
-  return parent->fullName() + "::" + name;
+  return parent->fullName() + CategorySeparator + name;
+}
+
+/// \todo We are seriously leaking memory here. Fix that up by using a
+/// proper copy constructor, rather than the default one.
+Category::~Category()
+{
+  // if(subCategories)		// But it really should always be the
+  // 				// case.
+  //   delete subCategories;
+}
+
+SerializationAccessor * Category::serializationAccessor()
+{
+  SerializationAccessor * ac = new SerializationAccessor(this);
+  ac->addAttribute("name", 
+		   new SerializationItemScalar<QString>(&name, true));
+  ac->addAttribute("category", 
+		   new SerializationQHash<Category>(subCategories));
+  return ac;
+}
+
+Category * CategoryHash::namedSubCategory(const QString &name, bool create)
+{
+
+  int index;
+  if(index = name.indexOf(CategorySeparator), index >= 0) {
+    QString root = name.left(index);
+    QString subPath = name.mid(index + QString(CategorySeparator).size());
+    Category * sub = namedSubCategory(root, create);
+    if(sub)
+      return sub->subCategories->namedSubCategory(subPath, create);
+    else
+      return NULL;
+  }
+  else {
+    // Plain key
+    if(contains(name))
+      return &operator[](name);
+    if(!create)
+      return NULL;
+
+    insert(name, Category());
+    value(name).subCategories->dumpContents(" -> ");
+    operator[](name).name = name;
+    return &operator[](name);
+  }
+}
+
+void CategoryHash::dumpContents(QString prefix)
+{
+  QTextStream o(stdout);
+  QStringList l = keys();
+  for(int i = 0; i < l.size(); i++) {
+    o << prefix << l[i] << " (" << &operator[](l[i]) << ")" << endl;
+    operator[](l[i]).subCategories->dumpContents(prefix + "  ");
+  }
 }

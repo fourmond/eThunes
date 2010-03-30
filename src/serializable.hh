@@ -219,6 +219,7 @@ public:
 
 /// This abstract class describes a QString-based hash of objects:
 class SerializationHash : public SerializationAttribute {
+protected:
 
   /// The name to be used as 'XML' attribute name for the key ?
   /// Careful, this key isn't saved ! The serialized stuff needs to
@@ -238,6 +239,9 @@ public:
 
   /// Returns the named element
   virtual Serializable * value(const QString & key) = 0;
+
+  /// Creates an empty element with the named key
+  virtual void newElement(const QString & key) = 0;
   
   /// @}
 
@@ -280,11 +284,15 @@ public:
   virtual QStringList keys() { return target->keys();};
 
   virtual Serializable * value(const QString &key) { 
-    return &target->value(key);
+    return &target->operator[](key);
   };
 
   virtual void insert(const QString & key, Serializable * el) {
     target->insert(key, *static_cast<T*>(el));
+  };
+
+  virtual void newElement(const QString & key) {
+    target->insert(key, T());
   };
  
 };
