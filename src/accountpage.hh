@@ -43,8 +43,7 @@ class AccountPage : public NavigationPage {
 
   /// A correspondance Account* -> AccountPage
   static QHash<Account *, AccountPage *> accountPages;
-  
-  
+
 public:
   
   AccountPage(Account * a);
@@ -58,9 +57,16 @@ public slots:
   /// Updates the summary of the account
   void updateAccountSummary();
 
+  /// Prompts for renaming the account
+  void renameAccount();
+
+public:
+
   /// Returns the AccountPage for the given account, or create it if
   /// it doesn't exist yet.
   static AccountPage * getAccountPage(Account * account);
+
+  
 };
 
 #endif

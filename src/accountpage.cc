@@ -38,6 +38,11 @@ AccountPage::AccountPage(Account * ac) : account(ac)
   view->setModel(model);
   view->setRootIndex(model->index(0,0));
   view->setRootIsDecorated(false);
+  
+  for(int i = 0; i < AccountModel::LastColumn; i++)
+    view->resizeColumnToContents(i);
+  connect(accountSummary, SIGNAL(linkActivated(const QString &)), 
+	  SLOT(renameAccount()));
 }
 
 AccountPage::~AccountPage()
@@ -54,7 +59,8 @@ QString AccountPage::pageTitle()
 
 void AccountPage::updateAccountSummary()
 {
-  accountSummary->setText(tr("<strong>Account: </strong> %1<br>"
+  /// \todo there is a great deal to change here.
+  accountSummary->setText(tr("<strong>Account: </strong> %1 <a href='#name'>(change name)</a><br>"
 			     "<strong>Balance: </strong> %2<br>").
 			  arg(account->name()).
 			  arg(account->balance() * 0.01 ));
@@ -65,4 +71,14 @@ AccountPage * AccountPage::getAccountPage(Account * account)
   if(! accountPages.contains(account))
     accountPages[account] = new AccountPage(account);
   return accountPages[account];
+}
+
+void AccountPage::renameAccount()
+{
+  QString newName = QInputDialog::getText(this, tr("New name"),
+					  tr("New name for the account"));
+  if(newName.isEmpty())
+    return;
+  account->publicName = newName;
+  updateAccountSummary();
 }
