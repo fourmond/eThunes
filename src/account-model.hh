@@ -23,6 +23,12 @@
 
 /// Class in charge of organising the data of a list of Transaction
 /// objects into something viewable with a Tree or Table view.
+///
+/// \todo Ideas:
+/// \li color background (or whathever) by month (possibly moving)
+/// \li color balance/amount by credit/debit
+/// \li color lines/specific parts according to the category
+/// More ideas ?
 class AccountModel : public QAbstractItemModel {
   /// List of transactions:
   ///
