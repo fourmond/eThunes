@@ -26,17 +26,8 @@
    First, it is important to go on with the banking part. The most
    important work on that side is:
    
-   \li provide a kind of delegate class that will handle proxying raw
-   account data into something viewable/editable by a ModelView
-   instance.
-
-   \li provide data persistence, through XML output (easy to diff,
-   check into VCS).
-   
    \li provide categories, subcategories and tags, and, following
    statistics of all kinds
-
-   \li provide support for multiple accounts (easy, in principle)
 
    \section todo-admin Administration
 
@@ -110,6 +101,8 @@ void MainWin::setupFrame()
   walletDW = new WalletDW(wallet);
 
   navigationWidget = new NavigationWidget();
+  /// \todo eventually navigationWidget should only see NavigationPage
+  /// objects.
   navigationWidget->addTab(walletDW, tr("Dashboard"));
 
   setCentralWidget(navigationWidget);
@@ -122,11 +115,38 @@ void MainWin::setupActions()
 		    this, SLOT(close()),
 		    QKeySequence(tr("Ctrl+Q")),
 		    tr("Exit from QMoney"));
+
+  actions.addAction(this, "save", tr("&Save"),
+		    walletDW, SLOT(save()),
+		    QKeySequence(tr("Ctrl+S")),
+		    tr("Saves the wallet"));
+
+  actions.addAction(this, "load", tr("&Load"),
+		    walletDW, SLOT(load()),
+		    QKeySequence(tr("Ctrl+L")),
+		    tr("Loads a new wallet"));
+
+  actions.addAction(this, "save as", tr("Save &As"),
+		    walletDW, SLOT(saveAs()),
+		    QKeySequence(),
+		    tr("Saves the wallet under a new name"));
+
+  actions.addAction(this, "import", tr("&Import transactions"),
+		    walletDW, SLOT(fileImportDialog()),
+		    QKeySequence(tr("Ctrl+I")),
+		    tr("Imports transactions into the wallet"));
+
 }
 
 void MainWin::setupMenus()
 {
   QMenu * fileMenu = menuBar()->addMenu(tr("&File"));
+  fileMenu->addAction(actions["load"]);
+  fileMenu->addAction(actions["save"]);
+  fileMenu->addAction(actions["save as"]);
+  fileMenu->addSeparator();
+  fileMenu->addAction(actions["import"]);
+  fileMenu->addSeparator();
   fileMenu->addAction(actions["quit"]);
 }
 

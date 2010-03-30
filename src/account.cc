@@ -51,7 +51,7 @@ SerializationAccessor * Account::serializationAccessor()
   ac->addAttribute("number", 
 		   new SerializationItemScalar<QString>(&accountNumber));
   ac->addAttribute("public-name", 
-		   new SerializationItemScalar<QString>(&publicName));
+		   new SerializationItemScalar<QString>(&publicName, true));
   ac->addAttribute("bank-id", 
 		   new SerializationItemScalar<QString>(&bankID));
   ac->addAttribute("branch-id", 

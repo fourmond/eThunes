@@ -56,6 +56,8 @@ class MainWin : public QMainWindow {
 public:
   MainWin();
   ~MainWin();
+
+public slots:
   
 };
 

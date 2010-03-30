@@ -32,25 +32,25 @@ WalletDW::WalletDW(Wallet * w) : wallet(w)
 
   // A button bar at the bottom for importing/saving/loading.
 
-  QHBoxLayout * hl = new QHBoxLayout();
-  // The button for importing something into the wallet
-  QPushButton * bt = new QPushButton(tr("Import OFX"));
-  hl->addWidget(bt);
-  connect(bt, SIGNAL(clicked()), SLOT(fileImportDialog()));
+  // QHBoxLayout * hl = new QHBoxLayout();
+  // // The button for importing something into the wallet
+  // QPushButton * bt = new QPushButton(tr("Import OFX"));
+  // hl->addWidget(bt);
+  // connect(bt, SIGNAL(clicked()), SLOT(fileImportDialog()));
 
-  bt = new QPushButton(tr("Save"));
-  hl->addWidget(bt);
-  connect(bt, SIGNAL(clicked()), SLOT(save()));
+  // bt = new QPushButton(tr("Save"));
+  // hl->addWidget(bt);
+  // connect(bt, SIGNAL(clicked()), SLOT(save()));
 
-  bt = new QPushButton(tr("Load"));
-  hl->addWidget(bt);
-  connect(bt, SIGNAL(clicked()), SLOT(load()));
+  // bt = new QPushButton(tr("Load"));
+  // hl->addWidget(bt);
+  // connect(bt, SIGNAL(clicked()), SLOT(load()));
 
-  bt = new QPushButton(tr("New category"));
-  hl->addWidget(bt);
-  connect(bt, SIGNAL(clicked()), SLOT(tempNewCategory()));
+  // bt = new QPushButton(tr("New category"));
+  // hl->addWidget(bt);
+  // connect(bt, SIGNAL(clicked()), SLOT(tempNewCategory()));
 
-  layout->addLayout(hl);
+  // layout->addLayout(hl);
 
 
   // We introduce contents into the summary.
@@ -59,7 +59,8 @@ WalletDW::WalletDW(Wallet * w) : wallet(w)
 
 void WalletDW::updateSummary()
 {
-  QString text = QString("<strong>") + tr("Wallet") + "</strong>\n<p>";
+  QString text = QString("<strong>") + tr("Wallet") + "</strong>:" +
+    QFileInfo(lastFilename).fileName() + "\n<p>";
   QString cellStyle = " style='padding-right: 20px'";
   int totalBalance = 0; /// \todo Maybe this should go in Wallet ?
   
@@ -73,7 +74,9 @@ void WalletDW::updateSummary()
       arg(ac->name()).arg(Transaction::formatAmount(ac->balance()));
     totalBalance += ac->balance();
   }
-  text += (QString("<tr><td>") + tr("Total") + "</td><td>%1</td></tr>\n").
+  text += "<tr></tr>";
+  text += (QString("<tr><td><strong>") + tr("Total") + 
+	   "</strong></td><td><strong>%1</strong></td></tr>\n").
     arg(Transaction::formatAmount(totalBalance));
   text += "</table>\n";
   
@@ -112,16 +115,23 @@ void WalletDW::showURL(const QString & link)
 
 void WalletDW::save()
 {
-  if(lastFilename.isEmpty()) {
-    lastFilename = 
-      QFileDialog::getSaveFileName(this, 
-				   tr("Save wallet as"),
-				   QString(),
-				   tr("XML wallet files (*.xml)"));
-    if(lastFilename.isEmpty())
-      return;
-  }
-  wallet->saveToFile(lastFilename);
+  if(lastFilename.isEmpty())
+    saveAs();
+  else
+    wallet->saveToFile(lastFilename);
+}
+
+void WalletDW::saveAs()
+{
+  QString str = 
+    QFileDialog::getSaveFileName(this, 
+				 tr("Save wallet as"),
+				 QString(),
+				 tr("XML wallet files (*.xml)"));
+  if(lastFilename.isEmpty())
+    return;
+  lastFilename = str;
+  save();
 }
 
 void WalletDW::load()
@@ -134,19 +144,20 @@ void WalletDW::load()
   if(file.isEmpty())
     return;
   wallet->loadFromFile(file);
+  lastFilename = file;
   /// \todo: here, we should find a way to invalidate all the windows
   /// that depend on this.
 		       
   updateSummary();
 }
 
-void WalletDW::tempNewCategory()
-{
-  QString nc = QInputDialog::getText(this, "New category !", "New category");
-  if(! nc.isEmpty()) {
-    QTextStream o(stderr);
-    wallet->categories.namedSubCategory(nc, true);
-    o << "Current categories:" << endl;
-    wallet->categories.dumpContents();
-  }
-}
+// void WalletDW::tempNewCategory()
+// {
+//   QString nc = QInputDialog::getText(this, "New category !", "New category");
+//   if(! nc.isEmpty()) {
+//     QTextStream o(stderr);
+//     wallet->categories.namedSubCategory(nc, true);
+//     o << "Current categories:" << endl;
+//     wallet->categories.dumpContents();
+//   }
+// }

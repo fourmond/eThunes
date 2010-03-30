@@ -52,17 +52,15 @@ public slots:
   /// Called internally when a link is clicked
   void showURL(const QString & link);
 
-  /// Saves the Wallet as a file.
-  ///
-  /// \todo Save (not as) too...
+  /// Saves the Wallet.
   void save();
+
+  /// Saves the Wallet into a new file.
+  void saveAs();
 
   /// Loads a file
   void load();
 
-  /// temporary
-  void tempNewCategory();
-  
 };
 
 #endif
