@@ -22,8 +22,6 @@
 Category::Category()
 {
   parent = 0;
-  subCategories = new CategoryHash();
-  printf("Initialization taking place for %p\n", this);
 }
 
 #define CategorySeparator "::"
@@ -50,7 +48,7 @@ SerializationAccessor * Category::serializationAccessor()
   ac->addAttribute("name", 
 		   new SerializationItemScalar<QString>(&name, true));
   ac->addAttribute("category", 
-		   new SerializationQHash<Category>(subCategories));
+		   new SerializationQHash<Category>(&subCategories));
   return ac;
 }
 
@@ -63,7 +61,7 @@ Category * CategoryHash::namedSubCategory(const QString &name, bool create)
     QString subPath = name.mid(index + QString(CategorySeparator).size());
     Category * sub = namedSubCategory(root, create);
     if(sub)
-      return sub->subCategories->namedSubCategory(subPath, create);
+      return sub->subCategories.namedSubCategory(subPath, create);
     else
       return NULL;
   }
@@ -75,18 +73,18 @@ Category * CategoryHash::namedSubCategory(const QString &name, bool create)
       return NULL;
 
     insert(name, Category());
-    value(name).subCategories->dumpContents(" -> ");
+    value(name).subCategories.dumpContents(" -> ");
     operator[](name).name = name;
     return &operator[](name);
   }
 }
 
-void CategoryHash::dumpContents(QString prefix)
+void CategoryHash::dumpContents(QString prefix) const 
 {
   QTextStream o(stdout);
   QStringList l = keys();
   for(int i = 0; i < l.size(); i++) {
     o << prefix << l[i] << " (" << &operator[](l[i]) << ")" << endl;
-    operator[](l[i]).subCategories->dumpContents(prefix + "  ");
+    operator[](l[i]).subCategories.dumpContents(prefix + "  ");
   }
 }

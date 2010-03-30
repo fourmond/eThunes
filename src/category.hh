@@ -23,7 +23,23 @@
 
 #include <serializable.hh>
 
-class CategoryHash;
+class Category;
+
+/// A hash of Category, knowing that they sho
+class CategoryHash : public QHash<QString, Category> {
+public:
+  /// Returns a pointer to the named (sub) category, or NULL if it
+  /// does not exist.
+  ///
+  /// On the other hand, if create is true, it is created even if it
+  /// does not exist.
+  Category * namedSubCategory(const QString &name, bool create = false);
+
+  /// Dumps the contents of the hash
+  void dumpContents(QString prefix = "") const;
+  
+};
+
 
 /// This class represents a Category; these are hierarchical objects
 /// to which transactions can belong (but that isn't compulsory). A
@@ -31,7 +47,7 @@ class CategoryHash;
 class Category : public Serializable {
 public:
   /// Sub-categories
-  CategoryHash * subCategories;
+  CategoryHash  subCategories;
 
   /// The parent of this category, or NULL if toplevel
   Category * parent;
@@ -49,19 +65,5 @@ public:
   virtual ~Category();
 };
 
-/// A hash of Category, knowing that they sho
-class CategoryHash : public QHash<QString, Category> {
-public:
-  /// Returns a pointer to the named (sub) category, or NULL if it
-  /// does not exist.
-  ///
-  /// On the other hand, if create is true, it is created even if it
-  /// does not exist.
-  Category * namedSubCategory(const QString &name, bool create = false);
-
-  /// Dumps the contents of the hash
-  void dumpContents(QString prefix = "");
-  
-};
 
 #endif
