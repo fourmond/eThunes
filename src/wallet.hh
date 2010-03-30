@@ -60,7 +60,16 @@ public:
   /// Clears the contents of the Wallet (such as before loading ;-)...
   void clearContents();
 
-  virtual void prepareSerializationRead() { clearContents();};
+  /// This holds the wallet currently being loaded through
+  /// serialization.
+  ///
+  /// \todo This will prevent parallel serialization; this could be
+  /// changed into some class, to be seen later on.
+  static Wallet * walletCurrentlyRead;
+
+  virtual void prepareSerializationRead();
+  
+  virtual void finishedSerializationRead();
 };
 
 #endif

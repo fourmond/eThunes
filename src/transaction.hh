@@ -24,6 +24,9 @@
 #include <serializable.hh>
 #include <category.hh>
 
+
+// Necessary classes
+class Wallet;
 class Account;
 
 /// Represents one transaction in a bank account.
@@ -86,6 +89,7 @@ public:
 
   /// \name User-defined attributes
   ///
+  /// (and possibly accessors too) 
   /// @{
 
   /// Whether the transaction is locked for manual modification or not.
@@ -98,6 +102,15 @@ public:
   /// on regular expressions, or other kinds of "filters" (a bit like
   /// the mail filters ?)
   Category * category;
+
+  
+  /// Sets the category from the given String. If wallet is NULL, it
+  /// is taken to be account->wallet, which shouldn't be NULL.
+  void setCategoryFromName(const QString & str, Wallet * wallet = NULL);
+
+  /// Returns the full name of the Category, suitable for saving, or
+  /// an empty string when there isn't a category.
+  QString categoryName() const ;
 
   /// @}
 

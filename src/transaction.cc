@@ -19,6 +19,38 @@
 #include <headers.hh>
 #include <transaction.hh>
 #include <account.hh>
+#include <wallet.hh>
+
+
+/// This class is used to read/write pointers to Category. It assumes
+/// that the Wallet::walletCurrentlyRead variable is set correctly.
+class SerializeCategoryPointer : public SerializationItem {
+  Category **target;
+public:
+  SerializeCategoryPointer(Category **t) { target = t;};
+
+  virtual void setFromVariant(const QVariant &v) {
+    setFromString(v.toString());
+  };
+  
+  virtual void setFromString(const QString &str) {
+    *target = Wallet::walletCurrentlyRead->categories.
+      namedSubCategory(str, true);
+  };
+
+
+  virtual QString valueToString() {
+    if(*target) {
+      return (*target)->fullName();
+    }
+    return QString();
+  };
+
+  virtual QVariant valueToVariant() {
+    return QVariant(valueToString());
+  };
+  
+};
 
 void Transaction::dump(QIODevice * dev)
 {
@@ -86,10 +118,31 @@ SerializationAccessor * Transaction::serializationAccessor()
 		   new SerializationItemScalar<QString>(&memo));
   ac->addAttribute("check-number", 
 		   new SerializationItemScalar<QString>(&checkNumber));
-  // ac->addAttribute("category", 
-  // 		   new SerializationItemScalar<QString>(&category));
+  ac->addAttribute("category", 
+  		   new SerializeCategoryPointer(&category));
 
   return ac;
+}
+
+QString Transaction::categoryName() const
+{
+  if(category)
+    return category->fullName();
+  return QString();
+}
+
+void Transaction::setCategoryFromName(const QString & str, Wallet * w)
+{
+  if(! w) {
+    if(! account || ! account->wallet) {
+      fprintf(stderr, "We have serious problems setting a "
+	      "Category from a Name\n");
+      return;
+    }
+    w = account->wallet;
+  }
+  // We create by default ?
+  category = w->categories.namedSubCategory(str, true);
 }
 
 
@@ -158,4 +211,5 @@ void TransactionList::sanitizeList(Account * ac)
     }
   }
 }
+
 

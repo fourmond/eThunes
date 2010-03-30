@@ -100,6 +100,8 @@ protected:
   ///  Can be used as XML attribute
   bool isAttribute;
 public:
+  SerializationItem() : isAttribute(false) {;};
+  
   /// Sets the value from a String
   virtual void setFromString(const QString & str);
   virtual void setFromVariant(const QVariant & v) = 0;

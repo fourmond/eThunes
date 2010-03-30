@@ -32,6 +32,8 @@ void Wallet::importAccountData(const OFXImport & data)
       ac = &accounts[j];
     }
     ac->importTransactions(data.transactions);
+    ac->wallet = this;		// Make sur the wallet attribute is
+				// set correctly
   }
 }
 
@@ -72,4 +74,21 @@ void Wallet::loadFromFile(QString fileName)
 void Wallet::clearContents()
 {
   accounts.clear();
+}
+
+
+Wallet * Wallet::walletCurrentlyRead = NULL;
+
+void Wallet::prepareSerializationRead()
+{ 
+  clearContents();
+  walletCurrentlyRead = this;
+}
+  
+void Wallet::finishedSerializationRead()
+{
+  walletCurrentlyRead = NULL;
+  // Make sure that account.wallet points to here.
+  for(int i = 0; i < accounts.size(); i++)
+    accounts[i].wallet = this;
 }

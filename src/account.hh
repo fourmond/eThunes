@@ -69,6 +69,11 @@ public:
 
   /// @}
 
+  Account() : wallet(NULL) {;};
+
+  /// The Wallet to which this account belongs to.
+  Wallet * wallet;
+
   /// The transactions of the account, ordered by date (0 = most
   /// ancient transaction), so that the computation of the balance is
   /// possible
