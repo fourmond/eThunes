@@ -61,6 +61,8 @@
 #include <account-model.hh>
 #include <mainwin.hh>
 
+#include <filterdialog.hh>
+
 MainWin::MainWin()
 {
   /// \todo here change !
@@ -136,6 +138,11 @@ void MainWin::setupActions()
 		    QKeySequence(tr("Ctrl+I")),
 		    tr("Imports transactions into the wallet"));
 
+  actions.addAction(this, "manage filters", tr("&Manage filters"),
+		    walletDW, SLOT(manageFilters()),
+		    QKeySequence(),
+		    tr("Creates and edit filters"));
+
 }
 
 void MainWin::setupMenus()
@@ -146,6 +153,7 @@ void MainWin::setupMenus()
   fileMenu->addAction(actions["save as"]);
   fileMenu->addSeparator();
   fileMenu->addAction(actions["import"]);
+  fileMenu->addAction(actions["manage filters"]);
   fileMenu->addSeparator();
   fileMenu->addAction(actions["quit"]);
 }

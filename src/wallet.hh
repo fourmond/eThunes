@@ -25,6 +25,7 @@
 #include <category.hh>
 #include <account.hh>
 #include <ofximport.hh>
+#include <filter.hh>
 
 /// This class represents a collection of accounts. Presumably, there
 /// should be only one Wallet instance in a running program, although
@@ -40,6 +41,9 @@ public:
 
   /// The top-level categories of the wallet
   CategoryHash categories;
+
+  /// A list of Filter objects to run over the imported transactions.
+  QList<Filter> filters;
 
   /// Returns the Category object corresponding to the given name.
   Category * namedCategory(QString name);

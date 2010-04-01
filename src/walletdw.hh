@@ -61,6 +61,9 @@ public slots:
   /// Loads a file
   void load();
 
+  /// Manage  filters
+  void manageFilters();
+
 };
 
 #endif

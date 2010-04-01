@@ -19,6 +19,7 @@
 #include <headers.hh>
 #include <walletdw.hh>
 
+#include <filterdialog.hh>
 #include <navigationwidget.hh>
 #include <accountpage.hh>
 
@@ -128,7 +129,7 @@ void WalletDW::saveAs()
 				 tr("Save wallet as"),
 				 QString(),
 				 tr("XML wallet files (*.xml)"));
-  if(lastFilename.isEmpty())
+  if(str.isEmpty())
     return;
   lastFilename = str;
   save();
@@ -161,3 +162,9 @@ void WalletDW::load()
 //     wallet->categories.dumpContents();
 //   }
 // }
+
+void WalletDW::manageFilters()
+{
+  FilterDialog * dlg = new FilterDialog(wallet);
+  dlg->show();
+}

@@ -36,9 +36,12 @@
 #include <QTabBar>
 #include <QTabWidget>
 
+#include <QListWidget>
+
 
 // Dialogs and the like
 #include <QFileDialog>
+#include <QDialog>
 #include <QInputDialog>
 
 // Non-GUI objects
