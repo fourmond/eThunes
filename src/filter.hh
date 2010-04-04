@@ -78,7 +78,7 @@ public:
   bool matches(Transaction * t);
 
   /// Loops over the list and sets the categories according to the tests.
-  void processList(TransactionList l);
+  void processList(TransactionList * l);
 };
 
 #endif

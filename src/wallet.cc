@@ -94,3 +94,15 @@ void Wallet::finishedSerializationRead()
   for(int i = 0; i < accounts.size(); i++)
     accounts[i].wallet = this;
 }
+
+void Wallet::runFilters(TransactionList * list)
+{
+  for(int i = 0; i < filters.size(); i++)
+    filters[i].processList(list);
+}
+
+void Wallet::runFilters()
+{
+  for(int i = 0; i < accounts.size(); i++)
+    runFilters(&accounts[i].transactions);
+}

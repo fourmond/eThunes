@@ -39,6 +39,32 @@ public slots:
 
   /// Updates the filter list according to what the wallet has.
   void updateFilterList();
+
+  /// Edits the current filter
+  void editCurrent();
+
+  /// Run filters
+  void runFilters();
+};
+
+/// A small widget to edit a FilterElement
+class FilterElementWidget : public QWidget {
+  Q_OBJECT;
+
+  /// The target FilterElement
+  FilterElement * element;
+
+  /// The attribute selection combo box
+  QComboBox * attributeSelection;
+public:
+  FilterElementWidget(FilterElement * el);
+  
+public slots:
+
+  void targetChanged(int);
+
+  void textChanged(const QString & str);
+
 };
 
 class FilterEditDialog : public QDialog {
@@ -47,11 +73,17 @@ class FilterEditDialog : public QDialog {
   /// The target wallet, for the record, and for category list ?
   Wallet * wallet;
   
-  /// The target filter 
+  /// The target filter
+  ///
+  /// \todo work on a copy ?
   Filter * filter;
 public:
   FilterEditDialog(Wallet *, Filter*);
-  
+
+public slots:
+  void nameChanged(const QString & str);
+
+  void categoryChanged(const QString & str);
 };
 
 #endif

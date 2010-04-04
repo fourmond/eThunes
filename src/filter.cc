@@ -79,10 +79,10 @@ bool Filter::matches(Transaction * t)
   return ! matchAny;
 }
 
-void Filter::processList(TransactionList l)
+void Filter::processList(TransactionList * l)
 {
-  for(int i = 0; i < l.size(); i++) {
-    Transaction * t = &l[i];
+  for(int i = 0; i < l->size(); i++) {
+    Transaction * t = &l->operator[](i);
     if(!t->category && matches(t)) // Does not set when category
 				   // exists, please override.
       t->setCategoryFromName(category);

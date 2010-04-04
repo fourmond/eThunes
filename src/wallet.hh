@@ -45,6 +45,12 @@ public:
   /// A list of Filter objects to run over the imported transactions.
   QList<Filter> filters;
 
+  /// Runs the filters on the given transaction list
+  void runFilters(TransactionList * list);
+
+  /// Runs the filters on all the account transactions
+  void runFilters();
+
   /// Returns the Category object corresponding to the given name.
   Category * namedCategory(QString name);
 

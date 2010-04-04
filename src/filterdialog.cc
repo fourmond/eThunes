@@ -31,12 +31,19 @@ FilterDialog::FilterDialog(Wallet *w)
   
   list = new QListWidget(this);
   hb->addWidget(list);
+  connect(list, SIGNAL(itemDoubleClicked(QListWidgetItem *)),
+	  SLOT(editCurrent()));
   
   QVBoxLayout * l2 = new QVBoxLayout;
   QPushButton * bt = new QPushButton(tr("New filter"));
   connect(bt, SIGNAL(clicked()), SLOT(newFilter()));
   l2->addWidget(bt);
   bt = new QPushButton(tr("Edit filter"));
+  connect(bt, SIGNAL(clicked()), SLOT(editCurrent()));
+  l2->addWidget(bt);
+  l2->addSpacing(10);
+  bt = new QPushButton(tr("Run filters"));
+  connect(bt, SIGNAL(clicked()), SLOT(runFilters()));
   l2->addWidget(bt);
   l2->addSpacing(10);
   bt = new QPushButton(tr("Close"));
@@ -60,10 +67,106 @@ void FilterDialog::newFilter()
   updateFilterList();
   list->setCurrentRow(list->count()-1);
   // And edit
+  editCurrent();
 }
+
+
+void FilterDialog::runFilters()
+{
+  wallet->runFilters();
+}
+
+void FilterDialog::editCurrent()
+{
+  FilterEditDialog * edit = 
+    new FilterEditDialog(wallet, &wallet->filters[list->currentRow()]);
+  connect(edit, SIGNAL(finished(int)), SLOT(updateFilterList()));
+  edit->show();
+}
+
 
 FilterEditDialog::FilterEditDialog(Wallet *w, Filter * f)
 {
   wallet = w;
   filter = f;
+
+  QVBoxLayout * l1 = new QVBoxLayout(this);
+  QHBoxLayout * hb = new QHBoxLayout;
+  hb->addWidget(new QLabel(tr("Filter: ")));
+  QLineEdit * edit = new QLineEdit(filter->name);
+  connect(edit, SIGNAL(textChanged(const QString &)), 
+	  SLOT(nameChanged(const QString &)));
+  hb->addWidget(edit);
+  l1->addLayout(hb);
+
+  if(! f->elements.size())
+    f->elements.push_back(FilterElement());
+  for(int i = 0; i < f->elements.size(); i++)
+    l1->addWidget(new FilterElementWidget(&f->elements[i]));
+
+  hb = new QHBoxLayout;
+  hb->addWidget(new QLabel(tr("Target category: ")));
+  edit = new QLineEdit(filter->category);
+  connect(edit, SIGNAL(textChanged(const QString &)), 
+	  SLOT(categoryChanged(const QString &)));
+  hb->addWidget(edit);
+  l1->addLayout(hb);
+
+  
+  QPushButton * bt = new QPushButton(tr("Close"));
+  connect(bt, SIGNAL(clicked()), SLOT(close()));
+  l1->addWidget(bt);
+}
+
+void FilterEditDialog::nameChanged(const QString & str)
+{
+  filter->name = str;
+}
+
+void FilterEditDialog::categoryChanged(const QString & str)
+{
+  filter->category = str;
+}
+
+FilterElementWidget::FilterElementWidget(FilterElement * el)
+{
+  element = el;
+  QHBoxLayout * hb = new QHBoxLayout(this);
+  hb->addWidget(new QLabel(tr("Applies to:")));
+  attributeSelection = new QComboBox;
+  attributeSelection->setEditable(false);
+  attributeSelection->addItem(tr("Name"), QVariant(FilterElement::Name));
+  if(element->transactionAttribute == FilterElement::Name)
+    attributeSelection->setCurrentIndex(attributeSelection->count()-1);
+    
+  attributeSelection->addItem(tr("Memo"), QVariant(FilterElement::Memo));
+  if(element->transactionAttribute == FilterElement::Memo)
+    attributeSelection->setCurrentIndex(attributeSelection->count()-1);
+  connect(attributeSelection, SIGNAL(activated(int)), 
+	  SLOT(targetChanged(int)));
+
+  hb->addWidget(attributeSelection);  
+
+  QLineEdit * edit = new QLineEdit();
+  edit->setText(element->match);
+  connect(edit, SIGNAL(textChanged(const QString &)), 
+	  SLOT(textChanged(const QString &)));
+
+  hb->addWidget(edit);  
+  
+
+  /// \todo Regexp ?
+
+}
+
+void FilterElementWidget::textChanged(const QString & str)
+{
+  element->match = str;
+}
+
+void FilterElementWidget::targetChanged(int t)
+{
+  // Ugly, but, well, works...
+  *((int*)&element->transactionAttribute) = 
+    attributeSelection->itemData(t).toInt();
 }

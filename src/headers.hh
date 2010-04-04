@@ -37,7 +37,7 @@
 #include <QTabWidget>
 
 #include <QListWidget>
-
+#include <QComboBox>
 
 // Dialogs and the like
 #include <QFileDialog>
