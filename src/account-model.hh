@@ -31,6 +31,12 @@
 /// \li color balance/amount by credit/debit
 /// \li color lines/specific parts according to the category
 /// More ideas ?
+///
+/// \todo This class should be more general and handle list of
+/// Transaction * instead of the current TransactionList; this would
+/// make it fairly trivial to view/modify transactions based on other
+/// criteria (Category, for intance) rather than the current model
+/// here. I'd better modify this before it is too painful to do.
 class AccountModel : public QAbstractItemModel {
 
   Q_OBJECT;
@@ -40,8 +46,6 @@ class AccountModel : public QAbstractItemModel {
   /// \todo This is no accessor, and doesn't care for
   /// modifications. The final type should be a QObject child with
   /// appropriate signaling mechanism.
-  ///
-  /// \todo We simply should use an Account instead of this.
   TransactionList * transactions;
 
 protected:

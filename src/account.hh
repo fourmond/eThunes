@@ -115,6 +115,13 @@ public:
   // Serialize reimplementation
   virtual void prepareSerializationRead() { clearContents();};
   virtual void finishedSerializationRead() { sanitizeAccount();}; 
+
+
+  /// Returns the Transaction objects of the account that belong to
+  /// the given Category, or possibly to one of its descendants.
+  QList<Transaction *> categoryTransactions(Category * category, 
+					    bool parents = true);
+
 };
 
 #endif

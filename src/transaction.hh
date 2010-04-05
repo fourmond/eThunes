@@ -151,11 +151,18 @@ public:
 
 };
 
+
+/// This class represents a list of Transaction objects, ready for
+/// storage, with a few additional functionalities.
+/// 
 /// \todo We should provide a function that can easily check for
 /// duplicates. Tough one, though, if it is possible that twice the
 /// same transaction happens on the same day. It should be possible to
 /// do that across two TransactionList, where one would have potential
 /// duplicates marked using a boolean value of some kind.
+///
+/// \todo Write a function that transforms this into a
+/// QList<Transaction *>.
 class TransactionList : public QList<Transaction> {
 public:
 

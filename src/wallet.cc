@@ -31,10 +31,12 @@ void Wallet::importAccountData(const OFXImport & data)
       accounts.append(data.accounts[i]);
       ac = &accounts[j];
     }
+    /// \todo Run filters on the new transactions !
     ac->importTransactions(data.transactions);
     ac->wallet = this;		// Make sur the wallet attribute is
 				// set correctly
   }
+  emit(accountsChanged());
 }
 
 

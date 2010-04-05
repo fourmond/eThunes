@@ -52,8 +52,20 @@ public:
   /// Runs the filters on all the account transactions
   void runFilters();
 
+  /// \name Category-based functions
+  ///
+  /// @{
+
   /// Returns the Category object corresponding to the given name.
   Category * namedCategory(QString name);
+
+  /// The list of Transaction objects that belong to one category. If
+  /// \p parents is true (default), then we also look for category in
+  /// the transactions ancestry.
+  QList<Transaction *> categoryTransactions(Category * category, 
+					    bool parents = true);
+
+  /// @}
 
   /// Import all the contents of an OFX import or something similar
   /// into the wallet. That means import the accounts and the

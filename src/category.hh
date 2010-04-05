@@ -69,6 +69,9 @@ public:
   /// does not exist, and its the parent is set to this.
   Category * namedSubCategory(const QString &name, bool create = false);
 
+  /// Whether this Category is a child of the given Category.
+  bool isChildOf(Category * category);
+
 
   virtual SerializationAccessor * serializationAccessor();
 

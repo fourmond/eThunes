@@ -75,3 +75,16 @@ void Account::clearContents()
 {
   transactions.clear();
 }
+
+QList<Transaction *> Account::categoryTransactions(Category * category, 
+						   bool parents)
+{
+  QList<Transaction *> found;
+  for(int i = 0; i < transactions.size(); i++) {
+    Transaction * t = &transactions[i];
+    if(t->category == category || (parents && t->category 
+				   && t->category->isChildOf(category)))
+      found.push_back(t);
+  }
+  return found;
+}

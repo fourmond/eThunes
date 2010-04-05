@@ -98,3 +98,14 @@ Category * Category::namedSubCategory(const QString &name, bool create)
     sub->parent = this;
   return sub;
 }
+
+bool Category::isChildOf(Category * category)
+{
+  Category * c = this;
+  while(c->parent) {
+    if(c->parent == category)
+      return true;
+    c = c->parent;
+  }
+  return false;
+}
