@@ -56,12 +56,14 @@ Category * CategoryHash::namedSubCategory(const QString &name, bool create)
 {
 
   int index;
+  if(name.isEmpty())
+    return NULL;
   if(index = name.indexOf(CategorySeparator), index >= 0) {
     QString root = name.left(index);
     QString subPath = name.mid(index + QString(CategorySeparator).size());
     Category * sub = namedSubCategory(root, create);
     if(sub)
-      return sub->subCategories.namedSubCategory(subPath, create);
+      return sub->namedSubCategory(subPath, create);
     else
       return NULL;
   }
@@ -87,4 +89,12 @@ void CategoryHash::dumpContents(QString prefix) const
     o << prefix << l[i] << " (" << &operator[](l[i]) << ")" << endl;
     operator[](l[i]).subCategories.dumpContents(prefix + "  ");
   }
+}
+
+Category * Category::namedSubCategory(const QString &name, bool create)
+{
+  Category * sub = subCategories.namedSubCategory(name, create);
+  if(sub)
+    sub->parent = this;
+  return sub;
 }

@@ -33,6 +33,8 @@ public:
   ///
   /// On the other hand, if create is true, it is created even if it
   /// does not exist.
+  ///
+  /// If name is empty, returns NULL
   Category * namedSubCategory(const QString &name, bool create = false);
 
   /// Dumps the contents of the hash
@@ -59,6 +61,14 @@ public:
   QString fullName();
 
   Category();
+
+  /// Returns a pointer to the named (sub) category, or NULL if it
+  /// does not exist.
+  ///
+  /// On the other hand, if create is true, it is created even if it
+  /// does not exist, and its the parent is set to this.
+  Category * namedSubCategory(const QString &name, bool create = false);
+
 
   virtual SerializationAccessor * serializationAccessor();
 

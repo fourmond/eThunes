@@ -50,6 +50,8 @@ FilterDialog::FilterDialog(Wallet *w)
   connect(bt, SIGNAL(clicked()), SLOT(close()));
   l2->addWidget(bt);
   hb->addLayout(l2);
+
+  updateFilterList();
 }
 
 void FilterDialog::updateFilterList()
