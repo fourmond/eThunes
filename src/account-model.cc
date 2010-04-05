@@ -80,7 +80,8 @@ int AccountModel::columnCount(const QModelIndex & /*index*/) const
   return LastColumn;
 }
 
-QVariant AccountModel::headerData(int section, Qt::Orientation orientation, 
+QVariant AccountModel::headerData(int section, 
+				  Qt::Orientation /*orientation*/, 
 				  int role) const 
 {
   if(role == Qt::DisplayRole) {
@@ -120,6 +121,14 @@ QVariant AccountModel::data(const QModelIndex& index, int role) const
       return QVariant();
     }
   }
+  if(role == Qt::EditRole) {
+    switch(index.column()) {
+    case CategoryColumn: return QVariant(t->categoryName());
+    default:
+      return QVariant();
+    }
+  }
+  /// \todo Add colors here !
   else
     return QVariant();
 }
@@ -143,6 +152,7 @@ bool AccountModel::setData(const QModelIndex & index, const QVariant & value,
   Transaction *t = indexedTransaction(index);
   if(index.column() == CategoryColumn && t && role == Qt::EditRole) {
     t->setCategoryFromName(value.toString());
+    emit(dataChanged(index, index));
     return true;
   }
   return false;
