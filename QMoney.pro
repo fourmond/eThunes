@@ -22,7 +22,8 @@ SOURCES += src/qmain.cc src/account.cc src/mainwin.cc src/actions.cc \
 	src/walletdw.cc src/navigationwidget.cc \
 	src/navigationpage.cc src/accountpage.cc \
 	src/serializable.cc src/category.cc \
-	src/filter.cc src/filterdialog.cc
+	src/filter.cc src/filterdialog.cc \
+	src/categorypage.cc
 
 HEADERS += src/account.hh src/mainwin.hh src/actions.hh \
 	src/ofximport.hh src/account-model.hh \
@@ -30,4 +31,4 @@ HEADERS += src/account.hh src/mainwin.hh src/actions.hh \
 	src/walletdw.hh src/navigationwidget.hh	\
 	src/navigationpage.hh src/accountpage.hh \
 	src/serializable.hh src/category.hh src/filter.hh \
-	src/filterdialog.hh
+	src/filterdialog.hh src/categorypage.hh
