@@ -34,7 +34,7 @@ AccountPage::AccountPage(Account * ac) : account(ac)
   layout->addWidget(view);
 
   /// \todo Won't do
-  model = new AccountModel(account->transactions);
+  model = new AccountModel(&(account->transactions));
   view->setModel(model);
   view->setRootIndex(model->index(0,0));
   view->setRootIsDecorated(false);

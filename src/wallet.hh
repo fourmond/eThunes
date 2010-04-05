@@ -33,7 +33,8 @@
 ///
 /// \todo maybe this should be a Q_OBJECT sending signals when
 /// information has changed ?
-class Wallet : public Serializable {
+class Wallet : public QObject, Serializable {
+  Q_OBJECT;
 
 public:
   /// The accounts held within the wallet.
@@ -80,6 +81,14 @@ public:
   virtual void prepareSerializationRead();
   
   virtual void finishedSerializationRead();
+
+
+signals:
+
+  /// This signal is emitted whenever the account data has changed for
+  /// some reason.
+  void accountsChanged();
+  
 };
 
 #endif

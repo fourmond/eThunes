@@ -93,6 +93,9 @@ void Wallet::finishedSerializationRead()
   // Make sure that account.wallet points to here.
   for(int i = 0; i < accounts.size(); i++)
     accounts[i].wallet = this;
+
+  // Evidently
+  emit(accountsChanged());
 }
 
 void Wallet::runFilters(TransactionList * list)
@@ -105,4 +108,5 @@ void Wallet::runFilters()
 {
   for(int i = 0; i < accounts.size(); i++)
     runFilters(&accounts[i].transactions);
+  emit(accountsChanged());
 }

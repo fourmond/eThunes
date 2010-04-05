@@ -21,6 +21,8 @@
 #ifndef __ACCOUNT_MODEL_HH
 #define __ACCOUNT_MODEL_HH
 
+#include <transaction.hh>
+
 /// Class in charge of organising the data of a list of Transaction
 /// objects into something viewable with a Tree or Table view.
 ///
@@ -30,6 +32,9 @@
 /// \li color lines/specific parts according to the category
 /// More ideas ?
 class AccountModel : public QAbstractItemModel {
+
+  Q_OBJECT;
+
   /// List of transactions:
   ///
   /// \todo This is no accessor, and doesn't care for
@@ -37,7 +42,7 @@ class AccountModel : public QAbstractItemModel {
   /// appropriate signaling mechanism.
   ///
   /// \todo We simply should use an Account instead of this.
-  QList<Transaction> transactions;
+  TransactionList * transactions;
 
 protected:
   /// Returns the transaction corresponding to the index, or NULL if
@@ -46,7 +51,7 @@ protected:
   
 public:
   /// The transactions to be displayed.
-  AccountModel(QList<Transaction> transactions);
+  AccountModel(TransactionList * transactions);
 
   enum {
     DateColumn,
@@ -77,6 +82,11 @@ public:
 
   virtual bool setData(const QModelIndex & index, const QVariant & value, 
 		       int role = Qt::EditRole);  
+
+public slots:
+  
+  /// Radically changes things that have changed ;-)...
+  void accountChanged();
 };
 
 #endif

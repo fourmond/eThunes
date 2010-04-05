@@ -20,16 +20,23 @@
 #include <account.hh>
 #include <account-model.hh>
 
-AccountModel::AccountModel(QList<Transaction> t) :
+AccountModel::AccountModel(TransactionList * t) :
   transactions(t)
 {
+  if(transactions->size() > 0) {
+    if((*transactions)[0].account && (*transactions)[0].account->wallet)
+      connect((QObject*) // I don't like this, it seems that C++ does not like multiple inheritance ?
+	      (*transactions)[0].account->wallet, 
+	      SIGNAL(accountsChanged()),
+	      SLOT(accountChanged())); /// \todo This is suboptimal, but better than nothing
+  }
 }
 
 Transaction * AccountModel::indexedTransaction(QModelIndex index) const
 {
   if(index.isValid() && index.internalId() >= 0 && 
-     index.internalId() < transactions.count() )
-    return const_cast<Transaction *>(&transactions[index.internalId()]);
+     index.internalId() < transactions->count() )
+    return const_cast<Transaction *>(& (*transactions)[index.internalId()]);
   return NULL;
 }
 
@@ -63,7 +70,7 @@ int AccountModel::rowCount(const QModelIndex & index) const
     if(index.internalId() >= 0) 
       return 0;
     else 
-      return transactions.count();
+      return transactions->count();
   }
   return 0;
 }
@@ -139,4 +146,12 @@ bool AccountModel::setData(const QModelIndex & index, const QVariant & value,
     return true;
   }
   return false;
+}
+
+
+void AccountModel::accountChanged()
+{
+  emit(dataChanged(index(0,0, index(0,0,QModelIndex())),
+		   index(transactions->size()-1,LastColumn-1, 
+			 index(0,0,QModelIndex()))));
 }
