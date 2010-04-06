@@ -109,3 +109,21 @@ bool Category::isChildOf(Category * category)
   }
   return false;
 }
+
+int Category::count() const 
+{
+  return 1 + subCategories.count();
+}
+
+int CategoryHash::count() const 
+{
+  const_iterator i = constBegin();
+  int nb = 0;
+  while (i != constEnd()) {
+    nb += i.value().count();
+    ++i;
+  }
+  return nb;
+}
+
+

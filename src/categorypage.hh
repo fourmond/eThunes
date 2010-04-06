@@ -29,6 +29,15 @@ class CategoryPage : public NavigationPage {
 
   Q_OBJECT;
 
+protected:
+
+  /// A correspondance Wallet* -> CategoryPage
+  static QHash<Wallet *, CategoryPage *> categoryPages;
+
+  Wallet * wallet;
+
+  /// Essentially holds the contents of the page
+  QLabel * contents;
 
 public:
   
@@ -39,6 +48,14 @@ public:
   
   virtual ~CategoryPage();
 
+  /// Returns the AccountPage for the given account, or create it if
+  /// it doesn't exist yet.
+  static CategoryPage * getCategoryPage(Wallet * wallet);
+
+public slots:
+
+  /// Updates the page
+  void updateContents();
 };
 
 #endif

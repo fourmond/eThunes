@@ -39,7 +39,9 @@ public:
 
   /// Dumps the contents of the hash
   void dumpContents(QString prefix = "") const;
-  
+
+  /// Returns the number of categories, including their subcategories
+  int count() const;
 };
 
 
@@ -76,6 +78,10 @@ public:
   virtual SerializationAccessor * serializationAccessor();
 
   virtual ~Category();
+
+  /// Returns the number of categories, including this and the
+  /// subcategories
+  int count() const;
 };
 
 

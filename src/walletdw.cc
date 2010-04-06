@@ -22,6 +22,7 @@
 #include <filterdialog.hh>
 #include <navigationwidget.hh>
 #include <accountpage.hh>
+#include <categorypage.hh>
 
 WalletDW::WalletDW(Wallet * w) : wallet(w)
 {
@@ -60,17 +61,22 @@ WalletDW::WalletDW(Wallet * w) : wallet(w)
 
 void WalletDW::updateSummary()
 {
-  QString text = QString("<strong>") + tr("Wallet") + "</strong>:" +
+  QString text = QString("<strong>") + tr("Wallet") + "</strong>: " +
     QFileInfo(lastFilename).fileName() + "\n<p>";
   QString cellStyle = " style='padding-right: 20px'";
   int totalBalance = 0; /// \todo Maybe this should go in Wallet ?
+
+  text += "<a href='categories'>" + 
+    tr("%1 categories").arg(wallet->categories.count()) + "</a><p>\n";
   
+  /// \todo Maybe the facility for building up tables should end up
+  /// somewhere as global utilities ?
   text += "<table>\n";
   text += QString("<tr><th" + cellStyle +">%1</th><th>%2</th></tr>\n").
     arg(tr("Account")).arg(tr("Balance"));
   for(int i = 0; i < wallet->accounts.size(); i++) {
     Account * ac = &wallet->accounts[i];
-    text += QString("<tr><td" + cellStyle +"><a href='%1'>").
+    text += QString("<tr><td" + cellStyle +"><a href='account:%1'>").
       arg(i) + QString("%1</a></td><td align='right'>%2</td></tr>\n").
       arg(ac->name()).arg(Transaction::formatAmount(ac->balance()));
     totalBalance += ac->balance();
@@ -105,13 +111,19 @@ void WalletDW::fileImportDialog()
   updateSummary();
 }
 
-/// \todo Here be careful if there are more than one kind of URLs one
-/// could handle.
 void WalletDW::showURL(const QString & link)
 {
-  int id = link.toInt();
-  AccountPage * page = AccountPage::getAccountPage(&wallet->accounts[id]);
-  NavigationWidget::gotoPage(page);
+  QStringList l = link.split(':');
+  QString & id = l[0];
+  NavigationPage * page = NULL;
+  if(id == "account") {
+    page = AccountPage::getAccountPage(&wallet->accounts[l[1].toInt()]);
+  }
+  else if(id == "categories") {
+    page = CategoryPage::getCategoryPage(wallet);
+  }
+  if(page)
+    NavigationWidget::gotoPage(page);
 }
 
 void WalletDW::save()
