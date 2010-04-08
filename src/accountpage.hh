@@ -21,7 +21,7 @@
 #define __ACCOUNTPAGE_HH
 
 #include <account.hh>
-#include <account-model.hh>
+#include <accountmodel.hh>
 #include <navigationpage.hh>
 
 /// This NavigationPage displays the contents of an account.

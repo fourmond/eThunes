@@ -18,8 +18,8 @@
 */
 
 
-#ifndef __ACCOUNT_MODEL_HH
-#define __ACCOUNT_MODEL_HH
+#ifndef __ACCOUNTMODEL_HH
+#define __ACCOUNTMODEL_HH
 
 #include <transaction.hh>
 
@@ -42,11 +42,9 @@ class AccountModel : public QAbstractItemModel {
   Q_OBJECT;
 
   /// List of transactions:
-  ///
-  /// \todo This is no accessor, and doesn't care for
-  /// modifications. The final type should be a QObject child with
-  /// appropriate signaling mechanism.
   TransactionList * transactions;
+
+  QColor oddColor;
 
 protected:
   /// Returns the transaction corresponding to the index, or NULL if

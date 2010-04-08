@@ -18,7 +18,7 @@
 
 #include <headers.hh>
 #include <account.hh>
-#include <account-model.hh>
+#include <accountmodel.hh>
 
 AccountModel::AccountModel(TransactionList * t) :
   transactions(t)
@@ -30,13 +30,14 @@ AccountModel::AccountModel(TransactionList * t) :
 	      SIGNAL(accountsChanged()),
 	      SLOT(accountChanged())); /// \todo This is suboptimal, but better than nothing
   }
+  oddColor = QColor(220,220,220);
 }
 
 Transaction * AccountModel::indexedTransaction(QModelIndex index) const
 {
   if(index.isValid() && index.internalId() >= 0 && 
      index.internalId() < transactions->count() )
-    return const_cast<Transaction *>(& (*transactions)[index.internalId()]);
+    return const_cast<Transaction *>(& (*transactions)[transactions->count() - index.internalId() - 1]);
   return NULL;
 }
 
@@ -127,6 +128,11 @@ QVariant AccountModel::data(const QModelIndex& index, int role) const
     default:
       return QVariant();
     }
+  }
+  if(role == Qt::BackgroundRole) {
+    if(index.row() % 2)
+      return QVariant(QBrush(oddColor));
+    else return QVariant();
   }
   /// \todo Add colors here !
   else

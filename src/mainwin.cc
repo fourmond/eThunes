@@ -58,7 +58,7 @@
 #include <headers.hh>
 #include <account.hh>
 #include <ofximport.hh>
-#include <account-model.hh>
+#include <accountmodel.hh>
 #include <mainwin.hh>
 
 #include <filterdialog.hh>
