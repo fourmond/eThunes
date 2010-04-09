@@ -30,7 +30,6 @@ AccountModel::AccountModel(TransactionList * t) :
 	      SIGNAL(accountsChanged()),
 	      SLOT(accountChanged())); /// \todo This is suboptimal, but better than nothing
   }
-  oddColor = QColor(220,220,220);
 }
 
 Transaction * AccountModel::indexedTransaction(QModelIndex index) const
@@ -129,10 +128,25 @@ QVariant AccountModel::data(const QModelIndex& index, int role) const
       return QVariant();
     }
   }
+  if(role == Qt::TextAlignmentRole) {
+    switch(index.column()) {
+    case AmountColumn:
+    case BalanceColumn:
+      return QVariant(Qt::AlignRight);
+    default:
+      return QVariant();
+    }
+  }
+  if(role == Qt::FontRole && index.column() == BalanceColumn) {
+    QFont font;
+    font.setBold(true);
+    return font;
+  }
   if(role == Qt::BackgroundRole) {
-    if(index.row() % 2)
-      return QVariant(QBrush(oddColor));
-    else return QVariant();
+    QColor background;
+    int month = t->date.month() - 1;
+    background.setHsv(month * 50 % 360, 30, (index.row() % 2 ? 220 : 240));
+    return QBrush(background);
   }
   /// \todo Add colors here !
   else
