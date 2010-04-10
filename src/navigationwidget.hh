@@ -68,6 +68,12 @@ public slots:
   /// Closes the current tab. Won't work for the first tab.
   void closeCurrentTab();
 
+  /// Switches to next tab
+  void switchToNextTab();
+
+  /// Switches to next tab
+  void switchToPreviousTab();
+
 };
 
 #endif

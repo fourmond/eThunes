@@ -76,3 +76,13 @@ void NavigationWidget::closeCurrentTab()
   if(currentIndex() > 0)
     removeTab(currentIndex());
 }
+
+void NavigationWidget::switchToNextTab()
+{
+  setCurrentIndex((currentIndex() + 1) % count());
+}
+
+void NavigationWidget::switchToPreviousTab()
+{
+  setCurrentIndex((currentIndex() - 1) % count());
+}

@@ -143,6 +143,25 @@ void MainWin::setupActions()
 		    QKeySequence(),
 		    tr("Creates and edit filters"));
 
+  // Tab-related actions
+  actions.addAction(this, "next tab", tr("&Next tab"),
+		    navigationWidget, SLOT(switchToNextTab()),
+		    QKeySequence(Qt::CTRL + Qt::Key_Tab),
+		    tr("Switches to next tab"));
+
+  actions.addAction(this, "previous tab", tr("&Previous tab"),
+		    navigationWidget, SLOT(switchToPreviousTab()),
+		    QKeySequence(Qt::CTRL + Qt::Key_Backtab),
+		    tr("Switches to previous tab"));
+
+  /// \todo For some reason, the two above actions are triggered even
+  /// when absent of the menus, while this one isn't.
+  actions.addAction(this, "close tab", tr("&Close tab"),
+		    navigationWidget, SLOT(closeCurrentTab()),
+		    QKeySequence(tr("Ctrl+W")),
+		    tr("Closes current tab"));
+  
+
 }
 
 void MainWin::setupMenus()
@@ -156,6 +175,9 @@ void MainWin::setupMenus()
   fileMenu->addAction(actions["manage filters"]);
   fileMenu->addSeparator();
   fileMenu->addAction(actions["quit"]);
+
+  QMenu * tabMenu = menuBar()->addMenu(tr("&Tabs"));
+  tabMenu->addAction(actions["close tab"]);
 }
 
 // This sounds ridiculous, but I'll have to use a macro, as the copy
