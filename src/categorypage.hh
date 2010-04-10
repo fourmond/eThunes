@@ -22,9 +22,24 @@
 
 #include <wallet.hh>
 #include <navigationpage.hh>
+#include <categorymodel.hh>
 
 /// This NavigationPage displays various informations about
-/// categories of a Wallet .
+/// categories of a Wallet.
+///
+/// \todo Quickly: this page should be transformed to use, at least
+/// partially, a QStandardItemModel to display all the information
+/// about the categories, and to provide a way to choose a color for
+/// the categories.
+///
+/// Alternatively, it wouldn't be too complex to subclass
+/// QAbstractItemModel ? Probably fine enough.
+///
+/// This model would provide all statistics about the categories
+/// (monthly in/out, total, color...)
+///
+/// For Category, provide a tree-like way to get colors, and store
+/// them as strings: a specialized Serialization is necessary.
 class CategoryPage : public NavigationPage {
 
   Q_OBJECT;
@@ -36,9 +51,13 @@ protected:
 
   Wallet * wallet;
 
-  /// Essentially holds the contents of the page
-  QLabel * contents;
+  /// Underlying model to display data about categories
+  CategoryModel * model;
 
+  /// And the corresponding view:
+  QTreeView * view;
+  
+  
 public:
   
   CategoryPage(Wallet * a);
