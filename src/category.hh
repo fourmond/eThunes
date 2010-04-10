@@ -41,7 +41,7 @@ public:
   void dumpContents(QString prefix = "") const;
 
   /// Returns the number of categories, including their subcategories
-  int count() const;
+  int categoryCount() const;
 };
 
 
@@ -61,6 +61,9 @@ public:
 
   /// Returns the full name of this category.
   QString fullName();
+
+  /// The color of the caterogy. invalid means "unspecified"
+  QColor color;
 
   Category();
 
@@ -82,6 +85,10 @@ public:
   /// Returns the number of categories, including this and the
   /// subcategories
   int count() const;
+
+  /// Returns the color of the category, or the one of its parent if
+  /// invalid.
+  QColor categoryColor();
 };
 
 

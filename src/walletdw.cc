@@ -67,7 +67,7 @@ void WalletDW::updateSummary()
   int totalBalance = 0; /// \todo Maybe this should go in Wallet ?
 
   text += "<a href='categories'>" + 
-    tr("%1 categories").arg(wallet->categories.count()) + "</a><p>\n";
+    tr("%1 categories").arg(wallet->categories.categoryCount()) + "</a><p>\n";
   
   /// \todo Maybe the facility for building up tables should end up
   /// somewhere as global utilities ?

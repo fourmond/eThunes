@@ -148,6 +148,11 @@ QVariant AccountModel::data(const QModelIndex& index, int role) const
     background.setHsv(month * 170 % 360, 50, (index.row() % 2 ? 220 : 240));
     return QBrush(background);
   }
+  if(role == Qt::ForegroundRole) {
+    if(t->category)
+      return QBrush(t->category->categoryColor());
+    return QVariant();
+  }
   /// \todo Add colors here !
   else
     return QVariant();

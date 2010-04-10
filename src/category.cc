@@ -86,7 +86,9 @@ void CategoryHash::dumpContents(QString prefix) const
   QTextStream o(stdout);
   QStringList l = keys();
   for(int i = 0; i < l.size(); i++) {
-    o << prefix << l[i] << " (" << &operator[](l[i]) << ")" << endl;
+    o << prefix << l[i] << " (" << &(const_cast<CategoryHash *>(this)->
+				     operator[](l[i])) 
+      << ")" << endl;
     operator[](l[i]).subCategories.dumpContents(prefix + "  ");
   }
 }
@@ -112,10 +114,10 @@ bool Category::isChildOf(Category * category)
 
 int Category::count() const 
 {
-  return 1 + subCategories.count();
+  return 1 + subCategories.categoryCount();
 }
 
-int CategoryHash::count() const 
+int CategoryHash::categoryCount() const 
 {
   const_iterator i = constBegin();
   int nb = 0;
@@ -126,4 +128,9 @@ int CategoryHash::count() const
   return nb;
 }
 
-
+QColor Category::categoryColor()
+{
+  if(color.isValid() || !parent)
+    return color;
+  return parent->categoryColor();
+}
