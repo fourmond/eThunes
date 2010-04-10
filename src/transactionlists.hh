@@ -23,11 +23,21 @@
 
 #include <transaction.hh>
 
+/// This class represents a list of Transaction objects, that can
+/// potentially be modified, but not stored unlike TransactionList. It
+/// is great for working on a sublist of a TransactionList.
+///
+/// It (will) provides quite a lot of functionality for obtaining
+/// statistics.
+class TransactionPtrList : public QList<Transaction*> {
+public:
+  
+};
+
 /// This class represents a list of Transaction objects, ready for
 /// storage, with a few additional functionalities.
 ///
-/// \todo Write a function that transforms this into a
-/// QList<Transaction *>.
+/// \todo Write a function that transforms this into a TransactionPtrList
 class TransactionList : public QList<Transaction> {
 public:
 
@@ -58,6 +68,9 @@ public:
   ///
   /// \todo There will probably be more cleanup to do around this.
   void sanitizeList(Account * ac);
+
+  /// Transforms into a pointer list, for further manipulations.
+  TransactionPtrList toPtrList();
 };
 
 #endif

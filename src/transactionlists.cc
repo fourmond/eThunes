@@ -85,4 +85,10 @@ void TransactionList::sanitizeList(Account * ac)
   }
 }
 
-
+TransactionPtrList TransactionList::toPtrList()
+{
+  TransactionPtrList list;
+  for(int i = 0; i < size(); i++)
+    list << &(operator[](i));
+  return list;
+}
