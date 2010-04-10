@@ -23,6 +23,7 @@
 
 #include <serializable.hh>
 #include <transaction.hh>
+#include <transactionlists.hh>
 
 /// This is a simple filter element, that applies to a single
 /// attribute of a target Transaction, and returns yes/no.

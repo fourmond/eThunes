@@ -22,6 +22,7 @@
 #define __ACCOUNTMODEL_HH
 
 #include <transaction.hh>
+#include <transactionlists.hh>
 
 /// Class in charge of organising the data of a list of Transaction
 /// objects into something viewable with a Tree or Table view.

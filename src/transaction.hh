@@ -151,48 +151,4 @@ public:
 
 };
 
-
-/// This class represents a list of Transaction objects, ready for
-/// storage, with a few additional functionalities.
-/// 
-/// \todo We should provide a function that can easily check for
-/// duplicates. Tough one, though, if it is possible that twice the
-/// same transaction happens on the same day. It should be possible to
-/// do that across two TransactionList, where one would have potential
-/// duplicates marked using a boolean value of some kind.
-///
-/// \todo Write a function that transforms this into a
-/// QList<Transaction *>.
-class TransactionList : public QList<Transaction> {
-public:
-
-  TransactionList() {;};
-  TransactionList(const  QList<Transaction> & l) : QList<Transaction>(l) {;};
-
-  /// Sorts the list according to the transaction date.
-  void sortByDate();
-
-  /// Returns a sublist in the same order as this one containing only
-  /// transactions dealing with the given account (as per
-  /// Account.isSameAccount()).
-  TransactionList sublist(const Account & account);
-
-  /// Compute the balance for each element of the list. Does not sort
-  /// the list beforehand. You'll have to do it yourself.
-  void computeBalance(int initialBalance = 0);
-
-  /// Removes the transactions in this list which are already present
-  /// in the other list. Returns the number of duplicates removed.
-  ///
-  /// Both lists \b must be sorted !
-  int removeDuplicates(const TransactionList & other);
-
-  /// Makes sure the list only contains references to the given
-  /// account, by removing all accounts that point to some different
-  /// account, and setting NULL values to the given pointer.
-  ///
-  /// \todo There will probably be more cleanup to do around this.
-  void sanitizeList(Account * ac);
-};
-
 #endif

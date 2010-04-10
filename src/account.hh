@@ -23,6 +23,7 @@
 
 #include <serializable.hh>
 #include <transaction.hh>
+#include <transactionlists.hh>
 
 /// Represents informations about an account.
 ///
