@@ -62,8 +62,8 @@ public:
   /// The list of Transaction objects that belong to one category. If
   /// \p parents is true (default), then we also look for category in
   /// the transactions ancestry.
-  QList<Transaction *> categoryTransactions(Category * category, 
-					    bool parents = true);
+  TransactionPtrList categoryTransactions(const Category * category, 
+					  bool parents = true);
 
   /// @}
 

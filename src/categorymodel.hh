@@ -47,6 +47,8 @@ public:
 
   enum {
     NameColumn,
+    NumberColumn, /// number of transactions
+    AmountColumn, 
     LastColumn
   };
 

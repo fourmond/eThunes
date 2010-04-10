@@ -23,6 +23,20 @@
 
 #include <transaction.hh>
 
+/// A series of statistics about a list of Transaction objects; see
+/// TransactionPtrList.
+class TransactionListStatistics {
+public:
+  TransactionListStatistics();
+
+  /// Number of transactions
+  int number;
+
+  /// Total amount of the transactions
+  int totalAmount;
+};
+
+
 /// This class represents a list of Transaction objects, that can
 /// potentially be modified, but not stored unlike TransactionList. It
 /// is great for working on a sublist of a TransactionList.
@@ -31,7 +45,9 @@
 /// statistics.
 class TransactionPtrList : public QList<Transaction*> {
 public:
-  
+
+  /// Returns various interesting statistics about the list.
+  TransactionListStatistics statistics() const;
 };
 
 /// This class represents a list of Transaction objects, ready for

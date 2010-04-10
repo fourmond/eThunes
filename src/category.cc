@@ -101,7 +101,7 @@ Category * Category::namedSubCategory(const QString &name, bool create)
   return sub;
 }
 
-bool Category::isChildOf(Category * category)
+bool Category::isChildOf(const Category * category)
 {
   Category * c = this;
   while(c->parent) {

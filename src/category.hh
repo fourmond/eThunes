@@ -75,7 +75,7 @@ public:
   Category * namedSubCategory(const QString &name, bool create = false);
 
   /// Whether this Category is a child of the given Category.
-  bool isChildOf(Category * category);
+  bool isChildOf(const Category * category);
 
 
   virtual SerializationAccessor * serializationAccessor();

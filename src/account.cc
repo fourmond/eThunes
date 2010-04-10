@@ -76,7 +76,7 @@ void Account::clearContents()
   transactions.clear();
 }
 
-QList<Transaction *> Account::categoryTransactions(Category * category, 
+QList<Transaction *> Account::categoryTransactions(const Category * category, 
 						   bool parents)
 {
   QList<Transaction *> found;

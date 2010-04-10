@@ -21,6 +21,21 @@
 #include <account.hh>
 #include <wallet.hh>
 
+TransactionListStatistics::TransactionListStatistics() :
+  number(0), totalAmount(0)
+{
+}
+
+TransactionListStatistics TransactionPtrList::statistics() const
+{
+  TransactionListStatistics stats;
+  for(int i = 0; i < size(); i++) {
+    stats.number += 1;
+    stats.totalAmount += value(i)->amount;
+  }
+  return stats;
+}
+
 TransactionList TransactionList::sublist(const Account &ac)
 {
   TransactionList retval;

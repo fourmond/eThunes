@@ -120,7 +120,7 @@ public:
 
   /// Returns the Transaction objects of the account that belong to
   /// the given Category, or possibly to one of its descendants.
-  QList<Transaction *> categoryTransactions(Category * category, 
+  QList<Transaction *> categoryTransactions(const Category * category, 
 					    bool parents = true);
 
 };

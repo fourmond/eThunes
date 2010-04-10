@@ -92,7 +92,8 @@ QVariant CategoryModel::headerData(int section,
   if(role == Qt::DisplayRole) {
     switch(section) {
     // case DateColumn: return QVariant(tr("Date"));
-    // case AmountColumn: return QVariant(tr("Amount"));
+    case AmountColumn: return QVariant(tr("Amount"));
+    case NumberColumn: return QVariant(tr("Number"));
     // case BalanceColumn: return QVariant(tr("Balance"));
     case NameColumn: return QVariant(tr("Name"));
     // case MemoColumn: return QVariant(tr("Memo"));
@@ -109,16 +110,20 @@ QVariant CategoryModel::headerData(int section,
 QVariant CategoryModel::data(const QModelIndex& index, int role) const
 {
   const Category *c = indexedCategory(index);
+  /// \todo Add a cache for results
   if(! c)
     return QVariant();
   if(role == Qt::DisplayRole) {
+    TransactionPtrList list = wallet->categoryTransactions(c);
+    TransactionListStatistics stats;
     switch(index.column()) {
-    case NameColumn: return QVariant(c->name);
-    // case CategoryColumn: return QVariant(t->categoryName());
-    // case MemoColumn: if(!t->memo.isEmpty())
-    // 	return QVariant(t->memo);
-    //   else if(!t->checkNumber.isEmpty())
-    // 	return QVariant(tr("Check: %1").arg(t->checkNumber));
+    case NameColumn: 
+      return QVariant(c->name);
+    case AmountColumn: 
+      stats = list.statistics();
+      return QVariant(Transaction::formatAmount(stats.totalAmount));
+    case NumberColumn: 
+      return QVariant(list.count());
     default:
       return QVariant();
     }

@@ -113,10 +113,10 @@ void Wallet::runFilters()
   emit(accountsChanged());
 }
 
-QList<Transaction *> Wallet::categoryTransactions(Category * category, 
-						  bool parents)
+TransactionPtrList Wallet::categoryTransactions(const Category * category, 
+						bool parents)
 {
-  QList<Transaction *> vals;
+  TransactionPtrList vals;
   for(int i = 0; i < accounts.size(); i++)
     vals << accounts[i].categoryTransactions(category, parents);
   return vals;
