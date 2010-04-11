@@ -29,7 +29,10 @@ CategoryPage::CategoryPage(Wallet * w) : wallet(w)
   view->setModel(model);
   view->setRootIndex(model->index(0,0));
   // view->setRootIsDecorated(false);
+  view->setContextMenuPolicy(Qt::CustomContextMenu);
   updateContents();
+  connect(view, SIGNAL(customContextMenuRequested(const QPoint &)), 
+	  SLOT(categoriesContextMenu(const QPoint &)));
 }
 
 
@@ -70,4 +73,30 @@ void CategoryPage::updateContents()
   // }
   // text += "</table>";
   // contents->setText(text);
+}
+
+void CategoryPage::categoriesContextMenu(const QPoint & pos)
+{
+  QModelIndex i = view->indexAt(pos);
+  Category * c = model->indexedCategory(i);
+  if(c) {
+    // We popup a menu for modifying a few things.
+    QMenu * menu = new QMenu();
+    menu->addAction("Change category color",this, 
+		    SLOT(changeCurrentColor()));
+    menu->exec(view->mapToGlobal(pos));
+  }
+}
+
+void CategoryPage::changeCurrentColor()
+{
+  QModelIndex i = view->currentIndex();
+  Category * c = model->indexedCategory(i);
+  if(c) {
+    QColorDialog dlg(c->categoryColor());
+    dlg.setWindowTitle(tr("Pick the color for %1").arg(c->fullName()));
+    if(dlg.exec() == QDialog::Accepted) {
+      c->color = dlg.currentColor();
+    }
+  }
 }

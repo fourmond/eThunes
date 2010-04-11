@@ -128,39 +128,9 @@ QVariant CategoryModel::data(const QModelIndex& index, int role) const
       return QVariant();
     }
   }
-  // if(role == Qt::EditRole) {
-  //   switch(index.column()) {
-  //   case CategoryColumn: return QVariant(t->categoryName());
-  //   default:
-  //     return QVariant();
-  //   }
-  // }
-  // if(role == Qt::TextAlignmentRole) {
-  //   switch(index.column()) {
-  //   case AmountColumn:
-  //   case BalanceColumn:
-  //     return QVariant(Qt::AlignRight);
-  //   default:
-  //     return QVariant();
-  //   }
-  // }
-  // if(role == Qt::FontRole && index.column() == BalanceColumn) {
-  //   QFont font;
-  //   font.setBold(true);
-  //   return font;
-  // }
-  // if(role == Qt::BackgroundRole) {
-  //   QColor background;
-  //   int month = t->date.month() - 1;
-  //   background.setHsv(month * 170 % 360, 50, (index.row() % 2 ? 220 : 240));
-  //   return QBrush(background);
-  // }
-  // if(role == Qt::ForegroundRole) {
-  //   if(t->category)
-  //     return QBrush(t->category->categoryColor());
-  //   return QVariant();
-  // }
-  /// \todo Add colors here !
+  if(role == Qt::ForegroundRole && index.column() == NameColumn) {
+    return QBrush(c->categoryColor());
+  }
   else
     return QVariant();
 }

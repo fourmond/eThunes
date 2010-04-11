@@ -88,7 +88,7 @@ public:
 
   /// Returns the color of the category, or the one of its parent if
   /// invalid.
-  QColor categoryColor();
+  QColor categoryColor() const;
 };
 
 

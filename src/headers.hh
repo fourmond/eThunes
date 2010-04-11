@@ -43,6 +43,7 @@
 #include <QFileDialog>
 #include <QDialog>
 #include <QInputDialog>
+#include <QColorDialog>
 
 // Non-GUI objects
 #include <QDate>

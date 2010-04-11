@@ -73,8 +73,14 @@ public:
 
 public slots:
 
-  /// Updates the page
+  /// Updates the page. Mostly useless for now
   void updateContents();
+
+  /// Displays the context menu for tweaking
+  void categoriesContextMenu(const QPoint & pos);
+
+  /// Prompts the user for changing the color of the current category.
+  void changeCurrentColor();
 };
 
 #endif

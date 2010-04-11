@@ -128,7 +128,7 @@ int CategoryHash::categoryCount() const
   return nb;
 }
 
-QColor Category::categoryColor()
+QColor Category::categoryColor() const
 {
   if(color.isValid() || !parent)
     return color;

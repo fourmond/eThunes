@@ -32,15 +32,17 @@ class CategoryModel : public QAbstractItemModel {
 
 protected:
   
-  /// Returns the category corresponding to the index, or NULL for
-  /// root/invalid
-  Category * indexedCategory(QModelIndex index) const;
 
   /// Returns a pointer to the CategoryHas relevant to the given index
   /// (ie subcategories)
   CategoryHash * indexedCategoryHash(QModelIndex index) const;
-  
+
 public:
+
+  /// Returns the category corresponding to the index, or NULL for
+  /// root/invalid
+  Category * indexedCategory(QModelIndex index) const;
+
   /// The transactions to be displayed.
   CategoryModel(Wallet * wallet);
 
