@@ -42,11 +42,44 @@ Category::~Category()
   //   delete subCategories;
 }
 
+
+/// This class is used to read/write QColor objects.
+class SerializeQColor : public SerializationItem {
+  QColor *target;
+public:
+  SerializeQColor(QColor *t, bool attr) { target = t; 
+    isAttribute = attr;};
+
+  virtual void setFromVariant(const QVariant &v) {
+    setFromString(v.toString());
+  };
+  
+  virtual void setFromString(const QString &str) {
+    target->setNamedColor(str);
+  };
+
+
+  virtual QString valueToString() {
+    if(target && target->isValid())
+      return target->name();
+    return QString();
+  };
+
+  virtual QVariant valueToVariant() {
+    return QVariant(valueToString());
+  };
+  
+};
+
+
+
 SerializationAccessor * Category::serializationAccessor()
 {
   SerializationAccessor * ac = new SerializationAccessor(this);
   ac->addAttribute("name", 
 		   new SerializationItemScalar<QString>(&name, true));
+  ac->addAttribute("color", 
+		   new SerializeQColor(&color, true));
   ac->addAttribute("category", 
 		   new SerializationQHash<Category>(&subCategories));
   return ac;
