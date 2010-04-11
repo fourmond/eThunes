@@ -145,11 +145,22 @@ QVariant AccountModel::data(const QModelIndex& index, int role) const
   if(role == Qt::BackgroundRole) {
     QColor background;
     int month = t->date.month() - 1;
-    background.setHsv(month * 170 % 360, 50, (index.row() % 2 ? 220 : 240));
+    background.setHsv(month * 170 % 360, 0, 
+		      (index.row() % 2 ? 220 : 240));
     return QBrush(background);
   }
   if(role == Qt::ForegroundRole) {
-    if(t->category)
+    if(index.column() == DateColumn) {
+      QColor color;
+      int month = t->date.month() - 1;
+      color.setHsv(month * 170 % 360, 255, 100);
+      return QBrush(color);
+    }
+
+    if(t->category && 
+       (index.column() == AmountColumn ||
+	index.column() == CategoryColumn || 
+	index.column() == NameColumn))
       return QBrush(t->category->categoryColor());
     return QVariant();
   }
