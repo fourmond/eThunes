@@ -27,6 +27,10 @@
 
 #include <navigationwidget.hh>
 
+/// The main window
+///
+/// \todo handle application-wide logging (possibly saving into a real
+/// log file)
 class MainWin : public QMainWindow {
 
   Q_OBJECT;

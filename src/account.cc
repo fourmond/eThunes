@@ -18,6 +18,7 @@
 
 #include <headers.hh>
 #include <account.hh>
+#include <wallet.hh>		// For filtering
 
 QString Account::name()
 {
@@ -27,7 +28,7 @@ QString Account::name()
 }
 
 
-int Account::importTransactions(TransactionList t)
+int Account::importTransactions(TransactionList t, Wallet * filters)
 {
   // Here, we implicitly assume that the transaction list is sorted.
   t = t.sublist(*this);
@@ -36,6 +37,9 @@ int Account::importTransactions(TransactionList t)
   t.sortByDate();
   //  int dups = 
   t.removeDuplicates(transactions);
+  if(filters)
+    filters->runFilters(&t);
+  /// \todo This should be logged !
   // printf("%d duplicates were removed out of %d !!\n", dups, dups + t.size());
   transactions.append(t);
   // Now, we sort and update the balance

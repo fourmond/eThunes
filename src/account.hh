@@ -24,14 +24,9 @@
 #include <serializable.hh>
 #include <transaction.hh>
 #include <transactionlists.hh>
+#include <filter.hh>
 
 /// Represents informations about an account.
-///
-/// \todo this class and all the other serializable ones should be the
-/// child of one XMLSerializable class that could handle simple
-/// attributes through hashes (fromHash, toHash method to be
-/// reimplemented by children) + more complex structure such as lists
-/// of other XML elements...
 ///
 /// \todo Maybe this class and all the other ones should join a Money
 /// namespace of some kind when the program sees the birth of the new
@@ -82,8 +77,12 @@ public:
 
   /// Import the given list of transactions into the current
   /// account. It does reorder the transaction list so that they are
-  /// sorted by date. 
-  int importTransactions(TransactionList transactions);
+  /// sorted by date.
+  ///
+  /// If the pointer to the Wallet NULL the filters are run
+  /// on the new transactions.
+  int importTransactions(TransactionList transactions, 
+			 Wallet * walletFilters = NULL);
 
   /// The user-given name for the account.
   QString publicName;

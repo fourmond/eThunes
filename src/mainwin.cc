@@ -52,7 +52,6 @@
    \li This requires as well to design few various HTTP groping
    classes that will look for patterns in very specific things.
 
-   
 */
 
 #include <headers.hh>

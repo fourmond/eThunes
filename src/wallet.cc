@@ -19,7 +19,7 @@
 #include <headers.hh>
 #include <wallet.hh>
 
-void Wallet::importAccountData(const OFXImport & data)
+void Wallet::importAccountData(const OFXImport & data, bool runFilters)
 {
   for(int i = 0; i < data.accounts.size(); i++) {
     Account * ac = 0;
@@ -31,9 +31,9 @@ void Wallet::importAccountData(const OFXImport & data)
       accounts.append(data.accounts[i]);
       ac = &accounts[j];
     }
-    /// \todo Run filters on the new transactions !
-    ac->importTransactions(data.transactions);
-    ac->wallet = this;		// Make sur the wallet attribute is
+    ac->importTransactions(data.transactions, 
+			   runFilters ? this : NULL);
+    ac->wallet = this;		// Make sure the wallet attribute is
 				// set correctly
   }
   emit(accountsChanged());

@@ -68,6 +68,9 @@ void WalletDW::updateSummary()
 
   text += "<a href='categories'>" + 
     tr("%1 categories").arg(wallet->categories.categoryCount()) + "</a><p>\n";
+
+  text += "<a href='filters'>" + 
+    tr("%1 filters").arg(wallet->filters.count()) + "</a><p>\n";
   
   /// \todo Maybe the facility for building up tables should end up
   /// somewhere as global utilities ?
@@ -121,6 +124,9 @@ void WalletDW::showURL(const QString & link)
   }
   else if(id == "categories") {
     page = CategoryPage::getCategoryPage(wallet);
+  }
+  else if(id == "filters") {
+    manageFilters(); /// \todo shouldn't this be a page too ?
   }
   if(page)
     NavigationWidget::gotoPage(page);

@@ -70,7 +70,7 @@ public:
   /// Import all the contents of an OFX import or something similar
   /// into the wallet. That means import the accounts and the
   /// transactions if necessary.
-  void importAccountData(const OFXImport & data);
+  void importAccountData(const OFXImport & data, bool runFilters = true);
 
   virtual SerializationAccessor * serializationAccessor();
 

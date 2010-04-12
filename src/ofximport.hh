@@ -31,6 +31,9 @@
 /// \todo Maybe this class should have an ancestor that would be
 /// common to all the ways to import banking information, although for
 /// now I'll stick to OFX.
+///
+/// \todo This class should have a "source" member to trace from where
+/// it is coming (file name, URL...)
 class OFXImport {
 public:
   QList<Transaction> transactions;
