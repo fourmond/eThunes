@@ -158,10 +158,18 @@ QVariant AccountModel::data(const QModelIndex& index, int role) const
     }
 
     if(t->category && 
-       (// index.column() == AmountColumn ||
-	index.column() == CategoryColumn || 
+       (index.column() == CategoryColumn || 
 	index.column() == NameColumn))
       return QBrush(t->category->categoryColor());
+    if(index.column() == AmountColumn) {
+      QColor color;
+      /// \todo Provide customization of the colors
+      if(t->amount < 0)
+	color.setHsv(240,200,130);
+      else
+	color.setHsv(120,200,130);
+      return QBrush(color);
+    }
     return QVariant();
   }
   /// \todo Add colors here !
