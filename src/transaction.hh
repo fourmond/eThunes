@@ -56,6 +56,30 @@ class Account;
 class Transaction : public Serializable {
 public:
 
+  /// \name Format-linked functions
+  ///
+  /// A series of function for global formating.
+  ///
+  /// @{
+
+  /// A global function to format amount
+  static inline QString formatAmount(int amount) {
+    return QString("%1").arg(amount * 0.01, 0, 'f',2);
+  };
+
+  /// Returns a unique monthID for the given month
+  static inline int monthID(const QDate &date) {
+    return date.month()-1 + date.year() * 12;
+  };
+
+  /// Returns a unique monthID for the given month
+  static inline QDate dateFromID(int monthID, int day = 1) {
+    return QDate(monthID/12, monthID % 12 + 1, day); 
+  };
+
+  /// @}
+
+
   /// \name Bank-given attributes
   ///
   /// These attributes are found in raw OFX files or other exports from
@@ -97,10 +121,6 @@ public:
   int locked;
 
   /// The main category. Empty means no category.
-  ///
-  /// \todo Provide a way to automatically select the category based
-  /// on regular expressions, or other kinds of "filters" (a bit like
-  /// the mail filters ?)
   Category * category;
 
   
@@ -134,6 +154,9 @@ public:
 
   void dump(QTextStream & stream);
 
+  /// Returns the month ID for this transaction
+  int monthID() const { return monthID(date); };
+
   /// Implements the comparison for sorting. Based on the date.
   /// 
   /// \todo implement a full sort so that two slightly different items
@@ -144,10 +167,6 @@ public:
 
   virtual SerializationAccessor * serializationAccessor();
 
-  /// A global function to format amount
-  static inline QString formatAmount(int amount) {
-    return QString("%1").arg(amount * 0.01, 0, 'f',2);
-  };
 
 };
 
