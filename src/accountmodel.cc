@@ -19,6 +19,7 @@
 #include <headers.hh>
 #include <account.hh>
 #include <accountmodel.hh>
+#include <wallet.hh>
 
 AccountModel::AccountModel(TransactionList * t) :
   transactions(t)
@@ -209,3 +210,39 @@ void AccountModel::accountChanged()
 		   index(transactions->size()-1,LastColumn-1, 
 			 index(0,0,QModelIndex()))));
 }
+
+
+///////////////////////////////////////////////////////////////
+
+AccountItemDelegate::AccountItemDelegate(Wallet * w) :
+  wallet(w)
+{
+}
+
+QWidget * AccountItemDelegate::createEditor(QWidget * parent, 
+					    const QStyleOptionViewItem & /*option*/, 
+					    const QModelIndex & /*index*/ ) const
+{
+  QComboBox * box = new QComboBox(parent);
+  box->setEditable(true);
+  if(wallet)
+    box->addItems(wallet->categories.categoryNames());
+  return box;
+}
+
+void AccountItemDelegate::setEditorData(QWidget * editor, 
+					const QModelIndex & index) const
+{
+  QComboBox * box = static_cast<QComboBox*>(editor);
+  box->setEditText(index.data(Qt::EditRole).toString());
+}
+
+
+void AccountItemDelegate::setModelData(QWidget * editor, 
+				       QAbstractItemModel * model, 
+				       const QModelIndex & index) const
+{
+  QComboBox * box = static_cast<QComboBox*>(editor);
+  model->setData(index, box->currentText());
+}
+

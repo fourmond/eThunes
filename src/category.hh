@@ -42,6 +42,9 @@ public:
 
   /// Returns the number of categories, including their subcategories
   int categoryCount() const;
+
+  /// Returns the list of "fully-qualified" names for the categories.
+  QStringList categoryNames() const;
 };
 
 
@@ -60,7 +63,7 @@ public:
   QString name;
 
   /// Returns the full name of this category.
-  QString fullName();
+  QString fullName() const;
 
   /// The color of the caterogy. invalid means "unspecified"
   QColor color;

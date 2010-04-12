@@ -39,6 +39,9 @@
 #include <QListWidget>
 #include <QComboBox>
 
+// Deeply digging into Qt4...
+#include <QStyledItemDelegate>
+
 // Dialogs and the like
 #include <QFileDialog>
 #include <QDialog>

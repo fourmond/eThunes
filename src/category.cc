@@ -26,7 +26,7 @@ Category::Category()
 
 #define CategorySeparator "::"
 
-QString Category::fullName()
+QString Category::fullName() const
 {
   if(! parent)
     return name;
@@ -166,4 +166,16 @@ QColor Category::categoryColor() const
   if(color.isValid() || !parent)
     return color;
   return parent->categoryColor();
+}
+
+QStringList CategoryHash::categoryNames() const 
+{
+  QStringList res;
+  const_iterator i = constBegin();
+  while (i != constEnd()) {
+    res << i.value().fullName() 
+	<< i.value().subCategories.categoryNames(); 
+    ++i;
+  }
+  return res;
 }

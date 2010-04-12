@@ -38,6 +38,9 @@ AccountPage::AccountPage(Account * ac) : account(ac)
   view->setModel(model);
   view->setRootIndex(model->index(0,0));
   view->setRootIsDecorated(false);
+
+  view->setItemDelegateForColumn(AccountModel::CategoryColumn,
+				 new AccountItemDelegate(account->wallet));
   
   for(int i = 0; i < AccountModel::LastColumn; i++)
     view->resizeColumnToContents(i);
