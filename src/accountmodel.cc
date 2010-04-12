@@ -143,13 +143,13 @@ QVariant AccountModel::data(const QModelIndex& index, int role) const
     font.setBold(true);
     return font;
   }
-  if(role == Qt::BackgroundRole) {
-    QColor background;
-    int month = t->date.month() - 1;
-    background.setHsv(month * 170 % 360, 0, 
-		      (index.row() % 2 ? 220 : 240));
-    return QBrush(background);
-  }
+  // if(role == Qt::BackgroundRole) {
+  //   QColor background;
+  //   int month = t->date.month() - 1;
+  //   background.setHsv(month * 170 % 360, 0, 
+  // 		      (index.row() % 2 ? 220 : 240));
+  //   return QBrush(background);
+  // }
   if(role == Qt::ForegroundRole) {
     if(index.column() == DateColumn) {
       QColor color;

@@ -41,6 +41,7 @@ AccountPage::AccountPage(Account * ac) : account(ac)
 
   view->setItemDelegateForColumn(AccountModel::CategoryColumn,
 				 new AccountItemDelegate(account->wallet));
+  view->setAlternatingRowColors(true);
   
   for(int i = 0; i < AccountModel::LastColumn; i++)
     view->resizeColumnToContents(i);
