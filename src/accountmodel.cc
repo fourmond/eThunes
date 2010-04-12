@@ -158,7 +158,7 @@ QVariant AccountModel::data(const QModelIndex& index, int role) const
     }
 
     if(t->category && 
-       (index.column() == AmountColumn ||
+       (// index.column() == AmountColumn ||
 	index.column() == CategoryColumn || 
 	index.column() == NameColumn))
       return QBrush(t->category->categoryColor());
