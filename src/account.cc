@@ -92,3 +92,10 @@ QList<Transaction *> Account::categoryTransactions(const Category * category,
   }
   return found;
 }
+
+int Account::firstMonthID() const
+{
+  if(transactions.size() > 0)
+    return transactions[0].monthID();
+  return -1;
+}

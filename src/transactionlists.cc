@@ -22,7 +22,7 @@
 #include <wallet.hh>
 
 BasicStatistics::BasicStatistics() :
-  number(0), totalAmount(0)
+  number(0), totalAmount(0), firstMonthID(-1)
 {
 }
 
@@ -30,6 +30,9 @@ void BasicStatistics::addTransaction(const Transaction * t)
 {
   number += 1;
   totalAmount += t->amount;
+  if(t->account && (firstMonthID < 0 || 
+		    t->account->firstMonthID() < firstMonthID))
+    firstMonthID = t->account->firstMonthID();
 }
 
 TransactionListStatistics::TransactionListStatistics() 
@@ -44,19 +47,16 @@ void TransactionListStatistics::addTransaction(const Transaction * t)
 
 int TransactionListStatistics::monthlyAverageAmount()
 {
-  int nb = 0;
   int total = 0;
-  int thisMonthID = Transaction::thisMonthID();
+  const int thisMonthID = Transaction::thisMonthID();
   QHash<int, BasicStatistics>::const_iterator i = monthlyStats.constBegin();
   while (i != monthlyStats.constEnd()) {
-    if(i.key() != thisMonthID) {
-      nb += 1;
+    if(i.key() != thisMonthID)
       total += i.value().totalAmount;
-    }
     i++;
   }
-  if(nb)
-    return total/nb;
+  if(firstMonthID < thisMonthID)
+    return total/(thisMonthID - firstMonthID);
   return 0;
 }
 

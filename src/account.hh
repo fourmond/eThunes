@@ -75,6 +75,11 @@ public:
   /// possible
   TransactionList transactions;
 
+  /// Returns the monthID of the earliest month of the account, or -1
+  /// if there are not transactions. (but that shouldn't happen,
+  /// shouldn't it ?)
+  int firstMonthID() const;
+
   /// Import the given list of transactions into the current
   /// account. It does reorder the transaction list so that they are
   /// sorted by date.

@@ -36,6 +36,10 @@ public:
   /// Total amount of the transactions
   int totalAmount;
 
+  /// The first month ID of the accounts corresponding to the
+  /// transactions.
+  int firstMonthID;
+
   /// Adds the given Transaction to the statistics
   virtual void addTransaction(const Transaction * t);
 
@@ -46,6 +50,7 @@ public:
 class TransactionListStatistics : public BasicStatistics {
 public:
   TransactionListStatistics();
+
 
   /// A hash of Transaction::monthID -> BasicStatistics 
   QHash<int, BasicStatistics> monthlyStats;
