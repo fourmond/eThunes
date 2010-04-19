@@ -56,9 +56,11 @@ class Account;
 class Transaction : public Serializable {
 public:
 
-  /// \name Format-linked functions
+  /// \name Global functions
   ///
-  /// A series of function for global formating.
+  /// These functions are somewhat normative of how a transaction
+  /// should look, and how to acquire various data and so on. This is
+  /// of course a very precise definition
   ///
   /// @{
 
@@ -72,9 +74,21 @@ public:
     return date.month()-1 + date.year() * 12;
   };
 
-  /// Returns a unique monthID for the given month
+  /// Returns a date from a monthID
   static inline QDate dateFromID(int monthID, int day = 1) {
     return QDate(monthID/12, monthID % 12 + 1, day); 
+  };
+
+  /// Returns the monthID for this month
+  static inline int thisMonthID() {
+    return monthID(QDate::currentDate());
+  };
+
+  /// Returns the monthID for last month
+  static inline int lastMonthID() {
+    return monthID(QDate::currentDate()) - 1; /// \todo hard-wired to
+					      /// the representation
+					      /// of monthID
   };
 
   /// @}

@@ -51,6 +51,9 @@ public:
     NameColumn,
     NumberColumn, /// number of transactions
     AmountColumn, 
+    CurrentMonthColumn, 
+    LastMonthColumn, 
+    AverageMonthColumn, 
     LastColumn
   };
 

@@ -91,13 +91,12 @@ QVariant CategoryModel::headerData(int section,
 {
   if(role == Qt::DisplayRole) {
     switch(section) {
-    // case DateColumn: return QVariant(tr("Date"));
     case AmountColumn: return QVariant(tr("Amount"));
     case NumberColumn: return QVariant(tr("Number"));
-    // case BalanceColumn: return QVariant(tr("Balance"));
     case NameColumn: return QVariant(tr("Name"));
-    // case MemoColumn: return QVariant(tr("Memo"));
-    // case CategoryColumn: return QVariant(tr("Category"));
+    case CurrentMonthColumn: return QVariant(tr("This month"));
+    case LastMonthColumn: return QVariant(tr("Last month"));
+    case AverageMonthColumn: return QVariant(tr("Monthly average"));
     default:
       return QVariant();
     }
@@ -122,8 +121,31 @@ QVariant CategoryModel::data(const QModelIndex& index, int role) const
     case AmountColumn: 
       stats = list.statistics();
       return QVariant(Transaction::formatAmount(stats.totalAmount));
+    case CurrentMonthColumn:
+      stats = list.statistics();
+      return QVariant(Transaction::
+		      formatAmount(stats.monthlyStats[Transaction::thisMonthID()].totalAmount));
+    case LastMonthColumn:
+      stats = list.statistics();
+      return QVariant(Transaction::
+		      formatAmount(stats.lastMonthStats().totalAmount));
+    case AverageMonthColumn:
+      stats = list.statistics();
+      return QVariant(Transaction::
+		      formatAmount(stats.monthlyAverageAmount()));
     case NumberColumn: 
       return QVariant(list.count());
+    default:
+      return QVariant();
+    }
+  }
+  if(role == Qt::TextAlignmentRole) {
+    switch(index.column()) {
+    case AmountColumn:
+    case CurrentMonthColumn:
+    case LastMonthColumn:
+    case AverageMonthColumn:
+      return QVariant(Qt::AlignRight);
     default:
       return QVariant();
     }

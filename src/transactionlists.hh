@@ -23,17 +23,49 @@
 
 #include <transaction.hh>
 
-/// A series of statistics about a list of Transaction objects; see
-/// TransactionPtrList.
-class TransactionListStatistics {
+/// Statistics inherent to a series of transactions, from whichever
+/// way they are organized.
+class BasicStatistics {
 public:
-  TransactionListStatistics();
+
+  BasicStatistics();
 
   /// Number of transactions
   int number;
 
   /// Total amount of the transactions
   int totalAmount;
+
+  /// Adds the given Transaction to the statistics
+  virtual void addTransaction(const Transaction * t);
+
+};
+
+/// A series of (detailed) statistics about a list of Transaction
+/// objects; see TransactionPtrList.
+class TransactionListStatistics : public BasicStatistics {
+public:
+  TransactionListStatistics();
+
+  /// A hash of Transaction::monthID -> BasicStatistics 
+  QHash<int, BasicStatistics> monthlyStats;
+
+  /// Adds the given Transaction to the statistics
+  virtual void addTransaction(const Transaction * t);
+
+  /// Returns the BasicStatistics for this month
+  inline const BasicStatistics & thisMonthStats() {
+    return monthlyStats[Transaction::thisMonthID()];
+  };
+
+  /// Returns the BasicStatistics for last month
+  inline const BasicStatistics & lastMonthStats() {
+    return monthlyStats[Transaction::lastMonthID()];
+  };
+
+  /// Returns the average amount for "complete months !" (ie before
+  /// thisMonthID)
+  int monthlyAverageAmount();
 };
 
 

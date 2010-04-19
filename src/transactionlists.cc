@@ -21,18 +21,50 @@
 #include <account.hh>
 #include <wallet.hh>
 
-TransactionListStatistics::TransactionListStatistics() :
+BasicStatistics::BasicStatistics() :
   number(0), totalAmount(0)
 {
+}
+
+void BasicStatistics::addTransaction(const Transaction * t)
+{
+  number += 1;
+  totalAmount += t->amount;
+}
+
+TransactionListStatistics::TransactionListStatistics() 
+{
+}
+
+void TransactionListStatistics::addTransaction(const Transaction * t)
+{
+  BasicStatistics::addTransaction(t);
+  monthlyStats[t->monthID()].addTransaction(t);
+}
+
+int TransactionListStatistics::monthlyAverageAmount()
+{
+  int nb = 0;
+  int total = 0;
+  int thisMonthID = Transaction::thisMonthID();
+  QHash<int, BasicStatistics>::const_iterator i = monthlyStats.constBegin();
+  while (i != monthlyStats.constEnd()) {
+    if(i.key() != thisMonthID) {
+      nb += 1;
+      total += i.value().totalAmount;
+    }
+    i++;
+  }
+  if(nb)
+    return total/nb;
+  return 0;
 }
 
 TransactionListStatistics TransactionPtrList::statistics() const
 {
   TransactionListStatistics stats;
-  for(int i = 0; i < size(); i++) {
-    stats.number += 1;
-    stats.totalAmount += value(i)->amount;
-  }
+  for(int i = 0; i < size(); i++)
+    stats.addTransaction(value(i));
   return stats;
 }
 
