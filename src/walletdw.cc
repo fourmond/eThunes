@@ -162,24 +162,18 @@ void WalletDW::load()
 				 tr("XML wallet files (*.xml)"));
   if(file.isEmpty())
     return;
+  load(file);
+}
+
+void WalletDW::load(const QString & file)
+{
   wallet->loadFromFile(file);
   lastFilename = file;
   /// \todo: here, we should find a way to invalidate all the windows
   /// that depend on this.
-		       
   updateSummary();
 }
-
-// void WalletDW::tempNewCategory()
-// {
-//   QString nc = QInputDialog::getText(this, "New category !", "New category");
-//   if(! nc.isEmpty()) {
-//     QTextStream o(stderr);
-//     wallet->categories.namedSubCategory(nc, true);
-//     o << "Current categories:" << endl;
-//     wallet->categories.dumpContents();
-//   }
-// }
+		       
 
 void WalletDW::manageFilters()
 {

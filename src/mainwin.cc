@@ -190,6 +190,8 @@ void MainWin::saveSettings()
 {
   ownSettings;
   settings.setValue("size", size());
+  if(! walletDW->currentFileName().isEmpty())
+    settings.setValue("lastfile", walletDW->currentFileName());
 }
 
 
@@ -198,4 +200,6 @@ void MainWin::loadSettings()
   ownSettings;
   if(settings.contains("size"))
     resize(settings.value("size").toSize());
+  if(settings.contains("lastfile"))
+    walletDW->load(settings.value("lastfile").toString());
 }

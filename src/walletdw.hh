@@ -40,6 +40,10 @@ public:
   WalletDW(Wallet * w);
   virtual ~WalletDW();
 
+  const QString & currentFileName() const {
+    return lastFilename;
+  }
+
 public slots:
   /// Updates the summary; should be called whenever the status of the
   /// wallet has changed somehow.
@@ -58,8 +62,11 @@ public slots:
   /// Saves the Wallet into a new file.
   void saveAs();
 
-  /// Loads a file
+  /// Prompts to load a file
   void load();
+
+  /// Loads a file
+  void load(const QString & file);
 
   /// Manage  filters
   void manageFilters();
