@@ -18,6 +18,7 @@
 
 #include <headers.hh>
 #include <categorypage.hh>
+#include <categorytransactions.hh>
 
 CategoryPage::CategoryPage(Wallet * w) : wallet(w)
 {
@@ -84,6 +85,8 @@ void CategoryPage::categoriesContextMenu(const QPoint & pos)
     QMenu * menu = new QMenu();
     menu->addAction("Change category color",this, 
 		    SLOT(changeCurrentColor()));
+    menu->addAction("Display category transactions",this, 
+		    SLOT(displayCurrentTransactions()));
     menu->exec(view->mapToGlobal(pos));
   }
 }
@@ -98,5 +101,15 @@ void CategoryPage::changeCurrentColor()
     if(dlg.exec() == QDialog::Accepted) {
       c->color = dlg.currentColor();
     }
+  }
+}
+
+void CategoryPage::displayCurrentTransactions()
+{
+  QModelIndex i = view->currentIndex();
+  Category * c = model->indexedCategory(i);
+  if(c) {
+    CategoryTransactions * transactions = new CategoryTransactions(wallet, c);
+    transactions->show();
   }
 }

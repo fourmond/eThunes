@@ -81,6 +81,9 @@ public slots:
 
   /// Prompts the user for changing the color of the current category.
   void changeCurrentColor();
+
+  /// Prompts the user for changing the color of the current category.
+  void displayCurrentTransactions();
 };
 
 #endif
