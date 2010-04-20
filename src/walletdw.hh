@@ -44,6 +44,11 @@ public:
     return lastFilename;
   }
 
+signals:
+
+  /// Emitted whenever the document name is changed.
+  void filenameChanged(const QString & filename);
+
 public slots:
   /// Updates the summary; should be called whenever the status of the
   /// wallet has changed somehow.

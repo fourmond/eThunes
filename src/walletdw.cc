@@ -150,6 +150,7 @@ void WalletDW::saveAs()
   if(str.isEmpty())
     return;
   lastFilename = str;
+  emit(filenameChanged(lastFilename));
   save();
 }
 
@@ -169,8 +170,7 @@ void WalletDW::load(const QString & file)
 {
   wallet->loadFromFile(file);
   lastFilename = file;
-  /// \todo: here, we should find a way to invalidate all the windows
-  /// that depend on this.
+  emit(filenameChanged(file));
   updateSummary();
 }
 		       

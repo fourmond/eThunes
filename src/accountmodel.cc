@@ -26,8 +26,7 @@ AccountModel::AccountModel(TransactionList * t) :
 {
   if(transactions->size() > 0) {
     if((*transactions)[0].account && (*transactions)[0].account->wallet)
-      connect((QObject*) // I don't like this, it seems that C++ does not like multiple inheritance ?
-	      (*transactions)[0].account->wallet, 
+      connect((*transactions)[0].account->wallet, 
 	      SIGNAL(accountsChanged()),
 	      SLOT(accountChanged())); /// \todo This is suboptimal, but better than nothing
   }
@@ -198,6 +197,8 @@ bool AccountModel::setData(const QModelIndex & index, const QVariant & value,
   if(index.column() == CategoryColumn && t && role == Qt::EditRole) {
     t->setCategoryFromName(value.toString());
     emit(dataChanged(index, index));
+    if(t->account && t->account->wallet)
+      t->account->wallet->didChangeCategories();
     return true;
   }
   return false;

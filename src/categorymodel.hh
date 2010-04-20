@@ -33,8 +33,8 @@ class CategoryModel : public QAbstractItemModel {
 protected:
   
 
-  /// Returns a pointer to the CategoryHas relevant to the given index
-  /// (ie subcategories)
+  /// Returns a pointer to the CategoryHash relevant to the given
+  /// index (ie subcategories)
   CategoryHash * indexedCategoryHash(QModelIndex index) const;
 
 public:
@@ -49,11 +49,11 @@ public:
 
   enum {
     NameColumn,
-    NumberColumn, /// number of transactions
-    AmountColumn, 
     CurrentMonthColumn, 
     LastMonthColumn, 
     AverageMonthColumn, 
+    NumberColumn, 
+    AmountColumn, 
     LastColumn
   };
 

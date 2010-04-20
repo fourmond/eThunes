@@ -36,7 +36,16 @@
 class Wallet : public QObject, Serializable {
   Q_OBJECT;
 
+protected:
+
+  /// Dirty is set when the Wallet has been modified since the last
+  /// time dirty was cleared.
+  bool dirty;
+
 public:
+
+  Wallet();
+
   /// The accounts held within the wallet.
   QList<Account> accounts;
 
@@ -100,7 +109,32 @@ signals:
   /// This signal is emitted whenever the account data has changed for
   /// some reason.
   void accountsChanged();
-  
+
+  /// This signal is emitted whenever filters have changed for some
+  /// reason.
+  void filtersChanged();
+
+  /// This signal is emitted whenever category data has changed for
+  /// some reason.
+  void categoriesChanged();
+
+  /// Emitted when the dirty flag has changed.
+  void dirtyChanged(bool dirty);
+
+public slots:
+
+  /// To be used when everything has changed
+  void allChanged();
+
+  /// To use when one has modified categories
+  void didChangeCategories() {emit(categoriesChanged()); };
+
+  /// Sets the dirty flag
+  void setDirty(bool dirty = true);
+
+public:
+  /// Whether the Wallet has pending modifications
+  bool isDirty() const { return dirty; }; 
 };
 
 #endif

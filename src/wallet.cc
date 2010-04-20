@@ -19,6 +19,14 @@
 #include <headers.hh>
 #include <wallet.hh>
 
+
+Wallet::Wallet() : dirty(false)
+{
+  connect(this, SIGNAL(accountsChanged()), SLOT(setDirty()));
+  connect(this, SIGNAL(categoriesChanged()), SLOT(setDirty()));
+  connect(this, SIGNAL(filtersChanged()), SLOT(setDirty()));
+}
+
 void Wallet::importAccountData(const OFXImport & data, bool runFilters)
 {
   for(int i = 0; i < data.accounts.size(); i++) {
@@ -62,6 +70,7 @@ void Wallet::saveToFile(QString fileName)
   w.writeStartDocument();
   writeXML("wallet", &w);
   w.writeEndDocument();
+  setDirty(false);
 }
 
 
@@ -73,11 +82,22 @@ void Wallet::loadFromFile(QString fileName)
   while(! w.isStartElement() && ! w.atEnd())
     w.readNext();
   readXML(&w);
+  setDirty(false);
+}
+
+void Wallet::allChanged()
+{
+  emit(accountsChanged());
+  emit(filtersChanged());
+  emit(categoriesChanged());
 }
 
 void Wallet::clearContents()
 {
   accounts.clear();
+  filters.clear();
+  categories.clear();
+  allChanged();
 }
 
 
@@ -97,7 +117,7 @@ void Wallet::finishedSerializationRead()
     accounts[i].wallet = this;
 
   // Evidently
-  emit(accountsChanged());
+  allChanged();
 }
 
 void Wallet::runFilters(TransactionList * list)
@@ -120,4 +140,13 @@ TransactionPtrList Wallet::categoryTransactions(const Category * category,
   for(int i = 0; i < accounts.size(); i++)
     vals << accounts[i].categoryTransactions(category, parents);
   return vals;
+}
+
+void Wallet::setDirty(bool d)
+{
+  if(d == dirty)
+    return;
+  
+  dirty = d;
+  emit(dirtyChanged(dirty));
 }

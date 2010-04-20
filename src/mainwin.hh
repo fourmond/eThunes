@@ -62,7 +62,15 @@ public:
   ~MainWin();
 
 public slots:
+
+  /// Change the title of the window according to the dirty flag
+  void dirtyChanged(bool dirty);
+
+  /// Change the title of the windows to reflect the file name
+  void fileNameChanged(const QString & newName);
   
+  /// Try to quit, but prompt for saving before if dirty.
+  void tryQuit();
 };
 
 #endif

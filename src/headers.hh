@@ -47,6 +47,7 @@
 #include <QDialog>
 #include <QInputDialog>
 #include <QColorDialog>
+#include <QMessageBox>
 
 // Non-GUI objects
 #include <QDate>

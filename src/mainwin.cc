@@ -72,6 +72,8 @@ MainWin::MainWin()
 {
   /// \todo here change !
   wallet = new Wallet();
+  connect(wallet, SIGNAL(dirtyChanged(bool)), SLOT(dirtyChanged(bool)));
+  fileNameChanged(QString());
   
   setupFrame();
   setupActions();
@@ -106,6 +108,9 @@ void MainWin::setupFrame()
   // view->setRootIndex(model->index(0,0));
 
   walletDW = new WalletDW(wallet);
+  connect(walletDW, SIGNAL(filenameChanged(const QString &)),
+	  SLOT(fileNameChanged(const QString &)));
+
 
   navigationWidget = new NavigationWidget();
   /// \todo eventually navigationWidget should only see NavigationPage
@@ -119,7 +124,7 @@ void MainWin::setupActions()
 {
   // Quitting...
   actions.addAction(this, "quit", tr("&Quit"),
-		    this, SLOT(close()),
+		    this, SLOT(tryQuit()),
 		    QKeySequence(tr("Ctrl+Q")),
 		    tr("Exit from QMoney"));
 
@@ -208,4 +213,29 @@ void MainWin::loadSettings()
     resize(settings.value("size").toSize());
   if(settings.contains("lastfile"))
     walletDW->load(settings.value("lastfile").toString());
+}
+
+void MainWin::dirtyChanged(bool dirty)
+{
+  setWindowModified(dirty);
+}
+
+void MainWin::fileNameChanged(const QString & newName)
+{
+  if(newName.isEmpty())
+    setWindowTitle(tr("QMoney[*]"));
+  setWindowTitle(tr("%1[*] - QMoney").arg(QFileInfo(newName).fileName()));
+}
+
+void MainWin::tryQuit()
+{
+  if(isWindowModified()) {
+    if(QMessageBox::question(this, tr("Quit with unsaved changes ?"),
+			     tr("The wallet has unsaved changes, do you still "
+				"want to quit ?"),
+			     QMessageBox::Ok|QMessageBox::No, 
+			     QMessageBox::No) == QMessageBox::No)
+      return;
+  }
+  close();
 }
