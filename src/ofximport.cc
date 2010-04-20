@@ -106,9 +106,20 @@ OFXImport OFXImport::importFromFile(QIODevice * stream)
       }
       else if(tagRE.cap(1).compare("TRNAMT", Qt::CaseInsensitive) == 0) {
 	// The date of the transaction
-	if(currentTransaction)
+	if(currentTransaction) {
 	  // Quite naive, but it really should work most of the times...
-	  currentTransaction->amount = tagRE.cap(2).toDouble() * 100;
+	  // NO !!!
+	  /// \todo: this induces rounding mistakes !!! Never go to
+	  /// double !!!
+	  QStringList a = tagRE.cap(2).split(".");
+	  bool negative = a[0].contains("-");
+	  int amount = a[0].toInt() * 100;
+	  if(negative)
+	    amount -= a[1].toInt();
+	  else
+	    amount += a[1].toInt();
+	  currentTransaction->amount = amount;
+	}
       }
       
       // Now, account-related tags

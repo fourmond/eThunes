@@ -52,6 +52,12 @@
    \li This requires as well to design few various HTTP groping
    classes that will look for patterns in very specific things.
 
+   \section todo-short Shorter term things to do
+   
+   \li It is more and more important to make sure that the objects
+   communicate well about their status changes: updates of the windows
+   + dirty flag for saving.
+
 */
 
 #include <headers.hh>
