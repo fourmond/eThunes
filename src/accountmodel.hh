@@ -48,15 +48,22 @@ class AccountModel : public QAbstractItemModel {
 
   /// List of transactions:
   TransactionList * transactions;
+  
+  /// Or this way:
+  TransactionPtrList * transactionsPtr;
+  
 
 protected:
   /// Returns the transaction corresponding to the index, or NULL if
   /// invalid or root.
   Transaction * indexedTransaction(QModelIndex index) const;
+
+  /// returns transaction at the given index.
+  Transaction * indexedTransaction(int idx) const;
   
 public:
-  /// The transactions to be displayed.
   AccountModel(TransactionList * transactions);
+  AccountModel(TransactionPtrList * transactions);
 
   enum {
     DateColumn,
@@ -92,6 +99,17 @@ public slots:
   
   /// Radically changes things that have changed ;-)...
   void accountChanged();
+
+protected:
+  
+  /// Number of transactions in the list
+  int transactionCount() const {
+    if(transactions) 
+      return transactions->count();
+    if(transactionsPtr)
+      return transactionsPtr->count();
+    return 0;
+  };
 };
 
 /// A specific delegate to handle in particular the edition of

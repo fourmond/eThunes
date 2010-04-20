@@ -22,7 +22,7 @@
 #include <wallet.hh>
 
 AccountModel::AccountModel(TransactionList * t) :
-  transactions(t)
+  transactions(t), transactionsPtr(NULL)
 {
   if(transactions->size() > 0) {
     if((*transactions)[0].account && (*transactions)[0].account->wallet)
@@ -32,11 +32,38 @@ AccountModel::AccountModel(TransactionList * t) :
   }
 }
 
+AccountModel::AccountModel(TransactionPtrList * t) :
+  transactions(NULL), transactionsPtr(t)
+{
+  if(transactionsPtr->size() > 0) {
+    if((*transactionsPtr)[0]->account && (*transactionsPtr)[0]->account->wallet)
+      connect((*transactionsPtr)[0]->account->wallet, 
+	      SIGNAL(accountsChanged()),
+	      SLOT(accountChanged())); /// \todo This is suboptimal, but better than nothing
+  }
+}
+
+Transaction * AccountModel::indexedTransaction(int idx) const
+{
+  if(transactions) {
+    if(idx < transactions->size())
+      return const_cast<Transaction *>(& (*transactions)[transactions->count() - idx - 1]);
+
+    else
+      return NULL;
+  }
+  else {
+    if(idx < transactionsPtr->size())
+      return transactionsPtr->value(idx);
+    else
+      return NULL;
+  }
+}
+
 Transaction * AccountModel::indexedTransaction(QModelIndex index) const
 {
-  if(index.isValid() && index.internalId() >= 0 && 
-     index.internalId() < transactions->count() )
-    return const_cast<Transaction *>(& (*transactions)[transactions->count() - index.internalId() - 1]);
+  if(index.isValid() && index.internalId() >= 0)
+    return indexedTransaction(index.internalId());
   return NULL;
 }
 
@@ -70,7 +97,7 @@ int AccountModel::rowCount(const QModelIndex & index) const
     if(index.internalId() >= 0) 
       return 0;
     else 
-      return transactions->count();
+      return transactionCount();
   }
   return 0;
 }
