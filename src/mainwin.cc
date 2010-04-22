@@ -68,6 +68,9 @@
 
 #include <filterdialog.hh>
 
+// temporary ?
+#include <collection.hh>
+
 MainWin::MainWin()
 {
   /// \todo here change !
@@ -170,6 +173,13 @@ void MainWin::setupActions()
 		    navigationWidget, SLOT(closeCurrentTab()),
 		    QKeySequence(tr("Ctrl+W")),
 		    tr("Closes current tab"));
+
+
+  // Temporary action
+  actions.addAction(this, "test definitions", tr("&Load definition"),
+		    this, SLOT(tryLoadCollectionDefinition()),
+		    QKeySequence(tr("Ctrl+X")),
+		    tr("Biniou !!"));
   
 
 }
@@ -184,6 +194,7 @@ void MainWin::setupMenus()
   fileMenu->addAction(actions["import"]);
   fileMenu->addAction(actions["manage filters"]);
   fileMenu->addSeparator();
+  fileMenu->addAction(actions["test definitions"]);
   fileMenu->addAction(actions["quit"]);
 
   QMenu * tabMenu = menuBar()->addMenu(tr("&Tabs"));
@@ -238,4 +249,19 @@ void MainWin::tryQuit()
       return;
   }
   close();
+}
+
+void MainWin::tryLoadCollectionDefinition()
+{
+  QString file = 
+    QFileDialog::getOpenFileName(this, 
+				 tr("Select definition to load"),
+				 QString(),
+				 tr("XML wallet files (*.xml)"));
+  if(file.isEmpty())
+    return;
+
+  CollectionDefinition def;
+  def.loadFromFile(file);
+  def.dumpContents();
 }
