@@ -55,6 +55,8 @@
 #include <QFile>
 #include <QTextStream>
 
+#include <QProcess>
+
 // Templates
 #include <QHash>
 #include <QList>

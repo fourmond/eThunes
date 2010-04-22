@@ -15,6 +15,11 @@ PRECOMPILED_HEADER = src/headers.hh
 # QMAKE_CXXFLAGS += -pg
 # QMAKE_LFLAGS += -pg
 
+# Bad for now
+INCLUDEPATH += /usr/lib/ruby/1.8/x86_64-linux
+
+LIBS += -lruby1.8
+
 # Input files
 SOURCES += src/qmain.cc src/account.cc src/mainwin.cc src/actions.cc \
 	src/ofximport.cc src/accountmodel.cc \
@@ -25,7 +30,8 @@ SOURCES += src/qmain.cc src/account.cc src/mainwin.cc src/actions.cc \
 	src/filter.cc src/filterdialog.cc \
 	src/categorypage.cc src/transactionlists.cc \
 	src/categorymodel.cc src/categorytransactions.cc \
-	src/document.cc src/collection.cc
+	src/document.cc src/collection.cc \
+	src/rubymodulecode.cc
 
 HEADERS += src/account.hh src/mainwin.hh src/actions.hh \
 	src/ofximport.hh src/accountmodel.hh \
@@ -36,4 +42,5 @@ HEADERS += src/account.hh src/mainwin.hh src/actions.hh \
 	src/filter.hh src/filterdialog.hh \
 	src/categorypage.hh src/transactionlists.hh \
 	src/categorymodel.hh src/categorytransactions.hh \
-	src/document.hh src/collection.hh
+	src/document.hh src/collection.hh \
+	src/rubymodulecode.hh

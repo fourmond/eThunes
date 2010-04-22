@@ -257,11 +257,24 @@ void MainWin::tryLoadCollectionDefinition()
     QFileDialog::getOpenFileName(this, 
 				 tr("Select definition to load"),
 				 QString(),
-				 tr("XML wallet files (*.xml)"));
+				 tr("XML wallet files (*.def.xml)"));
   if(file.isEmpty())
     return;
 
   CollectionDefinition def;
   def.loadFromFile(file);
   def.dumpContents();
+  def.code.loadModule();
+
+  // Now, PDF file handling...
+  file = 
+    QFileDialog::getOpenFileName(this, 
+				 tr("Select PDF to load"),
+				 QString(),
+				 tr("PDF files (*.pdf)"));
+
+  if(file.isEmpty())
+    return;
+  def.code.parseDocumentMetaData("avis", file);  
+
 }

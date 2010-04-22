@@ -23,6 +23,7 @@
 
 #include <serializable.hh>
 #include <document.hh>
+#include <rubymodulecode.hh>
 
 /// This class represents the definition of a Collection object. In
 /// particular, it will hold:
@@ -34,11 +35,20 @@
 /// $SAFE = 4, and it is not reasonable to run class definition at a
 /// lower level.
 ///
+/// \todo There should be a global hash definition name ->
+/// CollectionDefinition, using guarded pointers (QPointer ?)
 class CollectionDefinition : public Serializable {
 public:
   /// The definition of the types of documents supported by this
   /// Collection.
   QHash<QString, DocumentDefinition> documentTypes;
+
+  /// The underlying code. For now, hardwired as RubyClassCode.
+  ///
+  /// \todo find a way to serialize pointers to objects and use it
+  /// this way. (saving would probably not work, but that doesn't
+  /// matter)
+  RubyModuleCode code;
 
   virtual SerializationAccessor * serializationAccessor();
 

@@ -53,7 +53,7 @@ public:
   
   /// Fill in the meta-data for the given document, based on file
   /// data.
-  virtual void parseDocumentMetaData(Document * doc) = 0;
+  virtual void parseDocumentMetaData(Document * doc) { ; };
 
 protected:
   // Here, functions to transform a PDF file into a QString ?

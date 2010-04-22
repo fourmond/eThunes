@@ -26,6 +26,8 @@ SerializationAccessor * CollectionDefinition::serializationAccessor()
   // 		   new SerializationItemScalar<QString>(&name, true));
   ac->addAttribute("document-type", 
 		   new SerializationQHash<DocumentDefinition>(&documentTypes));
+  ac->addAttribute("ruby-class-code", 
+		   &code);
   return ac;
 }
 
@@ -35,9 +37,10 @@ void CollectionDefinition::dumpContents()
   QHash<QString, DocumentDefinition>::const_iterator i = 
     documentTypes.constBegin();
   while (i != documentTypes.constEnd()) {
-    o << "Type : " << i.value().name;
+    o << "Type : " << i.value().name << endl;
     ++i;
   }
+  o << "Code (" << code.name << "): " << code.code;
 }
 
 void CollectionDefinition::loadFromFile(QString fileName)

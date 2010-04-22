@@ -45,6 +45,10 @@ public:
   /// names
   QString name;
 
+  /// Public description of the kind of documents, with a little more
+  /// details. Could contain links ?
+  QString description;
+
   /// Whether or not there is an amount attached to Document objects
   /// following this DocumentDefinition.
   bool amountMeaningful;
