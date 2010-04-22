@@ -34,24 +34,19 @@
 /// $SAFE = 4, and it is not reasonable to run class definition at a
 /// lower level.
 ///
-/// This Ruby class will be in charge of many things:
-///
-/// \li given a PDF file, or rather given its text and
-/// meta-information, it should find out all necessary things about
-/// the Document, such as its date and its amount if applicable
-///
-/// \li given a list of transactions and a Document, find out if there
-/// is a Transaction likely to correspond to the given Document
-///
-/// \li It could provide ways to show extract more information about
-/// the documents, possibly globally, and to display it somehow ?
-///
-/// \li It would fetch files from the Internet ! (but this is yet
-/// another functionality: if surely data is not dissociable from the
-/// way to get it for "usual" documents, for bank accounts it is
-/// completely disconnected). The interface for the latter needs to be
-/// thought clearly !
 class CollectionDefinition : public Serializable {
+public:
+  /// The definition of the types of documents supported by this
+  /// Collection.
+  QHash<QString, DocumentDefinition> documentTypes;
+
+  virtual SerializationAccessor * serializationAccessor();
+
+  /// Temporary
+  void dumpContents();
+
+  /// Loads a definition from a file.
+  void loadFromFile(QString fileName);
 };
 
 /// This class holds a series of Document objects.

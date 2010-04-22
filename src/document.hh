@@ -49,6 +49,8 @@ public:
   /// following this DocumentDefinition.
   bool amountMeaningful;
 
+  virtual SerializationAccessor * serializationAccessor();
+
 };
 
 /// A Document is a text-like document (for now, only PDF supported ?)
@@ -66,6 +68,19 @@ public:
 /// is a good try !)
 ///
 /// Its behavior is to some extent handled by a DocumentDefinition.
+///
+/// Probably provide several dates, using a hash, with a "main" date
+/// and accessory dates ? (but then I need a way to serialize that).
+/// Dates would have "roles", interpreted in hard:
+/// 
+/// \li 'downloaded': download time
+/// 
+/// \li 'base': date of the bill/whatever (which could be very
+/// different from the "official" date)
+///
+/// \li 'main': date used for file name (or name one in the definition
+/// ? -> would be much better, since it would allow one to keep the
+/// interpretation of the rest)
 class Document : public Serializable {
 public:
   /// The definition of this Document.
