@@ -357,7 +357,11 @@ public:
 };
 
 /// All classes that should be serialized at some point should include
-/// this class in their ancestry. It shouldn't contain data.
+/// this class in their ancestry (but not necessarily as first
+/// superclass). It shouldn't contain data.
+///
+/// All children must reimplement serializationAccessor() to return
+/// the proper SerializationAccessor to handle the serialization.
 ///
 /// It is a child of SerializationAttribute in order to make it
 /// dreadfull easy to embed complex in attributes ;-)...
