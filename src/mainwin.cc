@@ -273,8 +273,12 @@ void MainWin::tryLoadCollectionDefinition()
 				 QString(),
 				 tr("PDF files (*.pdf)"));
 
+  /// \todo To do this properly, it is possible to fire up a custom
+  /// QFileDialog box, with a match document type -> filter and
+  /// appropriate changing of labels when the user chooses different
+  /// files ? Use custom labels.
+
   if(file.isEmpty())
     return;
   def.code.parseDocumentMetaData("avis", file);  
-
 }

@@ -25,18 +25,17 @@
 #include <document.hh>
 #include <rubymodulecode.hh>
 
-/// This class represents the definition of a Collection object. In
-/// particular, it will hold:
-/// 
-/// \li a list of DocumentDefinition, to find out what kind of
-/// documents are allowed
+/// This class represents the definition of a Collection object. 
 ///
-/// \li the code of a Ruby class... NO ! You can't define anything at
-/// $SAFE = 4, and it is not reasonable to run class definition at a
-/// lower level.
 ///
 /// \todo There should be a global hash definition name ->
 /// CollectionDefinition, using guarded pointers (QPointer ?)
+///
+/// \todo There should be a way to load all definitions available to
+/// the program (or at least to browse them easily ?): this means
+/// setting up a path, providing function to load a file based on its
+/// name (which would also be inside the file ? No ? Yes ?) and to
+/// enumerate all the files found.
 class CollectionDefinition : public Serializable {
 public:
   /// The definition of the types of documents supported by this
@@ -46,9 +45,33 @@ public:
   /// The underlying code. For now, hardwired as RubyClassCode.
   ///
   /// \todo find a way to serialize pointers to objects and use it
-  /// this way. (saving would probably not work, but that doesn't
-  /// matter)
+  /// this way. It would be enough to write a small class that
+  /// serializes a pointer to a Serializable object; several
+  /// statements could be used for the different types, with different
+  /// element names. This would work for loading, but not for saving !
+  ///
+  /// Maybe use a hash 'element name' => Serializable ? (with full
+  /// conversion ? but then finding out which one to use for writing
+  /// out isn't that trivial). Or let that be handled by virtual
+  /// functions ? but then it makes duplicated code (for the choice of
+  /// the element at saving and the choice of the target class at
+  /// loading)
   RubyModuleCode code;
+
+  /// A public name with no particular restriction
+  QString name;
+
+  /// A public description
+  QString description;
+
+  /// A restricted domain: HTTP access from the code of the definition
+  /// should not be done outside of this domain (strings prepended
+  /// with a . before the domain are fine, though).
+  ///
+  /// Of course, so long as the Ruby code can setup sockets on its
+  /// own, no guarantee can be made with respect to what can be
+  /// accessed. But, still !
+  QString domain;
 
   virtual SerializationAccessor * serializationAccessor();
 
