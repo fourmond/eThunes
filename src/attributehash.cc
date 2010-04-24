@@ -22,6 +22,7 @@
 #include <st.h>
 
 #include <attributehash.hh>
+#include <transaction.hh>
 
 #define QSTRING2VALUE(str) \
   (rb_str_new2((const char*) (str).toLocal8Bit()));
@@ -110,4 +111,70 @@ void AttributeHash::dumpContents() const
     i++;
   }
   
+}
+
+void AttributeHash::writeXML(const QString& name, 
+			     QXmlStreamWriter* writer)
+{
+  /// \todo !
+}
+void AttributeHash::readXML(QXmlStreamReader* reader)
+{
+  /// \todo !
+}
+
+QString AttributeHash::formatString(const QString & format)
+{
+  QTextStream o(stdout);
+  QString str;
+  int idx = 0;
+  int lastidx;
+  o << "Orig: " << format << endl;
+  QRegExp formatSpecifierRE("%\\{([^%}]+)(%[^}]+)?\\}");
+  // formatSpecifierRE.setMinimal(true); // Non-greedy regular expressions !
+  while(idx >= 0) {
+    lastidx = idx;
+    idx = formatSpecifierRE.indexIn(format, idx);
+    if(idx < 0) {
+      str += format.mid(lastidx);
+      // o << lastidx << " -- " << format.mid(lastidx) << endl;
+    }
+    else {
+      // prefix.
+      str += format.mid(lastidx, idx - lastidx);
+      // Now, we have fun
+      if(! contains(formatSpecifierRE.cap(1))) 
+	str += "undef";
+      else {
+	// handle formats !
+	if(formatSpecifierRE.cap(2).isEmpty())
+	  str += value(formatSpecifierRE.cap(1)).toString();
+	else
+	  str += formatVariant(value(formatSpecifierRE.cap(1)),
+			       formatSpecifierRE.cap(2).mid(1));
+      }
+      idx += formatSpecifierRE.cap(0).size();
+     }
+  }
+  return str;
+}
+
+QString AttributeHash::formatVariant(QVariant v, const QString &spec)
+{
+  if(spec.size() == 1) {
+    switch(spec[0].toAscii()) {
+    case 'A':
+      return Transaction::formatAmount(v.toLongLong());
+    case 'M':
+      return v.toDateTime().toString("MM");
+    case 'y':
+      return v.toDateTime().toString("yyyy");
+    default: 
+      return v.toString();
+    }
+  }
+  else if(spec.startsWith("date:"))
+    return v.toDateTime().toString(spec.mid(5));
+  else
+    return v.toString();
 }

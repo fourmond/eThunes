@@ -38,7 +38,11 @@
 /// Most importantly, it also provides a formatting mechanism based on
 /// the contents of the hash; this is central to any string pertaining
 /// to the Document system.
-class AttributeHash : public QHash<QString, QVariant> {
+///
+/// For serialization: reimplement the writeXML/readXML of
+/// SerializationAttribute
+class AttributeHash : public QHash<QString, QVariant>, 
+		      SerializationAttribute {
 public:
 
   /// Conversion to a Ruby hash
@@ -68,6 +72,31 @@ public:
 
   /// Dump the contents of the hash, for debugging purposes
   void dumpContents() const;
+
+  // serialization stuff
+  virtual void writeXML(const QString& name, QXmlStreamWriter* writer);
+  virtual void readXML(QXmlStreamReader* reader);
+
+
+  /// Returns a string based on format within which the constructs
+  /// %{key} are replaced by the corresponding string values (or undef
+  /// if there is no such key);
+  ///
+  /// Optionnally %{key%spec} uses a certain format conversion ; see
+  /// the documentation of formatVariant for more documentation.
+  /// 
+  /// \warning Keys that contain % will not be interpreted correctly !
+  QString formatString(const QString & format);
+
+  /// Formats the given variant according to the given format:
+  /// 
+  /// \li A: v is an integer converted to an amount using
+  /// Transaction::formatAmount();
+  /// \li M: the month, from 01 to 12
+  /// \li y: the year (4-digit number)
+  /// \li "date:...": return QDateTime.toString(...)
+  static QString formatVariant(QVariant v, const QString &spec);
+  
 };
 
 /// and the class to serialize it ?
