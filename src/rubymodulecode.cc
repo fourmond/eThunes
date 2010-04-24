@@ -75,6 +75,10 @@ QString getPDFString(QString file)
 
 /// Wah, these are ugly wrappers; I'll have to come up with something a
 /// little more decent later on...
+///
+/// \todo it should be possible to write a few template classes that
+/// handle precisely a call to a function, passing around the
+/// arguments (try doing that with member functions, for fun !)
 typedef struct {
   AttributeHash * hash;
   VALUE v;
@@ -99,6 +103,10 @@ VALUE rescue(VALUE a, VALUE b)
 /// Idea: for return value, get a Ruby hash, check the type of each
 /// element and store it as a date in the dates hash or as a String in
 /// the string hash.
+///
+/// \todo Write a bunch of Ruby code (modules, possibly as a resource
+/// ?) to parse french dates (using proper regular expressions !) and
+/// eval it after Ruby starts.
 void RubyModuleCode::parseDocumentMetaData(QString doctype, QString fileName)
 {
   // first, convert the file from PDF into string using QProcess and
@@ -123,4 +131,11 @@ void RubyModuleCode::parseDocumentMetaData(QString doctype, QString fileName)
 	    (VALUE (*)(...)) rescue, Qnil);
   a.dumpContents();
   rb_p(a.toRuby());
+
+  // And now we test the format:
+  QString w = a.formatString("Bidule %{bidule} %{bidule%A} %{base} "
+			     "%{base%y} %{base%M} "
+			     "%{base%date: MMM dddd mm}");
+  o << "Format: " << w << endl;
+
 }
