@@ -181,6 +181,9 @@ public:
 
   virtual SerializationAccessor * serializationAccessor();
 
+  /// Compares the checkNumber of two transactions (to use for qSort,
+  /// for instance)
+  static bool compareCheckNumbers(Transaction * a, Transaction * b);
 
 };
 

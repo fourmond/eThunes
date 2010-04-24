@@ -99,3 +99,15 @@ int Account::firstMonthID() const
     return transactions[0].monthID();
   return -1;
 }
+
+
+
+TransactionPtrList Account::checks()
+{
+  TransactionPtrList t;
+  for(int i = 0; i < transactions.size(); i++)
+    if(! transactions[i].checkNumber.isEmpty())
+      t << &transactions[i];
+  qSort(t.begin(), t.end(), Transaction::compareCheckNumbers);
+  return t;
+}

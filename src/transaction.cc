@@ -145,3 +145,8 @@ void Transaction::setCategoryFromName(const QString & str, Wallet * w)
   category = w->categories.namedSubCategory(str, true);
 }
 
+
+bool Transaction::compareCheckNumbers(Transaction * a, Transaction * b)
+{
+  return a->checkNumber < b->checkNumber;
+}
