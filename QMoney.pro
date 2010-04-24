@@ -31,7 +31,7 @@ SOURCES += src/qmain.cc src/account.cc src/mainwin.cc src/actions.cc \
 	src/categorypage.cc src/transactionlists.cc \
 	src/categorymodel.cc src/categorytransactions.cc \
 	src/document.cc src/collection.cc \
-	src/rubymodulecode.cc
+	src/rubymodulecode.cc src/accountchecks.cc
 
 HEADERS += src/account.hh src/mainwin.hh src/actions.hh \
 	src/ofximport.hh src/accountmodel.hh \
@@ -43,4 +43,4 @@ HEADERS += src/account.hh src/mainwin.hh src/actions.hh \
 	src/categorypage.hh src/transactionlists.hh \
 	src/categorymodel.hh src/categorytransactions.hh \
 	src/document.hh src/collection.hh \
-	src/rubymodulecode.hh
+	src/rubymodulecode.hh src/accountchecks.hh

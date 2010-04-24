@@ -60,6 +60,12 @@ public slots:
   /// Prompts for renaming the account
   void renameAccount();
 
+  /// Handles the links
+  void handleLinks(const QString & url);
+
+  /// Displays checks using an AccountChecks dialog box.
+  void displayChecks();
+
 public:
 
   /// Returns the AccountPage for the given account, or create it if

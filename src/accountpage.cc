@@ -18,6 +18,7 @@
 
 #include <headers.hh>
 #include <accountpage.hh>
+#include <accountchecks.hh>
 
 
 QHash<Account *, AccountPage *> AccountPage::accountPages;
@@ -46,7 +47,7 @@ AccountPage::AccountPage(Account * ac) : account(ac)
   for(int i = 0; i < AccountModel::LastColumn; i++)
     view->resizeColumnToContents(i);
   connect(accountSummary, SIGNAL(linkActivated(const QString &)), 
-	  SLOT(renameAccount()));
+	  SLOT(handleLinks(const QString &)));
 }
 
 AccountPage::~AccountPage()
@@ -65,7 +66,8 @@ void AccountPage::updateAccountSummary()
 {
   /// \todo there is a great deal to change here.
   accountSummary->setText(tr("<strong>Account: </strong> %1 <a href='#name'>(change name)</a><br>"
-			     "<strong>Balance: </strong> %2<br>").
+			     "<strong>Balance: </strong> %2\t"
+			     "<a href='#checks'>(see checks)</a><br>").
 			  arg(account->name()).
 			  arg(account->balance() * 0.01 ));
 }
@@ -85,4 +87,17 @@ void AccountPage::renameAccount()
     return;
   account->publicName = newName;
   updateAccountSummary();
+}
+
+void AccountPage::handleLinks(const QString & url)
+{
+  if(url == "#name")
+    renameAccount();
+  else if(url == "#checks")
+    displayChecks();
+}
+void AccountPage::displayChecks()
+{
+  AccountChecks * checks = new AccountChecks(account);
+  checks->show();
 }
