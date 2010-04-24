@@ -1,6 +1,6 @@
 /** 
-    \file accountchecks.hh
-    A small dialog box to display the cheques from an account
+    \file transactionlistdialog.hh
+    A small generic dialog box to display list of pointers
     Copyright 2010 by Vincent Fourmond
 
     This program is free software; you can redistribute it and/or modify
@@ -23,28 +23,40 @@
 
 #include <transaction.hh>
 #include <account.hh>
+#include <accountmodel.hh>
 
-/// Dialog box to display checks
-///
-/// \todo This class should be merged with CategoryTransactions to
-/// make a single dialog box (either using only one class, through
-/// specific functions setting the TransactionPtrList and the label
-/// text, or using derived class of a single class, but this seems
-/// less neat)
-///
-/// \todo In particular, the final class should handle resizing
+/// Dialog box to display transaction lists
+/// 
+/// \todo this class should handle resizing
 /// properly.
-class AccountChecks : public QDialog {
+class TransactionListDialog : public QDialog {
+protected:
   Q_OBJECT;
 
-  /// The target Account
-  Account * account;
+  /// the label at the top of the dialog box
+  QLabel * topLabel;
 
+  /// The model to display transactions
+  AccountModel * model;
+
+  /// The actual display of the transactions
+  QTreeView * view;
+
+  /// The list of transactions to be displayed.
   TransactionPtrList list;
   
 public:
-  AccountChecks(Account * c);
+  TransactionListDialog();
 
+public slots:
+
+  /// Setup the dialog box to display the given list. The Wallet is
+  /// necessary for the delegate for the Category column.
+  void displayList(const TransactionPtrList & list, Wallet * wallet, 
+		   const QString & label);
+  
+  /// Displays the checks of the given account.
+  void displayChecks(Account * account);
 };
 
 #endif

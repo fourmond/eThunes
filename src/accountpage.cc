@@ -18,7 +18,7 @@
 
 #include <headers.hh>
 #include <accountpage.hh>
-#include <accountchecks.hh>
+#include <transactionlistdialog.hh>
 
 
 QHash<Account *, AccountPage *> AccountPage::accountPages;
@@ -98,6 +98,7 @@ void AccountPage::handleLinks(const QString & url)
 }
 void AccountPage::displayChecks()
 {
-  AccountChecks * checks = new AccountChecks(account);
+  TransactionListDialog * checks = new TransactionListDialog();
+  checks->displayChecks(account);
   checks->show();
 }
