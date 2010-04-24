@@ -53,6 +53,8 @@ protected:
 public:
   TransactionListDialog();
 
+  ~TransactionListDialog();
+
 public slots:
 
   /// Setup the dialog box to display the given list. The Wallet is

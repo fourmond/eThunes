@@ -31,8 +31,5 @@ int main(int argc, char ** argv)
   
   main.setApplicationName("QMoney");
   win.show();
-  if(argc > 1)
-    OFXImport::importFromFile(argv[1]);
-  else
-    main.exec();
+  main.exec();
 }

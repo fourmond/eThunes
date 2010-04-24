@@ -53,6 +53,9 @@ class Account;
 /// \todo When the whole "bill" things is implemented, it would
 /// probably be very interesting to be able to link a given bill to
 /// its corresponding transaction, and vice versa.
+///
+/// \todo It would be interesting to display which Transaction objects
+/// are "new", ie just imported ?
 class Transaction : public Serializable {
 public:
 

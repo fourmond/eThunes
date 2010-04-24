@@ -34,6 +34,20 @@ TransactionListDialog::TransactionListDialog() :
   QPushButton * bt = new QPushButton(tr("Close"));
   connect(bt, SIGNAL(clicked()), SLOT(close()));
   l1->addWidget(bt);
+
+  // Force the deletion on close
+  setAttribute(Qt::WA_DeleteOnClose);
+}
+
+TransactionListDialog::~TransactionListDialog()
+{
+  if(model)
+    delete model;
+  // The following deletions are unnecessary according to valgrind,
+  // which is kinda expected and cool ;-)...
+
+  // delete topLabel;
+  // delete view;
 }
 
 void TransactionListDialog::displayList(const TransactionPtrList & l,
