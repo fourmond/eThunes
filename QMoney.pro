@@ -2,7 +2,7 @@
 # QMake configuration file for QCam
 
 TEMPLATE = app
-CONFIG += precompile_header debug
+CONFIG += precompile_header debug warn_on
 INCLUDEPATH += . src
 
 VERSION = 0.0
@@ -11,13 +11,9 @@ QT += xml
 
 PRECOMPILED_HEADER = src/headers.hh
 
-# Following lines for profiling
-# QMAKE_CXXFLAGS += -pg
-# QMAKE_LFLAGS += -pg
-
+# Handling of Ruby sources, but rather bad for now
 # Bad for now
 INCLUDEPATH += /usr/lib/ruby/1.8/x86_64-linux
-
 LIBS += -lruby1.8
 
 # Input files
@@ -31,7 +27,8 @@ SOURCES += src/qmain.cc src/account.cc src/mainwin.cc src/actions.cc \
 	src/categorypage.cc src/transactionlists.cc \
 	src/categorymodel.cc \
 	src/document.cc src/collection.cc \
-	src/rubymodulecode.cc src/transactionlistdialog.cc
+	src/rubymodulecode.cc src/transactionlistdialog.cc \
+	src/attributehash.cc
 
 HEADERS += src/account.hh src/mainwin.hh src/actions.hh \
 	src/ofximport.hh src/accountmodel.hh \
@@ -43,4 +40,5 @@ HEADERS += src/account.hh src/mainwin.hh src/actions.hh \
 	src/categorypage.hh src/transactionlists.hh \
 	src/categorymodel.hh \
 	src/document.hh src/collection.hh \
-	src/rubymodulecode.hh src/transactionlistdialog.hh
+	src/rubymodulecode.hh src/transactionlistdialog.hh \
+	src/attributehash.hh
