@@ -52,8 +52,10 @@ public:
     CurrentMonthColumn, 
     LastMonthColumn, 
     AverageMonthColumn, 
+    AmountColumn,
+    DebitColumn,
+    CreditColumn,
     NumberColumn, 
-    AmountColumn, 
     LastColumn
   };
 

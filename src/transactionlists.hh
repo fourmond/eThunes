@@ -36,6 +36,12 @@ public:
   /// Total amount of the transactions
   int totalAmount;
 
+  /// total amount of the credits
+  int totalCredit;
+
+  /// total amount of the debits
+  int totalDebit;
+
   /// The first month ID of the accounts corresponding to the
   /// transactions.
   int firstMonthID;
@@ -121,6 +127,12 @@ public:
   ///
   /// \todo There will probably be more cleanup to do around this.
   void sanitizeList(Account * ac);
+
+  /// Mark the transactions as "recent"
+  void markRecent() {
+    for(int i = 0; i < size(); i++)
+      operator[](i).recent = true;
+  };
 
   /// Transforms into a pointer list, for further manipulations.
   TransactionPtrList toPtrList();

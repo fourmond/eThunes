@@ -135,7 +135,7 @@ public:
 
   /// Whether the transaction is locked for manual modification or not.
   /// By default, they are all locked.
-  int locked;
+  bool locked;
 
   /// The main category. Empty means no category.
   Category * category;
@@ -148,6 +148,11 @@ public:
   /// Returns the full name of the Category, suitable for saving, or
   /// an empty string when there isn't a category.
   QString categoryName() const ;
+
+  /// Whether the transaction has been added recently or not (when the
+  /// user has already seen it). This flag should be set for every
+  /// data import.
+  bool recent;
 
   /// @}
 

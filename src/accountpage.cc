@@ -52,7 +52,8 @@ AccountPage::AccountPage(Account * ac) : account(ac)
 
 AccountPage::~AccountPage()
 {
-  /// \todo Here, delete quite a few things.
+  if(model)
+    delete model;
 }
 
 QString AccountPage::pageTitle()

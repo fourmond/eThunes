@@ -94,6 +94,8 @@ QVariant CategoryModel::headerData(int section,
     case AmountColumn: return QVariant(tr("Amount"));
     case NumberColumn: return QVariant(tr("Number"));
     case NameColumn: return QVariant(tr("Name"));
+    case CreditColumn: return QVariant(tr("Credit"));
+    case DebitColumn: return QVariant(tr("Debit"));
     case CurrentMonthColumn: return QVariant(tr("This month"));
     case LastMonthColumn: return QVariant(tr("Last month"));
     case AverageMonthColumn: return QVariant(tr("Monthly average"));
@@ -129,6 +131,14 @@ QVariant CategoryModel::data(const QModelIndex& index, int role) const
       stats = list.statistics();
       return QVariant(Transaction::
 		      formatAmount(stats.lastMonthStats().totalAmount));
+    case CreditColumn: 
+      stats = list.statistics();
+      return QVariant(Transaction::
+		      formatAmount(stats.totalCredit));
+    case DebitColumn: 
+      stats = list.statistics();
+      return QVariant(Transaction::
+		      formatAmount(stats.totalDebit));
     case AverageMonthColumn:
       stats = list.statistics();
       return QVariant(Transaction::
@@ -145,6 +155,8 @@ QVariant CategoryModel::data(const QModelIndex& index, int role) const
     case CurrentMonthColumn:
     case LastMonthColumn:
     case AverageMonthColumn:
+    case DebitColumn: 
+    case CreditColumn: 
       return QVariant(Qt::AlignRight);
     default:
       return QVariant();

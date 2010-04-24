@@ -41,6 +41,10 @@ int Account::importTransactions(TransactionList t, Wallet * filters)
     filters->runFilters(&t);
   /// \todo This should be logged !
   // printf("%d duplicates were removed out of %d !!\n", dups, dups + t.size());
+
+  // We now mark imported transactions as recent.
+  t.markRecent();
+
   transactions.append(t);
   // Now, we sort and update the balance
   transactions.sortByDate();
