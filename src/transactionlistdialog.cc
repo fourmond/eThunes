@@ -18,6 +18,7 @@
 
 #include <headers.hh>
 #include <transactionlistdialog.hh>
+#include <wallet.hh>
 
 TransactionListDialog::TransactionListDialog() :
   model(0)
@@ -35,9 +36,9 @@ TransactionListDialog::TransactionListDialog() :
   l1->addWidget(bt);
 }
 
-void TransactionListDialog::displayList(const TransactionPtrList & l, 
-					Wallet * wallet, 
-					const QString & label)
+void TransactionListDialog::displayList(const TransactionPtrList & l,
+					const QString & label, 
+					Wallet * wallet)
 {
   if(model)
     delete model;
@@ -46,8 +47,13 @@ void TransactionListDialog::displayList(const TransactionPtrList & l,
   view->setModel(model);
   view->setRootIndex(model->index(0,0));
   view->setRootIsDecorated(false);
-  view->setItemDelegateForColumn(AccountModel::CategoryColumn,
-				 new AccountItemDelegate(wallet));
+  // if no wallet was provided, attempt to get one from the
+  // transaction list
+  if(!wallet && list.size() > 0 && list[0]->account)
+    wallet = list[0]->account->wallet;
+  if(wallet)
+    view->setItemDelegateForColumn(AccountModel::CategoryColumn,
+				   new AccountItemDelegate(wallet));
   view->setAlternatingRowColors(true);
   for(int i = 0; i < AccountModel::LastColumn; i++)
     view->resizeColumnToContents(i);
@@ -58,6 +64,13 @@ void TransactionListDialog::displayList(const TransactionPtrList & l,
 void TransactionListDialog::displayChecks(Account * account)
 {
   displayList(account->checks(),
-	      account->wallet,
 	      tr("Account: %1").arg(account->name()));
+}
+
+void TransactionListDialog::displayCategory(Category * category, 
+					    Wallet * wallet)
+{
+  displayList(wallet->categoryTransactions(category),
+	      tr("Category: %1").arg(category->fullName()),
+	      wallet);
 }

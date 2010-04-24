@@ -18,7 +18,7 @@
 
 #include <headers.hh>
 #include <categorypage.hh>
-#include <categorytransactions.hh>
+#include <transactionlistdialog.hh>
 
 CategoryPage::CategoryPage(Wallet * w) : wallet(w)
 {
@@ -109,7 +109,8 @@ void CategoryPage::displayCurrentTransactions()
   QModelIndex i = view->currentIndex();
   Category * c = model->indexedCategory(i);
   if(c) {
-    CategoryTransactions * transactions = new CategoryTransactions(wallet, c);
-    transactions->show();
+    TransactionListDialog * ct = new TransactionListDialog();
+    ct->displayCategory(c, wallet);
+    ct->show();
   }
 }

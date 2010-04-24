@@ -23,12 +23,17 @@
 
 #include <transaction.hh>
 #include <account.hh>
+#include <category.hh>
 #include <accountmodel.hh>
 
 /// Dialog box to display transaction lists
 /// 
-/// \todo this class should handle resizing
-/// properly.
+/// \todo this class should handle resizing properly.
+///
+/// \todo Provide a way to display read-only transactions ! (this
+/// should be done in AccountModel, probably, but here as well)
+///
+/// \todo Optionally remove the balance ?
 class TransactionListDialog : public QDialog {
 protected:
   Q_OBJECT;
@@ -51,12 +56,17 @@ public:
 public slots:
 
   /// Setup the dialog box to display the given list. The Wallet is
-  /// necessary for the delegate for the Category column.
-  void displayList(const TransactionPtrList & list, Wallet * wallet, 
-		   const QString & label);
+  /// necessary for the delegate for the Category column; it is taken
+  /// from the first transaction if it is NULL (which means no
+  /// delegate is created for Category edition)
+  void displayList(const TransactionPtrList & list, const QString & label,
+		   Wallet * wallet = NULL);
   
   /// Displays the checks of the given account.
   void displayChecks(Account * account);
+
+  /// Displays the transactions of the given Category
+  void displayCategory(Category * category, Wallet * wallet);
 };
 
 #endif
