@@ -23,7 +23,7 @@
 
 #include <serializable.hh>
 
-/// A hash of attributes
+/// A hash of attributes.
 ///
 /// This class hold a hash of attributes, ie data that can be
 /// associated with Document objects (for instance). It handles
@@ -44,6 +44,15 @@
 class AttributeHash : public QHash<QString, QVariant>, 
 		      SerializationAttribute {
 public:
+
+  enum HandledType {
+    String,
+    Number,
+    Time
+  };
+
+  /// Returns the HandledType for the given QVariant
+  static HandledType variantType(const QVariant &v);
 
   /// Conversion to a Ruby hash
   ///
@@ -96,7 +105,11 @@ public:
   /// \li y: the year (4-digit number)
   /// \li "date:...": return QDateTime.toString(...)
   static QString formatVariant(QVariant v, const QString &spec);
-  
+
+  /// The names of numbered types
+  static const char * typeNames[];
+
+  static HandledType namedType(const QString & name);
 };
 
 /// and the class to serialize it ?

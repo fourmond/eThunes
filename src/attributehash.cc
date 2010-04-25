@@ -24,13 +24,19 @@
 #include <attributehash.hh>
 #include <transaction.hh>
 
+
 #define QSTRING2VALUE(str) \
   (rb_str_new2((const char*) (str).toLocal8Bit()));
 
 #define VALUE2QSTRING(value) \
   QString(StringValueCStr(value));
 
-VALUE AttributeHash::variantToRuby(const QVariant & variant)
+
+const char * AttributeHash::typeNames[] = {
+  "string", "number", "time", 0
+};
+
+AttributeHash::HandledType AttributeHash::variantType(const QVariant &variant)
 {
   switch(variant.type()) {
   case QVariant::UInt:
@@ -39,10 +45,23 @@ VALUE AttributeHash::variantToRuby(const QVariant & variant)
   case QVariant::ULongLong: 
     /// \todo there are risks of precision loss for large numbers here
     /// (over 2 billions)
-    return LONG2NUM(variant.toLongLong());
+    return AttributeHash::Number;
   case QVariant::Date:
   case QVariant::DateTime:
   case QVariant::Time: // time values
+    return AttributeHash::Time;
+  default: // use string value
+    return AttributeHash::String;
+  }
+}
+
+
+VALUE AttributeHash::variantToRuby(const QVariant & variant)
+{
+  switch(variantType(variant.type())) {
+  case AttributeHash::Number:
+    return LONG2NUM(variant.toLongLong());
+  case AttributeHash::Time:
     return rb_time_new(variant.toDateTime().toTime_t(),0 /* microseconds */);
   default: // use string value
     return QSTRING2VALUE(variant.toString());
@@ -116,8 +135,13 @@ void AttributeHash::dumpContents() const
 void AttributeHash::writeXML(const QString& name, 
 			     QXmlStreamWriter* writer)
 {
-  /// \todo !
+  const_iterator i = constBegin();
+  while (i != constEnd()) {
+    writer->writeStartElement(name);
+    // writer->
+  }
 }
+
 void AttributeHash::readXML(QXmlStreamReader* reader)
 {
   /// \todo !
@@ -177,4 +201,18 @@ QString AttributeHash::formatVariant(QVariant v, const QString &spec)
     return v.toDateTime().toString(spec.mid(5));
   else
     return v.toString();
+}
+
+AttributeHash::HandledType AttributeHash::namedType(const QString & name)
+{
+  int i = String;
+  const char ** ptr = typeNames;
+  while(*ptr) {
+    if(name == *ptr)
+      return (HandledType) i;
+    i++;
+    ptr++;
+  }
+  // Issue a warning / throw an exception ?
+  return String; 		// By default
 }
