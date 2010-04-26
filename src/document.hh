@@ -22,6 +22,7 @@
 #define __DOCUMENT_HH
 
 #include <serializable.hh>
+#include <attributehash.hh>
 
 class Collection;
 class CollectionDefinition;
@@ -42,18 +43,27 @@ public:
   QString publicName;
 
   /// The code-like name of this type; will be used for making up file
-  /// names
+  /// names; this is also the hash name.
   QString name;
 
   /// Public description of the kind of documents, with a little more
   /// details. Could contain links ?
   QString description;
 
-  /// Whether or not there is an amount attached to Document objects
-  /// following this DocumentDefinition.
-  bool amountMeaningful;
+  /// A format string (see AttributeHash::formatString) for public
+  /// display; it will be combined with Document::attributes to form
+  /// something to be displayed (a label ?)
+  ///
+  /// It could be overridden by the user in the collection.
+  QString displayFormat;
+
+  /// The format of the file for saving.
+  QString fileNameFormat;
 
   virtual SerializationAccessor * serializationAccessor();
+
+  /// Which file extensions are "valid" for the given file
+  QStringList fileExtensions() const { return QStringList() << "pdf";};
 
 };
 
@@ -72,19 +82,6 @@ public:
 /// is a good try !)
 ///
 /// Its behavior is to some extent handled by a DocumentDefinition.
-///
-/// Probably provide several dates, using a hash, with a "main" date
-/// and accessory dates ? (but then I need a way to serialize that).
-/// Dates would have "roles", interpreted in hard:
-/// 
-/// \li 'downloaded': download time
-/// 
-/// \li 'base': date of the bill/whatever (which could be very
-/// different from the "official" date)
-///
-/// \li 'main': date used for file name (or name one in the definition
-/// ? -> would be much better, since it would allow one to keep the
-/// interpretation of the rest)
 class Document : public Serializable {
 public:
   /// The definition of this Document.
@@ -95,15 +92,17 @@ public:
 
   /// Returns the file name, relative to an appropriate base
   /// directory.
-  ///
-  /// Proposition:
-  ///
-  /// (CollectionFolder name /)? Collection name - type name - date -
-  /// something more if necessary ? Slightly improved to alway have
-  /// subfolders ?
-  ///
-  /// 
   QString documentFileName();
+
+  /// Returns the text used to display the given document.
+  QString displayText();
+
+  /// The attributes of the document, ie all the information one could
+  /// interpret from the file.
+  AttributeHash attributes;
+
+  virtual SerializationAccessor * serializationAccessor();
+
 };
 
 #endif

@@ -18,11 +18,28 @@
 
 #include <headers.hh>
 #include <document.hh>
+#include <collection.hh>
 
 SerializationAccessor * DocumentDefinition::serializationAccessor()
 {
   SerializationAccessor * ac = new SerializationAccessor(this);
   ac->addAttribute("name", 
 		   new SerializationItemScalar<QString>(&name, true));
+  ac->addAttribute("display-format",
+		   new SerializationItemScalar<QString>(&displayFormat));
+
   return ac;
+}
+
+SerializationAccessor * Document::serializationAccessor()
+{
+  SerializationAccessor * ac = new SerializationAccessor(this);
+  return ac;
+}
+
+
+
+QString Document::displayText()
+{
+  return attributes.formatString(collection->documentDisplayFormat(this));
 }

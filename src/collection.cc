@@ -53,3 +53,16 @@ void CollectionDefinition::loadFromFile(QString fileName)
     w.readNext();
   readXML(&w);
 }
+
+Document * Collection::importFile(const QString & doctype, 
+				  const QString & file)
+{
+  Document doc;
+  /// \tdexception handle the exceptions raised ? (or do that in the
+  /// calling functions ?)
+  doc.attributes = definition->code.parseFileMetaData(doctype, file);
+  doc.definition = &definition->documentTypes[doctype];
+  doc.collection = this;
+  documents.push_back(doc);
+  return &documents.last();
+}

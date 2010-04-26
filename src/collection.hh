@@ -87,10 +87,39 @@ public:
 
 /// This class holds a series of Document objects.
 class Collection : public Serializable {
+public:
+
+  /// The underlying definition for this collection.
+  CollectionDefinition * definition;
+  
+  /// Returns the file name format for the given Document.
+  ///
+  /// \todo Here, implement user overrides.
+  QString documentFileNameFormat(Document * doc) {
+    return doc->definition->fileNameFormat;
+  };
+
+  /// Returns the display format for the given Document.
+  ///
+  /// \todo Here, implement user overrides.
+  QString documentDisplayFormat(Document * doc) {
+    return doc->definition->displayFormat;
+  };
+
+  /// All the documents, regardless of their type.
+  QList<Document> documents;
+
+  /// \todo Returns the list of documents with the named type.
+  QList<Document *> typeDocuments(const QString & name);
+
+  /// Imports a file as a document of the given type, and returns a
+  /// pointer to the newly-created document (whose ownership stays
+  /// within the Collection).
+  Document * importFile(const QString & doctype, const QString & file);
 };
 
 /// A group of collections, when it is convenient to group several
-/// similar things ?
+/// similar things ? Is it necessary ?
 class CollectionFolder : public Serializable {
 };
 #endif
