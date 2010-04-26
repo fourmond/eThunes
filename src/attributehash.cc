@@ -147,10 +147,6 @@ void AttributeHash::writeXML(const QString& name,
   }
 }
 
-/// \todo Dirty trick; this function should move to
-/// SerializationAttribute as a static function ?
-void readNextToken(QXmlStreamReader * reader);
-
 void AttributeHash::readXML(QXmlStreamReader* reader)
 {
   // Once again, this function only reads one element; assumes to be
@@ -159,7 +155,7 @@ void AttributeHash::readXML(QXmlStreamReader* reader)
   QString name = attrs.value("name").toString();
   HandledType t = namedType(attrs.value("type").toString());
   QString value = attrs.value("value").toString();
-  readNextToken(reader);
+  Serialization::readNextToken(reader);
   switch(t) {
   case String:
     operator[](name) = QVariant(value);

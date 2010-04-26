@@ -18,19 +18,15 @@
 
 #include <serializable.hh>
 
-/// Reads tokens in the stream reader until a non-whitespace one is
-/// found.
-///
-/// \todo The downside of this approach is that we can't save pure
-/// whitespace, unless it is written as CDATA. (then make writeXML
-/// write CDATA if non-empty whitespace and here check for CDATA...)
-void readNextToken(QXmlStreamReader * reader)
+void Serialization::readNextToken(QXmlStreamReader * reader)
 {
   do {
     reader->readNext();
   }
   while(reader->isWhitespace() && (! reader->atEnd()));
 }
+
+using namespace Serialization;
 
 void SerializationItem::setFromString(const QString & v)
 {

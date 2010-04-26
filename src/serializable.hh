@@ -25,6 +25,16 @@
 
 class Serializable;
 
+namespace Serialization {
+  /// Reads tokens in the stream reader until a non-whitespace one is
+  /// found.
+  ///
+  /// \todo The downside of this approach is that we can't save pure
+  /// whitespace, unless it is written as CDATA. (then make writeXML
+  /// write CDATA if non-empty whitespace and here check for CDATA...)
+  void readNextToken(QXmlStreamReader * reader);
+};
+
 /// This class handles the very basic thing which we expect from a
 /// serializable item: to be able to read and write itself from XML.
 class SerializationAttribute {
@@ -82,19 +92,9 @@ public:
 /// pointer to set/get data from QString/QVariant (but of course that
 /// shouldn't happen in the base class, shouldn't it ?)
 ///
-/// \todo Some information, such as:
-/// 
-/// \li can this information be a XML attribute or it should be a
-/// full-blown node ?
-///
 /// \todo it would be interesting to a have template accessor-based
 /// serializers, using pointers to member functions, see
 /// http://www.parashift.com/c++-faq-lite/pointers-to-members.html
-///
-/// This might lift the need for callbacks.
-///
-/// Meanwhile, callbacks could use "pointer-to-members" with a
-/// template stuff.
 class SerializationItem : public SerializationAttribute {
 protected:
   ///  Can be used as XML attribute
