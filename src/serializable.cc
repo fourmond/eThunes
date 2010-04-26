@@ -23,7 +23,8 @@ void Serialization::readNextToken(QXmlStreamReader * reader)
   do {
     reader->readNext();
   }
-  while(reader->isWhitespace() && (! reader->atEnd()));
+  while((reader->isWhitespace() || reader->isComment()) 
+	&& (! reader->atEnd()));
 }
 
 using namespace Serialization;
