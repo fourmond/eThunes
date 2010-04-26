@@ -33,7 +33,7 @@
 ///
 /// \todo maybe this should be a Q_OBJECT sending signals when
 /// information has changed ?
-class Wallet : public QObject, Serializable {
+class Wallet : public QObject, public Serializable {
   Q_OBJECT;
 
 protected:

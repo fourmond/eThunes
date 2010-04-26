@@ -42,7 +42,7 @@
 /// For serialization: reimplement the writeXML/readXML of
 /// SerializationAttribute
 class AttributeHash : public QHash<QString, QVariant>, 
-		      SerializationAttribute {
+		      public SerializationAttribute {
 public:
 
   enum HandledType {
@@ -67,6 +67,8 @@ public:
   /// before !
   void setFromRuby(VALUE hash, bool clear);
 
+  /// Same as setFromRuby(VALUE, bool), with the second argument set
+  /// to true.
   void setFromRuby(VALUE hash) { setFromRuby(hash, true);};
 
   /// Converts a QVariant to Ruby VALUE, keeping information
@@ -112,6 +114,10 @@ public:
   static const char * typeNames[];
 
   static HandledType namedType(const QString & name);
+
+  /// This object, just like Serializable ones, shouldn't be deleted.
+  virtual bool shouldBeDeleted() { return false;};
+
 };
 
 /// and the class to serialize it ?
