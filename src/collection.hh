@@ -61,8 +61,13 @@ public:
   /// loading)
   RubyModuleCode code;
 
-  /// A public name with no particular restriction
+  /// The name of the CollectionDefinition; it must match the base of
+  /// file name ! (though it will be automatically set if missing)
   QString name;
+
+  /// The public name of the CollectionDefinition, without
+  /// restriction.
+  QString publicName;
 
   /// A public description
   QString description;
@@ -81,11 +86,38 @@ public:
   /// Temporary
   void dumpContents();
 
-  /// Loads a definition from a file.
-  void loadFromFile(QString fileName);
+
+  /// Gets a named CollectionDefinition, loading it from file if
+  /// necessary. Returns NULL if not found.
+  static CollectionDefinition * namedDefinition(const QString & name);
+
+  /// \todo Browse definitionPath to find all the .def.xml files
+  static QStringList availableDefinitions();
+
+protected:
+
+  /// The path in which to seach collections
+  ///
+  /// \todo Write accessors, in particular to extend the path.
+  static QStringList definitionPath;
+
+  /// Loads a named definition from a file named name + ".def.xml" in
+  /// the search path. Ensures the CollectionDefinition
+  static void loadFromFile(const QString &name);
+
+  /// This hash contains the loaded named collection definitions
+  ///
+  /// \warning This might need to be turned into a pointer to ensure
+  /// initialization is done properly, although I don't think it will
+  /// lead to problems.
+  static QHash<QString, CollectionDefinition *> loadedDefinitions;
 };
 
 /// This class holds a series of Document objects.
+///
+/// \todo Write a small class to serialize a CollectionDefinition *,
+/// saving as definition->name and loading using namedDefinition,
+/// (eventually) raising an exception when NULL is returned.
 class Collection : public Serializable {
 public:
 
@@ -122,7 +154,8 @@ public:
 };
 
 /// A group of collections, when it is convenient to group several
-/// similar things ? Is it necessary ?
+/// similar things ? Is it necessary ? In any case, this is not an
+/// emergency !
 class CollectionFolder : public Serializable {
 };
 #endif

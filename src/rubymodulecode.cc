@@ -35,7 +35,7 @@ SerializationAccessor * RubyModuleCode::serializationAccessor()
   return ac;
 }
 
-void RubyModuleCode::loadModule()
+void RubyModuleCode::ensureLoadModule()
 {
   Ruby::ensureInitRuby();
   if(! moduleLoaded) {
@@ -46,21 +46,6 @@ void RubyModuleCode::loadModule()
 
 RubyModuleCode::RubyModuleCode() : moduleLoaded(false) 
 {
-}
-
-/// Gets the PDF contexts as a string.
-///
-/// \todo Probably a whole system of class should be used to handle
-/// files and types
-QString getPDFString(QString file)
-{
-  QStringList args;
-  args << "-enc" << "UTF-8" << file << "-";
-  QProcess p;
-  p.start("pdftotext", args);
-  p.waitForFinished();
-  /// \tdexception This calls for proper error handling
-  return p.readAllStandardOutput();
 }
 
 void RubyModuleCode::parseDocumentMetaDataInternal(const QString & doctype,
@@ -77,6 +62,7 @@ void RubyModuleCode::parseDocumentMetaDataInternal(const QString & doctype,
 AttributeHash RubyModuleCode::parseDocumentMetaData(const QString &doctype, 
 						    const AttributeHash & contents)
 {
+  ensureLoadModule();			// Make sure the module is loaded.
   AttributeHash retVal;
   RescueMemberWrapper3Args<RubyModuleCode, const QString &, 
     const AttributeHash &, AttributeHash &>::

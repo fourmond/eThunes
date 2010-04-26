@@ -50,16 +50,18 @@ public:
 
   QString code;
 
-  /// Loads the module if necessary. Runs arbitrary Ruby code for now !
-  ///
-  /// \todo Find a way to decrease the number of problems with time !
-  void loadModule();
 
 protected:
 
   /// Whether the module has been loaded into the Ruby interpreter or
   /// not.
   bool moduleLoaded;
+
+  /// Loads the module if necessary. Runs arbitrary Ruby code for now !
+  ///
+  /// \todo Find a way to decrease the number of problems with time !
+  void ensureLoadModule();
+
 };
 
 #endif

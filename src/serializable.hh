@@ -17,7 +17,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     \todo This file is seriously getting crowded; possibly splitting
-    is in orderx?  
+    is in order?  
 */
 
 #ifndef __SERIALIZABLE_HH
@@ -149,6 +149,10 @@ public:
 };
 
 /// This abstract class describes a list of Serializable objects.
+///
+/// \todo To easily serialize lists of non Serializable objects, it
+/// would be easy to write a template class that wraps a "normal"
+/// object that can be converted to/from QVariant (and QString).
 class SerializationList : public SerializationAttribute {
 public:
 

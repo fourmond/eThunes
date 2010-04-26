@@ -253,25 +253,15 @@ void MainWin::tryQuit()
 
 void MainWin::tryLoadCollectionDefinition()
 {
-  QString file = 
-    QFileDialog::getOpenFileName(this, 
-				 tr("Select definition to load"),
-				 QString(),
-				 tr("XML wallet files (*.def.xml)"));
-  if(file.isEmpty())
-    return;
-
-  CollectionDefinition def;
-  def.loadFromFile(file);
-  // def.dumpContents();
-  def.code.loadModule(); 	// Boaf.
+  CollectionDefinition * def = 
+    CollectionDefinition::namedDefinition("assedic");
 
   Collection c;
-  c.definition = &def;
+  c.definition = def;
 
 
   // Now, PDF file handling...
-  file = 
+  QString file = 
     QFileDialog::getOpenFileName(this, 
 				 tr("Select PDF to load"),
 				 QString(),

@@ -43,15 +43,39 @@ void CollectionDefinition::dumpContents()
   o << "Code (" << code.name << "): " << code.code;
 }
 
-void CollectionDefinition::loadFromFile(QString fileName)
+
+QHash<QString, CollectionDefinition *> CollectionDefinition::loadedDefinitions;
+
+QStringList CollectionDefinition::definitionPath("/home/vincent/Prog/QMoney/xml");
+
+void CollectionDefinition::loadFromFile(const QString &name)
 {
-  QFile file(fileName);
-  file.open(QIODevice::ReadOnly);
-  QXmlStreamReader w(&file);
-  /// \todo should be factored out ?
-  while(! w.isStartElement() && ! w.atEnd())
-    w.readNext();
-  readXML(&w);
+  QString fileName(name + ".def.xml");
+  for(int i = 0; i < definitionPath.size(); i++) {
+    QFile file(definitionPath[i] + "/" + fileName);
+    if(file.exists()) {
+      file.open(QIODevice::ReadOnly);
+      QXmlStreamReader w(&file);
+      /// \todo should be factored out ?
+      CollectionDefinition * def = new CollectionDefinition;
+      while(! w.isStartElement() && ! w.atEnd())
+	w.readNext();
+      def->readXML(&w);
+      if(! def->name.isEmpty() && def->name != name)
+	printf("Names should match !\n"); /// \tdexception handle this!
+      def->name = name;
+      loadedDefinitions[name] = def;
+      return;
+    }
+  }
+  /// \tdexception raise something here ?
+}
+
+CollectionDefinition * CollectionDefinition::namedDefinition(const QString & name)
+{
+  if(! loadedDefinitions.contains(name))
+    loadFromFile(name);
+  return loadedDefinitions.value(name, NULL); 
 }
 
 SerializationAccessor * Collection::serializationAccessor()
@@ -71,4 +95,5 @@ Document * Collection::importFile(const QString & doctype,
   doc.collection = this;
   documents.push_back(doc);
   return &documents.last();
+  /// \todo This function should also copy the file !!
 }
