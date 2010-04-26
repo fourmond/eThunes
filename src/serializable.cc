@@ -24,7 +24,7 @@
 /// \todo The downside of this approach is that we can't save pure
 /// whitespace, unless it is written as CDATA. (then make writeXML
 /// write CDATA if non-empty whitespace and here check for CDATA...)
-inline void readNextToken(QXmlStreamReader * reader)
+void readNextToken(QXmlStreamReader * reader)
 {
   do {
     reader->readNext();
@@ -218,13 +218,11 @@ void SerializationAccessor::readXML(QXmlStreamReader * reader)
       return;
     }
 
-
-    // Then, find the elements:
-   
     // Now, find the elements.
     SerializationAttribute * attr = 
       attributes.value(reader->name().toString(), 0);
     if(! attr) {
+      /// \tdexception on unkown attributes !
       fprintf(stderr, "Unkown attribute: %s !\n", 
 	      (const char*)reader->name().toString().toLocal8Bit());
       return;
