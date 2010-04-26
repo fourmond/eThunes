@@ -2,6 +2,7 @@
 <collection-definition>
   <!-- Comment -->
   <document-type name="avis">
+    <display-format>Avis de %{mois%date:MM/yyyy} pour %{identifiant}</display-format>
   </document-type>
   <ruby-class-code module-name="Assedic">
     <code><![CDATA[
@@ -17,7 +18,6 @@ module Assedic
     if doc['text'] =~ /le\s+(\d+)\/(\d+)\/(\d+)\s+\S+\s+(\d+):(\d+)/
       res['enregistrement'] = Time.local($3.to_i + 2000, $2.to_i, $1.to_i, $4.to_i, $5.to_i)
     end
-    # raise "biniou"
     return res
   end
 end

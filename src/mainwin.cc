@@ -266,6 +266,10 @@ void MainWin::tryLoadCollectionDefinition()
   // def.dumpContents();
   def.code.loadModule(); 	// Boaf.
 
+  Collection c;
+  c.definition = &def;
+
+
   // Now, PDF file handling...
   file = 
     QFileDialog::getOpenFileName(this, 
@@ -280,5 +284,7 @@ void MainWin::tryLoadCollectionDefinition()
 
   if(file.isEmpty())
     return;
-  def.code.parseFileMetaData("avis", file).dumpContents();  
+  Document * doc = c.importFile("avis", file);
+  QTextStream o(stdout);
+  o << "Display: " << doc->displayText() << endl;
 }

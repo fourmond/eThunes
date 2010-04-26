@@ -54,6 +54,12 @@ void CollectionDefinition::loadFromFile(QString fileName)
   readXML(&w);
 }
 
+SerializationAccessor * Collection::serializationAccessor()
+{
+  SerializationAccessor * ac = new SerializationAccessor(this);
+  return ac;
+}
+
 Document * Collection::importFile(const QString & doctype, 
 				  const QString & file)
 {

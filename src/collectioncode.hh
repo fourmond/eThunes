@@ -72,9 +72,10 @@ protected:
   /// Reads the PDF into an AttributeHash, filling in the contents of
   /// the text, and some meta-data.
   ///
-  /// \todo Handle meta-data such as file date/time, file name ?, and
-  /// specific PDF information. The former should be done via a common
-  /// function (let's think of other kinds of files).
+  /// \todo Handle meta-data such as file date/time, file name ? (no),
+  /// but file extension !, and specific PDF information. The former
+  /// should be done via a common function (let's think of other kinds
+  /// of files).
   static AttributeHash readPDF(QString file);
 };
 

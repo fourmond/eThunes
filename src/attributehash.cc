@@ -173,11 +173,9 @@ void AttributeHash::readXML(QXmlStreamReader* reader)
 
 QString AttributeHash::formatString(const QString & format)
 {
-  QTextStream o(stdout);
   QString str;
   int idx = 0;
   int lastidx;
-  o << "Orig: " << format << endl;
   QRegExp formatSpecifierRE("%\\{([^%}]+)(%[^}]+)?\\}");
   // formatSpecifierRE.setMinimal(true); // Non-greedy regular expressions !
   while(idx >= 0) {
@@ -185,7 +183,6 @@ QString AttributeHash::formatString(const QString & format)
     idx = formatSpecifierRE.indexIn(format, idx);
     if(idx < 0) {
       str += format.mid(lastidx);
-      // o << lastidx << " -- " << format.mid(lastidx) << endl;
     }
     else {
       // prefix.

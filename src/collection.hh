@@ -116,6 +116,9 @@ public:
   /// pointer to the newly-created document (whose ownership stays
   /// within the Collection).
   Document * importFile(const QString & doctype, const QString & file);
+
+
+  virtual SerializationAccessor * serializationAccessor();
 };
 
 /// A group of collections, when it is convenient to group several
