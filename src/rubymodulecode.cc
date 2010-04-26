@@ -78,7 +78,9 @@ AttributeHash RubyModuleCode::parseDocumentMetaData(const QString &doctype,
 						    const AttributeHash & contents)
 {
   AttributeHash retVal;
-  /// \todo Handle Ruby exceptions !!
-  parseDocumentMetaDataInternal(doctype, contents, retVal);
+  RescueMemberWrapper3Args<RubyModuleCode, const QString &, 
+    const AttributeHash &, AttributeHash &>::
+    wrapCall(this, &RubyModuleCode::parseDocumentMetaDataInternal,
+	     doctype, contents, retVal);
   return retVal;
 }
