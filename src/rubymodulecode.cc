@@ -108,5 +108,27 @@ void RubyModuleCode::parseDocumentMetaData(QString doctype, QString fileName)
 			     "%{base%y} %{base%M} "
 			     "%{base%date: MMM dddd mm}");
   o << "Format: " << w << endl;
+  w.clear();
+  // Now testing serialization writing
+  QXmlStreamWriter xw(&w);
+  xw.setAutoFormatting(true);
 
+  // Ugly:
+  SerializationAccessor accessor(NULL);
+  accessor.addAttribute("attrs", &a);
+
+  accessor.writeXML("wrapper", &xw);
+  o << "XML output:" << endl;
+  o << w;
+  o << endl;
+
+  // Now testing serialization reading:
+  QXmlStreamReader reader(w);
+  a.clear();
+
+  while(! reader.isStartElement() && ! reader.atEnd())
+    reader.readNext();
+  accessor.readXML(&reader);
+
+  a.dumpContents();
 }
