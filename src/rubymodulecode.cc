@@ -22,8 +22,7 @@
 #include <attributehash.hh>
 
 // Ruby headers;
-#include <ruby.h>
-#include <intern.h>
+#include <ruby-utils.hh>
 
 SerializationAccessor * RubyModuleCode::serializationAccessor()
 {
@@ -73,33 +72,6 @@ QString getPDFString(QString file)
   return p.readAllStandardOutput();
 }
 
-/// Wah, these are ugly wrappers; I'll have to come up with something a
-/// little more decent later on...
-///
-/// \todo it should be possible to write a few template classes that
-/// handle precisely a call to a function, passing around the
-/// arguments (try doing that with member functions, for fun !)
-typedef struct {
-  AttributeHash * hash;
-  VALUE v;
-} setfromruby_wrapper;
-
-
-VALUE tempo_wrapper(VALUE v)
-{
-  setfromruby_wrapper * w = (setfromruby_wrapper *) v;
-  w->hash->setFromRuby(w->v);
-  return Qnil;
-}
-
-VALUE rescue(VALUE a, VALUE b)
-{
-  printf("Un joli biniou !!\n");
-  rb_p(a);
-  rb_p(b);
-  return Qnil;
-}
-
 /// Idea: for return value, get a Ruby hash, check the type of each
 /// element and store it as a date in the dates hash or as a String in
 /// the string hash.
@@ -123,12 +95,11 @@ void RubyModuleCode::parseDocumentMetaData(QString doctype, QString fileName)
   rb_p(result);
   // Now converting to AttributeHash and having fun
   AttributeHash a;
-  setfromruby_wrapper s;
-  s.hash = &a;
-  s.v = result;
-  // a.setFromRuby(result);
-  rb_rescue((VALUE (*)(...))tempo_wrapper, (VALUE) &s, 
-	    (VALUE (*)(...)) rescue, Qnil);
+  RescueMemberWrapper1Arg<AttributeHash, VALUE>::
+    wrapCall(&a, &AttributeHash::setFromRuby, result);
+  // // a.setFromRuby(result);
+  // rb_rescue((VALUE (*)(...))tempo_wrapper, (VALUE) &s, 
+  // 	    (VALUE (*)(...)) rescue, Qnil);
   a.dumpContents();
   rb_p(a.toRuby());
 

@@ -65,7 +65,9 @@ public:
   ///
   /// \warning This function assumes that Ruby has been initialized
   /// before !
-  void setFromRuby(VALUE hash, bool clear = true);
+  void setFromRuby(VALUE hash, bool clear);
+
+  void setFromRuby(VALUE hash) { setFromRuby(hash, true);};
 
   /// Converts a QVariant to Ruby VALUE, keeping information
   ///
