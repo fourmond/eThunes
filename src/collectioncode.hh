@@ -23,6 +23,7 @@
 
 #include <serializable.hh>
 #include <document.hh>
+#include <attributehash.hh>
 
 /// This class provides means to embed code to do at least some of the
 /// following things:
@@ -51,12 +52,30 @@
 class CollectionCode : public Serializable {
 public:
   
-  /// Fill in the meta-data for the given document, based on file
-  /// data.
-  virtual void parseDocumentMetaData(Document * doc) { ; };
+  /// Parses the given document and returns the attributes found as a
+  /// AttributeHash (or thrown an exception ?).
+  ///
+  /// The contents are given in the form of an AttributeHash, with
+  /// text containing the main text (for instance).
+  ///
+  /// This function needs to be reimplemented.
+  virtual AttributeHash parseDocumentMetaData(const QString & doctype,
+					      const AttributeHash & contents) = 0;
+
+  /// Extracts the meta-data from a file
+  AttributeHash parseFileMetaData(const QString & doctype,
+				  const QString & fileName);
 
 protected:
   // Here, functions to transform a PDF file into a QString ?
+
+  /// Reads the PDF into an AttributeHash, filling in the contents of
+  /// the text, and some meta-data.
+  ///
+  /// \todo Handle meta-data such as file date/time, file name ?, and
+  /// specific PDF information. The former should be done via a common
+  /// function (let's think of other kinds of files).
+  static AttributeHash readPDF(QString file);
 };
 
 #endif

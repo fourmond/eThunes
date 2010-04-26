@@ -19,8 +19,6 @@
 #include <headers.hh>
 #include <rubymodulecode.hh>
 
-#include <attributehash.hh>
-
 // Ruby headers;
 #include <ruby-utils.hh>
 
@@ -61,67 +59,26 @@ QString getPDFString(QString file)
   QProcess p;
   p.start("pdftotext", args);
   p.waitForFinished();
-  /// \todo This calls for 
+  /// \tdexception This calls for proper error handling
   return p.readAllStandardOutput();
 }
 
-/// Idea: for return value, get a Ruby hash, check the type of each
-/// element and store it as a date in the dates hash or as a String in
-/// the string hash.
-///
-/// \todo Write a bunch of Ruby code (modules, possibly as a resource
-/// ?) to parse french dates (using proper regular expressions !) and
-/// eval it after Ruby starts.
-void RubyModuleCode::parseDocumentMetaData(QString doctype, QString fileName)
+void RubyModuleCode::parseDocumentMetaDataInternal(const QString & doctype,
+						   const AttributeHash & contents,
+						   AttributeHash & target)
 {
-  // first, convert the file from PDF into string using QProcess and
-  // pdftotext.
-  QString str = getPDFString(fileName);
-  QTextStream o(stdout);
-  o << "Contents of file: " << fileName << endl;
-  o << str << endl;
   VALUE module = rb_eval_string((const char*)name.toLocal8Bit());
-  VALUE rbString = rb_str_new2((const char*) str.toLocal8Bit());
-  /// \todo convert - to _ in doctype !
+  VALUE hash = contents.toRuby();
   ID func = rb_intern((const char*)(QString("parse_") + doctype).toLocal8Bit());
-  VALUE result = rb_funcall(module, func, 1, rbString);
-  rb_p(result);
-  // Now converting to AttributeHash and having fun
-  AttributeHash a;
-  RescueMemberWrapper1Arg<AttributeHash, VALUE>::
-    wrapCall(&a, &AttributeHash::setFromRuby, result);
-  // // a.setFromRuby(result);
-  // rb_rescue((VALUE (*)(...))tempo_wrapper, (VALUE) &s, 
-  // 	    (VALUE (*)(...)) rescue, Qnil);
-  a.dumpContents();
-  rb_p(a.toRuby());
+  VALUE result = rb_funcall(module, func, 1, hash);
+  target.setFromRuby(result);
+}
 
-  // And now we test the format:
-  QString w = a.formatString("Bidule %{bidule} %{bidule%A} %{base} "
-			     "%{base%y} %{base%M} "
-			     "%{base%date: MMM dddd mm}");
-  o << "Format: " << w << endl;
-  w.clear();
-  // Now testing serialization writing
-  QXmlStreamWriter xw(&w);
-  xw.setAutoFormatting(true);
-
-  // Ugly:
-  SerializationAccessor accessor(NULL);
-  accessor.addAttribute("attrs", &a);
-
-  accessor.writeXML("wrapper", &xw);
-  o << "XML output:" << endl;
-  o << w;
-  o << endl;
-
-  // Now testing serialization reading:
-  QXmlStreamReader reader(w);
-  a.clear();
-
-  while(! reader.isStartElement() && ! reader.atEnd())
-    reader.readNext();
-  accessor.readXML(&reader);
-
-  a.dumpContents();
+AttributeHash RubyModuleCode::parseDocumentMetaData(const QString &doctype, 
+						    const AttributeHash & contents)
+{
+  AttributeHash retVal;
+  /// \todo Handle Ruby exceptions !!
+  parseDocumentMetaDataInternal(doctype, contents, retVal);
+  return retVal;
 }

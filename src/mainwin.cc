@@ -263,8 +263,8 @@ void MainWin::tryLoadCollectionDefinition()
 
   CollectionDefinition def;
   def.loadFromFile(file);
-  def.dumpContents();
-  def.code.loadModule();
+  // def.dumpContents();
+  def.code.loadModule(); 	// Boaf.
 
   // Now, PDF file handling...
   file = 
@@ -280,5 +280,5 @@ void MainWin::tryLoadCollectionDefinition()
 
   if(file.isEmpty())
     return;
-  def.code.parseDocumentMetaData("avis", file);  
+  def.code.parseFileMetaData("avis", file).dumpContents();  
 }

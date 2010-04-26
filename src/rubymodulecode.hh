@@ -31,10 +31,16 @@
 /// "type" is named parse_type, takes ... and returns ... (- should
 /// automatically be converted to _)
 class RubyModuleCode : public CollectionCode {
+  /// Internal function used by parseDocumentMeta, wrapped with Ruby
+  /// code exception protection.
+  void parseDocumentMetaDataInternal(const QString & doctype,
+				     const AttributeHash & contents,
+				     AttributeHash & target);
+
 public:
-  
-  /// Lower level ;-)... Bound to disappear shortly.
-  virtual void parseDocumentMetaData(QString doctype, QString fileName);
+
+  virtual AttributeHash parseDocumentMetaData(const QString & doctype,
+					      const AttributeHash & contents);
 
   virtual SerializationAccessor * serializationAccessor();
 

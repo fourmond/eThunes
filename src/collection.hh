@@ -36,6 +36,9 @@
 /// setting up a path, providing function to load a file based on its
 /// name (which would also be inside the file ? No ? Yes ?) and to
 /// enumerate all the files found.
+///
+/// \todo Add attributes to identify the author, and possibly
+/// copyright, licenses, and so on...
 class CollectionDefinition : public Serializable {
 public:
   /// The definition of the types of documents supported by this

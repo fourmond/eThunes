@@ -34,7 +34,6 @@ namespace Ruby {
   /// \todo maybe the first dummy variable should be made into something
   /// useful ?
   VALUE globalRescueFunction(VALUE dummy, VALUE exception);
-
   
   /// Makes sure Ruby is initialized properly (and, in particular,
   /// loads various useful files)
@@ -46,6 +45,14 @@ namespace Ruby {
   void loadFile(QString name);
 
 #define CALL_MEMBER_FN(object,ptrToMember) ((object).*(ptrToMember)) 
+
+  /// Maybe those guys should be inline functions ?
+#define QSTRING2VALUE(str) \
+  (rb_str_new2((const char*) (str).toLocal8Bit()));
+
+#define VALUE2QSTRING(value) \
+  QString(StringValueCStr(value));
+
 
   /// Rescue exceptions from 1-arg member functions.
   ///

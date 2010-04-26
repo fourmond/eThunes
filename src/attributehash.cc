@@ -18,19 +18,13 @@
 
 #include <headers.hh>
 // Ruby-specific stuff
-#include <intern.h>
+#include <ruby-utils.hh>
 #include <st.h>
 
 #include <attributehash.hh>
 #include <transaction.hh>
 
-
-#define QSTRING2VALUE(str) \
-  (rb_str_new2((const char*) (str).toLocal8Bit()));
-
-#define VALUE2QSTRING(value) \
-  QString(StringValueCStr(value));
-
+using namespace Ruby;
 
 const char * AttributeHash::typeNames[] = {
   "string", "number", "time", 0
@@ -73,6 +67,7 @@ QVariant AttributeHash::rubyToVariant(VALUE value)
 {
   if(RTEST(rb_obj_is_kind_of(value, rb_cTime))) {
     // we have a time value !
+    // rb_raise(rb_eRuntimeError, "biniou !!");
     QDateTime date;
     date.setTime_t(NUM2LONG(rb_funcall(value, rb_intern("to_i"), 0)));
     return date;
@@ -103,20 +98,27 @@ VALUE AttributeHash::toRuby() const
 // like the function expected is to be called thus:
 //
 // (arg is the last argument to rb_hash_foreach
-int hash_foreach_helper(VALUE key, VALUE val, void * arg)
+int AttributeHash::setFromRubyInternalHelper(VALUE key, VALUE val, void * arg)
 {
   AttributeHash * target = static_cast<AttributeHash *>(arg);
-  // VALUE kb = rb_obj_dup(key);
   QString k = VALUE2QSTRING(key);
   target->operator[](k) = AttributeHash::rubyToVariant(val);
   return ST_CONTINUE;
+}
+
+void AttributeHash::setFromRubyInternal(VALUE hash)
+{
+  rb_hash_foreach(hash, (int (*)(...))AttributeHash::
+		  setFromRubyInternalHelper, (VALUE)this);
 }
 
 void AttributeHash::setFromRuby(VALUE hash, bool clr)
 {
   if(clr)
     clear();
-  rb_hash_foreach(hash, (int (*)(...))hash_foreach_helper, (VALUE)this);
+  // Rescue for potential exceptions.
+  RescueMemberWrapper1Arg<AttributeHash, VALUE>::
+    wrapCall(this, &AttributeHash::setFromRubyInternal, hash);
 }
 
 void AttributeHash::dumpContents() const

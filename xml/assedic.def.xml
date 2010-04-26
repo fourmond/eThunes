@@ -1,22 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <collection-definition>
+  <!-- Comment -->
   <document-type name="avis">
   </document-type>
   <ruby-class-code module-name="Assedic">
     <code><![CDATA[
-# TODO: this is nice, but we need global functions for parsing time,
-# that should be defined globally.
 module Assedic
-  def self.parse_avis(str)
+  def self.parse_avis(doc)
     res = {}
-    res['bidule'] = 1023
-    res['biniou'] = "string\""
-    if str =~ /mois\s+de\s+(\S+)\s+(\d+)/
-      puts "Mois : #$1 -- annee: #$2"
+    if doc['text'] =~ /Identifiant\s*:\s*(\S+)/
+      res['identifiant'] = $1
     end
-    if str =~ /le\s+(\d+)\/(\d+)\/(\d+)\s+\S+\s+(\d+):(\d+)/
-      res['base'] = Time.local($3.to_i + 2000, $2.to_i, $1.to_i, $4.to_i, $5.to_i)
+    if doc['text'] =~ /mois\s+de\s+(\S+)\s+(\d+)/
+      res['mois'] = Time.local($2.to_i, Dates::parse_french_month($1))
     end
+    if doc['text'] =~ /le\s+(\d+)\/(\d+)\/(\d+)\s+\S+\s+(\d+):(\d+)/
+      res['enregistrement'] = Time.local($3.to_i + 2000, $2.to_i, $1.to_i, $4.to_i, $5.to_i)
+    end
+    # raise "biniou"
     return res
   end
 end

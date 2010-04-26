@@ -43,6 +43,15 @@
 /// SerializationAttribute
 class AttributeHash : public QHash<QString, QVariant>, 
 		      public SerializationAttribute {
+
+  // these two functions are for internal use.
+  
+  /// For internal use (exception wrapping);
+  void setFromRubyInternal(VALUE hash);
+
+  /// Internal static wrapper.
+  static int setFromRubyInternalHelper(VALUE key, VALUE val, void * arg);
+
 public:
 
   enum HandledType {
@@ -119,7 +128,4 @@ public:
   virtual bool shouldBeDeleted() { return false;};
 
 };
-
-/// and the class to serialize it ?
-
 #endif

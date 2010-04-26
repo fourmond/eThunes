@@ -36,6 +36,7 @@ void Ruby::ensureInitRuby()
 {
   if(! rubyInitialized) {
     ruby_init();
+    /// \todo Do not hardwire the list, but rather acquire it somehow
     loadFile("dates");
   }
   rubyInitialized = true;
@@ -43,6 +44,7 @@ void Ruby::ensureInitRuby()
 
 void Ruby::loadFile(QString str)
 {
+  /// \tdexception Fire away when file is missing (or log)
   if(! str.endsWith(".rb"))	// require-like handling
     str += ".rb";
   QFile code("ruby:" + str);
