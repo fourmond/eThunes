@@ -10,7 +10,7 @@ module Assedic
   def self.parse_avis(str)
     res = {}
     res['bidule'] = 1023
-    res['biniou'] = "string"
+    res['biniou'] = "string\""
     if str =~ /mois\s+de\s+(\S+)\s+(\d+)/
       puts "Mois : #$1 -- annee: #$2"
     end
