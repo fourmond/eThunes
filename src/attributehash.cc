@@ -125,7 +125,7 @@ void AttributeHash::dumpContents() const
   const_iterator i = constBegin();
   while (i != constEnd()) {
     o << "Key: " << i.key() << ": (type " 
-      << i.value().type() << ") " 
+      << typeNames[variantType(i.value())] << ") " 
       << i.value().toString() << endl;
     i++;
   }
@@ -138,13 +138,39 @@ void AttributeHash::writeXML(const QString& name,
   const_iterator i = constBegin();
   while (i != constEnd()) {
     writer->writeStartElement(name);
-    // writer->
+    writer->writeAttribute("name", i.key());
+    writer->writeAttribute("type", typeNames[variantType(i.value())]);
+    /// \todo maybe date should be special-cased ?
+    writer->writeAttribute("value", i.value().toString());
+    writer->writeEndElement();
+    i++;
   }
 }
 
+/// \todo Dirty trick; this function should move to
+/// SerializationAttribute as a static function ?
+void readNextToken(QXmlStreamReader * reader);
+
 void AttributeHash::readXML(QXmlStreamReader* reader)
 {
-  /// \todo !
+  // Once again, this function only reads one element; assumes to be
+  // just at the beginning of the element.
+  QXmlStreamAttributes attrs = reader->attributes();
+  QString name = attrs.value("name").toString();
+  HandledType t = namedType(attrs.value("type").toString());
+  QString value = attrs.value("value").toString();
+  readNextToken(reader);
+  switch(t) {
+  case String:
+    operator[](name) = QVariant(value);
+    return;
+  case Number:
+    operator[](name) = QVariant(value.toLongLong());
+    return;
+  case Time: 
+    operator[](name) = QDateTime::fromString(value, Qt::ISODate);
+    return;
+  }
 }
 
 QString AttributeHash::formatString(const QString & format)
@@ -213,6 +239,6 @@ AttributeHash::HandledType AttributeHash::namedType(const QString & name)
     i++;
     ptr++;
   }
-  // Issue a warning / throw an exception ?
+  ///tcexception Issue a warning / throw an exception when name unknown ?
   return String; 		// By default
 }
