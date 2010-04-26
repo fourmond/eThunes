@@ -19,12 +19,33 @@
 #include <headers.hh>
 #include <ruby-utils.hh>
 
-VALUE globalRescueFunction(VALUE /*dummy*/, VALUE exception)
+VALUE Ruby::globalRescueFunction(VALUE /*dummy*/, VALUE exception)
 {
-  /// \todo eventually, this should throw an exception
+  /// \tdexception eventually, this should throw an exception
   fprintf(stderr, "A Ruby exception occured:\n");
-  //  rb_p(a);
   rb_p(exception);
   return Qnil;
+}
 
+/// \todo Somehow, I don't seem to get it as a namespace
+/// variable. Funny. 
+static bool rubyInitialized = false;
+
+
+void Ruby::ensureInitRuby()
+{
+  if(! rubyInitialized) {
+    ruby_init();
+    loadFile("dates");
+  }
+  rubyInitialized = true;
+}
+
+void Ruby::loadFile(QString str)
+{
+  if(! str.endsWith(".rb"))	// require-like handling
+    str += ".rb";
+  QFile code("ruby:" + str);
+  code.open(QIODevice::ReadOnly);
+  rb_eval_string((const char*) code.readAll());
 }

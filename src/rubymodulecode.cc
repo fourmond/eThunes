@@ -24,6 +24,8 @@
 // Ruby headers;
 #include <ruby-utils.hh>
 
+using namespace Ruby;
+
 SerializationAccessor * RubyModuleCode::serializationAccessor()
 {
   SerializationAccessor * ac = new SerializationAccessor(this);
@@ -35,18 +37,9 @@ SerializationAccessor * RubyModuleCode::serializationAccessor()
   return ac;
 }
 
-bool RubyModuleCode::hasRubyStarted = false;
-
-void RubyModuleCode::initRuby()
-{
-  if(! hasRubyStarted)
-    ruby_init();
-  hasRubyStarted = true;
-}
-
 void RubyModuleCode::loadModule()
 {
-  initRuby();
+  Ruby::ensureInitRuby();
   if(! moduleLoaded) {
     rb_eval_string((const char*) code.toLocal8Bit());
   }

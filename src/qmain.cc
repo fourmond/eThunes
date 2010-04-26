@@ -28,7 +28,9 @@ int main(int argc, char ** argv)
 {
   QApplication main(argc, argv);
   MainWin win;
-  
+
+  // The search path for Ruby code (general-purpose modules)
+  QDir::addSearchPath("ruby", "/home/vincent/Prog/QMoney/ruby");
   main.setApplicationName("QMoney");
   win.show();
   main.exec();

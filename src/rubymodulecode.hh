@@ -50,14 +50,9 @@ public:
   void loadModule();
 
 protected:
-  /// Whether Ruby has been initialized properly
-  static bool hasRubyStarted;
 
-  /// Inits Ruby if necessary
-  void initRuby();
-
-
-  
+  /// Whether the module has been loaded into the Ruby interpreter or
+  /// not.
   bool moduleLoaded;
 };
 

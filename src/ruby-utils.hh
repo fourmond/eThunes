@@ -23,55 +23,69 @@
 
 #include <intern.h>
 
-/// A static function handling Ruby exceptions when using classes such
-/// as RescueWrapper1Arg
+/// Ruby-related functions and classes.
 ///
-/// \todo maybe the first dummy variable should be made into something
-/// useful ?
-VALUE globalRescueFunction(VALUE dummy, VALUE exception);
+/// This namespace contains a whole bunch of Ruby-related functions and 
+namespace Ruby {
+
+  /// A static function handling Ruby exceptions when using classes such
+  /// as RescueWrapper1Arg
+  ///
+  /// \todo maybe the first dummy variable should be made into something
+  /// useful ?
+  VALUE globalRescueFunction(VALUE dummy, VALUE exception);
+
+  
+  /// Makes sure Ruby is initialized properly (and, in particular,
+  /// loads various useful files)
+  void ensureInitRuby();
+
+  /// Loads the given file, from within the ruby prefix (in a
+  /// require-like fashion somehow, but not relying on Ruby's
+  /// path). This assumes Ruby has been started already.
+  void loadFile(QString name);
+
+#define CALL_MEMBER_FN(object,ptrToMember) ((object).*(ptrToMember)) 
+
+  /// Rescue exceptions from 1-arg member functions.
+  ///
+  /// This class can be used to run member functions taking one argument
+  /// within a rescue block (in particular to avoid segfaults during the
+  /// calls if an exception occurs)
+  template <class C, typename Arg1> class RescueMemberWrapper1Arg {
+    C * targetClass;
+
+    typedef void (C::*MemberFunction)(Arg1 arg);
+    MemberFunction targetMember;
+
+    Arg1 arg;
+
+    static VALUE wrapper(VALUE v) {
+      RescueMemberWrapper1Arg * arg = (RescueMemberWrapper1Arg *) v;
+      CALL_MEMBER_FN(*(arg->targetClass), arg->targetMember)(arg->arg);
+      return Qnil;
+    };
 
 
-/// Rescue exceptions from 1-arg member functions.
-///
-/// This class can be used to run member functions taking one argument
-/// within a rescue block (in particular to avoid segfaults during the
-/// calls if an exception occurs)
-template <class C, typename Arg1> class RescueMemberWrapper1Arg {
-  C * targetClass;
+  public:
+    RescueMemberWrapper1Arg(C* tc, MemberFunction tm, Arg1 a) :
+      targetClass(tc), targetMember(tm), arg(a) {;};
 
-  typedef void (C::*MemberFunction)(Arg1 arg);
-  MemberFunction targetMember;
+    /// Runs the code wrapping it into a rb_rescue code
+    void run() {
+      rb_rescue((VALUE (*)(...)) &wrapper, (VALUE) this, 
+		(VALUE (*)(...)) &globalRescueFunction, Qnil);
+    };
 
-  Arg1 arg;
-
-  static VALUE wrapper(VALUE v) {
-    RescueMemberWrapper1Arg * arg = (RescueMemberWrapper1Arg *) v;
-    C* t = arg->targetClass; 	// Somehow I don't manage to get
-				// through
-    MemberFunction tm = arg->targetMember;
-    ((*t).*(tm))(arg->arg);
-    return Qnil;
-  };
-
-
-public:
-  RescueMemberWrapper1Arg(C* tc, MemberFunction tm, Arg1 a) :
-    targetClass(tc), targetMember(tm), arg(a) {;};
-
-  /// Runs the code wrapping it into a rb_rescue code
-  void run() {
-    rb_rescue((VALUE (*)(...)) &wrapper, (VALUE) this, 
-	      (VALUE (*)(...)) &globalRescueFunction, Qnil);
-  };
-
-  /// Runs a member call within
-  static void wrapCall(C* tc, MemberFunction tm, Arg1 a) {
-    RescueMemberWrapper1Arg c(tc,tm,a);
-    c.run();
-  };
+    /// Runs a member call within
+    static void wrapCall(C* tc, MemberFunction tm, Arg1 a) {
+      RescueMemberWrapper1Arg c(tc,tm,a);
+      c.run();
+    };
   
     
-};
+  };
 
+};
 
 #endif
