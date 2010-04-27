@@ -24,6 +24,7 @@
 #include <navigationpage.hh>
 
 #include <walletdw.hh>
+#include <collectionsdw.hh>
 
 /// This NavigationPage displays a Cabinet.
 class CabinetPage : public NavigationPage {
@@ -47,6 +48,8 @@ public:
   /// The widget displaying the Wallet. \todo maybe this shouldn't be
   /// a public attribute ?
   WalletDW * walletDW;
+
+  CollectionsDW * collectionsDW;
 
   const QString & currentFileName() const {
     return lastFilename;

@@ -24,9 +24,14 @@ CabinetPage::CabinetPage(Cabinet * c) : cabinet(c)
   QVBoxLayout * layout = new QVBoxLayout(this);
   summary = new QLabel();
   layout->addWidget(summary);
+
   QHBoxLayout * hb = new QHBoxLayout();
   walletDW = new WalletDW(&cabinet->wallet);
   hb->addWidget(walletDW);
+
+  collectionsDW = new CollectionsDW(cabinet);
+  hb->addWidget(collectionsDW);
+
   layout->addLayout(hb);
   updateContents();
   connect(this, SIGNAL(filenameChanged(const QString&)), 
