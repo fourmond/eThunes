@@ -144,6 +144,9 @@ public:
   /// \todo Returns the list of documents with the named type.
   QList<Document *> typeDocuments(const QString & name);
 
+  /// A user-set name, for display purposes only
+  QString name;
+
   /// Imports a file as a document of the given type, and returns a
   /// pointer to the newly-created document (whose ownership stays
   /// within the Collection).
