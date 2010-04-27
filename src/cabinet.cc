@@ -54,6 +54,7 @@ void Cabinet::saveToFile(QString fileName)
 void Cabinet::loadFromFile(QString fileName)
 {
   QFile file(fileName);
+  QTextStream o(stdout);
   file.open(QIODevice::ReadOnly);
   QXmlStreamReader w(&file);
   while(! w.isStartElement() && ! w.atEnd())

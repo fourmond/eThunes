@@ -22,8 +22,8 @@
 
 #include <actions.hh>
 
-#include <wallet.hh>
-#include <walletdw.hh>
+#include <cabinet.hh>
+#include <cabinetpage.hh>
 
 #include <navigationwidget.hh>
 
@@ -48,14 +48,14 @@ class MainWin : public QMainWindow {
   /// names.
   ActionsHash actions;
 
-  /// The Wallet
-  Wallet * wallet;
-
-  /// The widget to view its contents
-  WalletDW * walletDW;
+  /// The Cabinet
+  Cabinet * cabinet;
 
   /// The navigation widget
   NavigationWidget * navigationWidget;
+
+  /// The dashboard
+  CabinetPage * dashboard;
   
 public:
   MainWin();

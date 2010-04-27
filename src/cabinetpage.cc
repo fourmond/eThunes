@@ -22,12 +22,15 @@
 CabinetPage::CabinetPage(Cabinet * c) : cabinet(c)
 {
   QVBoxLayout * layout = new QVBoxLayout(this);
-  topLabel = new QLabel(tr("<b>Cabinet</b>"));
-  layout->addWidget(topLabel);
+  summary = new QLabel();
+  layout->addWidget(summary);
   QHBoxLayout * hb = new QHBoxLayout();
   walletDW = new WalletDW(&cabinet->wallet);
   hb->addWidget(walletDW);
   layout->addLayout(hb);
+  updateContents();
+  connect(this, SIGNAL(filenameChanged(const QString&)), 
+	  SLOT(updateContents()));
 }
 
 
@@ -42,5 +45,47 @@ QString CabinetPage::pageTitle()
 
 void CabinetPage::updateContents()
 {
-  ;
+  summary->setText(tr("<b>Cabinet : </b>%1<p>").
+		   arg(QFileInfo(lastFilename).fileName()));
+}
+
+void CabinetPage::save()
+{
+  if(lastFilename.isEmpty())
+    saveAs();
+  else
+    cabinet->saveToFile(lastFilename);
+}
+
+void CabinetPage::saveAs()
+{
+  QString str = 
+    QFileDialog::getSaveFileName(this, 
+				 tr("Save cabinet as"),
+				 QString(),
+				 tr("XML cabinet files (*.xml)"));
+  if(str.isEmpty())
+    return;
+  lastFilename = str;
+  emit(filenameChanged(lastFilename));
+  save();
+}
+
+void CabinetPage::load()
+{
+  QString file = 
+    QFileDialog::getOpenFileName(this, 
+				 tr("Select cabinet to load"),
+				 QString(),
+				 tr("XML cabinet files (*.xml)"));
+  if(file.isEmpty())
+    return;
+  load(file);
+}
+
+void CabinetPage::load(const QString & file)
+{
+  cabinet->loadFromFile(file);
+  lastFilename = file;
+  emit(filenameChanged(file));
 }

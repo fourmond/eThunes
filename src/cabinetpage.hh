@@ -37,13 +37,20 @@ protected:
   Cabinet * cabinet;
 
 
-  QLabel * topLabel;
+  QLabel * summary;
+
+  /// The last filename used for saving
+  QString lastFilename;
 
 public:
 
   /// The widget displaying the Wallet. \todo maybe this shouldn't be
   /// a public attribute ?
   WalletDW * walletDW;
+
+  const QString & currentFileName() const {
+    return lastFilename;
+  }
 
   
   CabinetPage(Cabinet * c);
@@ -53,10 +60,28 @@ public:
   
   virtual ~CabinetPage();
 
+signals:
+
+  /// Emitted whenever the document name is changed.
+  void filenameChanged(const QString & filename);
+
 public slots:
 
   /// Updates the page; useless for now ?
   void updateContents();
+
+  /// Saves the Wallet.
+  void save();
+
+  /// Saves the Wallet into a new file.
+  void saveAs();
+
+  /// Prompts to load a file
+  void load();
+
+  /// Loads a file
+  void load(const QString & file);
+
 };
 
 #endif

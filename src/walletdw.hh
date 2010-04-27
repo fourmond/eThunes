@@ -33,21 +33,12 @@ class WalletDW : public DashboardWidget {
   /// The QLabel object displaying the rich text.
   QLabel * summary;
 
-  /// The last filename used for saving
-  QString lastFilename;
-
 public:
   WalletDW(Wallet * w);
   virtual ~WalletDW();
 
-  const QString & currentFileName() const {
-    return lastFilename;
-  }
 
 signals:
-
-  /// Emitted whenever the document name is changed.
-  void filenameChanged(const QString & filename);
 
 public slots:
   /// Updates the summary; should be called whenever the status of the
@@ -60,18 +51,6 @@ public slots:
 
   /// Called internally when a link is clicked
   void showURL(const QString & link);
-
-  /// Saves the Wallet.
-  void save();
-
-  /// Saves the Wallet into a new file.
-  void saveAs();
-
-  /// Prompts to load a file
-  void load();
-
-  /// Loads a file
-  void load(const QString & file);
 
   /// Manage  filters
   void manageFilters();

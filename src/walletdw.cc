@@ -32,28 +32,8 @@ WalletDW::WalletDW(Wallet * w) : wallet(w)
   connect(summary, SIGNAL(linkActivated(const QString &)), 
 	  SLOT(showURL(const QString &)));
 
-  // A button bar at the bottom for importing/saving/loading.
-
-  // QHBoxLayout * hl = new QHBoxLayout();
-  // // The button for importing something into the wallet
-  // QPushButton * bt = new QPushButton(tr("Import OFX"));
-  // hl->addWidget(bt);
-  // connect(bt, SIGNAL(clicked()), SLOT(fileImportDialog()));
-
-  // bt = new QPushButton(tr("Save"));
-  // hl->addWidget(bt);
-  // connect(bt, SIGNAL(clicked()), SLOT(save()));
-
-  // bt = new QPushButton(tr("Load"));
-  // hl->addWidget(bt);
-  // connect(bt, SIGNAL(clicked()), SLOT(load()));
-
-  // bt = new QPushButton(tr("New category"));
-  // hl->addWidget(bt);
-  // connect(bt, SIGNAL(clicked()), SLOT(tempNewCategory()));
-
-  // layout->addLayout(hl);
-
+  connect(wallet, SIGNAL(accountsChanged()),
+	  SLOT(updateSummary()));
 
   // We introduce contents into the summary.
   updateSummary();
@@ -61,8 +41,7 @@ WalletDW::WalletDW(Wallet * w) : wallet(w)
 
 void WalletDW::updateSummary()
 {
-  QString text = QString("<strong>") + tr("Wallet") + "</strong>: " +
-    QFileInfo(lastFilename).fileName() + "\n<p>";
+  QString text = QString("<strong>") + tr("Wallet") + "</strong>\n<p>";
   QString cellStyle = " style='padding-right: 20px'";
   int totalBalance = 0; /// \todo Maybe this should go in Wallet ?
 
@@ -131,49 +110,6 @@ void WalletDW::showURL(const QString & link)
   if(page)
     NavigationWidget::gotoPage(page);
 }
-
-void WalletDW::save()
-{
-  if(lastFilename.isEmpty())
-    saveAs();
-  else
-    wallet->saveToFile(lastFilename);
-}
-
-void WalletDW::saveAs()
-{
-  QString str = 
-    QFileDialog::getSaveFileName(this, 
-				 tr("Save wallet as"),
-				 QString(),
-				 tr("XML wallet files (*.xml)"));
-  if(str.isEmpty())
-    return;
-  lastFilename = str;
-  emit(filenameChanged(lastFilename));
-  save();
-}
-
-void WalletDW::load()
-{
-  QString file = 
-    QFileDialog::getOpenFileName(this, 
-				 tr("Select wallet to load"),
-				 QString(),
-				 tr("XML wallet files (*.xml)"));
-  if(file.isEmpty())
-    return;
-  load(file);
-}
-
-void WalletDW::load(const QString & file)
-{
-  wallet->loadFromFile(file);
-  lastFilename = file;
-  emit(filenameChanged(file));
-  updateSummary();
-}
-		       
 
 void WalletDW::manageFilters()
 {

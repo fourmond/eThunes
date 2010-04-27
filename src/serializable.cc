@@ -208,7 +208,6 @@ void SerializationAccessor::readXML(QXmlStreamReader * reader)
   // Now, we read the inner part
   while(!reader->atEnd()) {
     readNextToken(reader);
-
     if(reader->isEndElement()) {
       if(target)
 	target->finishedSerializationRead();

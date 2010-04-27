@@ -73,9 +73,8 @@
 
 MainWin::MainWin()
 {
-  /// \todo here change !
-  wallet = new Wallet();
-  connect(wallet, SIGNAL(dirtyChanged(bool)), SLOT(dirtyChanged(bool)));
+  cabinet = new Cabinet();
+  connect(cabinet, SIGNAL(dirtyChanged(bool)), SLOT(dirtyChanged(bool)));
   fileNameChanged(QString());
   
   setupFrame();
@@ -89,36 +88,21 @@ MainWin::~MainWin()
 {
   // We save the settings
   saveSettings();
-  if(wallet)
-    delete wallet;
+  if(cabinet)
+    delete cabinet;
 }
 
 void MainWin::setupFrame()
 {
   // We want a status bar anyway...
   statusBar();
-  // OFXImport import = OFXImport::importFromFile("test.ofx");
-  // account = import.accounts[0];
-  // account.importTransactions(import.transactions);
-
-  // // And now, small fun:
-  // QTreeView * view = new QTreeView(this);
-  // setCentralWidget(view);
-
-  // AccountModel * model = 
-  //   new AccountModel(account.transactions);
-  // view->setModel(model);
-  // view->setRootIndex(model->index(0,0));
-
-  walletDW = new WalletDW(wallet);
-  connect(walletDW, SIGNAL(filenameChanged(const QString &)),
-	  SLOT(fileNameChanged(const QString &)));
-
 
   navigationWidget = new NavigationWidget();
-  /// \todo eventually navigationWidget should only see NavigationPage
-  /// objects.
-  navigationWidget->addTab(walletDW, tr("Dashboard"));
+  dashboard = new CabinetPage(cabinet);
+  navigationWidget->addPage(dashboard);
+
+  connect(dashboard, SIGNAL(filenameChanged(const QString &)),
+  	  SLOT(fileNameChanged(const QString &)));
 
   setCentralWidget(navigationWidget);
 }
@@ -127,32 +111,34 @@ void MainWin::setupActions()
 {
   // Quitting...
   actions.addAction(this, "quit", tr("&Quit"),
-		    this, SLOT(tryQuit()),
+		    this, SLOT(tryQuit()), /// \todo replace by close
+					   /// and reimplement the
+					   /// handler for closing
 		    QKeySequence(tr("Ctrl+Q")),
 		    tr("Exit from QMoney"));
 
   actions.addAction(this, "save", tr("&Save"),
-		    walletDW, SLOT(save()),
+		    dashboard, SLOT(save()),
 		    QKeySequence(tr("Ctrl+S")),
 		    tr("Saves the wallet"));
 
   actions.addAction(this, "load", tr("&Load"),
-		    walletDW, SLOT(load()),
+		    dashboard, SLOT(load()),
 		    QKeySequence(tr("Ctrl+L")),
 		    tr("Loads a new wallet"));
 
   actions.addAction(this, "save as", tr("Save &As"),
-		    walletDW, SLOT(saveAs()),
+		    dashboard, SLOT(saveAs()),
 		    QKeySequence(),
 		    tr("Saves the wallet under a new name"));
 
   actions.addAction(this, "import", tr("&Import transactions"),
-		    walletDW, SLOT(fileImportDialog()),
+		    dashboard->walletDW, SLOT(fileImportDialog()),
 		    QKeySequence(tr("Ctrl+I")),
 		    tr("Imports transactions into the wallet"));
 
   actions.addAction(this, "manage filters", tr("&Manage filters"),
-		    walletDW, SLOT(manageFilters()),
+		    dashboard->walletDW, SLOT(manageFilters()),
 		    QKeySequence(),
 		    tr("Creates and edit filters"));
 
@@ -212,8 +198,8 @@ void MainWin::saveSettings()
 {
   ownSettings;
   settings.setValue("size", size());
-  if(! walletDW->currentFileName().isEmpty())
-    settings.setValue("lastfile", walletDW->currentFileName());
+  if(! dashboard->currentFileName().isEmpty())
+    settings.setValue("lastfile", dashboard->currentFileName());
 }
 
 
@@ -223,7 +209,7 @@ void MainWin::loadSettings()
   if(settings.contains("size"))
     resize(settings.value("size").toSize());
   if(settings.contains("lastfile"))
-    walletDW->load(settings.value("lastfile").toString());
+    dashboard->load(settings.value("lastfile").toString());
 }
 
 void MainWin::dirtyChanged(bool dirty)
