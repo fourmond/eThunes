@@ -25,6 +25,8 @@ CollectionPage::CollectionPage(Collection * c) : collection(c)
 {
   QVBoxLayout * layout = new QVBoxLayout(this);
   summary = new QLabel();
+  /// \todo this will have to change later on when we add "buttons"
+  summary->setOpenExternalLinks(true);
   layout->addWidget(summary);
 
   updateContents();
@@ -54,8 +56,13 @@ void CollectionPage::updateContents()
     dd.constBegin();
   while(i != dd.constEnd()) {
     str += QString("<h2>%1</h2><p>").arg(i.key()->definitionName());
-    for(int j = 0; j < i.value().size(); j++)
-      str += i.value()[j]->displayText() + "<br>";
+    for(int j = 0; j < i.value().size(); j++) {
+      Document * doc = i.value()[j];
+      /// \todo Use PDF logo !
+      str += QString("<a href='file://%1'>").arg(doc->currentFileName) +
+	"<img src='icons:accountmodel-recent.png'/></a>" +
+	doc->displayText() + "<br>";
+    }
     i++;
   }
   

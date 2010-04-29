@@ -107,6 +107,16 @@ public:
   /// interpret from the file.
   AttributeHash attributes;
 
+  /// A recent flag, as it definitely come in useful later on.
+  int recent;
+
+  /// The name of the file attached to the Document.
+  ///
+  /// \todo I must decide whether it will be empty when ==
+  /// documentFileName() (and if documentFileName shouldn't be called
+  /// canonicalDocumentFileName).
+  QString currentFileName;
+
   virtual SerializationAccessor * serializationAccessor();
 
 };

@@ -134,6 +134,5 @@ void CollectionsDW::addDocumentsDialog(Collection * collection)
     collection->importFile(filters[filter], files[i]);
   if(files.size() > 0)
     updateSummary();
-
 }
 

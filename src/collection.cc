@@ -120,9 +120,13 @@ Document * Collection::importFile(const QString & doctype,
   doc.attributes = definition->code.parseFileMetaData(doctype, file);
   doc.definition = &definition->documentTypes[doctype];
   doc.collection = this;
+  /// \todo this will have to be handled correctly later on
+  doc.currentFileName = file;
   documents.push_back(doc);
   return &documents.last();
   /// \todo This function should also copy the file !!
+
+  /// \todo Handle namespace collision !
 
   /// \todo Send signalling to ensure things are updated and the dirty
   /// flag is set !
