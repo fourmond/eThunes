@@ -19,7 +19,8 @@
 #include <headers.hh>
 #include <collectionsdw.hh>
 
-// #include <navigationwidget.hh>
+#include <navigationwidget.hh>
+#include <collectionpage.hh>
 
 CollectionsDW::CollectionsDW(Cabinet * c) : cabinet(c)
 {
@@ -76,18 +77,19 @@ void CollectionsDW::showURL(const QString & link)
     Collection * coll = &cabinet->collections[l[1].toInt()];
     addDocumentsDialog(coll);
   }
-  // NavigationPage * page = NULL;
-  // if(id == "account") {
-  //   page = AccountPage::getAccountPage(&wallet->accounts[l[1].toInt()]);
-  // }
+  NavigationPage * page = NULL;
+  if(id == "collection") {
+    page = CollectionPage::getCollectionPage(&cabinet->
+					     collections[l[1].toInt()]);
+  }
   // else if(id == "categories") {
   //   page = CategoryPage::getCategoryPage(wallet);
   // }
   // else if(id == "filters") {
   //   manageFilters(); /// \todo shouldn't this be a page too ?
   // }
-  // if(page)
-  //   NavigationWidget::gotoPage(page);
+  if(page)
+    NavigationWidget::gotoPage(page);
 }
 
 

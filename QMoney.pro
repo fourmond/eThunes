@@ -30,7 +30,8 @@ SOURCES += src/qmain.cc src/account.cc src/mainwin.cc src/actions.cc \
 	src/rubymodulecode.cc src/transactionlistdialog.cc \
 	src/attributehash.cc src/ruby-utils.cc \
 	src/collectioncode.cc src/cabinet.cc \
-	src/cabinetpage.cc src/collectionsdw.cc
+	src/cabinetpage.cc src/collectionsdw.cc \
+	src/collectionpage.cc
 
 HEADERS += src/account.hh src/mainwin.hh src/actions.hh \
 	src/ofximport.hh src/accountmodel.hh \
@@ -45,4 +46,5 @@ HEADERS += src/account.hh src/mainwin.hh src/actions.hh \
 	src/rubymodulecode.hh src/transactionlistdialog.hh \
 	src/attributehash.hh src/ruby-utils.hh \
 	src/collectioncode.hh src/cabinet.hh \
-	src/cabinetpage.hh src/collectionsdw.hh
+	src/cabinetpage.hh src/collectionsdw.hh \
+	src/collectionpage.hh
