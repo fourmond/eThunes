@@ -132,3 +132,12 @@ Document * Collection::importFile(const QString & doctype,
   /// flag is set !
 }
 
+QHash<DocumentDefinition *, QList<Document *> > Collection::typeDocuments()
+{
+  QHash<DocumentDefinition *, QList<Document *> > dd;
+  for(int i = 0; i < documents.size(); i++) {
+    Document * doc = &documents[i];
+    dd[doc->definition] << doc;
+  }
+  return dd;
+}

@@ -144,8 +144,9 @@ public:
   /// All the documents, regardless of their type.
   QList<Document> documents;
 
-  /// \todo Returns the list of documents with the named type.
-  QList<Document *> typeDocuments(const QString & name);
+  /// Returns the list of Document objects corresponding to each
+  /// DocumentDefinition present in this Collection.
+  QHash<DocumentDefinition *, QList<Document *> > typeDocuments();
 
   /// A user-set name, for display purposes only
   QString name;

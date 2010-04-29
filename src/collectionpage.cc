@@ -44,14 +44,15 @@ QString CollectionPage::pageTitle()
 
 void CollectionPage::updateContents()
 {
+  /// \todo Try out displaying in several columns, though that will be
+  /// fun to tune
+  ///
+  /// \todo Alternatively, I could setup document models of some kind,
+  /// though I like the Label approach.
   QString str = tr("<b>Collection : </b>%1<p>").
     arg(collection->name);
-  QHash<DocumentDefinition *, QList<Document *> > dd;
-  for(int i = 0; i < collection->documents.size(); i++) {
-    Document * doc = &collection->documents[i];
-    /// \todo have displayText const
-    dd[doc->definition] << doc;
-  }
+  QHash<DocumentDefinition *, QList<Document *> > dd = 
+    collection->typeDocuments();
   QHash<DocumentDefinition * , QList<Document *> >::const_iterator i = 
     dd.constBegin();
   while(i != dd.constEnd()) {
@@ -59,6 +60,7 @@ void CollectionPage::updateContents()
     for(int j = 0; j < i.value().size(); j++) {
       Document * doc = i.value()[j];
       /// \todo Use PDF logo !
+      /// \todo have displayText const
       str += QString("<a href='file://%1'>").arg(doc->currentFileName) +
 	"<img src='icons:accountmodel-recent.png'/></a>" +
 	doc->displayText() + "<br>";
