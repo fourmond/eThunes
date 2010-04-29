@@ -115,3 +115,12 @@ TransactionPtrList Account::checks()
   qSort(t.begin(), t.end(), Transaction::compareCheckNumbers);
   return t;
 }
+
+TransactionPtrList Account::recentTransactions()
+{
+  TransactionPtrList t;
+  for(int i = 0; i < transactions.size(); i++)
+    if(transactions[i].recent)
+      t << &transactions[i];
+  return t;
+}

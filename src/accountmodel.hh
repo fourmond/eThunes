@@ -60,12 +60,19 @@ protected:
 
   /// returns transaction at the given index.
   Transaction * indexedTransaction(int idx) const;
+
+  /// Static cache for icons
+  static QHash<QString, QIcon> statusIcons;
+
+  /// Returns a small icon (16x16) representing a given status
+  static const QIcon & statusIcon(const QString & status);
   
 public:
   AccountModel(TransactionList * transactions);
   AccountModel(TransactionPtrList * transactions);
 
   enum {
+    RecentColumn,		/// Whether the transaction is new or not ?
     DateColumn,
     AmountColumn,
     CategoryColumn,

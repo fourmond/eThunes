@@ -21,6 +21,19 @@
 #include <accountmodel.hh>
 #include <wallet.hh>
 
+QHash<QString, QIcon> AccountModel::statusIcons;
+
+const QIcon & AccountModel::statusIcon(const QString & status)
+{
+  if(! statusIcons.contains(status)) {
+    if(QFile::exists("icons:accountmodel-" + status + ".png")) 
+      statusIcons[status] = QIcon("icons:accountmodel-" + status + ".png");
+    else
+      statusIcons[status] = QIcon(QPixmap(16,16));
+  }
+  return statusIcons[status];
+}
+
 AccountModel::AccountModel(TransactionList * t) :
   transactions(t), transactionsPtr(NULL)
 {
@@ -155,6 +168,15 @@ QVariant AccountModel::data(const QModelIndex& index, int role) const
       return QVariant();
     }
   }
+  if(role == Qt::DecorationRole) {
+    if(index.column() == RecentColumn) {
+      if(t->recent)
+	return statusIcon("recent");
+      else
+	return statusIcon("default");
+    }
+    return QVariant();
+  }
   if(role == Qt::TextAlignmentRole) {
     switch(index.column()) {
     case AmountColumn:
@@ -164,7 +186,7 @@ QVariant AccountModel::data(const QModelIndex& index, int role) const
       return QVariant();
     }
   }
-  if(role == Qt::FontRole && index.column() == BalanceColumn) {
+  if(role == Qt::FontRole && (index.column() == BalanceColumn || t->recent)) {
     QFont font;
     font.setBold(true);
     return font;

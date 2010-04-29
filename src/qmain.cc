@@ -31,6 +31,7 @@ int main(int argc, char ** argv)
 
   // The search path for Ruby code (general-purpose modules)
   QDir::addSearchPath("ruby", "/home/vincent/Prog/QMoney/ruby");
+  QDir::addSearchPath("icons", "/home/vincent/Prog/QMoney/data");
   main.setApplicationName("QMoney");
   win.show();
   main.exec();

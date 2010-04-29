@@ -130,6 +130,9 @@ public:
 
   /// Returns a list of checks (for which checkNumber is not empty).
   TransactionPtrList checks();
+
+  /// Returns the list of recent transactions.
+  TransactionPtrList recentTransactions(); 
 };
 
 #endif
