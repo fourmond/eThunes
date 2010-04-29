@@ -46,7 +46,7 @@ void WalletDW::updateSummary()
   int totalBalance = 0; /// \todo Maybe this should go in Wallet ?
 
   text += "<a href='categories'>" + 
-    tr("%1 categories").arg(wallet->categories.categoryCount()) + "</a><p>\n";
+    tr("%1 categories").arg(wallet->categories.categoryCount()) + "</a>\n";
 
   text += "<a href='filters'>" + 
     tr("%1 filters").arg(wallet->filters.count()) + "</a><p>\n";

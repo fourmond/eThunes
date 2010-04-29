@@ -41,16 +41,18 @@ void CollectionsDW::updateSummary()
   QString text = QString("<strong>") + tr("Collections") + "</strong>\n<p>";
   QString cellStyle = " style='padding-right: 20px'";
 
+  text += "<a href='new-collection'>Add new collection</a><p>\n";
   /// \todo Maybe the facility for building up tables should end up
   /// somewhere as global utilities ?
   text += "<table>\n";
-  text += QString("<tr><th" + cellStyle +">%1</th><th>%2</th></tr>\n").
-    arg(tr("Account")).arg(tr("Balance"));
+  // text += QString("<tr><th" + cellStyle +">%1</th><th>%2</th></tr>\n").
+  //   arg(tr("Account")).arg(tr("Balance"));
   for(int i = 0; i < cabinet->collections.size(); i++) {
     Collection * c = &cabinet->collections[i];
     text += QString("<tr><td" + cellStyle +"><a href='collection:%1'>").
-      arg(i) + QString("%1</a></td><td align='right'>%2</td></tr>\n").
-      arg(c->name).arg(c->documents.size());
+      arg(i) + QString("%1</a></td><td align='right'>%2</td>"
+		       "<td><a href='add-collection:%3'>(add)</a></td></tr>\n").
+      arg(c->name).arg(c->documents.size()).arg(i);
   }
   text += "<tr></tr>";
   text += "</table>\n";
@@ -65,8 +67,15 @@ CollectionsDW::~CollectionsDW()
 
 void CollectionsDW::showURL(const QString & link)
 {
-  // QStringList l = link.split(':');
-  // QString & id = l[0];
+  QStringList l = link.split(':');
+  QString & id = l[0];
+  if(id == "new-collection") {
+    addCollectionDialog();
+  }
+  if(id == "add-collection") {
+    Collection * coll = &cabinet->collections[l[1].toInt()];
+    addDocumentsDialog(coll);
+  }
   // NavigationPage * page = NULL;
   // if(id == "account") {
   //   page = AccountPage::getAccountPage(&wallet->accounts[l[1].toInt()]);
@@ -79,5 +88,50 @@ void CollectionsDW::showURL(const QString & link)
   // }
   // if(page)
   //   NavigationWidget::gotoPage(page);
+}
+
+
+void CollectionsDW::addCollectionDialog()
+{
+  /// \todo this should be a proper dialog box, with both selections
+  /// at the same time and a decent display of the things.
+  QString type = 
+    QInputDialog::getItem(this, tr("Choose collection type"),
+			  tr("Choose collection type"),
+			  CollectionDefinition::availableDefinitions(), 0,
+			  false);
+  if(type.isEmpty())
+    return;
+  QString name =     
+    QInputDialog::getText(this, tr("Name of the new collection"),
+			  tr("Please input new collection name"));
+  if(name.isEmpty())
+    return;
+  cabinet->collections.append(Collection());
+  cabinet->collections.last().name = name;
+  cabinet->collections.last().definition = 
+    CollectionDefinition::namedDefinition(type);
+  updateSummary();
+}
+
+void CollectionsDW::addDocumentsDialog(Collection * collection)
+{
+  if(!collection)
+    return;
+  QHash<QString, QString> filters = 
+    collection->definition->documentFileFilters();
+  QString filter = filters[filters.keys()[0]];
+  QStringList files = 
+    QFileDialog::getOpenFileNames(this, 
+				  tr("Please select files to import into %1").
+				  arg(collection->name),
+				  QString(),
+				  QStringList(filters.keys()).join(";;"),
+				  &filter);
+  for(int i = 0; i < files.size(); i++)
+    collection->importFile(filters[filter], files[i]);
+  if(files.size() > 0)
+    updateSummary();
+
 }
 

@@ -86,6 +86,9 @@ public:
   /// Temporary
   void dumpContents();
 
+  /// Return a hash filter -> name, where filter is a filter suitable
+  /// for use with QFileDialog and name is a key of documentTypes.
+  QHash<QString,QString> documentFileFilters();
 
   /// Gets a named CollectionDefinition, loading it from file if
   /// necessary. Returns NULL if not found.

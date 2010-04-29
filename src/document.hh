@@ -65,6 +65,12 @@ public:
   /// Which file extensions are "valid" for the given file
   QStringList fileExtensions() const { return QStringList() << "pdf";};
 
+  QString definitionName() const {
+    if(publicName.isEmpty())
+      return name;
+    return publicName;
+  };
+
 };
 
 /// A Document is a text-like document (for now, only PDF supported ?)

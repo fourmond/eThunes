@@ -37,7 +37,6 @@ public:
   CollectionsDW(Cabinet * c);
   virtual ~CollectionsDW();
 
-
 signals:
 
 public slots:
@@ -52,8 +51,14 @@ public slots:
   /// Called internally when a link is clicked
   void showURL(const QString & link);
 
+  /// Fires up a dialog box to add a new Collection
+  void addCollectionDialog();
+
   // /// Manage  filters
   // void manageFilters();
+
+  /// Pops up a dialog box to add documents to the given Collection
+  void addDocumentsDialog(Collection * coll);
 
 };
 

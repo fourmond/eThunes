@@ -46,6 +46,7 @@ void CollectionDefinition::dumpContents()
 
 QHash<QString, CollectionDefinition *> CollectionDefinition::loadedDefinitions;
 
+/// \todo There should be a way to customize this.
 QStringList CollectionDefinition::definitionPath("/home/vincent/Prog/QMoney/xml");
 
 void CollectionDefinition::loadFromFile(const QString &name)
@@ -69,6 +70,32 @@ void CollectionDefinition::loadFromFile(const QString &name)
     }
   }
   /// \tdexception raise something here ?
+}
+
+QStringList CollectionDefinition::availableDefinitions()
+{
+  QStringList names;
+  for(int i = 0; i < definitionPath.size(); i++) {
+    QDir d(definitionPath[i]);
+    QStringList files = d.entryList(QStringList("*.def.xml"));
+    for(int j = 0; j < files.size(); j++)
+      names << files[j].replace(".def.xml", "");
+  }
+  return names;
+}
+
+
+QHash<QString, QString> CollectionDefinition::documentFileFilters()
+{
+  QHash<QString, QString> filters;
+  QHash<QString, DocumentDefinition>::const_iterator i = 
+    documentTypes.constBegin();
+  while(i != documentTypes.constEnd()) {
+    filters[QString("%1 (*.pdf)").arg(i.value().definitionName())] = 
+      i.key();
+    i++;
+  }
+  return filters;
 }
 
 CollectionDefinition * CollectionDefinition::namedDefinition(const QString & name)
@@ -96,4 +123,8 @@ Document * Collection::importFile(const QString & doctype,
   documents.push_back(doc);
   return &documents.last();
   /// \todo This function should also copy the file !!
+
+  /// \todo Send signalling to ensure things are updated and the dirty
+  /// flag is set !
 }
+
