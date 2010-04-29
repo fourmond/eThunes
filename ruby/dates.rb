@@ -28,7 +28,7 @@ module Dates
      /septembre/i,
      /octobre/i,
      /novembre/i,
-     /decembre/i
+     /d#{eacute}cembre/i
     ]
 
   # Returns the number of the french month corresponding to str.

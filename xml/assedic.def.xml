@@ -12,7 +12,7 @@ module Assedic
     if doc['text'] =~ /Identifiant\s*:\s*(\S+)/
       res['identifiant'] = $1
     end
-    if doc['text'] =~ /mois\s+de\s+(\S+)\s+(\d+)/
+    if doc['text'] =~ /mois\s+d(?:e\s|')\s*(\S+)\s+(\d+)/
       res['mois'] = Time.local($2.to_i, Dates::parse_french_month($1))
     end
     if doc['text'] =~ /le\s+(\d+)\/(\d+)\/(\d+)\s+\S+\s+(\d+):(\d+)/
