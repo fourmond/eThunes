@@ -45,6 +45,14 @@ public:
   /// Collection.
   QHash<QString, DocumentDefinition> documentTypes;
 
+  /// Returns a pointer to the named document definition
+  DocumentDefinition * documentDefinition(const QString & name) 
+  {
+    if(documentTypes.contains(name))
+      return &documentTypes[name];
+    return NULL;
+  };
+
   /// The underlying code. For now, hardwired as RubyClassCode.
   ///
   /// \todo find a way to serialize pointers to objects and use it
@@ -158,6 +166,13 @@ public:
 
 
   virtual SerializationAccessor * serializationAccessor();
+
+  /// The Collection currently being loaded.
+  static Collection * collectionBeingSerialized;
+
+  virtual void 	prepareSerializationRead();
+
+  virtual void 	finishedSerializationRead();
 };
 
 /// A group of collections, when it is convenient to group several

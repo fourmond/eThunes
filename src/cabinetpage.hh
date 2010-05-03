@@ -35,6 +35,11 @@ protected:
 
 
   /// The displayed Cabinet
+  ///
+  /// \todo: there shouldn't be a cabinet created by default, since a
+  /// file name is necessary ! Set to NULL, create on demand, and
+  /// provide a link for Cabinet creation prompting for a file name to
+  /// save into on creation.
   Cabinet * cabinet;
 
 

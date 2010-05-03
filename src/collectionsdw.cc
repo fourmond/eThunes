@@ -30,8 +30,8 @@ CollectionsDW::CollectionsDW(Cabinet * c) : cabinet(c)
   connect(summary, SIGNAL(linkActivated(const QString &)), 
 	  SLOT(showURL(const QString &)));
 
-  // connect(, SIGNAL(accountsChanged()),
-  // 	  SLOT(updateSummary()));
+  connect(cabinet, SIGNAL(collectionsPossiblyChanged()),
+  	  SLOT(updateSummary()));
 
   // We introduce contents into the summary.
   updateSummary();

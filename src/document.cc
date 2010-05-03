@@ -31,9 +31,49 @@ SerializationAccessor * DocumentDefinition::serializationAccessor()
   return ac;
 }
 
+/// A small helper class to handle the serialization of a
+/// DocumentDefinition pointer.
+class SerializeDocumentDefinitionPointer : public SerializationItem {
+  DocumentDefinition **target;
+public:
+  SerializeDocumentDefinitionPointer(DocumentDefinition **t) { target = t;};
+
+  virtual void setFromVariant(const QVariant &v) {
+    setFromString(v.toString());
+  };
+  
+  virtual void setFromString(const QString &str) {
+    /// \tdexception Probably check for NULL ?
+    *target = Collection::collectionBeingSerialized->definition->
+		documentDefinition(str);
+  };
+
+
+  virtual QString valueToString() {
+    if(*target) {
+      return (*target)->name;
+    }
+    /// \tdexception Probably this should never occur.
+    return QString();
+  };
+
+  virtual QVariant valueToVariant() {
+    return QVariant(valueToString());
+  };
+  
+};
+
+
+
 SerializationAccessor * Document::serializationAccessor()
 {
   SerializationAccessor * ac = new SerializationAccessor(this);
+  ac->addAttribute("file", 
+		   new SerializationItemScalar<QString>(&currentFileName, 
+							true));
+  ac->addAttribute("attributes", &attributes);
+  ac->addAttribute("definition", 
+		   new SerializeDocumentDefinitionPointer(&definition));
   return ac;
 }
 

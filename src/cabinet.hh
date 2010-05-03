@@ -51,6 +51,9 @@ public:
   QList<Collection> collections;
 
   /// Saves the Cabinet into the named file.
+  ///
+  /// \todo Maybe change into a saveTo/save stuff ? Since the file
+  /// name shouldn't change too much in the end.
   void saveToFile(QString filePath);
 
   /// Loads a Cabinet from the given file

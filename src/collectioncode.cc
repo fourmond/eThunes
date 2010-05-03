@@ -20,6 +20,9 @@
 #include <collectioncode.hh>
 
 
+/// \todo this function should use Poppler::Page::text and
+/// textList... It will be much much faster, and also provide
+/// rendering ?
 AttributeHash CollectionCode::readPDF(QString file)
 {
   AttributeHash retval;

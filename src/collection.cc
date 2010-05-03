@@ -105,9 +105,51 @@ CollectionDefinition * CollectionDefinition::namedDefinition(const QString & nam
   return loadedDefinitions.value(name, NULL); 
 }
 
+
+/// A small helper class to handle the serialization of a
+/// CollectionDefinition pointer.
+class SerializeCollectionDefinitionPointer : public SerializationItem {
+  CollectionDefinition **target;
+public:
+  SerializeCollectionDefinitionPointer(CollectionDefinition **t) { target = t;};
+
+  virtual void setFromVariant(const QVariant &v) {
+    setFromString(v.toString());
+  };
+  
+  virtual void setFromString(const QString &str) {
+    /// \tdexception Probably check for NULL ?
+    *target = CollectionDefinition::namedDefinition(str);
+  };
+
+
+  virtual QString valueToString() {
+    if(*target) {
+      return (*target)->name;
+    }
+    /// \tdexception Probably this should never occur.
+    return QString();
+  };
+
+  virtual QVariant valueToVariant() {
+    return QVariant(valueToString());
+  };
+  
+};
+
+
+
+
 SerializationAccessor * Collection::serializationAccessor()
 {
   SerializationAccessor * ac = new SerializationAccessor(this);
+  ac->addAttribute("definition", 
+		   new SerializeCollectionDefinitionPointer(&definition));
+  ac->addAttribute("name", 
+		   new SerializationItemScalar<QString>(&name, true));
+  // Now, we try the list stuff...
+  ac->addAttribute("document", 
+		   new SerializationQList<Document>(&documents));
   return ac;
 }
 
@@ -140,4 +182,16 @@ QHash<DocumentDefinition *, QList<Document *> > Collection::typeDocuments()
     dd[doc->definition] << doc;
   }
   return dd;
+}
+
+Collection * Collection::collectionBeingSerialized = NULL;
+
+void Collection::prepareSerializationRead()
+{
+  collectionBeingSerialized = this;
+}
+
+void Collection::finishedSerializationRead()
+{
+  collectionBeingSerialized = NULL;
 }
