@@ -37,9 +37,9 @@ SerializationAccessor * Cabinet::serializationAccessor()
   return ac;
 }
 
-void Cabinet::saveToFile(QString fileName)
+void Cabinet::saveToFile(QString name)
 {
-  QFile file(fileName);
+  QFile file(name);
   file.open(QIODevice::WriteOnly);
   QXmlStreamWriter w(&file);
   w.setAutoFormatting(true);
@@ -48,18 +48,25 @@ void Cabinet::saveToFile(QString fileName)
   writeXML("cabinet", &w);
   w.writeEndDocument();
   setDirty(false);
+  if(name != filePath) {
+    filePath = name;
+    emit(filenameChanged(filePath));
+  }
 }
 
 
-void Cabinet::loadFromFile(QString fileName)
+void Cabinet::loadFromFile(QString name)
 {
-  QFile file(fileName);
+  QFile file(name);
   QTextStream o(stdout);
   file.open(QIODevice::ReadOnly);
   QXmlStreamReader w(&file);
   while(! w.isStartElement() && ! w.atEnd())
     w.readNext();
   readXML(&w);
+  filePath = name;
+  emit(filenameChanged(filePath));
+  emit(collectionsPossiblyChanged());
   setDirty(false);
 }
 

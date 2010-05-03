@@ -34,8 +34,11 @@ CabinetPage::CabinetPage(Cabinet * c) : cabinet(c)
 
   layout->addLayout(hb);
   updateContents();
-  connect(this, SIGNAL(filenameChanged(const QString&)), 
+  connect(cabinet, SIGNAL(filenameChanged(const QString&)), 
 	  SLOT(updateContents()));
+
+  connect(cabinet, SIGNAL(filenameChanged(const QString&)), 
+	  SIGNAL(filenameChanged(const QString&)));
 }
 
 
@@ -51,15 +54,15 @@ QString CabinetPage::pageTitle()
 void CabinetPage::updateContents()
 {
   summary->setText(tr("<b>Cabinet : </b>%1<p>").
-		   arg(QFileInfo(lastFilename).fileName()));
+		   arg(cabinet->fileName()));
 }
 
 void CabinetPage::save()
 {
-  if(lastFilename.isEmpty())
+  if(currentFileName().isEmpty())
     saveAs();
   else
-    cabinet->saveToFile(lastFilename);
+    cabinet->saveToFile(currentFileName());
 }
 
 void CabinetPage::saveAs()
@@ -71,9 +74,7 @@ void CabinetPage::saveAs()
 				 tr("XML cabinet files (*.xml)"));
   if(str.isEmpty())
     return;
-  lastFilename = str;
-  emit(filenameChanged(lastFilename));
-  save();
+  cabinet->saveToFile(str);
 }
 
 void CabinetPage::load()
@@ -91,6 +92,4 @@ void CabinetPage::load()
 void CabinetPage::load(const QString & file)
 {
   cabinet->loadFromFile(file);
-  lastFilename = file;
-  emit(filenameChanged(file));
 }

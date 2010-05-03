@@ -40,9 +40,6 @@ protected:
 
   QLabel * summary;
 
-  /// The last filename used for saving
-  QString lastFilename;
-
 public:
 
   /// The widget displaying the Wallet. \todo maybe this shouldn't be
@@ -51,8 +48,8 @@ public:
 
   CollectionsDW * collectionsDW;
 
-  const QString & currentFileName() const {
-    return lastFilename;
+  QString currentFileName() const {
+    return cabinet->fullFilePath();
   }
 
   
@@ -65,8 +62,9 @@ public:
 
 signals:
 
-  /// Emitted whenever the document name is changed.
-  void filenameChanged(const QString & filename);
+  /// Emitted whenever the file name has changed.
+  void filenameChanged(const QString & filePath);
+
 
 public slots:
 

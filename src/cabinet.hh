@@ -36,6 +36,10 @@ protected:
   /// time dirty was cleared.
   bool dirty;
 
+  /// The file name
+  QString filePath;
+
+
 public:
 
   Cabinet();
@@ -47,10 +51,10 @@ public:
   QList<Collection> collections;
 
   /// Saves the Cabinet into the named file.
-  void saveToFile(QString fileName);
+  void saveToFile(QString filePath);
 
   /// Loads a Cabinet from the given file
-  void loadFromFile(QString fileName);
+  void loadFromFile(QString filePath);
 
   virtual SerializationAccessor * serializationAccessor();
 
@@ -58,9 +62,31 @@ public:
   
   virtual void finishedSerializationRead();
 
+  /// The full file name of the Cabinet.
+  QString fullFilePath() const {
+    return filePath;
+  };
+
+  /// The file name of the Cabinet
+  QString fileName() const {
+    return QFileInfo(filePath).fileName();
+  };
+
+  
+
 signals:
+
   /// Emitted when the dirty flag has changed.
   void dirtyChanged(bool dirty);
+
+  /// Emitted whenever the file name has changed.
+  ///
+  /// \todo handle changing directory !
+  void filenameChanged(const QString & filePath);
+
+  /// Emitted whenever there is a risk (or a certainty) that
+  /// collections have changed.
+  void collectionsPossiblyChanged();
 
 public slots:
   /// Sets the dirty flag
