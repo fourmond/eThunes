@@ -78,15 +78,18 @@ void Cabinet::clearContents()
   /// \todo emit signals here ?
 }
 
+Cabinet * Cabinet::cabinetBeingSerialized = NULL;
 
 
 void Cabinet::prepareSerializationRead()
 { 
   clearContents();
+  cabinetBeingSerialized = this;
 }
   
 void Cabinet::finishedSerializationRead()
 {
+  cabinetBeingSerialized = NULL;
 }
 
 

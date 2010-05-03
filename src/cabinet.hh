@@ -111,7 +111,7 @@ public slots:
 				CollectionDefinition * def);
 
   /// Creates a new Collection object and adds it to the Cabinet
-  Collection *  addNewCollection(const QString & name, const QString & type) {
+  Collection * addNewCollection(const QString & name, const QString & type) {
     return addNewCollection(name, CollectionDefinition::namedDefinition(type));
   };
 
@@ -126,6 +126,9 @@ public slots:
 public:
   /// Whether the Cabinet has pending modifications
   bool isDirty() const { return dirty; }; 
+
+  /// The Cabinet currently serialized.
+  static Cabinet * cabinetBeingSerialized;
 };
 
 #endif

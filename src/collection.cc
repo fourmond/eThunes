@@ -191,6 +191,7 @@ Collection * Collection::collectionBeingSerialized = NULL;
 void Collection::prepareSerializationRead()
 {
   collectionBeingSerialized = this;
+  cabinet = Cabinet::cabinetBeingSerialized;
 }
 
 void Collection::finishedSerializationRead()
