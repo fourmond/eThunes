@@ -25,6 +25,7 @@
 #include <document.hh>
 #include <rubymodulecode.hh>
 
+
 class Cabinet;
 
 /// This class represents the definition of a Collection object. 
@@ -135,26 +136,26 @@ public:
   CollectionDefinition * definition;
   
   /// Returns the file name format for the given Document.
-  QString documentFileNameFormat(const Document * doc) {
+  QString documentFileNameFormat(const Document * doc) const {
     return documentFileNameFormat(doc->definition);
   };
 
   /// Returns the file name format for the given DocumentDefinition.
   ///
   /// \todo Here, implement user overrides.
-  QString documentFileNameFormat(const DocumentDefinition * def) {
+  QString documentFileNameFormat(const DocumentDefinition * def) const {
     return def->fileNameFormat;
   };
 
   /// Returns the display format for the given Document.
-  QString documentDisplayFormat(const Document * doc) {
+  QString documentDisplayFormat(const Document * doc) const{
     return documentDisplayFormat(doc->definition);
   };
 
   /// Returns the display format for the given Document.
   ///
   /// \todo Here, implement user overrides.
-  QString documentDisplayFormat(const DocumentDefinition * def) {
+  QString documentDisplayFormat(const DocumentDefinition * def) const {
     return def->displayFormat;
   };
 
@@ -190,6 +191,20 @@ public:
   // signals:
   //   /// Emitted whenever the documents have changed somehow.
   //   void documentsChanged();
+protected:
+
+  /// Checks whether a document with the same file name exists or not.
+  /// \todo Possibly provide some caching, and some interaction with
+  /// other Collection objects.
+  bool fileClashes(const QString &) const;
+  
+
+  /// Checks whether a document with the same file name exists or not.
+  bool fileClashes(DocumentDefinition * def, 
+		   const AttributeHash & attrs) const {
+    return fileClashes(attrs.formatString(documentFileNameFormat(def)));
+  };
+  
 };
 
 /// A group of collections, when it is convenient to group several

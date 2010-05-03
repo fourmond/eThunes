@@ -160,6 +160,10 @@ Document * Collection::importFile(const QString & doctype,
   Document doc;
   /// \tdexception handle the exceptions raised ? (or do that in the
   /// calling functions ?)
+  AttributeHash attrs = definition->code.parseFileMetaData(doctype, file);
+  // Already have one !
+  if(fileClashes(&definition->documentTypes[doctype], attrs))
+    return NULL;
   
   doc.attributes = definition->code.parseFileMetaData(doctype, file);
   doc.definition = &definition->documentTypes[doctype];
@@ -197,4 +201,15 @@ void Collection::prepareSerializationRead()
 void Collection::finishedSerializationRead()
 {
   collectionBeingSerialized = NULL;
+}
+
+/// \todo This is very ineffective: a hash should be used eventually,
+/// either as a QString -> Document * cache or as the primary data
+/// storage.
+bool Collection::fileClashes(const QString & cn) const
+{
+  for(int i = 0; i < documents.size(); i++)
+    if(cn == documents[i].canonicalFileName())
+      return true;
+  return false;
 }

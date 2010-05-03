@@ -131,8 +131,11 @@ void CollectionsDW::addDocumentsDialog(Collection * collection)
 				  QString(),
 				  QStringList(filters.keys()).join(";;"),
 				  &filter);
-  for(int i = 0; i < files.size(); i++)
-    collection->importFile(filters[filter], files[i]);
+  QTextStream o(stderr);
+  for(int i = 0; i < files.size(); i++) 
+    if( ! collection->importFile(filters[filter], files[i]))
+      o << "Could not import file " << files[i] << endl;
+	
   if(files.size() > 0)
     updateSummary();
 }
