@@ -31,6 +31,11 @@ SerializationAccessor * DocumentDefinition::serializationAccessor()
   ac->addAttribute("filename-format",
 		   new SerializationItemScalar<QString>(&fileNameFormat));
 
+  ac->addAttribute("public-name",
+		   new SerializationItemScalar<QString>(&publicName));
+  ac->addAttribute("description",
+		   new SerializationItemScalar<QString>(&description));
+
   return ac;
 }
 
