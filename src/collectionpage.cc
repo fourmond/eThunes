@@ -65,11 +65,7 @@ void CollectionPage::updateContents()
       /// \todo have displayText const
       str += QString("<a href='file://%1'>").arg(doc->filePath()) +
 	"<img src='icons:accountmodel-recent.png'/></a>" +
-	doc->displayText() + " -- file: " +
-	doc->canonicalFileName() + 
-	" -- file path: " +
-	doc->canonicalFilePath() + 
-	"<br>";
+	doc->displayText() + "<br>";
     }
     i++;
   }
