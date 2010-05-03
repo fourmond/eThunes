@@ -44,7 +44,9 @@ namespace Ruby {
   /// path). This assumes Ruby has been started already.
   void loadFile(QString name);
 
+#ifndef CALL_MEMBER_FN
 #define CALL_MEMBER_FN(object,ptrToMember) ((object).*(ptrToMember)) 
+#endif
 
   /// Maybe those guys should be inline functions ?
 #define QSTRING2VALUE(str)				\

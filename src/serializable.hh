@@ -148,6 +148,42 @@ public:
   };
 };
 
+#ifndef CALL_MEMBER_FN
+#define CALL_MEMBER_FN(object,ptrToMember) ((object).*(ptrToMember)) 
+#endif
+
+
+/// This template class handles the serialization of a QString based
+/// on read/write accessors.
+template <class C>
+class SerializationItemAccessors : public SerializationItem {
+  typedef void (C::*Setter)(const QString &);
+  Setter setter;
+  typedef QString (C::*Getter)();
+  Getter getter;
+
+  C * targetClass;
+public:
+  SerializationItemAccessors<C>(C * t, Setter s, Getter g, bool attr = false) {
+    targetClass = t;
+    setter = s;
+    getter = g;
+    isAttribute = attr;
+  };
+
+  virtual void setFromVariant(const QVariant & v) {
+    CALL_MEMBER_FN(targetClass, setter)(v.toString());
+  };
+
+  virtual QVariant valueToVariant() {
+    return CALL_MEMBER_FN(targetClass, getter)();
+  };
+
+  virtual QVariant valueToString() {
+    return CALL_MEMBER_FN(targetClass, getter)();
+  };
+};
+
 /// This abstract class describes a list of Serializable objects.
 ///
 /// \todo To easily serialize lists of non Serializable objects, it
