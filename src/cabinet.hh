@@ -81,6 +81,7 @@ public:
   /// directory.
   QDir baseDirectory();
 
+
 signals:
 
   /// Emitted when the dirty flag has changed.
@@ -94,6 +95,9 @@ signals:
   /// Emitted whenever there is a risk (or a certainty) that
   /// collections have changed.
   void collectionsPossiblyChanged();
+
+  /// Emitted when documents have changed in the given collection
+  void documentsChanged(Collection * col);
 
 public slots:
   /// Sets the dirty flag
@@ -110,6 +114,14 @@ public slots:
   Collection *  addNewCollection(const QString & name, const QString & type) {
     return addNewCollection(name, CollectionDefinition::namedDefinition(type));
   };
+
+  /// Collection objects should call this whenever their document list
+  /// has changed. This is a kind of poor man's signal, since QList
+  /// does not like QObject.
+  void signalDocumentsChanged(Collection * col) {
+    emit(documentsChanged(col));
+  };
+
 
 public:
   /// Whether the Cabinet has pending modifications

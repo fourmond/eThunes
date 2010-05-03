@@ -28,6 +28,8 @@ CollectionPage::CollectionPage(Collection * c) : collection(c)
   /// \todo this will have to change later on when we add "buttons"
   summary->setOpenExternalLinks(true);
   layout->addWidget(summary);
+  connect(c->cabinet, SIGNAL(documentsChanged(Collection *)),
+	  SLOT(updateContents()));
 
   updateContents();
 }

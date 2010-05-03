@@ -135,17 +135,27 @@ public:
   CollectionDefinition * definition;
   
   /// Returns the file name format for the given Document.
+  QString documentFileNameFormat(const Document * doc) {
+    return documentFileNameFormat(doc->definition);
+  };
+
+  /// Returns the file name format for the given DocumentDefinition.
   ///
   /// \todo Here, implement user overrides.
-  QString documentFileNameFormat(const Document * doc) {
-    return doc->definition->fileNameFormat;
+  QString documentFileNameFormat(const DocumentDefinition * def) {
+    return def->fileNameFormat;
+  };
+
+  /// Returns the display format for the given Document.
+  QString documentDisplayFormat(const Document * doc) {
+    return documentDisplayFormat(doc->definition);
   };
 
   /// Returns the display format for the given Document.
   ///
   /// \todo Here, implement user overrides.
-  QString documentDisplayFormat(const Document * doc) {
-    return doc->definition->displayFormat;
+  QString documentDisplayFormat(const DocumentDefinition * def) {
+    return def->displayFormat;
   };
 
   /// All the documents, regardless of their type.
@@ -174,6 +184,12 @@ public:
   virtual void 	finishedSerializationRead();
 
   Collection() : cabinet(NULL), definition(NULL) {;};
+
+  // We can't use signals as the QObject copy constructor is private,
+  // which prevents it from being used inside a QList.
+  // signals:
+  //   /// Emitted whenever the documents have changed somehow.
+  //   void documentsChanged();
 };
 
 /// A group of collections, when it is convenient to group several

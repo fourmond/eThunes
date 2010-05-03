@@ -18,6 +18,7 @@
 
 #include <headers.hh>
 #include <collection.hh>
+#include <cabinet.hh>
 
 SerializationAccessor * CollectionDefinition::serializationAccessor()
 {
@@ -159,14 +160,15 @@ Document * Collection::importFile(const QString & doctype,
   Document doc;
   /// \tdexception handle the exceptions raised ? (or do that in the
   /// calling functions ?)
+  
   doc.attributes = definition->code.parseFileMetaData(doctype, file);
   doc.definition = &definition->documentTypes[doctype];
   doc.collection = this;
-  /// \todo this will have to be handled correctly later on
   doc.setFilePath(file);
   doc.bringFileIntoOwnership();
   documents.push_back(doc);
 
+  cabinet->signalDocumentsChanged(this);
   return &documents.last();
   /// \todo Handle namespace collision !
 
