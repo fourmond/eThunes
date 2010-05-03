@@ -57,7 +57,7 @@ public:
   /// It could be overridden by the user in the collection.
   QString displayFormat;
 
-  /// The format of the file for saving.
+  /// The format of the file name to be used as canonical file name.
   QString fileNameFormat;
 
   virtual SerializationAccessor * serializationAccessor();
@@ -88,17 +88,21 @@ public:
 /// is a good try !)
 ///
 /// Its behavior is to some extent handled by a DocumentDefinition.
+///
 class Document : public Serializable {
+protected:
+
+  /// The name of the file attached to the Document. This is a
+  /// canonical file path, and it is never empty. It shouldn't be set
+  /// directly, but rather through the setFilePath function.
+  QString currentFilePath;
+
 public:
   /// The definition of this Document.
   DocumentDefinition * definition;
 
   /// The Collection to which it belongs
   Collection * collection;
-
-  /// Returns the file name, relative to an appropriate base
-  /// directory.
-  QString documentFileName();
 
   /// Returns the text used to display the given document.
   QString displayText();
@@ -110,14 +114,60 @@ public:
   /// A recent flag, as it definitely come in useful later on.
   int recent;
 
-  /// The name of the file attached to the Document.
-  ///
-  /// \todo I must decide whether it will be empty when ==
-  /// documentFileName() (and if documentFileName shouldn't be called
-  /// canonicalDocumentFileName).
-  QString currentFileName;
+
+  virtual void prepareSerializationRead();
 
   virtual SerializationAccessor * serializationAccessor();
+
+  /// \name File-related functions
+  ///
+  /// @{
+
+  /// Attaches a file to the document; does not move nor copy it.
+  ///
+  /// \warning This function should not be called when a file is
+  /// already attached to this document.
+  void setFilePath(const QString & path);
+
+  /// The path of the file attached to this Document
+  QString filePath() const { return currentFilePath;} ;
+
+  /// Whether the file attached to this Document is outside
+  /// Cabinet::baseDirectory or not.
+  bool isFileExternal();
+
+  /// Returns the canonical file name, relative to
+  /// Cabinet::baseDirectory, irrespective of whether the current path
+  /// points there or not.
+  QString canonicalFileName() const;
+
+  /// Returns the absolute canonical file path.
+  QString canonicalFilePath() const;
+
+  /// Whether the file is canonical or not.
+  bool isFileCanonical();
+  
+  /// Copies the file to its target canonical path.
+  ///
+  /// \warning This function should not be called when isFileExternal
+  /// returns false !
+  void copyFileToCanonical();
+
+  /// Moves the file to its target canonical path.
+  ///
+  /// \warning This function probably should not be called when
+  /// the file is external !
+  void moveFileToCanonical();
+
+  /// Brings the file attached to the document into ownership of the
+  /// Cabinet, ie copy it to the right place if the current path is
+  /// external, or simply renames it if that isn't the case.
+  void bringFileIntoOwnership();
+
+  /// @}
+
+
+
 
 };
 

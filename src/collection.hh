@@ -25,17 +25,13 @@
 #include <document.hh>
 #include <rubymodulecode.hh>
 
+class Cabinet;
+
 /// This class represents the definition of a Collection object. 
 ///
 ///
 /// \todo There should be a global hash definition name ->
 /// CollectionDefinition, using guarded pointers (QPointer ?)
-///
-/// \todo There should be a way to load all definitions available to
-/// the program (or at least to browse them easily ?): this means
-/// setting up a path, providing function to load a file based on its
-/// name (which would also be inside the file ? No ? Yes ?) and to
-/// enumerate all the files found.
 ///
 /// \todo Add attributes to identify the author, and possibly
 /// copyright, licenses, and so on...
@@ -132,20 +128,23 @@ protected:
 class Collection : public Serializable {
 public:
 
+  /// The Cabinet this collection belongs to.
+  Cabinet * cabinet;
+
   /// The underlying definition for this collection.
   CollectionDefinition * definition;
   
   /// Returns the file name format for the given Document.
   ///
   /// \todo Here, implement user overrides.
-  QString documentFileNameFormat(Document * doc) {
+  QString documentFileNameFormat(const Document * doc) {
     return doc->definition->fileNameFormat;
   };
 
   /// Returns the display format for the given Document.
   ///
   /// \todo Here, implement user overrides.
-  QString documentDisplayFormat(Document * doc) {
+  QString documentDisplayFormat(const Document * doc) {
     return doc->definition->displayFormat;
   };
 
@@ -173,6 +172,8 @@ public:
   virtual void 	prepareSerializationRead();
 
   virtual void 	finishedSerializationRead();
+
+  Collection() : cabinet(NULL), definition(NULL) {;};
 };
 
 /// A group of collections, when it is convenient to group several

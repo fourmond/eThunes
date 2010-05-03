@@ -68,6 +68,10 @@ CollectionsDW::~CollectionsDW()
 
 void CollectionsDW::showURL(const QString & link)
 {
+  /// \todo There should be a dialog box proposing to override the
+  /// file name format for all the Collection objects. This could be
+  /// called "customize file names": it would provide a choice of
+  /// either a default value or a use-edited one.
   QStringList l = link.split(':');
   QString & id = l[0];
   if(id == "new-collection") {
@@ -109,10 +113,7 @@ void CollectionsDW::addCollectionDialog()
 			  tr("Please input new collection name"));
   if(name.isEmpty())
     return;
-  cabinet->collections.append(Collection());
-  cabinet->collections.last().name = name;
-  cabinet->collections.last().definition = 
-    CollectionDefinition::namedDefinition(type);
+  cabinet->addNewCollection(name,type);
   updateSummary();
 }
 

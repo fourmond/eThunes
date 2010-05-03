@@ -108,7 +108,7 @@ public:
   /// the documentation of formatVariant for more documentation.
   /// 
   /// \warning Keys that contain % will not be interpreted correctly !
-  QString formatString(const QString & format);
+  QString formatString(const QString & format) const;
 
   /// Formats the given variant according to the given format:
   /// 

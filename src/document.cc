@@ -19,6 +19,7 @@
 #include <headers.hh>
 #include <document.hh>
 #include <collection.hh>
+#include <cabinet.hh>
 
 SerializationAccessor * DocumentDefinition::serializationAccessor()
 {
@@ -27,6 +28,8 @@ SerializationAccessor * DocumentDefinition::serializationAccessor()
 		   new SerializationItemScalar<QString>(&name, true));
   ac->addAttribute("display-format",
 		   new SerializationItemScalar<QString>(&displayFormat));
+  ac->addAttribute("filename-format",
+		   new SerializationItemScalar<QString>(&fileNameFormat));
 
   return ac;
 }
@@ -69,7 +72,7 @@ SerializationAccessor * Document::serializationAccessor()
 {
   SerializationAccessor * ac = new SerializationAccessor(this);
   ac->addAttribute("file", 
-		   new SerializationItemScalar<QString>(&currentFileName, 
+		   new SerializationItemScalar<QString>(&currentFilePath, 
 							true));
   ac->addAttribute("attributes", &attributes);
   ac->addAttribute("definition", 
@@ -82,4 +85,84 @@ SerializationAccessor * Document::serializationAccessor()
 QString Document::displayText()
 {
   return attributes.formatString(collection->documentDisplayFormat(this));
+}
+
+
+void Document::prepareSerializationRead()
+{
+  collection = Collection::collectionBeingSerialized;
+}
+
+void Document::setFilePath(const QString & newPath)
+{
+  QFileInfo i(newPath);
+  if(! i.exists()) {
+    /// \tdexception Be unhappy about missing files.
+    fprintf(stderr, "Missing file !\n");
+    return;
+  }
+  currentFilePath = i.canonicalFilePath();
+}
+
+bool Document::isFileExternal()
+{
+  QDir basedir = collection->cabinet->baseDirectory();
+  return 
+    basedir.relativeFilePath(currentFilePath).startsWith("..");
+}
+
+QString Document::canonicalFileName() const
+{
+  return attributes.formatString(collection->documentFileNameFormat(this));
+}
+
+bool Document::isFileCanonical()
+{
+  QDir basedir = collection->cabinet->baseDirectory();
+  return 
+    basedir.relativeFilePath(currentFilePath) == canonicalFileName();  
+}
+
+QString Document::canonicalFilePath() const
+{
+  QDir basedir = collection->cabinet->baseDirectory();
+  return basedir.absoluteFilePath(canonicalFileName());
+}
+
+/// Ensures the directory of the given path exists, creating it if
+/// that isn't the case.
+///
+/// \todo Maybe this function should be turned into a util something
+static void ensureDirectoryExists(const QString & filePath)
+{
+  QFileInfo i(filePath);
+  /// \todo This won't work on windows.
+  QDir("/").mkpath(i.absolutePath());
+  /// \tdexception Check it went fine !
+}
+
+void Document::copyFileToCanonical()
+{
+  QString target = canonicalFilePath();
+  ensureDirectoryExists(target);
+  QFile::copy(currentFilePath, target); 
+  /// \tdexception Check the copy went fine
+  currentFilePath = target;
+}
+
+void Document::moveFileToCanonical()
+{
+  QString target = canonicalFilePath();
+  ensureDirectoryExists(target);
+  QFile::rename(currentFilePath, target); 
+  /// \tdexception Check the rename went fine
+  currentFilePath = target;
+}
+
+void Document::bringFileIntoOwnership()
+{
+  if(isFileExternal()) 
+    copyFileToCanonical();
+  else
+    moveFileToCanonical();
 }

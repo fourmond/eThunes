@@ -75,7 +75,11 @@ public:
     return QFileInfo(filePath).fileName();
   };
 
-  
+
+  /// The base directory for file storage. All path returned by
+  /// Document::canonicalFileName should be relative to this
+  /// directory.
+  QDir baseDirectory();
 
 signals:
 
@@ -97,6 +101,15 @@ public slots:
 
   /// Clears the contents of the Cabinet (such as before loading ;-)...
   void clearContents();
+
+  /// Creates a new Collection object and adds it to the Cabinet
+  Collection * addNewCollection(const QString & name, 
+				CollectionDefinition * def);
+
+  /// Creates a new Collection object and adds it to the Cabinet
+  Collection *  addNewCollection(const QString & name, const QString & type) {
+    return addNewCollection(name, CollectionDefinition::namedDefinition(type));
+  };
 
 public:
   /// Whether the Cabinet has pending modifications

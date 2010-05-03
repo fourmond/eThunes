@@ -171,7 +171,7 @@ void AttributeHash::readXML(QXmlStreamReader* reader)
   }
 }
 
-QString AttributeHash::formatString(const QString & format)
+QString AttributeHash::formatString(const QString & format) const
 {
   QString str;
   int idx = 0;

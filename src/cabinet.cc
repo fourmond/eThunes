@@ -98,3 +98,22 @@ void Cabinet::setDirty(bool d)
   dirty = d;
   emit(dirtyChanged(dirty));
 }
+
+QDir Cabinet::baseDirectory()
+{
+  QFileInfo f(filePath);
+  return QDir(f.canonicalPath());
+}
+
+Collection * Cabinet::addNewCollection(const QString &name, 
+				       CollectionDefinition * def)
+{
+  collections.append(Collection());
+  Collection * c = &collections.last();
+  c->name = name;
+  c->definition = def;
+  c->cabinet = this;
+  /// \tdexception Raise on NULL CollectionDefinition.
+  return c;
+}
+

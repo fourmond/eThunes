@@ -61,9 +61,13 @@ void CollectionPage::updateContents()
       Document * doc = i.value()[j];
       /// \todo Use PDF logo !
       /// \todo have displayText const
-      str += QString("<a href='file://%1'>").arg(doc->currentFileName) +
+      str += QString("<a href='file://%1'>").arg(doc->filePath()) +
 	"<img src='icons:accountmodel-recent.png'/></a>" +
-	doc->displayText() + "<br>";
+	doc->displayText() + " -- file: " +
+	doc->canonicalFileName() + 
+	" -- file path: " +
+	doc->canonicalFilePath() + 
+	"<br>";
     }
     i++;
   }

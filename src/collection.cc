@@ -163,11 +163,11 @@ Document * Collection::importFile(const QString & doctype,
   doc.definition = &definition->documentTypes[doctype];
   doc.collection = this;
   /// \todo this will have to be handled correctly later on
-  doc.currentFileName = file;
+  doc.setFilePath(file);
+  doc.bringFileIntoOwnership();
   documents.push_back(doc);
-  return &documents.last();
-  /// \todo This function should also copy the file !!
 
+  return &documents.last();
   /// \todo Handle namespace collision !
 
   /// \todo Send signalling to ensure things are updated and the dirty
