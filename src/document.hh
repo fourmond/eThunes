@@ -83,9 +83,7 @@ public:
 /// to it, and possibly a Transaction (how exactly this remains to be
 /// seen).
 ///
-/// It should have a unique ID, which would be used as an index from
-/// transactions to designate a (set of) unique Document. (file name
-/// is a good try !)
+/// It has a unique ID in the form of it canonicalFileName().
 ///
 /// Its behavior is to some extent handled by a DocumentDefinition.
 ///
@@ -96,6 +94,13 @@ protected:
   /// canonical file path, and it is never empty. It shouldn't be set
   /// directly, but rather through the setFilePath function.
   QString currentFilePath;
+
+  /// Other files that may be attached to this one. Ideally, they
+  /// would be named as the canonical file name, but with an added
+  /// number just before the extension.
+  /// 
+  /// \todo Handle them: copy, move, store their name...
+  QStringList attachedFiles;
 
 public:
   /// The definition of this Document.

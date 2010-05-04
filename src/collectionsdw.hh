@@ -23,6 +23,12 @@
 #include <dashboardwidget.hh>
 #include <cabinet.hh>
 
+/// A dashboard widget to display all Collection objects.
+///
+/// \todo it would be very good to have a filesystem-like model to
+/// display all the documents handled by a Cabinet, ordered by
+/// canonicalFileName, with links to the collection, the PDF file, and
+/// with the relevant data (in particular the display name).
 class CollectionsDW : public DashboardWidget {
 
   Q_OBJECT;
