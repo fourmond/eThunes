@@ -92,6 +92,7 @@ void Cabinet::prepareSerializationRead()
 void Cabinet::finishedSerializationRead()
 {
   cabinetBeingSerialized = NULL;
+  rebuildDocumentsHash();
 }
 
 
@@ -118,7 +119,28 @@ Collection * Cabinet::addNewCollection(const QString &name,
   c->name = name;
   c->definition = def;
   c->cabinet = this;
+  /// \todo emit something
   /// \tdexception Raise on NULL CollectionDefinition.
   return c;
 }
 
+void Cabinet::registerDocument(Document * doc, bool signal)
+{
+  QString name = doc->canonicalFileName();
+  if(namedDocument(name)) {
+    fprintf(stderr, "We have a document clash !\n");
+    /// \tdexception do something here on documents clash 
+  }
+  documentsByName[name] = doc;
+  if(signal) {
+    emit(documentsChanged(doc->collection));
+  }
+}
+
+void Cabinet::rebuildDocumentsHash()
+{
+  documentsByName.clear();
+  for(int i = 0; i < collections.size(); i++)
+    for(int j = 0; j < collections[i].documents.size(); j++)
+      registerDocument(&collections[i].documents[j], false);
+}

@@ -172,12 +172,8 @@ Document * Collection::importFile(const QString & doctype,
   doc.bringFileIntoOwnership();
   documents.push_back(doc);
 
-  cabinet->signalDocumentsChanged(this);
+  cabinet->registerDocument(&documents.last());
   return &documents.last();
-  /// \todo Handle namespace collision !
-
-  /// \todo Send signalling to ensure things are updated and the dirty
-  /// flag is set !
 }
 
 QHash<DocumentDefinition *, QList<Document *> > Collection::typeDocuments()
@@ -208,8 +204,7 @@ void Collection::finishedSerializationRead()
 /// storage.
 bool Collection::fileClashes(const QString & cn) const
 {
-  for(int i = 0; i < documents.size(); i++)
-    if(cn == documents[i].canonicalFileName())
-      return true;
+  if(cabinet->namedDocument(cn))
+    return true;
   return false;
 }

@@ -40,7 +40,24 @@ protected:
   QString filePath;
 
 
+  /// A hash that keeps a correspondance between canonicalName and the
+  /// corresponding Document. It is kept up to date by
+  /// registerDocument() and rebuildDocumentsHash
+  QHash<QString,Document *> documentsByName;
+
 public:
+
+  /// Makes sure the hash knows about the given document.
+  void registerDocument(Document * doc, bool signal = true);
+
+  /// Browse over all the collections to update the documentsByName
+  /// hash.
+  void rebuildDocumentsHash();
+
+  Document * namedDocument(const QString & name) const {
+    return documentsByName.value(name, NULL);
+  };
+
 
   Cabinet();
 
