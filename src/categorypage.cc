@@ -31,6 +31,7 @@ CategoryPage::CategoryPage(Wallet * w) : wallet(w)
   view->setRootIndex(model->index(0,0));
   // view->setRootIsDecorated(false);
   view->setContextMenuPolicy(Qt::CustomContextMenu);
+  view->setAlternatingRowColors(true);
   updateContents();
   connect(view, SIGNAL(customContextMenuRequested(const QPoint &)), 
 	  SLOT(categoriesContextMenu(const QPoint &)));
@@ -87,7 +88,7 @@ void CategoryPage::categoriesContextMenu(const QPoint & pos)
 		    SLOT(changeCurrentColor()));
     menu->addAction("Display category transactions",this, 
 		    SLOT(displayCurrentTransactions()));
-    menu->exec(view->mapToGlobal(pos));
+    menu->exec(view->viewport()->mapToGlobal(pos));
   }
 }
 

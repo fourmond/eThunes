@@ -49,6 +49,13 @@
 /// version using only closures ?, Perl/Python ?)
 ///
 /// Currently, this class is more a Java interface than anything else.
+///
+///
+/// \todo For attributing a Transaction to a document, there should be
+/// a field in the document type giving the name of a Date attribute
+/// and a tolerance (a given number of days). For looking, only the
+/// transactions within the time range date +- attribute would be
+/// considered. (ideally, just a few days for the most common case)
 class CollectionCode : public Serializable {
 public:
   

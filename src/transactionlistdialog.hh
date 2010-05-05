@@ -33,7 +33,10 @@
 /// \todo Provide a way to display read-only transactions ! (this
 /// should be done in AccountModel, probably, but here as well)
 ///
-/// \todo Optionally remove the balance ?
+/// \todo Optionally remove the balance ? 
+///
+/// \todo Activate multiple selection and provide popup menus to
+/// choose categories.
 class TransactionListDialog : public QDialog {
 protected:
   Q_OBJECT;
