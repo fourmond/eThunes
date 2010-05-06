@@ -151,3 +151,4 @@ bool Transaction::compareCheckNumbers(Transaction * a, Transaction * b)
 {
   return a->checkNumber < b->checkNumber;
 }
+

@@ -48,9 +48,6 @@
 /// used (the Ruby "class" implementation, perhaps a more secure
 /// version using only closures ?, Perl/Python ?)
 ///
-/// Currently, this class is more a Java interface than anything else.
-///
-///
 /// \todo For attributing a Transaction to a document, there should be
 /// a field in the document type giving the name of a Date attribute
 /// and a tolerance (a given number of days). For looking, only the
@@ -68,6 +65,26 @@ public:
   /// This function needs to be reimplemented.
   virtual AttributeHash parseDocumentMetaData(const QString & doctype,
 					      const AttributeHash & contents) = 0;
+
+
+  /// Computes a "likeliness" score for the given Transaction.
+  ///
+  /// A very negative score (to be tweaked later) would mean 'not
+  /// implemented' ?
+  ///
+  /// A small positive score would mean "likely"
+  ///
+  /// A high positive score would mean "for sure !" There should never
+  /// be more than one of those.
+  ///
+  /// \todo this is interesting for sure to implement in Ruby, but
+  /// there probably should be a simple implementation in C++ that
+  /// would give a high score for same amount and very close date,
+  /// with a bonus with a given string in the transaction name or
+  /// memo. Most probably the C++ implementation will be enough for
+  /// most cases.
+  virtual int scoreForTransaction(const AttributeHash & docMetaData,
+				  const AttributeHash & transaction);
 
   /// Extracts the meta-data from a file
   AttributeHash parseFileMetaData(const QString & doctype,

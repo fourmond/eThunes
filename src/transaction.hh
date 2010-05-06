@@ -23,6 +23,7 @@
 
 #include <serializable.hh>
 #include <category.hh>
+#include <attributehash.hh>
 
 
 // Necessary classes
@@ -192,6 +193,11 @@ public:
   /// Compares the checkNumber of two transactions (to use for qSort,
   /// for instance)
   static bool compareCheckNumbers(Transaction * a, Transaction * b);
+
+  /// Fills in a AttributeHash with the Transaction
+  /// information. Mostly useful for feeding the data to interpreted
+  /// scripts.
+  AttributeHash toHash();
 
 };
 

@@ -60,6 +60,20 @@ public:
   /// The format of the file name to be used as canonical file name.
   QString fileNameFormat;
 
+  /// @name Transaction-matching attributes
+  /// @{
+
+  /// The name of the attribute holding the date relevant to finding a
+  /// corresponding Transaction. In principle, the corresponding
+  /// Transaction should be on the same day or later.
+  QString relevantDate;
+
+  /// Tolerance for looking for the relevant Transaction, in number of
+  /// days.
+  int transactionDateTolerance;
+ 
+  /// @}
+
   virtual SerializationAccessor * serializationAccessor();
 
   /// Which file extensions are "valid" for the given file

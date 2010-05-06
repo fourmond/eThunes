@@ -27,6 +27,10 @@
 #include <collectionsdw.hh>
 
 /// This NavigationPage displays a Collection.
+///
+/// \todo It should be possible to reparse all the documents of a
+/// Collection (or at least of a given type) to take part of new
+/// features developed
 class CollectionPage : public NavigationPage {
 
   Q_OBJECT;
