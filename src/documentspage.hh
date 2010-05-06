@@ -1,5 +1,5 @@
 /** 
-    \file categorypage.hh
+    \file documentspage.hh
     A page displaying informations about the categories
     Copyright 2010 by Vincent Fourmond
 
@@ -17,59 +17,60 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef __CATEGORYPAGE_HH
-#define __CATEGORYPAGE_HH
+#ifndef __DOCUMENTSPAGE_HH
+#define __DOCUMENTSPAGE_HH
 
 #include <wallet.hh>
 #include <navigationpage.hh>
-#include <categorymodel.hh>
+#include <documentsmodel.hh>
+
+#include <cabinet.hh>
 
 /// This NavigationPage displays various informations about
 /// categories of a Wallet.
-class CategoryPage : public NavigationPage {
+class DocumentsPage : public NavigationPage {
 
   Q_OBJECT;
 
 protected:
+  /// A correspondance Wallet* -> DocumentsPage
+  static QHash<Cabinet *, DocumentsPage *> documentsPages;
 
-  /// A correspondance Wallet* -> CategoryPage
-  static QHash<Wallet *, CategoryPage *> categoryPages;
-
-  Wallet * wallet;
 
   /// Underlying model to display data about categories
-  CategoryModel * model;
+  DocumentsModel * model;
+
+  /// The current list of documents to be displayed.
+  QList<Document *> documents;
 
   /// And the corresponding view:
   QTreeView * view;
-  
+
+  /// The Cabinet we're taking care of.
+  Cabinet * cabinet;
+
   
 public:
   
-  CategoryPage(Wallet * a);
+  DocumentsPage(Cabinet * c);
   
   /// Returns the title of the page
   virtual QString pageTitle();
   
-  virtual ~CategoryPage();
+  virtual ~DocumentsPage();
 
   /// Returns the AccountPage for the given account, or create it if
   /// it doesn't exist yet.
-  static CategoryPage * getCategoryPage(Wallet * wallet);
+  static DocumentsPage * getDocumentsPage(Cabinet * cabinet);
 
 public slots:
 
   /// Updates the page. Mostly useless for now
   void updateContents();
 
-  /// Displays the context menu for tweaking
-  void categoriesContextMenu(const QPoint & pos);
+  // /// Displays the context menu for tweaking
+  // void documentsContextMenu(const QPoint & pos);
 
-  /// Prompts the user for changing the color of the current category.
-  void changeCurrentColor();
-
-  /// Prompts the user for changing the color of the current category.
-  void displayCurrentTransactions();
 };
 
 #endif

@@ -98,6 +98,9 @@ public:
   /// directory.
   QDir baseDirectory();
 
+  /// Returns all the Document objects within all the Collection objects.
+  QList<Document *> allDocuments();
+
 
 signals:
 

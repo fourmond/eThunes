@@ -186,8 +186,13 @@ public:
 
   Collection() : cabinet(NULL), definition(NULL) {;};
 
+  /// Returns all the documents in the Collection
+  QList<Document *> allDocuments();
+
   // We can't use signals as the QObject copy constructor is private,
-  // which prevents it from being used inside a QList.
+  // which prevents it from being used inside a QList, probably for
+  // very good reasons too...
+  // 
   // signals:
   //   /// Emitted whenever the documents have changed somehow.
   //   void documentsChanged();

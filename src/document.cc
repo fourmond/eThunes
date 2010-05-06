@@ -87,7 +87,7 @@ SerializationAccessor * Document::serializationAccessor()
 
 
 
-QString Document::displayText()
+QString Document::displayText() const
 {
   return attributes.formatString(collection->documentDisplayFormat(this));
 }

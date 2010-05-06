@@ -110,7 +110,7 @@ public:
   Collection * collection;
 
   /// Returns the text used to display the given document.
-  QString displayText();
+  QString displayText() const;
 
   /// The attributes of the document, ie all the information one could
   /// interpret from the file.

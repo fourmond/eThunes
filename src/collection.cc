@@ -186,6 +186,14 @@ QHash<DocumentDefinition *, QList<Document *> > Collection::typeDocuments()
   return dd;
 }
 
+QList<Document *> Collection::allDocuments()
+{
+  QList<Document *> list;
+  for(int i = 0; i < documents.size(); i++)
+    list << &documents[i];
+  return list;
+}
+
 Collection * Collection::collectionBeingSerialized = NULL;
 
 void Collection::prepareSerializationRead()

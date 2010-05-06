@@ -144,3 +144,11 @@ void Cabinet::rebuildDocumentsHash()
     for(int j = 0; j < collections[i].documents.size(); j++)
       registerDocument(&collections[i].documents[j], false);
 }
+
+QList<Document *> Cabinet::allDocuments()
+{
+  QList<Document *> retval;
+  for(int i = 0; i < collections.size(); i++)
+    retval += collections[i].allDocuments();
+  return retval;
+}

@@ -21,6 +21,7 @@
 
 #include <navigationwidget.hh>
 #include <collectionpage.hh>
+#include <documentspage.hh>
 
 CollectionsDW::CollectionsDW(Cabinet * c) : cabinet(c)
 {
@@ -56,7 +57,9 @@ void CollectionsDW::updateSummary()
       arg(c->name).arg(c->documents.size()).arg(i);
   }
   text += "<tr></tr>";
-  text += "</table>\n";
+  text += "</table><p>\n";
+
+  text += "<a href='all-documents'>See all documents</a><p>\n";
   
   summary->setText(text);
 }
@@ -85,6 +88,9 @@ void CollectionsDW::showURL(const QString & link)
   if(id == "collection") {
     page = CollectionPage::getCollectionPage(&cabinet->
 					     collections[l[1].toInt()]);
+  }
+  if(id == "all-documents") {
+    page = DocumentsPage::getDocumentsPage(cabinet);
   }
   // else if(id == "categories") {
   //   page = CategoryPage::getCategoryPage(wallet);

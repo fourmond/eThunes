@@ -160,14 +160,6 @@ void MainWin::setupActions()
 		    QKeySequence(tr("Ctrl+W")),
 		    tr("Closes current tab"));
 
-
-  // Temporary action
-  actions.addAction(this, "test definitions", tr("&Load definition"),
-		    this, SLOT(tryLoadCollectionDefinition()),
-		    QKeySequence(tr("Ctrl+X")),
-		    tr("Biniou !!"));
-  
-
 }
 
 void MainWin::setupMenus()
@@ -180,7 +172,6 @@ void MainWin::setupMenus()
   fileMenu->addAction(actions["import"]);
   fileMenu->addAction(actions["manage filters"]);
   fileMenu->addSeparator();
-  fileMenu->addAction(actions["test definitions"]);
   fileMenu->addAction(actions["quit"]);
 
   QMenu * tabMenu = menuBar()->addMenu(tr("&Tabs"));
@@ -237,30 +228,30 @@ void MainWin::tryQuit()
   close();
 }
 
-void MainWin::tryLoadCollectionDefinition()
-{
-  CollectionDefinition * def = 
-    CollectionDefinition::namedDefinition("assedic");
+// void MainWin::tryLoadCollectionDefinition()
+// {
+//   CollectionDefinition * def = 
+//     CollectionDefinition::namedDefinition("assedic");
 
-  Collection c;
-  c.definition = def;
+//   Collection c;
+//   c.definition = def;
 
 
-  // Now, PDF file handling...
-  QString file = 
-    QFileDialog::getOpenFileName(this, 
-				 tr("Select PDF to load"),
-				 QString(),
-				 tr("PDF files (*.pdf)"));
+//   // Now, PDF file handling...
+//   QString file = 
+//     QFileDialog::getOpenFileName(this, 
+// 				 tr("Select PDF to load"),
+// 				 QString(),
+// 				 tr("PDF files (*.pdf)"));
 
-  /// \todo To do this properly, it is possible to fire up a custom
-  /// QFileDialog box, with a match document type -> filter and
-  /// appropriate changing of labels when the user chooses different
-  /// files ? Use custom labels.
+//   /// \todo To do this properly, it is possible to fire up a custom
+//   /// QFileDialog box, with a match document type -> filter and
+//   /// appropriate changing of labels when the user chooses different
+//   /// files ? Use custom labels.
 
-  if(file.isEmpty())
-    return;
-  Document * doc = c.importFile("avis", file);
-  QTextStream o(stdout);
-  o << "Display: " << doc->displayText() << endl;
-}
+//   if(file.isEmpty())
+//     return;
+//   Document * doc = c.importFile("avis", file);
+//   QTextStream o(stdout);
+//   o << "Display: " << doc->displayText() << endl;
+// }

@@ -72,8 +72,8 @@ public slots:
   /// Try to quit, but prompt for saving before if dirty.
   void tryQuit();
 
-  /// Temporary slot for loading collection definition...
-  void tryLoadCollectionDefinition();
+  // /// Temporary slot for loading collection definition...
+  // void tryLoadCollectionDefinition();
 };
 
 #endif
