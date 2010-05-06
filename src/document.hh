@@ -126,6 +126,11 @@ public:
 
   /// \name File-related functions
   ///
+  /// \todo All these functions belong into a specific class handling
+  /// all files known to QMoney; in particular, this class would
+  /// handle serialization somehow and keep track seriously of the
+  /// files.
+  ///
   /// @{
 
   /// Attaches a file to the document; does not move nor copy it.
