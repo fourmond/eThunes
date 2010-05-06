@@ -252,28 +252,30 @@ void MainWin::testCollectionDefinitionDocument()
 
   QHash<QString, QString> filters = def->documentFileFilters();
   QString filter = filters[filters.keys()[0]];
-  
-  QString file = 
-    QFileDialog::getOpenFileName(this, 
-				 tr("Please select a file to test"),
-				 QString(),
-				 QStringList(filters.keys()).join(";;"),
-				 &filter);
-  
-  if(file.isEmpty())
-    return;
 
-  QTextStream o(stdout);
-  AttributeHash contents = CollectionCode::readPDF(file);
-  o << "File " << file << "'s raw attributes: " << endl;
-  contents.dumpContents();
-  AttributeHash outAttrs = def->code.
-    parseDocumentMetaData(filters[filter], contents);
-  o << endl << "Parse attributes:" << endl;
-  outAttrs.dumpContents();
+  do {
+    QString file = 
+      QFileDialog::getOpenFileName(this, 
+				   tr("Please select a file to test"),
+				   QString(),
+				   QStringList(filters.keys()).join(";;"),
+				   &filter);
+  
+    if(file.isEmpty())
+      return;
 
-  DocumentDefinition * dd = def->documentDefinition(filters[filter]);
-  o << "Final strings: " << endl;
-  o << "Display text: " << outAttrs.formatString(dd->displayFormat) << endl;
-  o << "File name: " << outAttrs.formatString(dd->fileNameFormat) << endl;
+    QTextStream o(stdout);
+    AttributeHash contents = CollectionCode::readPDF(file);
+    o << "File " << file << "'s raw attributes: " << endl;
+    contents.dumpContents();
+    AttributeHash outAttrs = def->code.
+      parseDocumentMetaData(filters[filter], contents);
+    o << endl << "Parse attributes:" << endl;
+    outAttrs.dumpContents();
+
+    DocumentDefinition * dd = def->documentDefinition(filters[filter]);
+    o << "Final strings: " << endl;
+    o << "Display text: " << outAttrs.formatString(dd->displayFormat) << endl;
+    o << "File name: " << outAttrs.formatString(dd->fileNameFormat) << endl;
+  } while(true);
 }
