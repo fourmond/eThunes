@@ -73,8 +73,6 @@ public:
   AttributeHash parseFileMetaData(const QString & doctype,
 				  const QString & fileName);
 
-protected:
-  // Here, functions to transform a PDF file into a QString ?
 
   /// Reads the PDF into an AttributeHash, filling in the contents of
   /// the text, and some meta-data.
@@ -84,6 +82,8 @@ protected:
   /// should be done via a common function (let's think of other kinds
   /// of files).
   static AttributeHash readPDF(QString file);
+
+protected:
 };
 
 #endif

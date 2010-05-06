@@ -45,12 +45,13 @@ void CollectionDefinition::dumpContents()
 }
 
 
-QHash<QString, CollectionDefinition *> CollectionDefinition::loadedDefinitions;
+
+
 
 /// \todo There should be a way to customize this.
 QStringList CollectionDefinition::definitionPath("/home/vincent/Prog/QMoney/xml");
 
-void CollectionDefinition::loadFromFile(const QString &name)
+CollectionDefinition * CollectionDefinition::loadWithoutRegistering(const QString &name)
 {
   QString fileName(name + ".def.xml");
   for(int i = 0; i < definitionPath.size(); i++) {
@@ -66,12 +67,23 @@ void CollectionDefinition::loadFromFile(const QString &name)
       if(! def->name.isEmpty() && def->name != name)
 	printf("Names should match !\n"); /// \tdexception handle this!
       def->name = name;
-      loadedDefinitions[name] = def;
-      return;
+      return def;
     }
   }
-  /// \tdexception raise something here ?
+  return NULL;
 }
+
+QHash<QString, CollectionDefinition *> CollectionDefinition::loadedDefinitions;
+
+
+void CollectionDefinition::loadFromFile(const QString &name)
+{
+  CollectionDefinition * def = loadWithoutRegistering(name);
+  if(def)
+    loadedDefinitions[name] = def;
+  /// \tdexception raise something if NULL ?
+}
+
 
 QStringList CollectionDefinition::availableDefinitions()
 {
@@ -165,7 +177,7 @@ Document * Collection::importFile(const QString & doctype,
   if(fileClashes(&definition->documentTypes[doctype], attrs))
     return NULL;
   
-  doc.attributes = definition->code.parseFileMetaData(doctype, file);
+  doc.attributes = attrs;
   doc.definition = &definition->documentTypes[doctype];
   doc.collection = this;
   doc.setFilePath(file);

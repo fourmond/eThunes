@@ -130,6 +130,14 @@ void CollectionsDW::addDocumentsDialog(Collection * collection)
   QHash<QString, QString> filters = 
     collection->definition->documentFileFilters();
   QString filter = filters[filters.keys()[0]];
+
+  /// \todo To do this properly, it is possible to fire up a custom
+  /// QFileDialog box, with a match document type -> filter and
+  /// appropriate changing of labels when the user chooses different
+  /// files ? Use custom labels.
+  ///
+  /// It probably isn't necessary.
+
   QStringList files = 
     QFileDialog::getOpenFileNames(this, 
 				  tr("Please select files to import into %1").

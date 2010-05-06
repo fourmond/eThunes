@@ -160,6 +160,11 @@ void MainWin::setupActions()
 		    QKeySequence(tr("Ctrl+W")),
 		    tr("Closes current tab"));
 
+  actions.addAction(this, "test definition", tr("&Test definition"),
+		    this, SLOT(testCollectionDefinitionDocument()),
+		    QKeySequence(tr("Ctrl+Shift+T")),
+		    tr("Test definition"));
+
 }
 
 void MainWin::setupMenus()
@@ -176,6 +181,9 @@ void MainWin::setupMenus()
 
   QMenu * tabMenu = menuBar()->addMenu(tr("&Tabs"));
   tabMenu->addAction(actions["close tab"]);
+
+  QMenu * testMenu = menuBar()->addMenu(tr("Testing"));
+  testMenu->addAction(actions["test definition"]);
 }
 
 // This sounds ridiculous, but I'll have to use a macro, as the copy
@@ -228,30 +236,44 @@ void MainWin::tryQuit()
   close();
 }
 
-// void MainWin::tryLoadCollectionDefinition()
-// {
-//   CollectionDefinition * def = 
-//     CollectionDefinition::namedDefinition("assedic");
+void MainWin::testCollectionDefinitionDocument()
+{
+  QString type = 
+    QInputDialog::getItem(this, tr("Collection definition to test"),
+			  tr("Collection definition"),
+			  CollectionDefinition::availableDefinitions(), 0,
+			  false);
+  if(type.isEmpty())
+    return;
+  CollectionDefinition * def = 
+    CollectionDefinition::loadWithoutRegistering(type);
+  if(! def)
+    return;			// Though things go wrong !
 
-//   Collection c;
-//   c.definition = def;
+  QHash<QString, QString> filters = def->documentFileFilters();
+  QString filter = filters[filters.keys()[0]];
+  
+  QString file = 
+    QFileDialog::getOpenFileName(this, 
+				 tr("Please select a file to test"),
+				 QString(),
+				 QStringList(filters.keys()).join(";;"),
+				 &filter);
+  
+  if(file.isEmpty())
+    return;
 
+  QTextStream o(stdout);
+  AttributeHash contents = CollectionCode::readPDF(file);
+  o << "File " << file << "'s raw attributes: " << endl;
+  contents.dumpContents();
+  AttributeHash outAttrs = def->code.
+    parseDocumentMetaData(filters[filter], contents);
+  o << endl << "Parse attributes:" << endl;
+  outAttrs.dumpContents();
 
-//   // Now, PDF file handling...
-//   QString file = 
-//     QFileDialog::getOpenFileName(this, 
-// 				 tr("Select PDF to load"),
-// 				 QString(),
-// 				 tr("PDF files (*.pdf)"));
-
-//   /// \todo To do this properly, it is possible to fire up a custom
-//   /// QFileDialog box, with a match document type -> filter and
-//   /// appropriate changing of labels when the user chooses different
-//   /// files ? Use custom labels.
-
-//   if(file.isEmpty())
-//     return;
-//   Document * doc = c.importFile("avis", file);
-//   QTextStream o(stdout);
-//   o << "Display: " << doc->displayText() << endl;
-// }
+  DocumentDefinition * dd = def->documentDefinition(filters[filter]);
+  o << "Final strings: " << endl;
+  o << "Display text: " << outAttrs.formatString(dd->displayFormat) << endl;
+  o << "File name: " << outAttrs.formatString(dd->fileNameFormat) << endl;
+}

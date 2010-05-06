@@ -99,8 +99,14 @@ public:
   /// necessary. Returns NULL if not found.
   static CollectionDefinition * namedDefinition(const QString & name);
 
-  /// \todo Browse definitionPath to find all the .def.xml files
+  /// Browse definitionPath to find all the .def.xml files
   static QStringList availableDefinitions();
+
+  /// Loads the named definition, but without registering it in the
+  /// cache. In general, what you want is namedDefinition() instead,
+  /// but you might need this for testing purposes.
+  static CollectionDefinition * loadWithoutRegistering(const QString &name);
+
 
 protected:
 
@@ -110,7 +116,7 @@ protected:
   static QStringList definitionPath;
 
   /// Loads a named definition from a file named name + ".def.xml" in
-  /// the search path. Ensures the CollectionDefinition
+  /// the search path. 
   static void loadFromFile(const QString &name);
 
   /// This hash contains the loaded named collection definitions
