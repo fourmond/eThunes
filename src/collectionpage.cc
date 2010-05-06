@@ -61,10 +61,9 @@ void CollectionPage::updateContents()
     str += QString("<h2>%1</h2><p>").arg(i.key()->definitionName());
     for(int j = 0; j < i.value().size(); j++) {
       Document * doc = i.value()[j];
-      /// \todo Use PDF logo !
-      /// \todo have displayText const
+      /// \todo Use PDF logo ! (the right way...)
       str += QString("<a href='file://%1'>").arg(doc->filePath()) +
-	"<img src='icons:accountmodel-recent.png'/></a>" +
+	"<img src='/usr/share/icons/hicolor/16x16/apps/adobe.pdf.png'/></a> " +
 	doc->displayText() + "<br>";
     }
     i++;

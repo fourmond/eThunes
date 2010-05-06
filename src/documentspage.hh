@@ -26,8 +26,12 @@
 
 #include <cabinet.hh>
 
-/// This NavigationPage displays various informations about
-/// categories of a Wallet.
+/// This NavigationPage displays all the documents contained in a
+/// given Cabinet.
+///
+/// \todo Add an icon for the file, links working for collections,
+/// maybe a raw display of the attributes using an appropriate dialog
+/// box ?
 class DocumentsPage : public NavigationPage {
 
   Q_OBJECT;
