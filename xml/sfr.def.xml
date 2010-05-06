@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<collection-definition>
+  <!-- Comment -->
+  <document-type name="facture">
+    <display-format>Facture du %{date%date:d/MM/yyyy}: %{montant%A} (%{ref-client} -- %{facture})</display-format>
+    <filename-format>SFR/Facture-%{date%date:yyyy-MM}.pdf</filename-format>
+    <public-name>Facture</public-name>
+  </document-type>
+  <ruby-class-code module-name="SFR">
+    <code><![CDATA[
+module SFR
+  def self.parse_facture(doc)
+    res = {}
+    if doc['text'] =~ /Facture\s+du\s+(\d+)\/(\d+)\/(\d+)/i
+      res['date'] = Time.local($3.to_i, $2.to_i, $1.to_i)
+    end
+    if doc['text'] =~ /de\s*Facture\s*:\s*(\S+)/i
+      res['facture'] = $1
+    end
+    if doc['text'] =~ /client\s*:\s*(\S+)/i
+      res['ref-client'] = $1
+    end
+    if doc['text'] =~ /MONTANT\s*TOTAL\s*\S+\s*le\s*(\d+)\/(\d+)\/(\d+)\s*(\d+)[.,](\d+)/si
+      res['prelevement'] = Time.local($3.to_i, $2.to_i, $1.to_i)
+      res['montant'] = $4.to_i * 100 + $5.to_i
+    end
+    return res
+  end
+end
+]]>
+    </code>
+  </ruby-class-code>
+</collection-definition>
