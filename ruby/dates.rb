@@ -30,6 +30,8 @@ module Dates
      /novembre/i,
      /d#{eacute}cembre/i
     ]
+  
+  FrenchMonthRE = Regexp::union(FrenchMonthsRE)
 
   # Returns the number of the french month corresponding to str.
   def self.parse_french_month(str)
