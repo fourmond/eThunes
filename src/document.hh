@@ -134,6 +134,9 @@ public:
   /// already attached to this document.
   void setFilePath(const QString & path);
 
+  /// Attaches an auxiliary file to the current document.
+  void attachAuxiliaryFile(const QString & path);
+
   /// The path of the file attached to this Document
   QString filePath() const { return currentFilePath;} ;
 

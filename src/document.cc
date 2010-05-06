@@ -82,6 +82,9 @@ SerializationAccessor * Document::serializationAccessor()
   ac->addAttribute("attributes", &attributes);
   ac->addAttribute("definition", 
 		   new SerializeDocumentDefinitionPointer(&definition));
+
+  ac->addAttribute("attached-file",
+		   new SerializationStringList(&attachedFiles, "file-name"));
   return ac;
 }
 
@@ -107,6 +110,17 @@ void Document::setFilePath(const QString & newPath)
     return;
   }
   currentFilePath = i.canonicalFilePath();
+}
+
+void Document::attachAuxiliaryFile(const QString & newPath)
+{
+  QFileInfo i(newPath);
+  if(! i.exists()) {
+    /// \tdexception Be unhappy about missing files.
+    fprintf(stderr, "Missing file !\n");
+    return;
+  }
+  attachedFiles << i.canonicalFilePath();
 }
 
 bool Document::isFileExternal()
