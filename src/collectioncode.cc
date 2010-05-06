@@ -34,6 +34,14 @@ AttributeHash CollectionCode::readPDF(QString file)
   /// \tdexception This calls for proper error handling
   QString contents = p.readAllStandardOutput();
   retval["text"] = contents;
+  args.clear();
+  args << "-enc" << "UTF-8" << "-layout" << file << "-";
+  p.start("pdftotext", args);
+  p.waitForFinished();
+  /// \tdexception This calls for proper error handling
+  contents = p.readAllStandardOutput();
+  retval["text-layout"] = contents;
+
   return retval;
 }
 
