@@ -175,9 +175,7 @@ void SerializationAccessor::writeXML(const QString & name,
 // Implementation of the XML reading
 void SerializationAccessor::readXML(QXmlStreamReader * reader)
 {
-  /// \todo attributes parsing, if I come to that
-  ///
-  /// \todo Make it throw appropriate exceptions later on.
+  /// \tdexception Make it throw appropriate exceptions later on.
   if(target)
     target->prepareSerializationRead();
 
@@ -264,4 +262,20 @@ void SerializationHash::writeXML(const QString & name,
   QStringList k = keys();
   for(int i = 0; i < k.size();i++)
     value(k[i])->writeXML(name, writer);
+}
+
+void SerializationStringList::readXML(QXmlStreamReader * reader)
+{
+  target->append(reader->attributes().value(attributeName).toString());
+  readNextToken(reader);
+}
+
+void SerializationStringList::writeXML(const QString & name, 
+				       QXmlStreamWriter * writer)
+{
+  for(int i = 0; i < target->size();i++) {
+    writer->writeStartElement(name);
+    writer->writeAttribute(attributeName, target->value(i));
+    writer->writeEndElement();
+  }
 }

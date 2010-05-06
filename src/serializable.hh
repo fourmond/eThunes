@@ -16,8 +16,6 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-    \todo This file is seriously getting crowded; possibly splitting
-    is in order?  
 */
 
 #ifndef __SERIALIZABLE_HH
@@ -129,66 +127,15 @@ public:
 };
 
 
-/// This template class class should be used for any reasonably
-/// scalar.
-template <typename T>
-class SerializationItemScalar : public SerializationItem {
-  T * target;
-public:
-  SerializationItemScalar<T>(T * t, bool attr = false) {
-    target = t;
-    isAttribute = attr;
-  };
-  virtual void setFromVariant(const QVariant & v) {
-    *target = v.value<T>();
-  };
-
-  virtual QVariant valueToVariant() {
-    return QVariant(*target);
-  };
-};
-
-#ifndef CALL_MEMBER_FN
-#define CALL_MEMBER_FN(object,ptrToMember) ((object).*(ptrToMember)) 
-#endif
-
-
-/// This template class handles the serialization of a QString based
-/// on read/write accessors.
-template <class C>
-class SerializationItemAccessors : public SerializationItem {
-  typedef void (C::*Setter)(const QString &);
-  Setter setter;
-  typedef QString (C::*Getter)();
-  Getter getter;
-
-  C * targetClass;
-public:
-  SerializationItemAccessors<C>(C * t, Setter s, Getter g, bool attr = false) {
-    targetClass = t;
-    setter = s;
-    getter = g;
-    isAttribute = attr;
-  };
-
-  virtual void setFromVariant(const QVariant & v) {
-    CALL_MEMBER_FN(targetClass, setter)(v.toString());
-  };
-
-  virtual QVariant valueToVariant() {
-    return CALL_MEMBER_FN(targetClass, getter)();
-  };
-
-  virtual QVariant valueToString() {
-    return CALL_MEMBER_FN(targetClass, getter)();
-  };
-};
-
 /// This abstract class describes a list of Serializable objects.
 ///
 /// \todo To easily serialize lists of non Serializable objects, it
 /// would be easy to write a template class that wraps a "normal"
-/// object that can be converted to/from QVariant (and QString).
+/// object that can be converted to/from QVariant (and QString). In
+/// real, that isn't that trivial because either memory allocation
+/// does not follow if the wrapper deals with a pointer to the target
+/// or it isn't convenient at all if one has to use the wrapper as
+/// primary storage.
 class SerializationList : public SerializationAttribute {
 public:
 
@@ -232,32 +179,29 @@ public:
   /// *one* element of the list, but that doesn't matter, as it can be
   /// called hundreds of times ;-)...
   virtual void readXML(QXmlStreamReader * reader);
-
-  
 };
 
+/// Serialization of a String list
+class SerializationStringList : public SerializationAttribute {
+  QList<QString> * target;
 
-/// This template class deals with the specific case of QList of
-/// children of Serializable (but not pointers).
-template <class T>
-class SerializationQList : public SerializationList {
-  QList<T> * target;
+  QString attributeName;
 public:
-  SerializationQList(QList<T> * t) { target = t;};
-  
-  virtual int listSize() { return target->size();};
 
-  virtual Serializable * at(int n) { return &target->operator[](n);};
+  SerializationStringList(QList<QString> * t, 
+			  QString  n = "value") : 
+    target(t), attributeName(n) {;};
 
-  virtual void append(Serializable * el) {
-    target->append(*static_cast<T*>(el));
-  };
+  /// Writes the contents of the element to the QXmlStreamWriter
+  virtual void writeXML(const QString & name, QXmlStreamWriter * writer);
 
-  virtual void augment() { 
-    target->append(T());
-  };
-  
+  /// Reads from the given XML stream into the attributes. It assumes
+  /// that the reader is at the startElement stuff. It only reads
+  /// *one* element of the list, but that doesn't matter, as it can be
+  /// called hundreds of times ;-)...
+  virtual void readXML(QXmlStreamReader * reader);
 };
+
 
 /// This abstract class describes a QString-based hash of objects:
 class SerializationHash : public SerializationAttribute {
@@ -310,35 +254,6 @@ public:
   virtual void readXML(QXmlStreamReader * reader);
   
 };
-
-
-/// This template class deals with the specific case of QList of
-/// children of Serializable (but not pointers).
-template <class T>
-class SerializationQHash : public SerializationHash {
-  QHash<QString, T> * target;
-public:
-  SerializationQHash(QHash<QString, T> * t, QString kn = "name") { 
-    target = t;
-    keyName = kn;
-  };
-  
-  virtual QStringList keys() { return target->keys();};
-
-  virtual Serializable * value(const QString &key) { 
-    return &target->operator[](key);
-  };
-
-  virtual void insert(const QString & key, Serializable * el) {
-    target->insert(key, *static_cast<T*>(el));
-  };
-
-  virtual void newElement(const QString & key) {
-    target->insert(key, T());
-  };
- 
-};
-
 
 
 /// This class describes how to serialize a single serilization
@@ -449,5 +364,13 @@ public:
   /// default...
   virtual bool shouldBeDeleted() { return false;};
 };
+
+
+
+// I don't like that too much, but it seems to be the way too go,
+// turning serializable-templates.hh into some kind of "footer" rather
+// than header ;-)...
+
+#include <serializable-templates.hh>
 
 #endif
