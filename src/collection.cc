@@ -176,6 +176,12 @@ Document * Collection::importFile(const QString & doctype,
   // Already have one !
   if(fileClashes(&definition->documentTypes[doctype], attrs))
     return NULL;
+
+  /// \todo Here, we should check for missing attributes, based on the
+  /// format strings (display and filename), and provide a way to
+  /// prompt the user for them (maybe only in certain cases, when
+  /// there is no code attached to the Collection, for instance, which
+  /// would be the case for the misc collection)
   
   doc.attributes = attrs;
   doc.definition = &definition->documentTypes[doctype];
