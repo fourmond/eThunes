@@ -49,6 +49,10 @@
 #include <QColorDialog>
 #include <QMessageBox>
 
+// Desktop stuff
+#include <QUrl>
+#include <QDesktopServices>
+
 // Non-GUI objects
 #include <QDate>
 #include <QString>

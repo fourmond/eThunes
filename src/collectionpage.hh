@@ -42,6 +42,15 @@ protected:
   Collection * collection;
 
 
+  /// The actual contents of the display.
+  ///
+  /// \todo This shouldn't be a label, since it can lead to spurious
+  /// resizing of the parent widget. Few solutions:
+  /// \li use a readonly QTextEdit
+  /// \li wrap a QLabel into a QScrollArea
+  /// \li write yet another custom widget for displaying text
+  ///
+  /// In any case, this won't do on the long term.
   QLabel * summary;
 
   /// A correspondance Collection* -> CollectionPage
@@ -64,8 +73,14 @@ signals:
 
 public slots:
 
-  /// Updates the page; useless for now ?
+  /// Updates the page
   void updateContents();
+
+  /// Follows an URL
+  void openURL(const QString & url);
+
+  /// Prompt for a file attachment for the given Document
+  void promptForFileAttachment(Document * doc);
 
 };
 

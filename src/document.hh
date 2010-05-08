@@ -154,11 +154,14 @@ public:
   void attachAuxiliaryFile(const QString & path);
 
   /// The path of the file attached to this Document
-  QString filePath() const { 
-    if(attachedFiles.size())
-      return attachedFiles[0].filePath();
+  QString filePath(int i = 0) const { 
+    if(attachedFiles.size() > i)
+      return attachedFiles[i].filePath();
     return QString();
   };
+
+  /// The number of ManagedFile attached to this Document.
+  int attachmentsNumber() const { return attachedFiles.size();};
 
   /// Returns the canonical file name for attachement i (defaults to
   /// 0, the main path), relative to Cabinet::baseDirectory,

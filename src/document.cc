@@ -123,6 +123,9 @@ void Document::attachAuxiliaryFile(const QString & newPath)
   attachedFiles << ManagedFile(collection->cabinet, newPath);
 }
 
+/// \todo Problem here: for now, the canonical file name of an
+/// attachment necessary has the same extension as the main file,
+/// which probably isn't desirable.
 QString Document::canonicalFileName(int i) const
 {
   if(i) {
@@ -150,6 +153,8 @@ QString Document::canonicalFilePath(int i) const
 
 void Document::bringFileIntoOwnership(int file)
 {
+  if(file == -1)
+    file = attachedFiles.size() - 1;
   QString cf = canonicalFileName(file);
   if(! (attachedFiles[file].relativeFilePath() == cf))
     attachedFiles[file].changeFileName(cf);

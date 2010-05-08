@@ -25,8 +25,10 @@ CollectionPage::CollectionPage(Collection * c) : collection(c)
 {
   QVBoxLayout * layout = new QVBoxLayout(this);
   summary = new QLabel();
-  /// \todo this will have to change later on when we add "buttons"
-  summary->setOpenExternalLinks(true);
+
+  connect(summary, SIGNAL(linkActivated(const QString &)),
+	  SLOT(openURL(const QString &)));
+  summary->setOpenExternalLinks(false);
   layout->addWidget(summary);
   connect(c->cabinet, SIGNAL(documentsChanged(Collection *)),
 	  SLOT(updateContents()));
@@ -64,7 +66,13 @@ void CollectionPage::updateContents()
       /// \todo Use PDF logo ! (the right way...)
       str += QString("<a href='file://%1'>").arg(doc->filePath()) +
 	"<img src='/usr/share/icons/hicolor/16x16/apps/adobe.pdf.png'/></a> " +
-	doc->displayText() + "<br>";
+	doc->displayText();
+      for(int k = 1; k < doc->attachmentsNumber(); k++)
+	str += QString(" <a href='file://%1'>").arg(doc->filePath(k)) +
+	  "<img src='/usr/share/icons/hicolor/16x16/apps/adobe.pdf.png'/></a>";
+      str += "<a href='attach:" + doc->canonicalFileName() + 
+	"'> (attach file)</a>"; /// \todo tr around.
+      str += "\n<br>\n";
     }
     i++;
   }
@@ -79,3 +87,28 @@ CollectionPage * CollectionPage::getCollectionPage(Collection * collection)
   return collectionPages[collection];
 }
 
+
+void CollectionPage::openURL(const QString &str)
+{
+  if(str.startsWith("file://")) {
+    QDesktopServices::openUrl(str);
+  }
+  else if(str.startsWith("attach:")) {
+    Document * doc = collection->cabinet->
+      namedDocument(str.mid(str.indexOf(":") + 1));
+    if(doc)
+      promptForFileAttachment(doc);
+  }
+}
+
+void CollectionPage::promptForFileAttachment(Document * doc)
+{
+  QString file = 
+    QFileDialog::getOpenFileName(this, 
+				 tr("Attach a file to %1").arg(doc->canonicalFileName()));
+  if(file.isEmpty())
+    return;
+  doc->attachAuxiliaryFile(file);
+  doc->bringFileIntoOwnership(-1);
+  collection->cabinet->signalDocumentsChanged(collection);
+}
