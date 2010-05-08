@@ -30,6 +30,11 @@ SerializationAccessor * ManagedFile::serializationAccessor()
   return ac;
 }
 
+QDir ManagedFile::baseDirectory() const
+{
+  return cabinet->baseDirectory();
+}
+
 
 void ManagedFile::prepareSerializationRead()
 {

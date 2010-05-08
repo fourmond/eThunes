@@ -77,14 +77,14 @@ SerializationAccessor * Document::serializationAccessor()
 {
   SerializationAccessor * ac = new SerializationAccessor(this);
   ac->addAttribute("file", 
-		   new SerializationItemScalar<QString>(&currentFilePath, 
+		   new SerializationItemScalar<QString>(&oldFilePath, 
 							true));
   ac->addAttribute("attributes", &attributes);
   ac->addAttribute("definition", 
 		   new SerializeDocumentDefinitionPointer(&definition));
-
-  ac->addAttribute("attached-file",
-		   new SerializationStringList(&attachedFiles, "file-name"));
+  
+  ac->addAttribute("attachement",
+		   new SerializationQList<ManagedFile>(&attachedFiles));
   return ac;
 }
 
@@ -101,6 +101,14 @@ void Document::prepareSerializationRead()
   collection = Collection::collectionBeingSerialized;
 }
 
+void Document::finishedSerializationRead()
+{
+  if(! oldFilePath.isEmpty()) {
+    setFilePath(oldFilePath);
+    oldFilePath = "";
+  }
+}
+
 void Document::setFilePath(const QString & newPath)
 {
   QFileInfo i(newPath);
@@ -109,7 +117,10 @@ void Document::setFilePath(const QString & newPath)
     fprintf(stderr, "Missing file !\n");
     return;
   }
-  currentFilePath = i.canonicalFilePath();
+  if(! attachedFiles.size())
+    attachedFiles.append(ManagedFile(collection->cabinet, newPath));
+  else
+    attachedFiles[0].newFilePath(newPath);
 }
 
 void Document::attachAuxiliaryFile(const QString & newPath)
@@ -120,68 +131,37 @@ void Document::attachAuxiliaryFile(const QString & newPath)
     fprintf(stderr, "Missing file !\n");
     return;
   }
-  attachedFiles << i.canonicalFilePath();
+  attachedFiles << ManagedFile(collection->cabinet, newPath);
 }
 
-bool Document::isFileExternal()
+QString Document::canonicalFileName(int i) const
 {
-  QDir basedir = collection->cabinet->baseDirectory();
-  return 
-    basedir.relativeFilePath(currentFilePath).startsWith("..");
-}
-
-QString Document::canonicalFileName() const
-{
-  return attributes.formatString(collection->documentFileNameFormat(this));
-}
-
-bool Document::isFileCanonical()
-{
-  QDir basedir = collection->cabinet->baseDirectory();
-  return 
-    basedir.relativeFilePath(currentFilePath) == canonicalFileName();  
-}
-
-QString Document::canonicalFilePath() const
-{
-  QDir basedir = collection->cabinet->baseDirectory();
-  return basedir.absoluteFilePath(canonicalFileName());
-}
-
-/// Ensures the directory of the given path exists, creating it if
-/// that isn't the case.
-///
-/// \todo Maybe this function should be turned into a util something
-static void ensureDirectoryExists(const QString & filePath)
-{
-  QFileInfo i(filePath);
-  /// \todo This won't work on windows.
-  QDir("/").mkpath(i.absolutePath());
-  /// \tdexception Check it went fine !
-}
-
-void Document::copyFileToCanonical()
-{
-  QString target = canonicalFilePath();
-  ensureDirectoryExists(target);
-  QFile::copy(currentFilePath, target); 
-  /// \tdexception Check the copy went fine
-  currentFilePath = target;
-}
-
-void Document::moveFileToCanonical()
-{
-  QString target = canonicalFilePath();
-  ensureDirectoryExists(target);
-  QFile::rename(currentFilePath, target); 
-  /// \tdexception Check the rename went fine
-  currentFilePath = target;
-}
-
-void Document::bringFileIntoOwnership()
-{
-  if(isFileExternal()) 
-    copyFileToCanonical();
+  if(i) {
+    QString str = attributes.formatString(collection->
+					  documentFileNameFormat(this));
+    str.insert(str.lastIndexOf("."),QString("-%1").arg(i));
+    return str;
+  }
   else
-    moveFileToCanonical();
+    return attributes.formatString(collection->documentFileNameFormat(this));
+}
+
+bool Document::isFileCanonical(int file) const
+{
+  return attachedFiles[file].relativeFilePath() == 
+    canonicalFileName(file);
+}
+
+QString Document::canonicalFilePath(int i) const
+{
+  QDir basedir = collection->cabinet->baseDirectory();
+  return basedir.absoluteFilePath(canonicalFileName(i));
+}
+
+
+void Document::bringFileIntoOwnership(int file)
+{
+  QString cf = canonicalFileName(file);
+  if(! (attachedFiles[file].relativeFilePath() == cf))
+    attachedFiles[file].changeFileName(cf);
 }

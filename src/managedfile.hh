@@ -38,14 +38,20 @@ class ManagedFile : public Serializable {
   /// The current path of the file. It is absolute.
   QString currentPath;
 
-  QDir baseDirectory() const {return cabinet->baseDirectory(); } ;
+  QDir baseDirectory() const;
+
 public:
 
-  ManagedFile() : cabinet(NULL) {;};
 
   /// Sets the current path, ie completely forgets anything about the
   /// previous file.
   void newFilePath(const QString & path);
+
+  ManagedFile(Cabinet * c = NULL, const QString  &newPath = QString()) : 
+    cabinet(c) {
+    if(! newPath.isEmpty())
+      newFilePath(newPath);
+  };
 
   /// Moves/copies the file to the target path, which is assumed to be
   /// relative to Cabinet::baseDirectory().
@@ -72,6 +78,10 @@ public:
 
   /// Returns the current absolute file path.
   QString filePath() const { return currentPath; };
+
+  QString relativeFilePath() const { 
+    return baseDirectory().relativeFilePath(currentPath);
+  };
 
 
   /// \todo Ideally, this serializer should handle the conversion from

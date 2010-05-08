@@ -52,3 +52,9 @@ AttributeHash CollectionCode::parseFileMetaData(const QString & doctype,
   AttributeHash contents = readPDF(fileName);
   return parseDocumentMetaData(doctype, contents);
 }
+
+int CollectionCode::scoreForTransaction(const AttributeHash & /*docMetaData*/,
+					const AttributeHash & /*transaction*/)
+{
+  return -10000;
+}

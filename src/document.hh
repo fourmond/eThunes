@@ -22,6 +22,7 @@
 #define __DOCUMENT_HH
 
 #include <serializable.hh>
+#include <managedfile.hh>
 #include <attributehash.hh>
 
 class Collection;
@@ -102,19 +103,17 @@ public:
 /// Its behavior is to some extent handled by a DocumentDefinition.
 ///
 class Document : public Serializable {
+
+  QString oldFilePath;
 protected:
 
-  /// The name of the file attached to the Document. This is a
-  /// canonical file path, and it is never empty. It shouldn't be set
-  /// directly, but rather through the setFilePath function.
-  QString currentFilePath;
+  /// The list of files attached to this document; the first is the
+  /// main one, the other ones are not considered for data collection.
+  QList<ManagedFile> attachedFiles;
 
-  /// Other files that may be attached to this one. Ideally, they
-  /// would be named as the canonical file name, but with an added
-  /// number just before the extension.
-  /// 
-  /// \todo Handle them: copy, move, store their name...
-  QStringList attachedFiles;
+  /// This function will crash the program if called when
+  /// attachedFiles is empty.
+  ManagedFile & mainFile() { return attachedFiles[0]; };
 
 public:
   /// The definition of this Document.
@@ -130,11 +129,14 @@ public:
   /// interpret from the file.
   AttributeHash attributes;
 
-  /// A recent flag, as it definitely come in useful later on.
+  /// A recent flag, as it will definitely come in useful later on.
   int recent;
 
 
   virtual void prepareSerializationRead();
+
+  // temporary for file conversion
+  virtual void finishedSerializationRead();
 
   virtual SerializationAccessor * serializationAccessor();
 
@@ -157,39 +159,30 @@ public:
   void attachAuxiliaryFile(const QString & path);
 
   /// The path of the file attached to this Document
-  QString filePath() const { return currentFilePath;} ;
+  QString filePath() const { 
+    if(attachedFiles.size())
+      return attachedFiles[0].filePath();
+    return QString();
+  };
 
-  /// Whether the file attached to this Document is outside
-  /// Cabinet::baseDirectory or not.
-  bool isFileExternal();
-
-  /// Returns the canonical file name, relative to
-  /// Cabinet::baseDirectory, irrespective of whether the current path
-  /// points there or not.
-  QString canonicalFileName() const;
+  /// Returns the canonical file name for attachement i (defaults to
+  /// 0, the main path), relative to Cabinet::baseDirectory,
+  /// irrespective of whether the current path points there or not.
+  QString canonicalFileName(int i = 0) const;
 
   /// Returns the absolute canonical file path.
-  QString canonicalFilePath() const;
+  QString canonicalFilePath(int i = 0) const;
 
   /// Whether the file is canonical or not.
-  bool isFileCanonical();
+  bool isFileCanonical(int file) const;
   
-  /// Copies the file to its target canonical path.
+  /// Brings the given file attached to the document into ownership of
+  /// the Cabinet, ie copy it to the right place if the current path
+  /// is external, or simply renames it if that isn't the case.
   ///
-  /// \warning This function should not be called when isFileExternal
-  /// returns false !
-  void copyFileToCanonical();
-
-  /// Moves the file to its target canonical path.
-  ///
-  /// \warning This function probably should not be called when
-  /// the file is external !
-  void moveFileToCanonical();
-
-  /// Brings the file attached to the document into ownership of the
-  /// Cabinet, ie copy it to the right place if the current path is
-  /// external, or simply renames it if that isn't the case.
-  void bringFileIntoOwnership();
+  /// If the file number is -1, it refers to the last item pushed on
+  /// the list.
+  void bringFileIntoOwnership(int file = 0);
 
   /// @}
 
