@@ -152,3 +152,14 @@ bool Transaction::compareCheckNumbers(Transaction * a, Transaction * b)
   return a->checkNumber < b->checkNumber;
 }
 
+
+AttributeHash Transaction::toHash() const
+{
+  AttributeHash retval;
+  retval["amount"] = amount;
+  retval["date"] = date;
+  retval["memo"] = memo;
+  retval["name"] = name;
+
+  return retval;
+}

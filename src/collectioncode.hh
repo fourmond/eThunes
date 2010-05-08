@@ -25,6 +25,8 @@
 #include <document.hh>
 #include <attributehash.hh>
 
+class CollectionDefinition;
+
 /// This class provides means to embed code to do at least some of the
 /// following things:
 ///
@@ -55,6 +57,15 @@
 /// considered. (ideally, just a few days for the most common case)
 class CollectionCode : public Serializable {
 public:
+
+  /// The CollectionDefinition for which this object is the code.
+  ///
+  /// \todo NULL could be used to denote that it is a Collection-free
+  /// bit of code, for, say, downloading bank information from
+  /// Internet ?
+  CollectionDefinition * definition;
+
+  CollectionCode() : definition(NULL) {;};
   
   /// Parses the given document and returns the attributes found as a
   /// AttributeHash (or thrown an exception ?).

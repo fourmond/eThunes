@@ -91,6 +91,10 @@ CollectionPage * CollectionPage::getCollectionPage(Collection * collection)
 void CollectionPage::openURL(const QString &str)
 {
   if(str.startsWith("file://")) {
+    /// \todo There should be a global function providing a proxy for
+    /// openUrl, to allow for local redifinition of dedicated
+    /// applications, including internal viewers if and when
+    /// applicable.
     QDesktopServices::openUrl(str);
   }
   else if(str.startsWith("attach:")) {

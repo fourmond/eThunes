@@ -197,7 +197,7 @@ public:
   /// Fills in a AttributeHash with the Transaction
   /// information. Mostly useful for feeding the data to interpreted
   /// scripts.
-  AttributeHash toHash();
+  AttributeHash toHash() const;
 
 };
 

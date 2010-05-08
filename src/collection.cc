@@ -23,8 +23,11 @@
 SerializationAccessor * CollectionDefinition::serializationAccessor()
 {
   SerializationAccessor * ac = new SerializationAccessor(this);
-  // ac->addAttribute("name", 
-  // 		   new SerializationItemScalar<QString>(&name, true));
+  /// \todo This small trick probably could avoid static
+  /// "beingSerialized" things, as the serializationAccessor function
+  /// is necessarily called for every single time.
+  code.definition = this;
+  
   ac->addAttribute("document-type", 
 		   new SerializationQHash<DocumentDefinition>(&documentTypes));
   ac->addAttribute("ruby-class-code", 
