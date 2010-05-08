@@ -37,7 +37,11 @@ class ManagedFile : public Serializable {
 
   /// The current path of the file. It is absolute.
   QString currentPath;
+
+  QDir baseDirectory() const {return cabinet->baseDirectory(); } ;
 public:
+
+  ManagedFile() : cabinet(NULL) {;};
 
   /// Sets the current path, ie completely forgets anything about the
   /// previous file.
@@ -59,26 +63,38 @@ public:
 
   /// The current extension of the file. Useful for attachments to a
   /// given Document.
-  QString fileExtension() const;
+  QString fileExtension() const { return fileInfo().suffix();};
+
+  /// Sets the permissions of the target file ?
+  ///
+  /// \todo Implement that
+  void setPermissions();
+
+  /// Returns the current absolute file path.
+  QString filePath() const { return currentPath; };
 
 
-  /// And a serializer...
-  ///
-  /// \todo I should be careful since XML attributes won't do fine
-  /// with the current design. On the other hand, it takes about a few
-  /// seconds to import all the files again.
-  ///
-  /// \todo Ideally, the serializer would handle the conversion from
+  /// \todo Ideally, this serializer should handle the conversion from
   /// absolute to relative path on save when isFileManaged.
+  virtual SerializationAccessor * serializationAccessor();
+
+  virtual void prepareSerializationRead();
+
+
+  /// Ensures that the directory in which the given file should be
+  /// exists. If the path is absolute, it is used as such; if it is
+  /// relative, it is taken as relative to Cabinet::baseDirectory()
+  void ensureDirectoryExists(const QString & filePath);
 
 protected:
 
-  // functions to move and copy.
-  
-  // functions to create directories as needed.
 
-  
-  
+  /// Moves the managed file into destination (absolute file path).
+  void moveFile(const QString &newPath);
+
+  /// Copies the managed file into destination (absolute file path).
+  void copyFile(const QString &newPath);
+
 };
 
 #endif
