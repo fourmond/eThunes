@@ -76,9 +76,6 @@ public:
 SerializationAccessor * Document::serializationAccessor()
 {
   SerializationAccessor * ac = new SerializationAccessor(this);
-  ac->addAttribute("file", 
-		   new SerializationItemScalar<QString>(&oldFilePath, 
-							true));
   ac->addAttribute("attributes", &attributes);
   ac->addAttribute("definition", 
 		   new SerializeDocumentDefinitionPointer(&definition));
@@ -99,14 +96,6 @@ QString Document::displayText() const
 void Document::prepareSerializationRead()
 {
   collection = Collection::collectionBeingSerialized;
-}
-
-void Document::finishedSerializationRead()
-{
-  if(! oldFilePath.isEmpty()) {
-    setFilePath(oldFilePath);
-    oldFilePath = "";
-  }
 }
 
 void Document::setFilePath(const QString & newPath)

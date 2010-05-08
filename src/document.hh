@@ -103,8 +103,6 @@ public:
 /// Its behavior is to some extent handled by a DocumentDefinition.
 ///
 class Document : public Serializable {
-
-  QString oldFilePath;
 protected:
 
   /// The list of files attached to this document; the first is the
@@ -134,9 +132,6 @@ public:
 
 
   virtual void prepareSerializationRead();
-
-  // temporary for file conversion
-  virtual void finishedSerializationRead();
 
   virtual SerializationAccessor * serializationAccessor();
 
