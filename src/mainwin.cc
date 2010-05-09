@@ -58,6 +58,25 @@
    communicate well about their status changes: updates of the windows
    + dirty flag for saving.
 
+   \section todo-next Things to do next week:
+
+   \li write a class to handle all kinds of links (ie redirecting
+   QDesktopServices openURL stuff + generating links based on
+   pointers)
+
+   \li Finish the connection between Transaction and Document
+
+   \li Write a Delegate for columns that might provide links (using a
+   QLabel)
+
+   \li Write a few classes for getting things from the web: logging
+   in, getting a list of what could be downloaded, comparing with
+   current contents of the Collection (that could be done on the Ruby
+   side of the things), getting the documents.
+
+   \li Write a Ruby code that gets links and forms out of (X)HTML
+   pages, to maximize code reuse.
+
 */
 
 #include <headers.hh>
