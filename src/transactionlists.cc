@@ -144,3 +144,19 @@ TransactionPtrList TransactionList::toPtrList()
     list << &(operator[](i));
   return list;
 }
+
+TransactionPtrList TransactionList::transactionsWithinRange(const QDate & before, const QDate & after)
+
+{
+  TransactionPtrList list;
+  if(before > after)
+    return list;
+  for(int i = 0; i < size(); i++) {
+    if(value(i).date >= before && value(i).date <= after)
+      list << &(operator[](i));
+    if(value(i).date > after)
+      break;
+  }
+  return list;
+}
+

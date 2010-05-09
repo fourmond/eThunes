@@ -36,6 +36,13 @@ SerializationAccessor * DocumentDefinition::serializationAccessor()
   ac->addAttribute("description",
 		   new SerializationItemScalar<QString>(&description));
 
+  // Transaction-matching attributes
+  ac->addAttribute("relevant-date",
+		   new SerializationItemScalar<QString>(&relevantDate));
+  ac->addAttribute("relevant-amount",
+		   new SerializationItemScalar<QString>(&relevantAmount));
+  ac->addAttribute("date-tolerance",
+		   new SerializationItemScalar<int>(&transactionDateTolerance));
   return ac;
 }
 

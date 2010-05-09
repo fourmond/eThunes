@@ -156,6 +156,17 @@ public:
 
   /// The Cabinet currently serialized.
   static Cabinet * cabinetBeingSerialized;
+
+  /// The Transaction objects that are candidates for matching the
+  /// given Document, based uniquely on dates.
+  ///
+  /// \todo I'm unsure whether this is the right position for this
+  /// function (in particular for redifinition fun).
+  TransactionPtrList transactionMatchingCandidates(Document * document);
+
+  /// Finds the Transaction matching to the document. In case of
+  /// ambiguity or if none is found, NULL is returned.
+  Transaction * matchingTransaction(Document * document);
 };
 
 #endif

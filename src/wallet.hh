@@ -135,6 +135,11 @@ public slots:
 public:
   /// Whether the Wallet has pending modifications
   bool isDirty() const { return dirty; }; 
+
+
+  /// Returns all the transactions within the given date range.
+  TransactionPtrList transactionsWithinRange(const QDate & before, 
+					     const QDate & after);
 };
 
 #endif

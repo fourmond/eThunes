@@ -18,6 +18,7 @@
 
 #include <headers.hh>
 #include <collectionpage.hh>
+#include <transactionlistdialog.hh>
 
 QHash<Collection *, CollectionPage *> CollectionPage::collectionPages;
 
@@ -72,6 +73,8 @@ void CollectionPage::updateContents()
 	  "<img src='/usr/share/icons/hicolor/16x16/apps/adobe.pdf.png'/></a>";
       str += "<a href='attach:" + doc->canonicalFileName() + 
 	"'> (attach file)</a>"; /// \todo tr around.
+      str += " <a href='look-matching:" + doc->canonicalFileName() + 
+	"'> (matching ?)</a>";
       str += "\n<br>\n";
     }
     i++;
@@ -102,6 +105,27 @@ void CollectionPage::openURL(const QString &str)
       namedDocument(str.mid(str.indexOf(":") + 1));
     if(doc)
       promptForFileAttachment(doc);
+  }
+  else if(str.startsWith("look-matching:")) {
+    Document * doc = collection->cabinet->
+      namedDocument(str.mid(str.indexOf(":") + 1));
+    if(doc) {
+      Transaction * found = collection->cabinet->
+	matchingTransaction(doc);
+      TransactionListDialog * dlg = 
+	new TransactionListDialog();
+      dlg->displayList(collection->cabinet->
+		       transactionMatchingCandidates(doc), "Possibly matching transactions !");
+      dlg->show();
+      if(found) {
+	TransactionListDialog * dialog = 
+	  new TransactionListDialog();
+	TransactionPtrList list;
+	list << found;
+	dialog->displayList(list, "Possibly matching transactions !");
+	dialog->show();
+      }
+    }
   }
 }
 

@@ -26,6 +26,7 @@
 #include <attributehash.hh>
 
 class CollectionDefinition;
+class Transaction;
 
 /// This class provides means to embed code to do at least some of the
 /// following things:
@@ -94,8 +95,26 @@ public:
   /// with a bonus with a given string in the transaction name or
   /// memo. Most probably the C++ implementation will be enough for
   /// most cases.
-  virtual int scoreForTransaction(const AttributeHash & docMetaData,
-				  const AttributeHash & transaction);
+  virtual int scoreForTransaction(DocumentDefinition * def,
+				  const AttributeHash & docMetaData,
+				  const AttributeHash & transaction) const;
+
+
+  /// Overloaded function for convenience. Automatically calls other
+  /// one with the relevant data.
+  ///
+  /// \todo I'm unsure whether this should be here.
+  ///
+  /// \todo (not here, but well): to store a correspondance
+  /// Transaction <-> Document, it should be only necessary to
+  /// Serialize the document's name and have a Cabinet function look
+  /// at all transactions one the documents have been read and set the
+  /// pointers accordingly (on both the Document and the
+  /// Transaction). This could take the form of a
+  /// dynamically-allocated "static" list of <Transaction *, QString
+  /// docname ?>
+  int scoreForTransaction(Document * doc, Transaction * tr) const;
+
 
   /// Extracts the meta-data from a file
   AttributeHash parseFileMetaData(const QString & doctype,

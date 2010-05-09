@@ -152,3 +152,27 @@ QList<Document *> Cabinet::allDocuments()
     retval += collections[i].allDocuments();
   return retval;
 }
+
+TransactionPtrList Cabinet::transactionMatchingCandidates(Document * document)
+{
+  DocumentDefinition * def = document->definition;
+  if(def->relevantDate.isEmpty() || 
+     ! document->attributes.contains(def->relevantDate))
+    return TransactionPtrList();	// No need to go further
+  QDate base = document->attributes[def->relevantDate].toDate();
+  return wallet.transactionsWithinRange(base.addDays(-2), 
+					base.addDays(def->transactionDateTolerance));
+}
+
+Transaction * Cabinet::matchingTransaction(Document * document)
+{
+  TransactionPtrList candidates = transactionMatchingCandidates(document);
+  for(int i = 0; i < candidates.size(); i++) {
+    if(document->collection->definition->code.scoreForTransaction(document, 
+								  candidates[i]) > 1000)
+      return candidates[i];
+    /// \todo This is very primitive...
+  }
+  return NULL;
+  
+}

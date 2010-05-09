@@ -95,8 +95,6 @@ public:
 
 /// This class represents a list of Transaction objects, ready for
 /// storage, with a few additional functionalities.
-///
-/// \todo Write a function that transforms this into a TransactionPtrList
 class TransactionList : public QList<Transaction> {
 public:
 
@@ -136,6 +134,14 @@ public:
 
   /// Transforms into a pointer list, for further manipulations.
   TransactionPtrList toPtrList();
+
+  /// Returns a list of Transaction pointers for Transaction within
+  /// the date range. The list is assume to be sorted, at least with
+  /// respect to dates. Both dates are inclusive.
+  ///
+  /// \todo this one should also be part of TransactionPtrList.
+  TransactionPtrList transactionsWithinRange(const QDate & before, 
+					     const QDate & after);
 };
 
 #endif

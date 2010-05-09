@@ -64,14 +64,19 @@ public:
   /// @name Transaction-matching attributes
   /// @{
 
-  /// The name of the attribute holding the date relevant to finding a
-  /// corresponding Transaction. In principle, the corresponding
+  /// The name of the attribute holding the date relevant for finding
+  /// a corresponding Transaction. In principle, the corresponding
   /// Transaction should be on the same day or later.
   QString relevantDate;
 
   /// Tolerance for looking for the relevant Transaction, in number of
   /// days.
   int transactionDateTolerance;
+
+  /// The name of the attribute holding the amount of the
+  /// corresponding Transaction. 
+  QString relevantAmount;
+
  
   /// @}
 
@@ -183,9 +188,6 @@ public:
   void bringFileIntoOwnership(int file = 0);
 
   /// @}
-
-
-
 
 };
 

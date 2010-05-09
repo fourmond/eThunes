@@ -18,6 +18,7 @@
 
 #include <headers.hh>
 #include <collectioncode.hh>
+#include <transaction.hh>
 
 
 /// \todo this function should use Poppler::Page::text and
@@ -53,8 +54,29 @@ AttributeHash CollectionCode::parseFileMetaData(const QString & doctype,
   return parseDocumentMetaData(doctype, contents);
 }
 
-int CollectionCode::scoreForTransaction(const AttributeHash & /*docMetaData*/,
-					const AttributeHash & /*transaction*/)
+int CollectionCode::scoreForTransaction(DocumentDefinition * def,
+					const AttributeHash & docMetaData,
+					const AttributeHash & transaction) const
 {
-  return -10000;
+  // docMetaData.dumpContents();
+  // transaction.dumpContents();
+  if(def->relevantDate.isEmpty() || def->relevantAmount.isEmpty())
+    return -10000;		// No way to match !
+  int amount = docMetaData[def->relevantAmount].toInt();
+  // QDate date = docMetaData[def->relevantDate].toDate();
+  if(transaction["amount"].toInt() == amount) 
+    return 10000; 		
+  if(! (transaction["amount"].toInt() + amount)) 
+    return 10000; 		
+  return -10000;		
+  /// \todo we should elaborate later and use the name/memo and the
+  /// date distance ?
+}
+
+
+int CollectionCode::scoreForTransaction(Document * doc,
+					Transaction * tr) const 
+{
+  return scoreForTransaction(doc->definition, doc->attributes,
+			     tr->toHash());
 }

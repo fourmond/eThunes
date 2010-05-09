@@ -150,3 +150,12 @@ void Wallet::setDirty(bool d)
   dirty = d;
   emit(dirtyChanged(dirty));
 }
+
+TransactionPtrList Wallet::transactionsWithinRange(const QDate & before, const QDate & after)
+
+{
+  TransactionPtrList list;
+  for(int i = 0; i < accounts.size(); i++)
+    list += accounts[i].transactions.transactionsWithinRange(before,after);
+  return list;
+}

@@ -5,6 +5,9 @@
     <display-format>Facture du %{date%date:d/MM/yyyy}: %{montant%A} (%{ref-client} -- %{facture})</display-format>
     <filename-format>SFR/Facture-%{date%date:yyyy-MM}.pdf</filename-format>
     <public-name>Facture</public-name>
+    <relevant-date>prelevement</relevant-date>
+    <relevant-amount>montant</relevant-amount>
+    <date-tolerance>4</date-tolerance>
   </document-type>
   <ruby-class-code module-name="SFR">
     <code><![CDATA[
