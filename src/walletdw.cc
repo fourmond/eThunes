@@ -99,24 +99,6 @@ void WalletDW::fileImportDialog()
   updateSummary();
 }
 
-void WalletDW::showURL(const QString & link)
-{
-  QStringList l = link.split(':');
-  QString & id = l[0];
-  NavigationPage * page = NULL;
-  if(id == "account") {
-    page = AccountPage::getAccountPage(&wallet->accounts[l[1].toInt()]);
-  }
-  else if(id == "categories") {
-    page = CategoryPage::getCategoryPage(wallet);
-  }
-  else if(id == "filters") {
-    manageFilters(); /// \todo shouldn't this be a page too ?
-  }
-  if(page)
-    NavigationWidget::gotoPage(page);
-}
-
 void WalletDW::manageFilters()
 {
   FilterDialog * dlg = new FilterDialog(wallet);

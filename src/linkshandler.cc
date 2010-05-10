@@ -85,6 +85,8 @@ void LinksHandler::followLink(const QString & str)
   else if(protocol == "filters")
     widget = new FilterDialog(decodePointer<Wallet>(target));
   else {
+    emit(unhandledLink(str));
+    return;
   }
 
   if(page)

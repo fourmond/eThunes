@@ -73,6 +73,11 @@ public slots:
 
   void followLink(const QString & str);
 
+signals:
+  
+  /// This signal is emitted in case of an unhandled link
+  void unhandledLink(const QString & str);
+
 };
 
 #endif

@@ -49,9 +49,6 @@ public slots:
   /// the wallet.
   void fileImportDialog();
 
-  /// Called internally when a link is clicked
-  void showURL(const QString & link);
-
   /// Manage  filters
   void manageFilters();
 
