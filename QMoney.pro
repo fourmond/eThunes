@@ -32,7 +32,8 @@ SOURCES += src/qmain.cc src/account.cc src/mainwin.cc src/actions.cc \
 	src/collectioncode.cc src/cabinet.cc \
 	src/cabinetpage.cc src/collectionsdw.cc \
 	src/collectionpage.cc src/documentsmodel.cc \
-	src/documentspage.cc src/managedfile.cc
+	src/documentspage.cc src/managedfile.cc \
+	src/linkshandler.cc
 
 HEADERS += src/account.hh src/mainwin.hh src/actions.hh \
 	src/ofximport.hh src/accountmodel.hh \
@@ -49,4 +50,5 @@ HEADERS += src/account.hh src/mainwin.hh src/actions.hh \
 	src/collectioncode.hh src/cabinet.hh \
 	src/cabinetpage.hh src/collectionsdw.hh \
 	src/collectionpage.hh src/documentsmodel.hh \
-	src/documentspage.hh src/managedfile.hh
+	src/documentspage.hh src/managedfile.hh \
+	src/linkshandler.hh

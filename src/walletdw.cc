@@ -24,13 +24,16 @@
 #include <accountpage.hh>
 #include <categorypage.hh>
 
+#include <linkshandler.hh>
+
 WalletDW::WalletDW(Wallet * w) : wallet(w)
 {
   QVBoxLayout * layout = new QVBoxLayout(this);
   summary = new QLabel();
   layout->addWidget(summary);
-  connect(summary, SIGNAL(linkActivated(const QString &)), 
-	  SLOT(showURL(const QString &)));
+  LinksHandler::handleObject(summary);
+  // connect(summary, SIGNAL(linkActivated(const QString &)), 
+  // 	  SLOT(showURL(const QString &)));
 
   connect(wallet, SIGNAL(accountsChanged()),
 	  SLOT(updateSummary()));
@@ -45,11 +48,13 @@ void WalletDW::updateSummary()
   QString cellStyle = " style='padding-right: 20px'";
   int totalBalance = 0; /// \todo Maybe this should go in Wallet ?
 
-  text += "<a href='categories'>" + 
-    tr("%1 categories").arg(wallet->categories.categoryCount()) + "</a>\n";
+  text += LinksHandler::
+    linkToCategories(wallet, tr("%1 categories").
+		     arg(wallet->categories.categoryCount())) + "\n";
 
-  text += "<a href='filters'>" + 
-    tr("%1 filters").arg(wallet->filters.count()) + "</a><p>\n";
+  text += LinksHandler::linkToFilters(wallet, tr("%1 filters").
+				      arg(wallet->filters.count()))
+    + "<p>\n";
   
   /// \todo Maybe the facility for building up tables should end up
   /// somewhere as global utilities ?
@@ -58,9 +63,10 @@ void WalletDW::updateSummary()
     arg(tr("Account")).arg(tr("Balance"));
   for(int i = 0; i < wallet->accounts.size(); i++) {
     Account * ac = &wallet->accounts[i];
-    text += QString("<tr><td" + cellStyle +"><a href='account:%1'>").
-      arg(i) + QString("%1</a></td><td align='right'>%2</td></tr>\n").
-      arg(ac->name()).arg(Transaction::formatAmount(ac->balance()));
+    text += QString("<tr><td" + cellStyle +">") +
+      LinksHandler::linkTo(ac, ac->name()) + 
+      QString("</td><td align='right'>%1</td></tr>\n").
+      arg(Transaction::formatAmount(ac->balance()));
     totalBalance += ac->balance();
   }
   text += "<tr></tr>";

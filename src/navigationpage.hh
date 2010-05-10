@@ -33,6 +33,9 @@ public:
   
   virtual ~NavigationPage();
 
+  /// Forces an update of the contents of the page
+  virtual void update() {;};
+
 };
 
 #endif
