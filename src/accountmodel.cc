@@ -73,6 +73,21 @@ Transaction * AccountModel::indexedTransaction(int idx) const
   }
 }
 
+QModelIndex AccountModel::index(Transaction * transaction)
+{
+  Transaction * t;
+  int i = 0;
+  do {
+    t = indexedTransaction(i);
+    if(t == transaction) {
+      return createIndex(i, 0, i);
+    }
+    i++;
+  } while(t);
+  return QModelIndex();
+}
+
+
 Transaction * AccountModel::indexedTransaction(QModelIndex index) const
 {
   if(index.isValid() && index.internalId() >= 0)
@@ -81,7 +96,7 @@ Transaction * AccountModel::indexedTransaction(QModelIndex index) const
 }
 
 QModelIndex AccountModel::index(int row, int column, 
-					const QModelIndex & parent) const
+				const QModelIndex & parent) const
 {
   // printf("Index: %d %d %d\n", row, column, parent.internalId());
   if(parent.isValid()) 

@@ -28,6 +28,8 @@
 class Collection;
 class CollectionDefinition;
 
+class Transaction;
+
 /// This class defines the kind of Document objects one can find in a
 /// given CollectionDefinition.
 ///
@@ -133,8 +135,14 @@ public:
   AttributeHash attributes;
 
   /// A recent flag, as it will definitely come in useful later on.
-  int recent;
+  bool recent;
 
+  /// The transaction corresponding to this Document.
+  Transaction * relatedTransaction;
+
+
+  Document() : definition(NULL), collection(NULL), recent(false),
+	       relatedTransaction(NULL) {;}
 
   virtual void prepareSerializationRead();
 

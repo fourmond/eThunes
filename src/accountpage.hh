@@ -66,6 +66,9 @@ public slots:
   /// Displays checks using an AccountChecks dialog box.
   void displayChecks();
 
+  /// Selects and shows the given Transaction, if it is visible
+  void showTransaction(Transaction * transaction);
+
 public:
 
   /// Returns the AccountPage for the given account, or create it if

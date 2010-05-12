@@ -83,6 +83,9 @@ public:
   };
 
 
+  /// Returns the QModelIndex corresponding to the given transaction
+  QModelIndex index(Transaction * transaction);
+
   virtual QModelIndex index(int row, int column, 
 			    const QModelIndex & parent = QModelIndex() ) const;
 

@@ -19,6 +19,7 @@
 #include <headers.hh>
 #include <collectionpage.hh>
 #include <transactionlistdialog.hh>
+#include <linkshandler.hh>
 
 QHash<Collection *, CollectionPage *> CollectionPage::collectionPages;
 
@@ -27,9 +28,11 @@ CollectionPage::CollectionPage(Collection * c) : collection(c)
   QVBoxLayout * layout = new QVBoxLayout(this);
   summary = new QLabel();
 
-  connect(summary, SIGNAL(linkActivated(const QString &)),
+  /// \todo use the links handler !
+  LinksHandler::handleObject(summary);
+  connect(LinksHandler::getHandler(), 
+	  SIGNAL(unhandledLink(const QString &)),
 	  SLOT(openURL(const QString &)));
-  summary->setOpenExternalLinks(false);
   layout->addWidget(summary);
   connect(c->cabinet, SIGNAL(documentsChanged(Collection *)),
 	  SLOT(updateContents()));
@@ -62,6 +65,7 @@ void CollectionPage::updateContents()
     dd.constBegin();
   while(i != dd.constEnd()) {
     str += QString("<h2>%1</h2><p>").arg(i.key()->definitionName());
+    str += " <a href='look-matching'>Look for matching transactions</a><p>";
     for(int j = 0; j < i.value().size(); j++) {
       Document * doc = i.value()[j];
       /// \todo Use PDF logo ! (the right way...)
@@ -73,8 +77,11 @@ void CollectionPage::updateContents()
 	  "<img src='/usr/share/icons/hicolor/16x16/apps/adobe.pdf.png'/></a>";
       str += "<a href='attach:" + doc->canonicalFileName() + 
 	"'> (attach file)</a>"; /// \todo tr around.
-      str += " <a href='look-matching:" + doc->canonicalFileName() + 
-	"'> (matching ?)</a>";
+      if(doc->relatedTransaction)
+	str += " " + LinksHandler::linkTo(doc->relatedTransaction,
+					  tr("Transaction"));
+	// str += " <a href='look-matching:" + doc->canonicalFileName() + 
+	//   "'> (matching ?)</a>";
       str += "\n<br>\n";
     }
     i++;
@@ -106,26 +113,15 @@ void CollectionPage::openURL(const QString &str)
     if(doc)
       promptForFileAttachment(doc);
   }
-  else if(str.startsWith("look-matching:")) {
-    Document * doc = collection->cabinet->
-      namedDocument(str.mid(str.indexOf(":") + 1));
-    if(doc) {
-      Transaction * found = collection->cabinet->
-	matchingTransaction(doc);
-      TransactionListDialog * dlg = 
-	new TransactionListDialog();
-      dlg->displayList(collection->cabinet->
-		       transactionMatchingCandidates(doc), "Possibly matching transactions !");
-      dlg->show();
-      if(found) {
-	TransactionListDialog * dialog = 
-	  new TransactionListDialog();
-	TransactionPtrList list;
-	list << found;
-	dialog->displayList(list, "Possibly matching transactions !");
-	dialog->show();
-      }
+  else if(str.startsWith("look-matching")) {
+    for(int i = 0; i < collection->documents.size(); i++) {
+      Document * doc = &(collection->documents[i]);
+      if(!doc->relatedTransaction)
+	doc->relatedTransaction = collection->cabinet->
+	  matchingTransaction(doc);
     }
+    updateContents(); 
+    /// \todo Display of what was found / log ?
   }
 }
 

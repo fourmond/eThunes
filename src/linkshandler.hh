@@ -40,13 +40,14 @@ protected:
 
   static LinksHandler * handler;
 
-  static LinksHandler * getHandler();
   
 
   /// Wraps the link into an <a> element if str isn't empty.
   static QString wrapLink(const QString &link, 
 			  const QString &str = QString());
 public:
+
+  static LinksHandler * getHandler();
 
   /// Attaches an object; it must have the linkActivated and
   /// linkHovered signals.
@@ -60,6 +61,10 @@ public:
 
   /// Returns the text for a link to an Account.
   static QString linkTo(Account * account, const QString & text = QString());
+
+  /// Returns the text for a link to a Transaction.
+  static QString linkTo(Transaction * transaction, 
+			const QString & text = QString());
 
   /// Returns the text for a link to the CategoryPage for the given
   /// Wallet

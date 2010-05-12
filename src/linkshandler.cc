@@ -69,6 +69,11 @@ QString LinksHandler::linkTo(Account * account, const QString & str)
   return wrapLink(QString("account:") + encodePointer(account), str);
 }
 
+QString LinksHandler::linkTo(Transaction * transaction, const QString & str)
+{
+  return wrapLink(QString("transaction:") + encodePointer(transaction), str);
+}
+
 void LinksHandler::followLink(const QString & str)
 {
   int index = str.indexOf(":");
@@ -79,6 +84,13 @@ void LinksHandler::followLink(const QString & str)
   if(protocol == "account")
     page = 
       AccountPage::getAccountPage(decodePointer<Account>(target));
+  else if(protocol == "transaction") {
+    Transaction * transaction = decodePointer<Transaction>(target);
+    AccountPage * acPage = 
+      AccountPage::getAccountPage(transaction->account);
+    acPage->showTransaction(transaction);
+    page = acPage;
+  }
   else if(protocol == "categories")
     page = 
       CategoryPage::getCategoryPage(decodePointer<Wallet>(target));

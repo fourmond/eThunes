@@ -103,3 +103,8 @@ void AccountPage::displayChecks()
   checks->displayChecks(account);
   checks->show();
 }
+
+void AccountPage::showTransaction(Transaction * transaction)
+{
+  view->setCurrentIndex(model->index(transaction));
+}
