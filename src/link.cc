@@ -47,21 +47,23 @@ void Link::prepareSerializationWrite()
 QList<Link*> Link::linksToBeFinalized;
 
 
-void Link::finalizePendingLinks(Cabinet * cabinet)
+int Link::finalizePendingLinks(Cabinet * cabinet)
 {
+  int dangling = 0;
   QList<Linkable *> targets;
+  QHash<Linkable *, bool> done;
   for(int i = 0; i < linksToBeFinalized.size(); i++) {
     Link * link = linksToBeFinalized[i];
-    // if(link->typeName == "document")
-    //   link->target = cabinet->namedDocument(link->linkID);
-    // else if(link->typeName == "transaction")
-    //   ;
-    //   // todo !!
-    if(link->target)
-      targets << link->target;
+    if(link->typeName == "document")
+      link->target = cabinet->namedDocument(link->linkID);
+    else if(link->typeName == "transaction")
+      link->target = cabinet->wallet.namedTransaction(link->linkID);
+    if(! link->target)
+      dangling++;
+      
   }
   linksToBeFinalized.clear();
-  /// \todo Ensure using targets that all the links are reciprocal.
+  return dangling;
 }
 
 void LinkList::addLink(Linkable * target)

@@ -168,10 +168,10 @@ AttributeHash Transaction::toHash() const
 QString Transaction::transactionID() const
 {
   return toHash().
-    formatString("%{date%date:dd/MM/yy}<>%{amount%A}<>%{memo}<>%{name}");
+    formatString("%{date%date:dd/MM/yy}##%{amount%A}##%{memo}##%{name}");
 }
 
 QString Transaction::uniqueID() const
 { 
-  return account->accountID() + "<>" + transactionID();
+  return account->accountID() + "##" + transactionID();
 }

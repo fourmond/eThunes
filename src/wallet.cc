@@ -170,7 +170,7 @@ Account * Wallet::namedAccount(const QString & name)
 
 Transaction * Wallet::namedTransaction(const QString & name)
 {
-  int idx = name.indexOf("<>");
+  int idx = name.indexOf("##");
   QString accountID = name.left(idx);
   QString transactionID = name.mid(idx + 2);
   Account * account = namedAccount(accountID);

@@ -24,6 +24,7 @@ class Account;
 class AccountPage;
 class Transaction;
 class Wallet;
+class Linkable;
 
 /// Handles all links by opening the right NavigationPage (or possibly
 /// firing up dialog boxes ?)
@@ -65,6 +66,12 @@ public:
   /// Returns the text for a link to a Transaction.
   static QString linkTo(Transaction * transaction, 
 			const QString & text = QString());
+
+  /// Returns the text for a link to a Linkable object.
+  static QString linkTo(Linkable * link, 
+			const QString & text = QString());
+
+  
 
   /// Returns the text for a link to the CategoryPage for the given
   /// Wallet

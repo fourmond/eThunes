@@ -41,8 +41,11 @@ public:
 
   /// This functions browses the contents of linksToBeFinalized and
   /// finalizes the target attribute based on linkID and typeName. It
-  /// must be called in Cabinet::finishedSerializationRead().
-  static void finalizePendingLinks(Cabinet * cabinet);
+  /// must be called in Cabinet::finishedSerializationRead(). It
+  /// returns the number of links that were found dangling (ie NULL);
+  /// if there is any, we should process all the Linkable objects and
+  /// repair by ensuring that a link is always reciprocal.
+  static int finalizePendingLinks(Cabinet * cabinet);
 
 protected:
   /// The ID of the link as stored on disk; the value of

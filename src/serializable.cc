@@ -145,6 +145,8 @@ void SerializationAccessor::dumpValues()
 void SerializationAccessor::writeXML(const QString & name, 
 				     QXmlStreamWriter * writer )
 {
+  if(target)
+    target->prepareSerializationWrite();
   writer->writeStartElement(name);
   QStringList trueAttributes; // = XML attributes
   QStringList otherAttributes; // = more complex ones ?
@@ -163,6 +165,8 @@ void SerializationAccessor::writeXML(const QString & name,
     attributes.value(otherAttributes[i])->writeXML(otherAttributes[i], writer);
 
   writer->writeEndElement();
+  if(target)
+    target->finishedSerializationWrite();
 }
 
 

@@ -74,6 +74,11 @@ QString LinksHandler::linkTo(Transaction * transaction, const QString & str)
   return wrapLink(QString("transaction:") + encodePointer(transaction), str);
 }
 
+QString LinksHandler::linkTo(Linkable * l, const QString & str)
+{
+  return wrapLink(l->typeName() + ":" + encodePointer(l), str);
+}
+
 void LinksHandler::followLink(const QString & str)
 {
   int index = str.indexOf(":");

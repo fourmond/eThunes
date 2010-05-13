@@ -27,7 +27,7 @@
 /// the ones we store); typical examples would be Transaction,
 /// Document. These classes must provide a unique String ID
 /// (uniqueID()), an object name
-class Linkable {
+class Linkable : public Serializable {
 protected:
   /// Preparation of the serializationAccessor for links
   void addLinkAttributes(SerializationAccessor * accessor);
@@ -38,14 +38,15 @@ public:
   LinkList links;
 
   /// Adds a link to the given Target (and add this as a link to the
-  /// target too)
+  /// target too). It is a no-op when target is NULL.
   void addLink(Linkable * target);
 
   /// Returns the unique String ID for this object, suitable for
   /// serialization.
   virtual QString uniqueID() const = 0;
 
-  /// Returns the type of the object.
+  /// Returns the (internal) type of the object. It should match the
+  /// one that LinksHandler recognizes.
   virtual QString typeName() const = 0;
 
   /// A 'public type name'

@@ -58,7 +58,7 @@ class Account;
 ///
 /// \todo It would be interesting to display which Transaction objects
 /// are "new", ie just imported ?
-class Transaction : public Serializable, public Linkable {
+class Transaction : public Linkable {
 public:
 
   /// \name Global functions
@@ -209,7 +209,7 @@ public:
   virtual QString uniqueID() const;
 
   virtual QString typeName() const { 
-    return "transactions"; 
+    return "transaction"; 
   };
 
   virtual QString publicTypeName() const { 

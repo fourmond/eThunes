@@ -29,6 +29,8 @@ void Linkable::addLinkAttributes(SerializationAccessor * accessor)
 
 void Linkable::addLink(Linkable * target)
 {
+  if(!target)
+    return;
   links.addLink(target);
   target->links.addLink(this);
 }

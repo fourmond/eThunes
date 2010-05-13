@@ -77,11 +77,20 @@ void CollectionPage::updateContents()
 	  "<img src='/usr/share/icons/hicolor/16x16/apps/adobe.pdf.png'/></a>";
       str += "<a href='attach:" + doc->canonicalFileName() + 
 	"'> (attach file)</a>"; /// \todo tr around.
-      if(doc->relatedTransaction)
-	str += " " + LinksHandler::linkTo(doc->relatedTransaction,
-					  tr("Transaction"));
-	// str += " <a href='look-matching:" + doc->canonicalFileName() + 
-	//   "'> (matching ?)</a>";
+      for(int l = 0; l < doc->links.size(); l++)
+	if(doc->links[l].target) // {
+	  str += " " +
+	    LinksHandler::linkTo(doc->links[l].target,
+				 doc->links[l].target->publicTypeName());
+	//   QString link2 = 
+	//     LinksHandler::linkTo(static_cast<Transaction*>(doc->links[l].target),
+	// 			 "biniou");
+	//   QTextStream o(stdout);
+	//   o << link << endl 
+	//     << link2 << endl;
+
+	//   str += " " + link;
+	// }
       str += "\n<br>\n";
     }
     i++;
@@ -116,9 +125,9 @@ void CollectionPage::openURL(const QString &str)
   else if(str.startsWith("look-matching")) {
     for(int i = 0; i < collection->documents.size(); i++) {
       Document * doc = &(collection->documents[i]);
-      if(!doc->relatedTransaction)
-	doc->relatedTransaction = collection->cabinet->
-	  matchingTransaction(doc);
+      if(!doc->links.size())
+	doc->addLink(collection->cabinet->
+		     matchingTransaction(doc));
     }
     updateContents(); 
     /// \todo Display of what was found / log ?

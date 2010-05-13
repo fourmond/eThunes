@@ -110,7 +110,7 @@ public:
 ///
 /// Its behavior is to some extent handled by a DocumentDefinition.
 ///
-class Document : public Serializable, public Linkable {
+class Document : public Linkable {
 protected:
 
   /// The list of files attached to this document; the first is the
@@ -138,12 +138,7 @@ public:
   /// A recent flag, as it will definitely come in useful later on.
   bool recent;
 
-  /// The transaction corresponding to this Document.
-  Transaction * relatedTransaction;
-
-
-  Document() : definition(NULL), collection(NULL), recent(false),
-	       relatedTransaction(NULL) {;}
+  Document() : definition(NULL), collection(NULL), recent(false) {;}
 
   virtual void prepareSerializationRead();
 

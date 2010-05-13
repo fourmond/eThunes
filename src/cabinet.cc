@@ -93,6 +93,8 @@ void Cabinet::finishedSerializationRead()
 {
   cabinetBeingSerialized = NULL;
   rebuildDocumentsHash();
+  /// \todo Idem for transactions one day ?
+  Link::finalizePendingLinks(this);
 }
 
 
