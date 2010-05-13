@@ -26,7 +26,12 @@
 /// Base class for objects that can be the destination of links (ie
 /// the ones we store); typical examples would be Transaction,
 /// Document. These classes must provide a unique String ID
-/// (uniqueID()), an object name
+/// (uniqueID()), an object name, typeName(), that matches the
+/// protocol used for LinksHandler, and finally a publicTypeName().
+///
+/// \warning For some rather obscure reasons, it seems that Linkable
+/// should be the only (or first ?) base class; else the pointers
+/// marshalled by LinksHandler are slightly offset...
 class Linkable : public Serializable {
 protected:
   /// Preparation of the serializationAccessor for links
