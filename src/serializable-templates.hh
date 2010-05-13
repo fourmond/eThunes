@@ -93,10 +93,6 @@ public:
 
   virtual Serializable * at(int n) { return &target->operator[](n);};
 
-  virtual void append(Serializable * el) {
-    target->append(*static_cast<T*>(el));
-  };
-
   virtual void augment() { 
     target->append(T());
   };

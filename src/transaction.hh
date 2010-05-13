@@ -138,7 +138,7 @@ public:
   /// By default, they are all locked.
   bool locked;
 
-  /// The main category. Empty means no category.
+  /// The main category. NULL means no category.
   Category * category;
 
   

@@ -126,6 +126,7 @@ public:
   };
 };
 
+class SerializationAccessor;
 
 /// This abstract class describes a list of Serializable objects.
 ///
@@ -136,6 +137,9 @@ public:
 /// does not follow if the wrapper deals with a pointer to the target
 /// or it isn't convenient at all if one has to use the wrapper as
 /// primary storage.
+///
+/// \todo Maybe this could switch from a Serializable-based list to a
+/// SerializationAccessor-based one ?
 class SerializationList : public SerializationAttribute {
 public:
 
@@ -152,8 +156,13 @@ public:
   /// Returns the size of the list.
   virtual int listSize() = 0;
 
-  /// Returns the nth element of the list
-  virtual Serializable * at(int n) = 0;
+  /// Returns the Serializable element at nth element of the list
+  virtual Serializable * at(int /*n*/) { return NULL;};
+
+  /// Returns the SerializationAccessor element at nth element of the list
+  virtual SerializationAccessor * accessorAt(int n);
+
+  
   
   /// @}
 
@@ -162,9 +171,6 @@ public:
   /// Functions to change the state of the list.
   ///
   /// @{
-
-  /// Append the given element at the end of the list.
-  virtual void append(Serializable * el) = 0;
 
   /// Simply augment the size of the list by one:
   virtual void augment() = 0;

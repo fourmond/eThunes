@@ -76,18 +76,26 @@ void SerializationItem::readXML(QXmlStreamReader * reader)
   }
 }
 
+SerializationAccessor * SerializationList::accessorAt(int i)
+{
+  return at(i)->serializationAccessor();
+}
 
 void SerializationList::readXML(QXmlStreamReader * reader)
 {
   augment();
-  at(listSize() - 1)->readXML(reader);
+  SerializationAccessor * a = accessorAt(listSize() - 1);
+  a->readXML(reader);
+  delete a;
 }
 
 void SerializationList::writeXML(const QString & name, 
 				 QXmlStreamWriter * writer)
 {
   for(int i = 0; i < listSize();i++) {
-    at(i)->writeXML(name, writer);
+    SerializationAccessor * a = accessorAt(i);
+    a->writeXML(name, writer);
+    delete a;
   }
 }
 
