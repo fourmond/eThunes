@@ -67,14 +67,6 @@ public:
   
   /// @}
 
-  // ///\name Console-related functions
-  // ///
-  // /// Functions used to write attributes unformatted to the console
-  // /// @{
-
-  // /// Dumps the contents of the attribute to the console.
-  // virtual void dumpAttribute() { ; };
-
   virtual ~SerializationAttribute() { ;};
 
   /// Whether the SerializationAccessor should automatically free the
@@ -307,8 +299,11 @@ public:
 
   /// \name Loading hooks
   ///
-  /// Functions called at some time in the calling process, to ensure
+  /// Functions called at some time in the reading process, to ensure
   /// the attributes are in a well-defined state.
+  ///
+  /// \todo I might need Writing hooks too ;-)...
+  /// 
   /// @{
 
   /// This hook is called before the loading, to prepare it (and in
