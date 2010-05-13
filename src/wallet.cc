@@ -159,3 +159,22 @@ TransactionPtrList Wallet::transactionsWithinRange(const QDate & before, const Q
     list += accounts[i].transactions.transactionsWithinRange(before,after);
   return list;
 }
+
+Account * Wallet::namedAccount(const QString & name)
+{
+  for(int i = 0; i < accounts.size(); i++)
+    if(accounts[i].accountID() == name)
+      return &accounts[i];
+  return NULL;
+}
+
+Transaction * Wallet::namedTransaction(const QString & name)
+{
+  int idx = name.indexOf("<>");
+  QString accountID = name.left(idx);
+  QString transactionID = name.mid(idx + 2);
+  Account * account = namedAccount(accountID);
+  if(account)
+    return account->namedTransaction(transactionID);
+  return NULL;
+}

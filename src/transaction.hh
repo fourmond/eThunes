@@ -24,6 +24,7 @@
 #include <serializable.hh>
 #include <category.hh>
 #include <attributehash.hh>
+#include <linkable.hh>
 
 
 // Necessary classes
@@ -57,7 +58,7 @@ class Account;
 ///
 /// \todo It would be interesting to display which Transaction objects
 /// are "new", ie just imported ?
-class Transaction : public Serializable {
+class Transaction : public Serializable, public Linkable {
 public:
 
   /// \name Global functions
@@ -198,6 +199,23 @@ public:
   /// information. Mostly useful for feeding the data to interpreted
   /// scripts.
   AttributeHash toHash() const;
+
+  /// Returns a string that identifies uniquely a transaction within
+  /// the account it's in.
+  QString transactionID() const;
+
+  // Linkable functions
+
+  virtual QString uniqueID() const;
+
+  virtual QString typeName() const { 
+    return "transactions"; 
+  };
+
+  virtual QString publicTypeName() const { 
+    return QObject::tr("Transaction"); 
+  };
+
 
 };
 

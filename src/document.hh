@@ -22,6 +22,7 @@
 #define __DOCUMENT_HH
 
 #include <serializable.hh>
+#include <linkable.hh>
 #include <managedfile.hh>
 #include <attributehash.hh>
 
@@ -109,7 +110,7 @@ public:
 ///
 /// Its behavior is to some extent handled by a DocumentDefinition.
 ///
-class Document : public Serializable {
+class Document : public Serializable, public Linkable {
 protected:
 
   /// The list of files attached to this document; the first is the
@@ -197,6 +198,11 @@ public:
 
   /// @}
 
+  virtual QString uniqueID() const { return canonicalFileName();};
+
+  virtual QString typeName() const { return "document"; };
+
+  virtual QString publicTypeName() const { return QObject::tr("Document"); };
 };
 
 #endif

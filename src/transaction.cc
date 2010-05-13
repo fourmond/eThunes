@@ -122,6 +122,7 @@ SerializationAccessor * Transaction::serializationAccessor()
   ac->addAttribute("category", 
   		   new SerializeCategoryPointer(&category));
 
+  addLinkAttributes(ac);
   return ac;
 }
 
@@ -162,4 +163,15 @@ AttributeHash Transaction::toHash() const
   retval["name"] = name;
 
   return retval;
+}
+
+QString Transaction::transactionID() const
+{
+  return toHash().
+    formatString("%{date%date:dd/MM/yy}<>%{amount%A}<>%{memo}<>%{name}");
+}
+
+QString Transaction::uniqueID() const
+{ 
+  return account->accountID() + "<>" + transactionID();
 }

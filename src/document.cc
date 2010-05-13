@@ -89,6 +89,7 @@ SerializationAccessor * Document::serializationAccessor()
   
   ac->addAttribute("attachement",
 		   new SerializationQList<ManagedFile>(&attachedFiles));
+  addLinkAttributes(ac);
   return ac;
 }
 

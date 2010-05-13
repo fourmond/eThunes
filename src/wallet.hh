@@ -103,6 +103,11 @@ public:
   
   virtual void finishedSerializationRead();
 
+  /// Returns the Account whose Account::accountID() matches name.
+  Account * namedAccount(const QString & name);
+
+  /// Returns the Transaction whose Transaction::uniqueID() matches name.
+  Transaction * namedTransaction(const QString & name);
 
 signals:
 

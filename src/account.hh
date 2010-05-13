@@ -133,6 +133,10 @@ public:
 
   /// Returns the list of recent transactions.
   TransactionPtrList recentTransactions(); 
+
+  /// Returns the Transaction whose Transaction::transactionID()
+  /// matches name.
+  Transaction * namedTransaction(const QString & name);
 };
 
 #endif

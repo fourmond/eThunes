@@ -124,3 +124,12 @@ TransactionPtrList Account::recentTransactions()
       t << &transactions[i];
   return t;
 }
+
+Transaction * Account::namedTransaction(const QString & name)
+{
+  /// \todo This will eventually be *very* slow...
+  for(int i = 0; i < transactions.size(); i++) 
+    if(transactions[i].transactionID() == name)
+      return &transactions[i];
+  return NULL;
+}

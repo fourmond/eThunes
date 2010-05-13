@@ -297,12 +297,11 @@ public:
   /// object to set/get its data using a unique interface.
   virtual SerializationAccessor * serializationAccessor() = 0;
 
-  /// \name Loading hooks
+  /// \name Serialization hooks
   ///
-  /// Functions called at some time in the reading process, to ensure
-  /// the attributes are in a well-defined state.
-  ///
-  /// \todo I might need Writing hooks too ;-)...
+  /// Functions called at some time in the reading or writing process,
+  /// for instance to ensure the attributes are in a well-defined
+  /// state.
   /// 
   /// @{
 
@@ -313,6 +312,12 @@ public:
   /// This hook is called after the loading, to ensure all "derived
   /// attributes" are setup properly.
   virtual void finishedSerializationRead() {;}; 
+
+  /// This hook is called before the writing, to prepare it
+  virtual void prepareSerializationWrite() {;}; 
+
+  /// This hook is called after the writing.
+  virtual void finishedSerializationWrite() {;}; 
 
   /// @}
 
