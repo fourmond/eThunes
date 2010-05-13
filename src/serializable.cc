@@ -76,11 +76,6 @@ void SerializationItem::readXML(QXmlStreamReader * reader)
   }
 }
 
-SerializationAccessor * SerializationList::accessorAt(int i)
-{
-  return at(i)->serializationAccessor();
-}
-
 void SerializationList::readXML(QXmlStreamReader * reader)
 {
   augment();
@@ -116,15 +111,6 @@ SerializationAccessor::~SerializationAccessor()
   attributes.clear();
 }
 
-
-void SerializationList::dumpAllValues()
-{
-  for(int i = 0; i < listSize(); i++) {
-    SerializationAccessor * ac = at(i)->serializationAccessor();
-    ac->dumpValues();
-    delete ac;
-  }
-}
 
 /// \todo raise exception when name already exists (in
 /// simpleAttributes or elsewhere)
@@ -270,20 +256,4 @@ void SerializationHash::writeXML(const QString & name,
   QStringList k = keys();
   for(int i = 0; i < k.size();i++)
     value(k[i])->writeXML(name, writer);
-}
-
-void SerializationStringList::readXML(QXmlStreamReader * reader)
-{
-  target->append(reader->attributes().value(attributeName).toString());
-  readNextToken(reader);
-}
-
-void SerializationStringList::writeXML(const QString & name, 
-				       QXmlStreamWriter * writer)
-{
-  for(int i = 0; i < target->size();i++) {
-    writer->writeStartElement(name);
-    writer->writeAttribute(attributeName, target->value(i));
-    writer->writeEndElement();
-  }
 }

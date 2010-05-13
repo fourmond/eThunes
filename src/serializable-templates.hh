@@ -91,12 +91,40 @@ public:
   
   virtual int listSize() { return target->size();};
 
-  virtual Serializable * at(int n) { return &target->operator[](n);};
+  virtual SerializationAccessor * accessorAt(int n) { 
+    return target->operator[](n).serializationAccessor();};
 
   virtual void augment() { 
     target->append(T());
   };
   
+};
+
+/// This class provides serialization for QList of objects that do not
+/// inherit Serializable, but that can be serialized using
+/// SerializationItemScalar
+template <typename T> 
+class SerializationScalarQList : public SerializationList {
+  QList<T> * target;
+  QString attribute;
+public:
+  SerializationScalarQList(QList<T> * t, QString a) : 
+    target(t), attribute(a) {;};
+
+  virtual int listSize() { return target->size();};
+
+  virtual void augment() { 
+    target->append(T());
+  };
+
+  virtual SerializationAccessor * accessorAt(int n) { 
+    SerializationAccessor *a = new SerializationAccessor(NULL);
+    a->addAttribute(attribute, 
+		    new SerializationItemScalar<T>(&target->operator[](n), 
+						   true));
+    return a;
+  };
+
 };
 
 /// This template class deals with the specific case of QList of
@@ -124,5 +152,7 @@ public:
     target->insert(key, T());
   };
 };
+
+
 
 #endif

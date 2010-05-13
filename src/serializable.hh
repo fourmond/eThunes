@@ -150,19 +150,11 @@ public:
   ///
   /// @{
 
-  /// Dump all the values in the list
-  void dumpAllValues();
-  
   /// Returns the size of the list.
   virtual int listSize() = 0;
 
-  /// Returns the Serializable element at nth element of the list
-  virtual Serializable * at(int /*n*/) { return NULL;};
-
   /// Returns the SerializationAccessor element at nth element of the list
-  virtual SerializationAccessor * accessorAt(int n);
-
-  
+  virtual SerializationAccessor * accessorAt(int n) = 0;
   
   /// @}
 
@@ -186,28 +178,6 @@ public:
   /// called hundreds of times ;-)...
   virtual void readXML(QXmlStreamReader * reader);
 };
-
-/// Serialization of a String list
-class SerializationStringList : public SerializationAttribute {
-  QList<QString> * target;
-
-  QString attributeName;
-public:
-
-  SerializationStringList(QList<QString> * t, 
-			  QString  n = "value") : 
-    target(t), attributeName(n) {;};
-
-  /// Writes the contents of the element to the QXmlStreamWriter
-  virtual void writeXML(const QString & name, QXmlStreamWriter * writer);
-
-  /// Reads from the given XML stream into the attributes. It assumes
-  /// that the reader is at the startElement stuff. It only reads
-  /// *one* element of the list, but that doesn't matter, as it can be
-  /// called hundreds of times ;-)...
-  virtual void readXML(QXmlStreamReader * reader);
-};
-
 
 /// This abstract class describes a QString-based hash of objects:
 class SerializationHash : public SerializationAttribute {
