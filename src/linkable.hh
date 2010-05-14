@@ -32,6 +32,11 @@
 /// \warning For some rather obscure reasons, it seems that Linkable
 /// should be the only (or first ?) base class; else the pointers
 /// marshalled by LinksHandler are slightly offset...
+///
+/// \todo Maybe I should write a small virtual function to provide a
+/// simple textual representation of the Linkable object, such as what
+/// could be used to display a tooltip, or even as the name of the
+/// link ?
 class Linkable : public Serializable {
 protected:
   /// Preparation of the serializationAccessor for links

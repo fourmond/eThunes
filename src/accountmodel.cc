@@ -145,6 +145,7 @@ QVariant AccountModel::headerData(int section,
     case AmountColumn: return QVariant(tr("Amount"));
     case BalanceColumn: return QVariant(tr("Balance"));
     case NameColumn: return QVariant(tr("Name"));
+    case LinksColumn: return QVariant(tr("Links"));
     case MemoColumn: return QVariant(tr("Memo"));
     case CategoryColumn: return QVariant(tr("Category"));
     default:
@@ -167,6 +168,9 @@ QVariant AccountModel::data(const QModelIndex& index, int role) const
     case AmountColumn: return QVariant(Transaction::formatAmount(t->amount));
     case BalanceColumn: return QVariant(Transaction::formatAmount(t->balance));
     case NameColumn: return QVariant(t->name);
+    case LinksColumn: if(t->links.size()) 
+	return tr("%n link(s)", "", t->links.size());
+      return QVariant();
     case CategoryColumn: return QVariant(t->categoryName());
     case MemoColumn: if(!t->memo.isEmpty())
 	return QVariant(t->memo);
@@ -201,6 +205,16 @@ QVariant AccountModel::data(const QModelIndex& index, int role) const
       return QVariant();
     }
   }
+  // if(role == Qt::ToolTipRole) {
+  //   switch(index.column()) {
+  //   case LinksColumn:
+  //     if(t->links.size())
+  // 	return t->links.htmlLinkList().join("<br>") + 
+  // 	  "<a href='http://google.com'>google</a>";
+  //   default:
+  //     return QVariant();
+  //   }
+  // }
   if(role == Qt::FontRole && (index.column() == BalanceColumn || t->recent)) {
     QFont font;
     font.setBold(true);

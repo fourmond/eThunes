@@ -20,6 +20,7 @@
 #include <link.hh>
 #include <linkable.hh>
 #include <cabinet.hh>
+#include <linkshandler.hh>
 
 SerializationAccessor * Link::serializationAccessor()
 {
@@ -72,4 +73,13 @@ void LinkList::addLink(Linkable * target)
     if(value(i).target == target)
       return;
   append(Link(target));
+}
+
+QStringList LinkList::htmlLinkList() const
+{
+  QStringList ret;
+  for(int i=0; i < size(); i++)
+    ret << LinksHandler::linkTo(value(i).target, 
+				value(i).target->publicTypeName());
+  return ret;
 }

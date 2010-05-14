@@ -67,6 +67,11 @@ public:
   /// Adds a link to the given target, making sure there are no
   /// duplicates.
   void addLink(Linkable * target);
+
+  /// Returns a list of html links suitable for use with LinksHandler.
+  /// You just need to join the result to get a decent string.
+  QStringList htmlLinkList() const;
+
 };
 
 #endif

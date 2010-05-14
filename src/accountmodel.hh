@@ -78,6 +78,7 @@ public:
     CategoryColumn,
     NameColumn,
     BalanceColumn,
+    LinksColumn,
     MemoColumn,
     LastColumn
   };
