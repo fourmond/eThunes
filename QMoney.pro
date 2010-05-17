@@ -34,7 +34,7 @@ SOURCES += src/qmain.cc src/account.cc src/mainwin.cc src/actions.cc \
 	src/collectionpage.cc src/documentsmodel.cc \
 	src/documentspage.cc src/managedfile.cc \
 	src/linkshandler.cc src/linkable.cc \
-	src/link.cc
+	src/link.cc src/transactionlistwidget.cc
 
 HEADERS += src/account.hh src/mainwin.hh src/actions.hh \
 	src/ofximport.hh src/accountmodel.hh \
@@ -53,4 +53,4 @@ HEADERS += src/account.hh src/mainwin.hh src/actions.hh \
 	src/collectionpage.hh src/documentsmodel.hh \
 	src/documentspage.hh src/managedfile.hh \
 	src/linkshandler.hh src/linkable.hh \
-	src/link.hh
+	src/link.hh src/transactionlistwidget.hh

@@ -73,6 +73,14 @@ Transaction * AccountModel::indexedTransaction(int idx) const
   }
 }
 
+Account * AccountModel::account() const
+{
+  Transaction * first = indexedTransaction(0);
+  if(first)
+    return first->account;
+  return NULL;
+}
+
 QModelIndex AccountModel::index(Transaction * transaction)
 {
   Transaction * t;

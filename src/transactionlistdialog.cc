@@ -20,15 +20,14 @@
 #include <transactionlistdialog.hh>
 #include <wallet.hh>
 
-TransactionListDialog::TransactionListDialog() :
-  model(0)
+TransactionListDialog::TransactionListDialog() 
 {
   // First, a VBox:
   QVBoxLayout * l1 = new QVBoxLayout(this);
   topLabel = new QLabel();
   l1->addWidget(topLabel);
 
-  view = new QTreeView();
+  view = new TransactionListWidget();
   l1->addWidget(view);
 
   QPushButton * bt = new QPushButton(tr("Close"));
@@ -41,37 +40,13 @@ TransactionListDialog::TransactionListDialog() :
 
 TransactionListDialog::~TransactionListDialog()
 {
-  if(model)
-    delete model;
-  // The following deletions are unnecessary according to valgrind,
-  // which is kinda expected and cool ;-)...
-
-  // delete topLabel;
-  // delete view;
 }
 
 void TransactionListDialog::displayList(const TransactionPtrList & l,
-					const QString & label, 
-					Wallet * wallet)
+					const QString & label)
 {
-  if(model)
-    delete model;
   list = l;
-  model = new AccountModel(&list);
-  view->setModel(model);
-  view->setRootIndex(model->index(0,0));
-  view->setRootIsDecorated(false);
-  // if no wallet was provided, attempt to get one from the
-  // transaction list
-  if(!wallet && list.size() > 0 && list[0]->account)
-    wallet = list[0]->account->wallet;
-  if(wallet)
-    view->setItemDelegateForColumn(AccountModel::CategoryColumn,
-				   new AccountItemDelegate(wallet));
-  view->setAlternatingRowColors(true);
-  for(int i = 0; i < AccountModel::LastColumn; i++)
-    view->resizeColumnToContents(i);
-  
+  view->showTransactions(&list);
   topLabel->setText(label);
 }
 
@@ -85,6 +60,5 @@ void TransactionListDialog::displayCategory(Category * category,
 					    Wallet * wallet)
 {
   displayList(wallet->categoryTransactions(category),
-	      tr("Category: %1").arg(category->fullName()),
-	      wallet);
+	      tr("Category: %1").arg(category->fullName()));
 }

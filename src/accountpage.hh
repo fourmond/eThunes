@@ -23,6 +23,7 @@
 #include <account.hh>
 #include <accountmodel.hh>
 #include <navigationpage.hh>
+#include <transactionlistwidget.hh>
 
 /// This NavigationPage displays the contents of an account.
 class AccountPage : public NavigationPage {
@@ -36,7 +37,7 @@ class AccountPage : public NavigationPage {
   AccountModel * model;
 
   /// And the widget to actually display stuff
-  QTreeView * view;
+  TransactionListWidget * view;
 
   /// A label displaying summary information
   QLabel * accountSummary;

@@ -25,6 +25,7 @@
 #include <account.hh>
 #include <category.hh>
 #include <accountmodel.hh>
+#include <transactionlistwidget.hh>
 
 /// Dialog box to display transaction lists
 /// 
@@ -33,12 +34,7 @@
 /// \todo Provide a way to display read-only transactions ! (this
 /// should be done in AccountModel, probably, but here as well)
 ///
-/// \todo Optionally remove the balance ?
-///
 /// \todo Optionally display the account name ?
-///
-/// \todo Activate multiple selection and provide popup menus to
-/// choose categories.
 class TransactionListDialog : public QDialog {
 protected:
   Q_OBJECT;
@@ -50,7 +46,7 @@ protected:
   AccountModel * model;
 
   /// The actual display of the transactions
-  QTreeView * view;
+  TransactionListWidget * view;
 
   /// The list of transactions to be displayed.
   TransactionPtrList list;
@@ -66,8 +62,7 @@ public slots:
   /// necessary for the delegate for the Category column; it is taken
   /// from the first transaction if it is NULL (which means no
   /// delegate is created for Category edition)
-  void displayList(const TransactionPtrList & list, const QString & label,
-		   Wallet * wallet = NULL);
+  void displayList(const TransactionPtrList & list, const QString & label);
   
   /// Displays the checks of the given account.
   void displayChecks(Account * account);

@@ -31,21 +31,9 @@ AccountPage::AccountPage(Account * ac) : account(ac)
   layout->addWidget(accountSummary);
   updateAccountSummary();
   
-  view = new QTreeView(this);
+  view = new TransactionListWidget(&(account->transactions),this);
   layout->addWidget(view);
 
-  /// \todo Won't do
-  model = new AccountModel(&(account->transactions));
-  view->setModel(model);
-  view->setRootIndex(model->index(0,0));
-  view->setRootIsDecorated(false);
-
-  view->setItemDelegateForColumn(AccountModel::CategoryColumn,
-				 new AccountItemDelegate(account->wallet));
-  view->setAlternatingRowColors(true);
-  
-  for(int i = 0; i < AccountModel::LastColumn; i++)
-    view->resizeColumnToContents(i);
   connect(accountSummary, SIGNAL(linkActivated(const QString &)), 
 	  SLOT(handleLinks(const QString &)));
 }
@@ -106,5 +94,5 @@ void AccountPage::displayChecks()
 
 void AccountPage::showTransaction(Transaction * transaction)
 {
-  view->setCurrentIndex(model->index(transaction));
+  view->showTransaction(transaction);
 }
