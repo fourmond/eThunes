@@ -18,6 +18,7 @@
 
 #include <headers.hh>
 #include <rubymodulecode.hh>
+#include <fetcher.hh>
 
 // Ruby headers;
 #include <ruby-utils.hh>
@@ -69,4 +70,22 @@ AttributeHash RubyModuleCode::parseDocumentMetaData(const QString &doctype,
     wrapCall(this, &RubyModuleCode::parseDocumentMetaDataInternal,
 	     doctype, contents, retVal);
   return retVal;
+}
+
+void RubyModuleCode::testDownload()
+{
+  ensureLoadModule();			// Make sure the module is loaded.
+  Fetcher * n = new Fetcher();
+  n->dummyGet("http://google.com");
+  RescueMemberWrapper1Arg<RubyModuleCode, int>::
+    wrapCall(this, &RubyModuleCode::testDownloadInternal, 0);
+}
+
+void RubyModuleCode::testDownloadInternal(int)
+{
+  /// \todo This really should be done once for all in ensureLoadModule
+  VALUE module = rb_eval_string((const char*)name.toLocal8Bit());
+  Fetcher * n = new Fetcher();
+  ID func = rb_intern("test_download");
+  rb_funcall(module, func, 1, n->wrapToRuby());
 }

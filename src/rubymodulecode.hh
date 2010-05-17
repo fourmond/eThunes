@@ -50,8 +50,14 @@ public:
 
   QString code;
 
+  /// a temporary function
+  void testDownload();
+
 
 protected:
+
+  /// a temporary function
+  void testDownloadInternal(int );
 
   /// Whether the module has been loaded into the Ruby interpreter or
   /// not.

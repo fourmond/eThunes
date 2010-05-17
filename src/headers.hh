@@ -61,6 +61,13 @@
 
 #include <QProcess>
 
+// Network
+#include <QNetworkAccessManager>
+#include <QNetworkReply>
+#include <QNetworkRequest>
+#include <QNetworkCookieJar>
+#include <QNetworkProxy>
+
 // Templates
 #include <QHash>
 #include <QList>

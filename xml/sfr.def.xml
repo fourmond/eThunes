@@ -29,6 +29,11 @@ module SFR
     end
     return res
   end
+
+  def self.test_download(fetcher)
+    fetcher.dummy_get("http://qt.nokia.com")
+    puts "biniou"
+  end
 end
 ]]>
     </code>

@@ -18,6 +18,7 @@
 
 #include <headers.hh>
 #include <ruby-utils.hh>
+#include <fetcher.hh>
 
 VALUE Ruby::globalRescueFunction(VALUE /*dummy*/, VALUE exception)
 {
@@ -36,6 +37,7 @@ void Ruby::ensureInitRuby()
 {
   if(! rubyInitialized) {
     ruby_init();
+    Fetcher::initializeRuby();
     /// \todo Do not hardwire the list, but rather acquire it somehow
     loadFile("dates");
   }

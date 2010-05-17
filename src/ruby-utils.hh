@@ -52,8 +52,13 @@ namespace Ruby {
 #define QSTRING2VALUE(str)				\
   (rb_str_new2((const char*) (str).toLocal8Bit()));
 
+  inline QString valueToQString(VALUE value) {
+    return QString(StringValueCStr(value));
+  };
+
 #define VALUE2QSTRING(value)			\
-  QString(StringValueCStr(value));
+  Ruby::valueToQString(value)
+  
 
 
   /// Rescue exceptions from 1-arg member functions.

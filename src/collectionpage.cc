@@ -96,6 +96,9 @@ void CollectionPage::updateContents()
     i++;
   }
   
+  // temporary code for testing Ruby fetching code.
+  str += "<p><a href='test-download'>Test download code</a>";
+
   summary->setText(str);
 }
 
@@ -131,6 +134,9 @@ void CollectionPage::openURL(const QString &str)
     }
     updateContents(); 
     /// \todo Display of what was found / log ?
+  }
+  else if(str == "test-download") {
+    collection->definition->code.testDownload();
   }
 }
 
