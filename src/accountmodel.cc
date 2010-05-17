@@ -21,6 +21,8 @@
 #include <accountmodel.hh>
 #include <wallet.hh>
 
+#include <linkshandler.hh>
+
 QHash<QString, QIcon> AccountModel::statusIcons;
 
 const QIcon & AccountModel::statusIcon(const QString & status)
@@ -176,9 +178,6 @@ QVariant AccountModel::data(const QModelIndex& index, int role) const
     case AmountColumn: return QVariant(Transaction::formatAmount(t->amount));
     case BalanceColumn: return QVariant(Transaction::formatAmount(t->balance));
     case NameColumn: return QVariant(t->name);
-    case LinksColumn: if(t->links.size()) 
-	return tr("%n link(s)", "", t->links.size());
-      return QVariant();
     case CategoryColumn: return QVariant(t->categoryName());
     case MemoColumn: if(!t->memo.isEmpty())
 	return QVariant(t->memo);
@@ -191,6 +190,9 @@ QVariant AccountModel::data(const QModelIndex& index, int role) const
   if(role == Qt::EditRole) {
     switch(index.column()) {
     case CategoryColumn: return QVariant(t->categoryName());
+    case LinksColumn: if(t->links.size()) 
+	return t->links.htmlLinkList().join(", ");
+      return QVariant();
     default:
       return QVariant();
     }
@@ -213,16 +215,7 @@ QVariant AccountModel::data(const QModelIndex& index, int role) const
       return QVariant();
     }
   }
-  // if(role == Qt::ToolTipRole) {
-  //   switch(index.column()) {
-  //   case LinksColumn:
-  //     if(t->links.size())
-  // 	return t->links.htmlLinkList().join("<br>") + 
-  // 	  "<a href='http://google.com'>google</a>";
-  //   default:
-  //     return QVariant();
-  //   }
-  // }
+
   if(role == Qt::FontRole && (index.column() == BalanceColumn || t->recent)) {
     QFont font;
     font.setBold(true);
@@ -331,5 +324,32 @@ void AccountItemDelegate::setModelData(QWidget * editor,
 {
   QComboBox * box = static_cast<QComboBox*>(editor);
   model->setData(index, box->currentText());
+}
+
+
+///////////////////////////////////////////////////////////////
+
+
+QWidget * LinksItemDelegate::createEditor(QWidget * parent, 
+					  const QStyleOptionViewItem & /*option*/, 
+					  const QModelIndex & /*index*/ ) const
+{
+  QLabel * label = new QLabel(parent);
+  LinksHandler::handleObject(label);
+  return label;
+}
+
+void LinksItemDelegate::setEditorData(QWidget * editor, 
+				      const QModelIndex & index) const
+{
+  QLabel * label = static_cast<QLabel*>(editor);
+  label->setText(index.data(Qt::EditRole).toString());
+}
+
+
+void LinksItemDelegate::setModelData(QWidget * /*editor*/, 
+				     QAbstractItemModel * /*model*/, 
+				     const QModelIndex & /*index*/) const
+{
 }
 

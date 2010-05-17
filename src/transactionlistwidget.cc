@@ -73,6 +73,19 @@ void TransactionListWidget::setupTreeView()
   view->setItemDelegateForColumn(AccountModel::CategoryColumn,
 				 new AccountItemDelegate(model->
 							 account()->wallet));
+
+  // Now fun
+  view->setItemDelegateForColumn(AccountModel::LinksColumn,
+				 new LinksItemDelegate);
+  // This ain't gonna work, but it's worth a try ;-)...
+  QModelIndex root = model->index(0,0,QModelIndex());
+  /// \todo We need to intercept the signals from the model saying
+  /// columns have been inserted to ensure all have their persistent
+  /// editor opened.
+  for(int i = 0; i < model->rowCount(root); i++)
+    view->openPersistentEditor(root.child(i, AccountModel::LinksColumn));
+
+
   view->setAlternatingRowColors(true);
 
   // We make sure the columns have the right size.

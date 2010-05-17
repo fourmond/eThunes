@@ -151,4 +151,22 @@ public:
 			    const QModelIndex & index) const;
 };
 
+/// A weird delegate to be used with persistent editors for displaying
+/// links...
+class LinksItemDelegate : public QStyledItemDelegate {
+public:
+
+  /// Reimplementations
+  virtual QWidget * createEditor(QWidget * parent, 
+				 const QStyleOptionViewItem & option, 
+				 const QModelIndex & index) const;
+
+  virtual void setEditorData(QWidget * editor, 
+			     const QModelIndex & index) const;
+
+
+  virtual void setModelData(QWidget * editor, QAbstractItemModel * model, 
+			    const QModelIndex & index) const;
+};
+
 #endif
