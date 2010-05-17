@@ -40,8 +40,6 @@ AccountPage::AccountPage(Account * ac) : account(ac)
 
 AccountPage::~AccountPage()
 {
-  if(model)
-    delete model;
 }
 
 QString AccountPage::pageTitle()

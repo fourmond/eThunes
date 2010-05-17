@@ -33,9 +33,6 @@ class AccountPage : public NavigationPage {
   /// The account to be displayed.
   Account * account;
 
-  /// The model that does it.
-  AccountModel * model;
-
   /// And the widget to actually display stuff
   TransactionListWidget * view;
 
