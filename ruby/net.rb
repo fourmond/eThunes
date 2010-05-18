@@ -30,6 +30,7 @@ module Net
         else
           link[:absolute_target] = url + "/" + link[:target]
         end
+        # TODO: rough parsing of other fields ?
         lnks << link
       end
       return lnks

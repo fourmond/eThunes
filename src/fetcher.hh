@@ -32,7 +32,16 @@
 ///
 /// \todo There should be one (or more ?) fetcher for each Collection
 /// object (possibly created on demand using introspection facilities
-/// of the code), and possibly several for a Wallet (one for
+/// of the code), and possibly several for a Wallet (one for each
+/// backend ?)
+///
+/// \todo The best way to organize everything would be to organize
+/// things according to 'logins': the ruby code would be asked to
+/// kindly fetch information for a given 'login', possibly several
+/// times in a row with a different login, and with a different
+/// fetcher object. The Ruby code should be passed a hash of 'document
+/// type' => array of document hashes to ensure that as far as is
+/// reasonably possible, documents are not downloaded/parsed twice.
 class Fetcher : public QObject {
   Q_OBJECT;
 
