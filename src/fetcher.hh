@@ -1,6 +1,6 @@
 /** 
     \file fetcher.hh
-    The attribute hash 
+    The web fecther class...
     Copyright 2010 by Vincent Fourmond
 
     This program is free software; you can redistribute it and/or modify
@@ -25,17 +25,33 @@
 /// QNetworkAccessManager and can be wrapped into a Ruby VALUE using
 /// wrapForRuby();
 ///
-/// Some ideas: QNetworkAccessManager works asynchroneously: when a
-/// request is returned, it can be only progressing, until the Ruby
-/// program is interested in the contents of this request, in which
-/// case we wait until it is finished. This would allow for a small
-/// scale parallelization of the download requests
-///
 /// \todo Domain restriction...
+///
+/// \todo This class should provide a way to signal to the target
+/// object (Collection, Wallet ?) that something was found.
+///
+/// \todo There should be one (or more ?) fetcher for each Collection
+/// object (possibly created on demand using introspection facilities
+/// of the code), and possibly several for a Wallet (one for
 class Fetcher : public QObject {
   Q_OBJECT;
 
 protected:
+
+  /// Private class to handle ongoing download requests
+  class OngoingRequest {
+  public:
+    
+    /// The reply, as provided by QNetworkAccessManager
+    QNetworkReply * reply;
+
+    /// The proc object to be called upon completion of the request
+    VALUE code;
+  };
+
+  /// Requests currently underway
+  QHash<QNetworkReply *, OngoingRequest> ongoingRequests;
+
 
   /// The network manager
   QNetworkAccessManager * manager;
@@ -56,8 +72,11 @@ protected:
   /// The Ruby garbage collector.
   static void rubyFree(VALUE v);
 
-  /// The wrapper for dummyGet
-  static VALUE dummyGetWrapper(VALUE obj, VALUE str);
+  /// The wrapper for get
+  static VALUE getWrapper(VALUE obj, VALUE str);
+
+  /// Spawns a get request.
+  OngoingRequest * get(const QNetworkRequest & request, VALUE block);
 
 public:
 
@@ -69,9 +88,6 @@ public:
   ///
   /// \warning initializeRuby() must have been called beforehand.
   VALUE wrapToRuby();
-
-  /// A dummy function to test things are fine for now
-  void dummyGet(const QString & url);
 
 public slots:
 

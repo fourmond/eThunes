@@ -49,12 +49,17 @@ namespace Ruby {
 #endif
 
   /// Maybe those guys should be inline functions ?
-#define QSTRING2VALUE(str)				\
-  (rb_str_new2((const char*) (str).toLocal8Bit()));
+
+  inline VALUE qStringToValue(const QString & str) {
+    return rb_str_new2((const char*) (str).toLocal8Bit());
+  };
 
   inline QString valueToQString(VALUE value) {
     return QString(StringValueCStr(value));
   };
+
+#define QSTRING2VALUE(str)				\
+  Ruby::qStringToValue(str)
 
 #define VALUE2QSTRING(value)			\
   Ruby::valueToQString(value)

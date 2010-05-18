@@ -61,42 +61,44 @@ void Fetcher::initializeRuby()
   cFetcher = rb_define_class_under(mNet, "Fetcher", rb_cObject);
 
   /// \todo define class functions.
-  rb_define_method(cFetcher, "dummy_get", 
-		   (VALUE (*)(...)) dummyGetWrapper, 1);
+  rb_define_method(cFetcher, "get", 
+		   (VALUE (*)(...)) getWrapper, 1);
 
 
   rubyInitialized = true;
 }
 
-void Fetcher::dummyGet(const QString & url)
+Fetcher::OngoingRequest * Fetcher::get(const QNetworkRequest & request, VALUE code)
 {
-  QNetworkRequest request(url);
   QNetworkReply * reply = manager->get(request);
-  QTextStream o(stdout);
-  o << endl << "Fetching url : " << url << endl << endl;
-  o << "Reply is " << reply << endl;
-  // /// \todo Correct this, since the query will be finished *before*
-  // /// all data has been pulled ;-)...
-  // while(!reply->isFinished()) {
-  //   QCoreApplication::processEvents();
-  //   if(reply->canReadLine())
-  //     o <<reply->readLine();
-  //   sleep(1);
-  // }
-  // This approach does not work at all...
+  OngoingRequest & r = ongoingRequests[reply];
+  r.reply = reply;
+  r.code = code;
+  return &r;
 }
 
-VALUE Fetcher::dummyGetWrapper(VALUE obj, VALUE str)
+VALUE Fetcher::getWrapper(VALUE obj, VALUE str)
 {
   Fetcher * f;
   Data_Get_Struct(obj,Fetcher,f);
-  f->dummyGet(valueToQString(str));
+  f->get(QNetworkRequest(QUrl(valueToQString(str))), rb_block_proc());
   return Qnil;
 }
 
 void Fetcher::replyFinished(QNetworkReply* r)
 {
-  QTextStream o(stdout);
-  o << endl << "Done fecthing : " << endl;
-  o << r->readAll();
+  QTextStream err(stderr);
+  if(! ongoingRequests.contains(r)) {
+    /// \tdexception Raise here ? Or just log ?
+    err << "Unkown reply " << r << endl
+	<< "\tfor URL" << r->url().toString() << endl;
+    return;
+  }
+  err << "Reply " << r << endl
+      << "\tfor URL" << r->url().toString() << endl;
+  VALUE code = ongoingRequests[r].code;
+  QString value = r->readAll();
+  VALUE ary = rb_ary_new();
+  rb_ary_push(ary, Ruby::qStringToValue(value));
+  rb_proc_call(code, ary);
 }

@@ -75,8 +75,6 @@ AttributeHash RubyModuleCode::parseDocumentMetaData(const QString &doctype,
 void RubyModuleCode::testDownload()
 {
   ensureLoadModule();			// Make sure the module is loaded.
-  Fetcher * n = new Fetcher();
-  n->dummyGet("http://google.com");
   RescueMemberWrapper1Arg<RubyModuleCode, int>::
     wrapCall(this, &RubyModuleCode::testDownloadInternal, 0);
 }

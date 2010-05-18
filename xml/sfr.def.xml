@@ -31,8 +31,9 @@ module SFR
   end
 
   def self.test_download(fetcher)
-    fetcher.dummy_get("http://qt.nokia.com")
-    puts "biniou"
+    fetcher.get("http://qt.nokia.com") do |str|
+      p str
+    end
   end
 end
 ]]>
