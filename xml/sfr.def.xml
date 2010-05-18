@@ -31,8 +31,8 @@ module SFR
   end
 
   def self.test_download(fetcher)
-    fetcher.get("http://qt.nokia.com") do |str|
-      p str
+    fetcher.get("http://qt.nokia.com") do |res|
+      p [res, res.contents]
     end
   end
 end

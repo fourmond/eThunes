@@ -54,16 +54,53 @@ namespace Ruby {
     return rb_str_new2((const char*) (str).toLocal8Bit());
   };
 
+  inline VALUE byteArrayToValue(const QByteArray & ary) {
+    return rb_str_new(ary.constData(), ary.size());
+  };
+
   inline QString valueToQString(VALUE value) {
     return QString(StringValueCStr(value));
   };
 
-#define QSTRING2VALUE(str)				\
+#define QSTRING2VALUE(str)			\
   Ruby::qStringToValue(str)
 
 #define VALUE2QSTRING(value)			\
   Ruby::valueToQString(value)
   
+
+
+  /// Rescue exceptions from 2-arg non-member functions.
+  template <typename Arg1, typename Arg2> class RescueWrapper2Args {
+
+    typedef VALUE (*Function)(Arg1 arg1, Arg2 arg2);
+    Function targetFunction;
+
+    Arg1 arg1;
+    Arg2 arg2;
+
+    static VALUE wrapper(VALUE v) {
+      RescueWrapper2Args * arg = (RescueWrapper2Args *) v;
+      return arg->targetFunction(arg->arg1, arg->arg2);
+    };
+
+
+  public:
+    RescueWrapper2Args(Function tf, Arg1 a1, Arg2 a2) :
+      targetFunction(tf), arg1(a1), arg2(a2) {;};
+
+    /// Runs the code wrapping it into a rb_rescue code
+    void run() {
+      rb_rescue((VALUE (*)(...)) &wrapper, (VALUE) this, 
+		(VALUE (*)(...)) &globalRescueFunction, Qnil);
+    };
+
+    /// Runs a member call within
+    static void wrapCall(Function tf, Arg1 a1, Arg2 a2) {
+      RescueWrapper2Args c(tf,a1,a2);
+      c.run();
+    };
+  };
 
 
   /// Rescue exceptions from 1-arg member functions.

@@ -20,6 +20,7 @@
 // Ruby-specific stuff
 #include <ruby-utils.hh>
 #include <fetcher.hh>
+#include <result.hh>
 
 using namespace Ruby;
 
@@ -65,6 +66,7 @@ void Fetcher::initializeRuby()
 		   (VALUE (*)(...)) getWrapper, 1);
 
 
+  Result::initializeRuby(mNet);
   rubyInitialized = true;
 }
 
@@ -97,8 +99,8 @@ void Fetcher::replyFinished(QNetworkReply* r)
   err << "Reply " << r << endl
       << "\tfor URL" << r->url().toString() << endl;
   VALUE code = ongoingRequests[r].code;
-  QString value = r->readAll();
+  Result * res = new Result(r);
   VALUE ary = rb_ary_new();
-  rb_ary_push(ary, Ruby::qStringToValue(value));
-  rb_proc_call(code, ary);
+  rb_ary_push(ary, res->wrapToRuby());
+  RescueWrapper2Args<VALUE, VALUE>::wrapCall(rb_proc_call, code, ary);
 }

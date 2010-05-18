@@ -1,6 +1,6 @@
 /** 
     \file fetcher.hh
-    The web fecther class...
+    The web fetcher class...
     Copyright 2010 by Vincent Fourmond
 
     This program is free software; you can redistribute it and/or modify

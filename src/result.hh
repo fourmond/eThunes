@@ -41,8 +41,16 @@ protected:
   /// The Ruby garbage collector.
   static void rubyFree(VALUE v);
 
+  /// Accessor for the contents of the request's reply.
+  static VALUE contentsAccessor(VALUE obj);
+
 public:
 
+  /// Constructs a Result object from the given reply.
+  ///
+  /// \warning The reply must be finished, else the constructor will
+  /// most probably hang forever waiting for data that will never be
+  /// able to come !
   Result(QNetworkReply * r);
 
   /// Initializes the Ruby side of things; mNet is the Net module.

@@ -30,7 +30,7 @@ VALUE Result::cResult;
   
 Result::Result(QNetworkReply * r) : reply(r)
 {
-  data  = reply->readAll();
+  data = reply->readAll();
 }
 
 void Result::rubyFree(VALUE v)
@@ -46,6 +46,13 @@ VALUE Result::wrapToRuby()
   return Data_Wrap_Struct(cResult, NULL, rubyFree, this);
 }
 
+VALUE Result::contentsAccessor(VALUE v)
+{
+  Result * f;
+  Data_Get_Struct(v,Result,f);
+  return byteArrayToValue(f->data);
+}
+
 void Result::initializeRuby(VALUE mNet)
 {
   if(rubyInitialized)
@@ -53,8 +60,8 @@ void Result::initializeRuby(VALUE mNet)
 
   cResult = rb_define_class_under(mNet, "Result", rb_cObject);
 
-  // rb_define_method(cResult, "get", 
-  // 		   (VALUE (*)(...)) getWrapper, 1);
+  rb_define_method(cResult, "contents", 
+  		   (VALUE (*)(...)) contentsAccessor, 0);
 
 
   rubyInitialized = true;
