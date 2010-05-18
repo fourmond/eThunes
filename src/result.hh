@@ -47,6 +47,10 @@ protected:
   /// Accessor for the raw headers
   static VALUE rawHeadersAccessor(VALUE obj);
 
+  /// Accessor for the reply's URL (which may differ from the request
+  /// URL !)
+  static VALUE urlAccessor(VALUE obj);
+
 public:
 
   /// Constructs a Result object from the given reply.

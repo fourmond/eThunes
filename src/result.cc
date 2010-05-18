@@ -65,6 +65,15 @@ VALUE Result::rawHeadersAccessor(VALUE v)
   return hash;
 }
 
+VALUE Result::urlAccessor(VALUE v)
+{
+  Result * f;
+  Data_Get_Struct(v,Result,f);
+  return byteArrayToValue(f->reply->url().
+			  toEncoded(QUrl::StripTrailingSlash));
+}
+
+
 void Result::initializeRuby(VALUE mNet)
 {
   if(rubyInitialized)
@@ -77,6 +86,9 @@ void Result::initializeRuby(VALUE mNet)
 
   rb_define_method(cResult, "raw_headers", 
   		   (VALUE (*)(...)) rawHeadersAccessor, 0);
+
+  rb_define_method(cResult, "url", 
+  		   (VALUE (*)(...)) urlAccessor, 0);
 
 
   rubyInitialized = true;

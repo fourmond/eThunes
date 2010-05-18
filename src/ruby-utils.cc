@@ -40,6 +40,7 @@ void Ruby::ensureInitRuby()
     Fetcher::initializeRuby();
     /// \todo Do not hardwire the list, but rather acquire it somehow
     loadFile("dates");
+    loadFile("net");
   }
   rubyInitialized = true;
 }
