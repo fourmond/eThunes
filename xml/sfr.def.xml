@@ -32,7 +32,7 @@ module SFR
 
   def self.test_download(fetcher)
     fetcher.get("http://qt.nokia.com") do |res|
-      p [res, res.contents]
+      p [res, res.raw_headers]
     end
   end
 end

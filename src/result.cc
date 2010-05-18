@@ -53,6 +53,18 @@ VALUE Result::contentsAccessor(VALUE v)
   return byteArrayToValue(f->data);
 }
 
+VALUE Result::rawHeadersAccessor(VALUE v)
+{
+  Result * f;
+  Data_Get_Struct(v,Result,f);
+  VALUE hash = rb_hash_new();
+  QList<QByteArray> headers = f->reply->rawHeaderList();
+  for(int i = 0; i < headers.size(); i++) 
+    rb_hash_aset(hash, byteArrayToValue(headers[i]), 
+		 byteArrayToValue(f->reply->rawHeader(headers[i])));
+  return hash;
+}
+
 void Result::initializeRuby(VALUE mNet)
 {
   if(rubyInitialized)
@@ -62,6 +74,9 @@ void Result::initializeRuby(VALUE mNet)
 
   rb_define_method(cResult, "contents", 
   		   (VALUE (*)(...)) contentsAccessor, 0);
+
+  rb_define_method(cResult, "raw_headers", 
+  		   (VALUE (*)(...)) rawHeadersAccessor, 0);
 
 
   rubyInitialized = true;

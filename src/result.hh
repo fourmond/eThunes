@@ -44,6 +44,9 @@ protected:
   /// Accessor for the contents of the request's reply.
   static VALUE contentsAccessor(VALUE obj);
 
+  /// Accessor for the raw headers
+  static VALUE rawHeadersAccessor(VALUE obj);
+
 public:
 
   /// Constructs a Result object from the given reply.
