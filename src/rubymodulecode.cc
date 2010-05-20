@@ -39,13 +39,14 @@ SerializationAccessor * RubyModuleCode::serializationAccessor()
 void RubyModuleCode::ensureLoadModule()
 {
   Ruby::ensureInitRuby();
-  if(! moduleLoaded) {
+  if(! module) {
     rb_eval_string((const char*) code.toLocal8Bit());
   }
-  moduleLoaded = true;
+  /// \todo Maybe this should eventually use rb_const_get one day ?
+  module = rb_eval_string((const char*)name.toLocal8Bit());
 }
 
-RubyModuleCode::RubyModuleCode() : moduleLoaded(false) 
+RubyModuleCode::RubyModuleCode() : module(0) 
 {
 }
 
@@ -53,7 +54,7 @@ void RubyModuleCode::parseDocumentMetaDataInternal(const QString & doctype,
 						   const AttributeHash & contents,
 						   AttributeHash & target)
 {
-  VALUE module = rb_eval_string((const char*)name.toLocal8Bit());
+  ensureLoadModule();
   VALUE hash = contents.toRuby();
   ID func = rb_intern((const char*)(QString("parse_") + doctype).toLocal8Bit());
   VALUE result = rb_funcall(module, func, 1, hash);
@@ -72,18 +73,30 @@ AttributeHash RubyModuleCode::parseDocumentMetaData(const QString &doctype,
   return retVal;
 }
 
-void RubyModuleCode::testDownload()
+bool RubyModuleCode::canFetch() 
 {
-  ensureLoadModule();			// Make sure the module is loaded.
-  RescueMemberWrapper1Arg<RubyModuleCode, int>::
-    wrapCall(this, &RubyModuleCode::testDownloadInternal, 0);
+  ensureLoadModule();
+  return rb_respond_to(module, rb_intern("fetch"));
 }
 
-void RubyModuleCode::testDownloadInternal(int)
+void RubyModuleCode::fetchNewDocumentsInternal(const AttributeHash & credentials,
+					       const QList<AttributeHash> &existingDocuments, int /* dummy */) 
 {
-  /// \todo This really should be done once for all in ensureLoadModule
-  VALUE module = rb_eval_string((const char*)name.toLocal8Bit());
+  ensureLoadModule();
   Fetcher * n = new Fetcher();
-  ID func = rb_intern("test_download");
-  rb_funcall(module, func, 1, n->wrapToRuby());
+  ID func = rb_intern("fetch");
+  VALUE ary = rb_ary_new();
+  for(int i = 0; i < existingDocuments.size(); i++)
+    rb_ary_push(ary, existingDocuments[i].toRuby());
+  rb_funcall(module, func, 3, n->wrapToRuby(), 
+	     credentials.toRuby(), ary);
+}
+
+void RubyModuleCode::fetchNewDocuments(const AttributeHash & credentials,
+				       const QList<AttributeHash> &existingDocuments) 
+{
+  RescueMemberWrapper3Args<RubyModuleCode, const AttributeHash &, 
+			   const QList<AttributeHash> &, int >
+    ::wrapCall(this, &RubyModuleCode::fetchNewDocumentsInternal, 
+	       credentials, existingDocuments, 0);
 }

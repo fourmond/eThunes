@@ -80,11 +80,50 @@ Fetcher::OngoingRequest * Fetcher::get(const QNetworkRequest & request, VALUE co
   return &r;
 }
 
+Fetcher::OngoingRequest * Fetcher::post(const QNetworkRequest & request, 
+					const AttributeHash & parameters,
+					VALUE code)
+{
+  /// \todo This looks more like a dirty hack than a proper
+  /// solution. Taken from:
+  ///
+  /// http://stackoverflow.com/questions/2214595/how-can-i-create-a-http-post-request-with-qt-4-6-1
+  QByteArray data;
+  QUrl params;
+  QNetworkRequest re = request;
+  AttributeHash::const_iterator i = parameters.constBegin();
+  while (i != parameters.constEnd()) {
+    params.addQueryItem(i.key(), i.value().toString());
+    i++;
+  }
+  data.append(params.toString());
+  data.remove(0,1);
+
+  re.setHeader(QNetworkRequest::ContentTypeHeader,
+	      "application/x-www-form-urlencoded");
+  QNetworkReply * reply = manager->post(re, data);
+  OngoingRequest & r = ongoingRequests[reply];
+
+  r.reply = reply;
+  r.code = code;
+  r.done = false;
+  return &r;
+}
+
+
 VALUE Fetcher::getWrapper(VALUE obj, VALUE str)
 {
-  Fetcher * f;
-  Data_Get_Struct(obj,Fetcher,f);
+  Fetcher * f = fromValue(obj);
   f->get(QNetworkRequest(QUrl(valueToQString(str))), rb_block_proc());
+  return Qnil;
+}
+
+VALUE Fetcher::postWrapper(VALUE obj, VALUE str, VALUE hash)
+{
+  Fetcher * f = fromValue(obj);
+  AttributeHash val;
+  f->post(QNetworkRequest(QUrl(valueToQString(str))), 
+	  AttributeHash::fromRuby(hash), rb_block_proc());
   return Qnil;
 }
 
@@ -106,3 +145,4 @@ void Fetcher::replyFinished(QNetworkReply* r)
   RescueWrapper2Args<VALUE, VALUE>::wrapCall(rb_proc_call, code, ary);
   ongoingRequests[r].done = true;
 }
+

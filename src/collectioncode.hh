@@ -138,12 +138,12 @@ public:
 
 
   /// Whether the underlying code supports fetching
-  virtual bool canFetch() const { return false;}; 
+  virtual bool canFetch() { return false;}; 
 
   /// Looks up new documents in the given website for the given
   /// credentials.
-  // virtual void fetchNewDocuments(const AttributeHash & credentials,
-  // 				 const QList<AttributeHash> &existingDocuments) = 0;
+  virtual void fetchNewDocuments(const AttributeHash & credentials,
+  				 const QList<AttributeHash> &existingDocuments) = 0;
 
 protected:
 };

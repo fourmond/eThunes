@@ -42,6 +42,10 @@ void Ruby::ensureInitRuby()
     loadFile("dates");
     loadFile("net");
   }
+  /// \todo Here, add a whole bunch of functions to destroy all
+  /// functions for IO and process control (including require, for
+  /// instance), so that the user is guaranteed that information won't
+  /// leak, or that the object is not used for malicious purposes.
   rubyInitialized = true;
 }
 

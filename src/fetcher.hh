@@ -21,6 +21,8 @@
 #ifndef __FETCHER_HH
 #define __FETCHER_HH
 
+#include <attributehash.hh>
+
 /// The base class for fetching data over the internet. It is based on
 /// QNetworkAccessManager and can be wrapped into a Ruby VALUE using
 /// wrapForRuby();
@@ -42,10 +44,22 @@
 /// fetcher object. The Ruby code should be passed a hash of 'document
 /// type' => array of document hashes to ensure that as far as is
 /// reasonably possible, documents are not downloaded/parsed twice.
+///
+/// \todo There should be an addDocument function that would do:
+/// \li add the document if the target is a Collection
+/// \li or import the OFX file (or whatever is actually is) if the
+/// target is an account...
 class Fetcher : public QObject {
   Q_OBJECT;
 
 protected:
+
+  static inline Fetcher * fromValue(VALUE v) { 
+    Fetcher * f;  
+    Data_Get_Struct(v,Fetcher,f);
+    return f;
+  };
+
 
   /// Private class to handle ongoing download requests
   class OngoingRequest {
@@ -58,6 +72,10 @@ protected:
     VALUE code;
 
     /// Whether the request processing has ended or not.
+    ///
+    /// \todo Eventually, it would be good to implement a signalling
+    /// mechanism to tell when the Fetcher has finished all its
+    /// pending jobs (meaning as well that it can be disposed of).
     bool done;
   };
 
@@ -90,9 +108,22 @@ protected:
   /// Spawns a get request.
   OngoingRequest * get(const QNetworkRequest & request, VALUE block);
 
+  /// The wrapper for post
+  static VALUE postWrapper(VALUE obj, VALUE str, VALUE hash);
+
+  /// Spawns a post request with the given parameters.
+  OngoingRequest * post(const QNetworkRequest & request, 
+			const AttributeHash & params,
+			VALUE block);
+
 public:
 
+  /// \todo Eventually (soon) a Fetcher class should target a
+  /// collection ? Or something else ? (a common base class of
+  /// Collection and Wallet ? ) Or simply a choice between Wallet and
+  /// Collection that would be handled as in AccountModel
   Fetcher();
+
 
   static void initializeRuby();
 

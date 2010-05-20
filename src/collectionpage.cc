@@ -97,7 +97,9 @@ void CollectionPage::updateContents()
   }
   
   // temporary code for testing Ruby fetching code.
-  str += "<p><a href='test-download'>Test download code</a>";
+  if(collection->definition->code.canFetch())
+    str += "<p><a href='download'>Download new elements</a>";
+
 
   summary->setText(str);
 }
@@ -135,8 +137,14 @@ void CollectionPage::openURL(const QString &str)
     updateContents(); 
     /// \todo Display of what was found / log ?
   }
-  else if(str == "test-download") {
-    collection->definition->code.testDownload();
+  else if(str == "download") {
+    AttributeHash a;
+    QList<AttributeHash> b;
+    /// \todo This should be turned into a proper handling of the 
+    a["login"] = QInputDialog::getText(this, tr("login"), tr("login"));
+    a["passwd"] = QInputDialog::getText(this, tr("passwd"), tr("passwd"), 
+					QLineEdit::Password);
+    collection->definition->code.fetchNewDocuments(a,b);
   }
 }
 

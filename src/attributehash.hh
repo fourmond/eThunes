@@ -127,5 +127,11 @@ public:
   /// This object, just like Serializable ones, shouldn't be deleted.
   virtual bool shouldBeDeleted() { return false;};
 
+  static inline AttributeHash fromRuby(VALUE v) {
+    AttributeHash a;
+    a.setFromRuby(v);
+    return a;
+  };
+
 };
 #endif

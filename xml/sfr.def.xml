@@ -30,7 +30,8 @@ module SFR
     return res
   end
 
-  def self.test_download(fetcher)
+  def self.fetch(fetcher, creds, docs)
+    p [creds, docs]
     fetcher.get("http://qt.moqksdmlk") do |res|
       if res.ok?
         p [res, res.raw_headers]

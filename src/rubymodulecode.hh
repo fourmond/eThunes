@@ -50,23 +50,30 @@ public:
 
   QString code;
 
-  /// a temporary function
-  void testDownload();
+  virtual bool canFetch();
 
+  virtual void fetchNewDocuments(const AttributeHash & credentials,
+  				 const QList<AttributeHash> &existingDocuments);
 
 protected:
 
-  /// a temporary function
-  void testDownloadInternal(int );
+  // For convenient exception wrapping
+  void fetchNewDocumentsInternal(const AttributeHash & credentials,
+				 const QList<AttributeHash> &existingDocuments,
+				 int dummy);
 
-  /// Whether the module has been loaded into the Ruby interpreter or
-  /// not.
-  bool moduleLoaded;
 
-  /// Loads the module if necessary. Runs arbitrary Ruby code for now !
-  ///
-  /// \todo Find a way to decrease the number of problems with time !
+  /// Loads the module if necessary. 
   void ensureLoadModule();
+
+  /// The module; 0 means not loaded yet
+  VALUE module;
+
+  inline VALUE mModule() { 
+    if(!module)
+      ensureLoadModule();
+    return module;
+  };
 
 };
 
