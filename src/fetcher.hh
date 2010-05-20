@@ -52,10 +52,13 @@ protected:
   public:
     
     /// The reply, as provided by QNetworkAccessManager
-    QNetworkReply * reply;
+    QPointer<QNetworkReply> reply;
 
     /// The proc object to be called upon completion of the request
     VALUE code;
+
+    /// Whether the request processing has ended or not.
+    bool done;
   };
 
   /// Requests currently underway

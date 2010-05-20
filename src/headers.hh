@@ -58,8 +58,8 @@
 #include <QString>
 #include <QFile>
 #include <QTextStream>
-
 #include <QProcess>
+#include <QPointer>
 
 // Network
 #include <QNetworkAccessManager>

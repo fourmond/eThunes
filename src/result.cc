@@ -35,8 +35,7 @@ Result::Result(QNetworkReply * r) : reply(r)
 
 void Result::rubyFree(VALUE v)
 {
-  Result * f;
-  Data_Get_Struct(v,Result,f);
+  Result * f = fromValue(v);
   delete f;
 }
 
@@ -48,15 +47,13 @@ VALUE Result::wrapToRuby()
 
 VALUE Result::contentsAccessor(VALUE v)
 {
-  Result * f;
-  Data_Get_Struct(v,Result,f);
+  Result * f = fromValue(v);
   return byteArrayToValue(f->data);
 }
 
 VALUE Result::rawHeadersAccessor(VALUE v)
 {
-  Result * f;
-  Data_Get_Struct(v,Result,f);
+  Result * f = fromValue(v);
   VALUE hash = rb_hash_new();
   QList<QByteArray> headers = f->reply->rawHeaderList();
   for(int i = 0; i < headers.size(); i++) 
@@ -67,10 +64,23 @@ VALUE Result::rawHeadersAccessor(VALUE v)
 
 VALUE Result::urlAccessor(VALUE v)
 {
-  Result * f;
-  Data_Get_Struct(v,Result,f);
+  Result * f = fromValue(v);
   return byteArrayToValue(f->reply->url().
 			  toEncoded(QUrl::StripTrailingSlash));
+}
+
+VALUE Result::wentOK(VALUE v)
+{
+  Result * f = fromValue(v);
+  if(f->reply->error() == QNetworkReply::NoError)
+    return Qtrue;
+  return Qfalse;
+}
+
+VALUE Result::errorString(VALUE v)
+{
+  Result * f = fromValue(v);
+  return qStringToValue(f->reply->errorString());
 }
 
 
@@ -89,6 +99,12 @@ void Result::initializeRuby(VALUE mNet)
 
   rb_define_method(cResult, "url", 
   		   (VALUE (*)(...)) urlAccessor, 0);
+
+  rb_define_method(cResult, "ok?", 
+  		   (VALUE (*)(...)) wentOK, 0);
+
+  rb_define_method(cResult, "error", 
+  		   (VALUE (*)(...)) errorString, 0);
 
 
   rubyInitialized = true;

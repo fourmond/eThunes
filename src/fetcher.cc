@@ -76,6 +76,7 @@ Fetcher::OngoingRequest * Fetcher::get(const QNetworkRequest & request, VALUE co
   OngoingRequest & r = ongoingRequests[reply];
   r.reply = reply;
   r.code = code;
+  r.done = false;
   return &r;
 }
 
@@ -96,11 +97,12 @@ void Fetcher::replyFinished(QNetworkReply* r)
 	<< "\tfor URL" << r->url().toString() << endl;
     return;
   }
-  err << "Reply " << r << endl
-      << "\tfor URL" << r->url().toString() << endl;
+  // err << "Reply " << r << endl
+  //     << "\tfor URL" << r->url().toString() << endl;
   VALUE code = ongoingRequests[r].code;
   Result * res = new Result(r);
   VALUE ary = rb_ary_new();
   rb_ary_push(ary, res->wrapToRuby());
   RescueWrapper2Args<VALUE, VALUE>::wrapCall(rb_proc_call, code, ary);
+  ongoingRequests[r].done = true;
 }

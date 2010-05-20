@@ -95,6 +95,10 @@ public:
   /// with a bonus with a given string in the transaction name or
   /// memo. Most probably the C++ implementation will be enough for
   /// most cases.
+  ///
+  /// \todo Write class TransactionMatcher that would do the most
+  /// common case for transaction matching: it would be used unless a
+  /// specific Ruby function exists.
   virtual int scoreForTransaction(DocumentDefinition * def,
 				  const AttributeHash & docMetaData,
 				  const AttributeHash & transaction) const;
@@ -124,11 +128,22 @@ public:
   /// Reads the PDF into an AttributeHash, filling in the contents of
   /// the text, and some meta-data.
   ///
-  /// \todo Handle meta-data such as file date/time, file name ? (no),
-  /// but file extension !, and specific PDF information. The former
-  /// should be done via a common function (let's think of other kinds
-  /// of files).
+  /// \todo Handle meta-data such as file date/time, file name ? (no
+  /// -- why not ? so long as full path isn't included, that shouldn't
+  /// leak too much information, especially since most of the time, it
+  /// will just be stuff coming from a web server), but file extension
+  /// !, and specific PDF information. The former should be done via a
+  /// common function (let's think of other kinds of files).
   static AttributeHash readPDF(QString file);
+
+
+  /// Whether the underlying code supports fetching
+  virtual bool canFetch() const { return false;}; 
+
+  /// Looks up new documents in the given website for the given
+  /// credentials.
+  // virtual void fetchNewDocuments(const AttributeHash & credentials,
+  // 				 const QList<AttributeHash> &existingDocuments) = 0;
 
 protected:
 };

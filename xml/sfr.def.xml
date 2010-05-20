@@ -31,9 +31,14 @@ module SFR
   end
 
   def self.test_download(fetcher)
-    fetcher.get("http://qt.nokia.com") do |res|
-      p [res, res.raw_headers]
-      p res.links
+    fetcher.get("http://qt.moqksdmlk") do |res|
+      if res.ok?
+        p [res, res.raw_headers]
+        p res.links
+      else
+        p :error
+        p res.error
+      end
     end
   end
 end

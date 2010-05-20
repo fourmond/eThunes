@@ -26,6 +26,12 @@ class Result {
 
 protected:
 
+  static inline Result * fromValue(VALUE v) { 
+    Result * f;  
+    Data_Get_Struct(v,Result,f);
+    return f;
+  };
+
   /// The reply
   QNetworkReply * reply;
 
@@ -50,6 +56,12 @@ protected:
   /// Accessor for the reply's URL (which may differ from the request
   /// URL !)
   static VALUE urlAccessor(VALUE obj);
+
+  /// Whether the request went fine or not.
+  static VALUE wentOK(VALUE obj);
+
+  /// The error string
+  static VALUE errorString(VALUE obj);
 
 public:
 
