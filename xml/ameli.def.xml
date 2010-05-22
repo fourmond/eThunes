@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<collection-definition>
+  <!-- Comment -->
+  <document-type name="releve">
+    <display-format>Releve du %{date%date:d/MM/yyyy}: %{montant%A} (%{numero-ss})</display-format>
+    <filename-format>Ameli/Releve-%{ss}-%{date%date:yyyy-MM-dd}-%{ref}.pdf</filename-format>
+    <public-name>Releve</public-name>
+  </document-type>
+  <ruby-class-code module-name="Ameli">
+    <code><![CDATA[
+module Ameli
+  def self.parse_releve(doc)
+    res = {}
+    if doc['text'] =~ /Sociale\s*([\d\s]{13,})+/i
+      res['numero-ss'] = $1
+      res['ss'] = res['numero-ss'].gsub(/\s+/,'')
+    end
+    if doc['text'] =~ /client\s*:\s*(\S+)/i
+      res['ref-client'] = $1
+    end
+    if doc['text'] =~ /r(?:.|..)gl(?:.|..)\s*le\s*(\d+)\/(\d+)\/(\d+)\s*:\s*(\d+),(\d+)/i
+      res['date'] = Time.local($3.to_i, $2.to_i, $1.to_i)
+      res['montant'] = $4.to_i * 100 + $5.to_i
+    end
+    if doc['text'] =~ /r(?:.|..)gl(?:.|..)\s*le\s*(\d+)\/(\d+)\/(\d+)\s*au\s*destinataire\s*(.*)\s*:\s*(\d+),(\d+)/i
+      res['date'] = Time.local($3.to_i, $2.to_i, $1.to_i)
+      res['montant'] = $5.to_i * 100 + $6.to_i
+      res['destinataire'] = $4
+    end
+    if doc['text'] =~ /r(?:.|..)f\s*(\d+)\s*(\d+)/i
+      res['ref'] = "#$1-#$2"
+      # Voir un jour pour scanner tout le document et en extraire de multiples references...
+    end
+    
+    return res
+  end
+
+  def self.fetch(fetcher, creds, docs)
+    p [creds, docs]
+    fetcher.get("http://qt.moqksdmlk") do |res|
+      if res.ok?
+        p [res, res.raw_headers]
+        p res.links
+      else
+        p :error
+        p res.error
+      end
+    end
+  end
+end
+]]>
+    </code>
+  </ruby-class-code>
+</collection-definition>
