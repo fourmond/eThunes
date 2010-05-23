@@ -31,10 +31,10 @@ VALUE Fetcher::mNet;
   
 VALUE Fetcher::cFetcher;
   
-Fetcher::Fetcher()
+Fetcher::Fetcher() : followRedirections(true)
 {
   manager = new QNetworkAccessManager(this);
-  cookieJar = new QNetworkCookieJar();
+  cookieJar = new PermissiveCookieJar();
   manager->setCookieJar(cookieJar);
   manager->setProxy(QNetworkProxy(QNetworkProxy::NoProxy));
   connect(manager, SIGNAL(finished(QNetworkReply*)),
@@ -64,6 +64,9 @@ void Fetcher::initializeRuby()
   /// \todo define class functions.
   rb_define_method(cFetcher, "get", 
 		   (VALUE (*)(...)) getWrapper, 1);
+
+  rb_define_method(cFetcher, "post", 
+		   (VALUE (*)(...)) postWrapper, 2);
 
 
   Result::initializeRuby(mNet);
@@ -138,11 +141,50 @@ void Fetcher::replyFinished(QNetworkReply* r)
   }
   // err << "Reply " << r << endl
   //     << "\tfor URL" << r->url().toString() << endl;
-  VALUE code = ongoingRequests[r].code;
-  Result * res = new Result(r);
-  VALUE ary = rb_ary_new();
-  rb_ary_push(ary, res->wrapToRuby());
-  RescueWrapper2Args<VALUE, VALUE>::wrapCall(rb_proc_call, code, ary);
+  
+  // Here, if the request is a redirection, we mention that and follow
+  // it, unless followRedirection is false
+  QString target = r->attribute(QNetworkRequest::RedirectionTargetAttribute).
+    toString();
+  if(followRedirections && ! target.isEmpty()) {
+    // That looks like a redirection
+    err // << "Reply to  URL " << r->url().toString() << endl
+	<< " -> redirects to " << target << endl;
+    // Now redirect cookies
+    reinterpret_cast<PermissiveCookieJar *>(cookieJar)->dumpAllCookies();
+    get(QNetworkRequest(QUrl(target)), ongoingRequests[r].code);
+  }
+  else {
+    VALUE code = ongoingRequests[r].code;
+    Result * res = new Result(r);
+    VALUE ary = rb_ary_new();
+    rb_ary_push(ary, res->wrapToRuby());
+    RescueWrapper2Args<VALUE, VALUE>::wrapCall(rb_proc_call, code, ary);
+  }
+  // In any case, we 
   ongoingRequests[r].done = true;
 }
 
+
+// AttributeHash Fetcher::cookies()
+// {
+//   QList<QNetworkCookie> cookies = cookieJar->allCookies();
+//   AttributeHash val;
+//   for(int i = 0; i < cookies.size(); i++)
+//     val[cookies[i].name()] = cookies[i].value();
+//   return val;
+// }
+
+// Temporary ?
+void PermissiveCookieJar::dumpAllCookies() const
+{
+  QTextStream o(stdout);
+  QList<QNetworkCookie> cookies = allCookies();
+  for(int i = 0; i < cookies.size(); i++) {
+    const QNetworkCookie & c = cookies[i];
+    o << "Cookie: " << c.name() << endl
+      << "\tdomain: " << c.domain() << endl
+      << "\tpath: " << c.path() << endl/*
+					 << "\tvalue: " << c.value() << endl*/;
+  }
+}

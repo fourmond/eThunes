@@ -12,7 +12,7 @@ module Ameli
   def self.parse_releve(doc)
     res = {}
     if doc['text'] =~ /Sociale\s*([\d\s]{13,})+/i
-      res['numero-ss'] = $1
+      res['numero-ss'] = $1.strip
       res['ss'] = res['numero-ss'].gsub(/\s+/,'')
     end
     if doc['text'] =~ /client\s*:\s*(\S+)/i

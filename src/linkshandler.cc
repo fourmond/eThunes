@@ -53,7 +53,7 @@ QString LinksHandler::encodePointer(void * pointer)
 template<typename T> T * LinksHandler::decodePointer(const QString & str)
 {
   void * ptr;
-  sscanf((const char *)str.toAscii(), "%p", &ptr);
+  ::sscanf((const char *)str.toAscii(), "%p", &ptr);
   return static_cast<T*>(ptr);
 }
 

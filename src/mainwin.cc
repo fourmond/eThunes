@@ -77,6 +77,11 @@
    \li Write a Ruby code that gets links and forms out of (X)HTML
    pages, to maximize code reuse.
 
+   \section ideas Vague ideas
+   
+   \li Customize the frequency at which new documents should be polled
+   from master sites ?
+
 */
 
 #include <headers.hh>

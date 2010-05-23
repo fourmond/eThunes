@@ -23,6 +23,18 @@
 
 #include <attributehash.hh>
 
+/// This class is a permissive cookie Jar, in the sense that it does
+/// not attempt to match URLs; this is not as bad as it looks, as
+/// anyway Fetchers only deal with *one* connection.
+class PermissiveCookieJar : public QNetworkCookieJar {
+public:
+
+  /// Dumps all cookies to stdout.
+  void dumpAllCookies() const;
+
+};
+
+
 /// The base class for fetching data over the internet. It is based on
 /// QNetworkAccessManager and can be wrapped into a Ruby VALUE using
 /// wrapForRuby();
@@ -115,6 +127,18 @@ protected:
   OngoingRequest * post(const QNetworkRequest & request, 
 			const AttributeHash & params,
 			VALUE block);
+
+
+  // /// The wrapper for post
+  // static VALUE cookiesWrapper(VALUE obj);
+  
+  // /// A very basic wrapping for cookies
+  // AttributeHash cookies();
+
+  /// Whether or not the Fetcher should follow redirections (by
+  /// sending GET requests). On by default, as this is what we
+  /// generally want.
+  bool followRedirections;
 
 public:
 

@@ -28,7 +28,6 @@ CollectionPage::CollectionPage(Collection * c) : collection(c)
   QVBoxLayout * layout = new QVBoxLayout(this);
   summary = new QLabel();
 
-  /// \todo use the links handler !
   LinksHandler::handleObject(summary);
   connect(LinksHandler::getHandler(), 
 	  SIGNAL(unhandledLink(const QString &)),
@@ -140,10 +139,13 @@ void CollectionPage::openURL(const QString &str)
   else if(str == "download") {
     AttributeHash a;
     QList<AttributeHash> b;
-    /// \todo This should be turned into a proper handling of the 
-    a["login"] = QInputDialog::getText(this, tr("login"), tr("login"));
-    a["passwd"] = QInputDialog::getText(this, tr("passwd"), tr("passwd"), 
-					QLineEdit::Password);
+    /// \todo This should be turned into a proper handling of the
+    /// passwords.
+
+
+    // a["login"] = QInputDialog::getText(this, tr("login"), tr("login"));
+    // a["passwd"] = QInputDialog::getText(this, tr("passwd"), tr("passwd"), 
+    // 					QLineEdit::Password);
     collection->definition->code.fetchNewDocuments(a,b);
   }
 }
