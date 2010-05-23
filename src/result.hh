@@ -63,6 +63,9 @@ protected:
   /// The error string
   static VALUE errorString(VALUE obj);
 
+  /// the .inspect function to help debugging.
+  static VALUE inspect(VALUE obj);
+
 public:
 
   /// Constructs a Result object from the given reply.

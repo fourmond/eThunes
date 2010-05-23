@@ -83,6 +83,20 @@ VALUE Result::errorString(VALUE v)
   return qStringToValue(f->reply->errorString());
 }
 
+VALUE Result::inspect(VALUE v)
+{
+  Result * f = fromValue(v);
+  QString retval = QString().sprintf("#<Net::Result 0x%lx ",(unsigned long) v);
+  retval += "url: '";
+  retval += f->reply->url().toString() + "' ";
+  if(f->reply->error() == QNetworkReply::NoError) 
+    retval += "ok";
+  else 
+    retval += "error: " + f->reply->errorString();
+  retval += ">";
+  return qStringToValue(retval);
+}
+
 
 void Result::initializeRuby(VALUE mNet)
 {
@@ -105,6 +119,9 @@ void Result::initializeRuby(VALUE mNet)
 
   rb_define_method(cResult, "error", 
   		   (VALUE (*)(...)) errorString, 0);
+
+  rb_define_method(cResult, "inspect", 
+  		   (VALUE (*)(...)) inspect, 0);
 
 
   rubyInitialized = true;
