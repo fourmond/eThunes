@@ -22,17 +22,7 @@
 #define __FETCHER_HH
 
 #include <attributehash.hh>
-
-/// This class is a permissive cookie Jar, in the sense that it does
-/// not attempt to match URLs; this is not as bad as it looks, as
-/// anyway Fetchers only deal with *one* connection.
-class PermissiveCookieJar : public QNetworkCookieJar {
-public:
-
-  /// Dumps all cookies to stdout.
-  void dumpAllCookies() const;
-
-};
+#include <cookiejar.hh>
 
 
 /// The base class for fetching data over the internet. It is based on
@@ -89,7 +79,15 @@ protected:
     /// mechanism to tell when the Fetcher has finished all its
     /// pending jobs (meaning as well that it can be disposed of).
     bool done;
+
+    /// maximum number of redirections left
+    int maxHops;
   };
+
+  /// Register a request in the hash, and setup the right things about
+  /// it.
+  OngoingRequest * registerRequest(QNetworkReply * reply, 
+				   VALUE code, int redirections = 0);
 
   /// Requests currently underway
   QHash<QNetworkReply *, OngoingRequest> ongoingRequests;
@@ -99,7 +97,7 @@ protected:
   QNetworkAccessManager * manager;
 
   /// The cookie Jar
-  QNetworkCookieJar * cookieJar;
+  CookieJar * cookieJar;
 
 
   /// The "Net" module
@@ -118,7 +116,8 @@ protected:
   static VALUE getWrapper(VALUE obj, VALUE str);
 
   /// Spawns a get request.
-  OngoingRequest * get(const QNetworkRequest & request, VALUE block);
+  OngoingRequest * get(const QNetworkRequest & request, VALUE block, 
+		       int redirections = 0);
 
   /// The wrapper for post
   static VALUE postWrapper(VALUE obj, VALUE str, VALUE hash);

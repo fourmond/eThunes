@@ -24,7 +24,6 @@
 
 using namespace Ruby;
 
-
 bool Fetcher::rubyInitialized = false;
 
 VALUE Fetcher::mNet;
@@ -34,7 +33,7 @@ VALUE Fetcher::cFetcher;
 Fetcher::Fetcher() : followRedirections(true)
 {
   manager = new QNetworkAccessManager(this);
-  cookieJar = new PermissiveCookieJar();
+  cookieJar = new CookieJar();
   manager->setCookieJar(cookieJar);
   manager->setProxy(QNetworkProxy(QNetworkProxy::NoProxy));
   connect(manager, SIGNAL(finished(QNetworkReply*)),
@@ -73,13 +72,22 @@ void Fetcher::initializeRuby()
   rubyInitialized = true;
 }
 
-Fetcher::OngoingRequest * Fetcher::get(const QNetworkRequest & request, VALUE code)
+Fetcher::OngoingRequest * Fetcher::get(const QNetworkRequest & request, 
+				       VALUE code, int redirections)
 {
   QNetworkReply * reply = manager->get(request);
+  return registerRequest(reply, code, redirections);
+}
+
+Fetcher::OngoingRequest * Fetcher::registerRequest(QNetworkReply * reply, 
+						   VALUE code, 
+						   int redirections)
+{
   OngoingRequest & r = ongoingRequests[reply];
   r.reply = reply;
   r.code = code;
   r.done = false;
+  r.maxHops = (redirections ?  redirections : 7 /** \todo Customize this */);
   return &r;
 }
 
@@ -91,6 +99,9 @@ Fetcher::OngoingRequest * Fetcher::post(const QNetworkRequest & request,
   /// solution. Taken from:
   ///
   /// http://stackoverflow.com/questions/2214595/how-can-i-create-a-http-post-request-with-qt-4-6-1
+  ///
+  /// Although it seems to work with SFR, which is a good thing
+  /// already.
   QByteArray data;
   QUrl params;
   QNetworkRequest re = request;
@@ -105,12 +116,7 @@ Fetcher::OngoingRequest * Fetcher::post(const QNetworkRequest & request,
   re.setHeader(QNetworkRequest::ContentTypeHeader,
 	      "application/x-www-form-urlencoded");
   QNetworkReply * reply = manager->post(re, data);
-  OngoingRequest & r = ongoingRequests[reply];
-
-  r.reply = reply;
-  r.code = code;
-  r.done = false;
-  return &r;
+  return registerRequest(reply, code);
 }
 
 
@@ -150,9 +156,11 @@ void Fetcher::replyFinished(QNetworkReply* r)
     // That looks like a redirection
     err // << "Reply to  URL " << r->url().toString() << endl
 	<< " -> redirects to " << target << endl;
-    // Now redirect cookies
-    reinterpret_cast<PermissiveCookieJar *>(cookieJar)->dumpAllCookies();
-    get(QNetworkRequest(QUrl(target)), ongoingRequests[r].code);
+    int nb = ongoingRequests[r].maxHops - 1;
+    if(nb)
+      get(QNetworkRequest(QUrl(target)), ongoingRequests[r].code, nb);
+    else 
+      err << "Maximum number of redirections hit, stopping" << endl;
   }
   else {
     VALUE code = ongoingRequests[r].code;
@@ -163,28 +171,4 @@ void Fetcher::replyFinished(QNetworkReply* r)
   }
   // In any case, we 
   ongoingRequests[r].done = true;
-}
-
-
-// AttributeHash Fetcher::cookies()
-// {
-//   QList<QNetworkCookie> cookies = cookieJar->allCookies();
-//   AttributeHash val;
-//   for(int i = 0; i < cookies.size(); i++)
-//     val[cookies[i].name()] = cookies[i].value();
-//   return val;
-// }
-
-// Temporary ?
-void PermissiveCookieJar::dumpAllCookies() const
-{
-  QTextStream o(stdout);
-  QList<QNetworkCookie> cookies = allCookies();
-  for(int i = 0; i < cookies.size(); i++) {
-    const QNetworkCookie & c = cookies[i];
-    o << "Cookie: " << c.name() << endl
-      << "\tdomain: " << c.domain() << endl
-      << "\tpath: " << c.path() << endl/*
-					 << "\tvalue: " << c.value() << endl*/;
-  }
 }
