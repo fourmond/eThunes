@@ -77,19 +77,10 @@ void CollectionPage::updateContents()
       str += "<a href='attach:" + doc->canonicalFileName() +
 	"'> (attach file)</a>"; /// \todo tr around.
       for(int l = 0; l < doc->links.size(); l++)
-	if(doc->links[l].target) // {
+	if(doc->links[l].target)
 	  str += " " +
 	    LinksHandler::linkTo(doc->links[l].target,
 				 doc->links[l].target->publicTypeName());
-	//   QString link2 =
-	//     LinksHandler::linkTo(static_cast<Transaction*>(doc->links[l].target),
-	// 			 "biniou");
-	//   QTextStream o(stdout);
-	//   o << link << endl
-	//     << link2 << endl;
-
-	//   str += " " + link;
-	// }
       str += "\n<br>\n";
     }
     i++;
@@ -98,7 +89,6 @@ void CollectionPage::updateContents()
   // temporary code for testing Ruby fetching code.
   if(collection->definition->code.canFetch())
     str += "<p><a href='download'>Download new elements</a>";
-
 
   summary->setText(str);
 }
@@ -137,16 +127,15 @@ void CollectionPage::openURL(const QString &str)
     /// \todo Display of what was found / log ?
   }
   else if(str == "download") {
-    AttributeHash a;
-    QList<AttributeHash> b;
+    AttributeHash user;
     /// \todo This should be turned into a proper handling of the
-    /// passwords.
+    /// passwords and of multiple identities...
 
 
-    // a["login"] = QInputDialog::getText(this, tr("login"), tr("login"));
-    // a["passwd"] = QInputDialog::getText(this, tr("passwd"), tr("passwd"),
-    // 					QLineEdit::Password);
-    collection->definition->code.fetchNewDocuments(a,b);
+    user["login"] = QInputDialog::getText(this, tr("login"), tr("login"));
+    user["passwd"] = QInputDialog::getText(this, tr("passwd"), tr("passwd"),
+					   QLineEdit::Password);
+    collection->fetchNewDocumentsForUser(user);
   }
 }
 

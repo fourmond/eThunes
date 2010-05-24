@@ -237,3 +237,11 @@ bool Collection::fileClashes(const QString & cn) const
     return true;
   return false;
 }
+
+void Collection::fetchNewDocumentsForUser(const AttributeHash &user)
+{
+  QList<AttributeHash> docs;
+  for(int i = 0; i < documents.size(); i++)
+    docs << documents[i].documentAttributes();
+  definition->code.fetchNewDocuments(user, docs);
+}

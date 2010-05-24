@@ -195,6 +195,16 @@ public:
   /// Returns all the documents in the Collection
   QList<Document *> allDocuments();
 
+  /// Launches the CollectionCode to get all potentially new
+  /// documents.
+  ///
+  /// The attributeHash respresents the credentials of the user.
+  ///
+  /// \warning When this function returns, not all documents will have
+  /// been fetched. Most probably, no Internet access will even have
+  /// been performed up to this point ;-)...
+  void fetchNewDocumentsForUser(const AttributeHash &user);
+
   // We can't use signals as the QObject copy constructor is private,
   // which prevents it from being used inside a QList, probably for
   // very good reasons too...

@@ -135,6 +135,14 @@ public:
   /// interpret from the file.
   AttributeHash attributes;
 
+  /// Returns an AttributeHash containing, in addition to the
+  /// attributes, the name of document type as __type__:
+  AttributeHash documentAttributes() const {
+    AttributeHash retval = attributes;
+    retval["__type__"] = definition->name;
+    return retval;
+  };
+
   /// A recent flag, as it will definitely come in useful later on.
   bool recent;
 

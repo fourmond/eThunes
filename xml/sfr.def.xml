@@ -30,15 +30,49 @@ module SFR
     return res
   end
 
-  def self.fetch(fetcher, creds, docs)
-    p [creds, docs]
-    fetcher.get("http://qt.moqksdmlk") do |res|
-      if res.ok?
-        p [res, res.raw_headers]
-        p res.links
+  # Parses the 'final' page and gets the bills present there. We write
+  # it as a separate function, as it gets rather painful to wrap
+  # everything in a do block
+  def self.parse_and_fetch_bills(res, fetcher, docs)
+    current_docs = {}
+    for d in docs
+      current_docs[d['facture']] = d
+    end
+    bills = res.links.select do |x|
+      x[:target] =~ /affichageFacturePdf/i
+    end
+    for b in bills
+      if current_docs.key?(b[:name])
+        puts "Not downloading bill #{b[:name]}, we have it"
       else
-        p :error
-        p res.error
+        puts "We should consider dowloading #{b[:name]}"
+      end
+    end
+  end
+
+  def self.fetch(fetcher, creds, docs)
+    vals = {'username' => creds['login'],
+             'password' => creds['passwd'],
+	     'service' => 'https://www.sfr.fr/j_spring_cas_security_check',
+	     'spring-security-redirect' => '/do/creationMail/redirect/redirect?provenance=',
+	     'identifier' => ''}
+
+    fetcher.post("https://www.sfr.fr/cas/login?noRattachement=true",vals) do |res|
+      if res.ok?
+	fetcher.get('https://moncompte-neufbox.sfr.fr/moncompte-webapp/moncompte/hub/accueil.action?javascript=true') do |res|
+	  if res.ok?
+	    fetcher.get('https://moncompte-neufbox.sfr.fr/moncompte-webapp/moncompte/factures/detailFacture.action') do |res|
+              if res.ok?
+                # We really look hard into all the bills SFR knows about...
+                fetcher.get('https://moncompte-neufbox.sfr.fr/moncompte-webapp/moncompte/factures/detailFactureHisto.action') do |res|
+                  SFR.parse_and_fetch_bills(res, fetcher, docs)
+                end
+              end
+	    end
+	  end
+	end
+      else
+        p [:error, res.error]
       end
     end
   end
