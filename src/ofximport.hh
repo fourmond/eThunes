@@ -1,4 +1,4 @@
-/** 
+/**
     \file ofximport.hh
     A simple way to import OFX 'downloads' from banks.
     Copyright 2008 by Vincent Fourmond

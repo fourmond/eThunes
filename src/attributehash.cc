@@ -36,7 +36,7 @@ AttributeHash::HandledType AttributeHash::variantType(const QVariant &variant)
   case QVariant::UInt:
   case QVariant::Int:
   case QVariant::LongLong:
-  case QVariant::ULongLong: 
+  case QVariant::ULongLong:
     /// \todo there are risks of precision loss for large numbers here
     /// (over 2 billions)
     return AttributeHash::Number;
@@ -126,15 +126,15 @@ void AttributeHash::dumpContents() const
   QTextStream o(stdout);
   const_iterator i = constBegin();
   while (i != constEnd()) {
-    o << "Key: " << i.key() << ": (type " 
-      << typeNames[variantType(i.value())] << ") " 
+    o << "Key: " << i.key() << ": (type "
+      << typeNames[variantType(i.value())] << ") "
       << i.value().toString() << endl;
     i++;
   }
-  
+
 }
 
-void AttributeHash::writeXML(const QString& name, 
+void AttributeHash::writeXML(const QString& name,
 			     QXmlStreamWriter* writer)
 {
   const_iterator i = constBegin();
@@ -165,7 +165,7 @@ void AttributeHash::readXML(QXmlStreamReader* reader)
   case Number:
     operator[](name) = QVariant(value.toLongLong());
     return;
-  case Time: 
+  case Time:
     operator[](name) = QDateTime::fromString(value, Qt::ISODate);
     return;
   }
@@ -188,7 +188,7 @@ QString AttributeHash::formatString(const QString & format) const
       // prefix.
       str += format.mid(lastidx, idx - lastidx);
       // Now, we have fun
-      if(! contains(formatSpecifierRE.cap(1))) 
+      if(! contains(formatSpecifierRE.cap(1)))
 	str += "undef";
       else {
 	// handle formats !
@@ -214,7 +214,7 @@ QString AttributeHash::formatVariant(QVariant v, const QString &spec)
       return v.toDateTime().toString("MM");
     case 'y':
       return v.toDateTime().toString("yyyy");
-    default: 
+    default:
       return v.toString();
     }
   }

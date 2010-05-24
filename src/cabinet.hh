@@ -1,4 +1,4 @@
-/** 
+/**
     \file cabinet.hh
     Class representing a collection of all objects.
     Copyright 2010 by Vincent Fourmond
@@ -86,7 +86,7 @@ public:
   virtual SerializationAccessor * serializationAccessor();
 
   virtual void prepareSerializationRead();
-  
+
   virtual void finishedSerializationRead();
 
   /// The full file name of the Cabinet.
@@ -134,7 +134,7 @@ public slots:
   void clearContents();
 
   /// Creates a new Collection object and adds it to the Cabinet
-  Collection * addNewCollection(const QString & name, 
+  Collection * addNewCollection(const QString & name,
 				CollectionDefinition * def);
 
   /// Creates a new Collection object and adds it to the Cabinet
@@ -152,7 +152,7 @@ public slots:
 
 public:
   /// Whether the Cabinet has pending modifications
-  bool isDirty() const { return dirty; }; 
+  bool isDirty() const { return dirty; };
 
   /// The Cabinet currently serialized.
   static Cabinet * cabinetBeingSerialized;

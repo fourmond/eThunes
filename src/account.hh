@@ -1,4 +1,4 @@
-/** 
+/**
     \file account.hh
     The Account class
     Copyright 2008,2010 by Vincent Fourmond
@@ -38,12 +38,12 @@ public:
   ///
   /// These attributes are found in raw OFX files or other exports from
   /// the bank.
-  /// 
+  ///
   /// @{
 
   /// The different kinds of accounts (not much here, admittedly...)
-  enum  AccountType { 
-    Savings 
+  enum  AccountType {
+    Savings
   };
 
   /// The type of the account.
@@ -86,7 +86,7 @@ public:
   ///
   /// If the pointer to the Wallet NULL the filters are run
   /// on the new transactions.
-  int importTransactions(TransactionList transactions, 
+  int importTransactions(TransactionList transactions,
 			 Wallet * walletFilters = NULL);
 
   /// The user-given name for the account.
@@ -98,7 +98,7 @@ public:
 
   /// Returns true if the given Account object is the same account
   /// as this one.
-  int isSameAccount(const Account & ac) const { 
+  int isSameAccount(const Account & ac) const {
     return ac.accountID() == accountID();
   };
 
@@ -119,12 +119,12 @@ public:
 
   // Serialize reimplementation
   virtual void prepareSerializationRead() { clearContents();};
-  virtual void finishedSerializationRead() { sanitizeAccount();}; 
+  virtual void finishedSerializationRead() { sanitizeAccount();};
 
 
   /// Returns the Transaction objects of the account that belong to
   /// the given Category, or possibly to one of its descendants.
-  QList<Transaction *> categoryTransactions(const Category * category, 
+  QList<Transaction *> categoryTransactions(const Category * category,
 					    bool parents = true);
 
 
@@ -132,7 +132,7 @@ public:
   TransactionPtrList checks();
 
   /// Returns the list of recent transactions.
-  TransactionPtrList recentTransactions(); 
+  TransactionPtrList recentTransactions();
 
   /// Returns the Transaction whose Transaction::transactionID()
   /// matches name.

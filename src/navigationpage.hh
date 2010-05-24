@@ -1,4 +1,4 @@
-/** 
+/**
     \file navigationpage.hh
     A page in the navigation widget
     Copyright 2010 by Vincent Fourmond
@@ -27,10 +27,10 @@ class NavigationPage : public QWidget {
   Q_OBJECT;
 
 public:
-  
+
   /// Returns the title of the page
   virtual QString pageTitle() = 0;
-  
+
   virtual ~NavigationPage();
 
   /// Forces an update of the contents of the page

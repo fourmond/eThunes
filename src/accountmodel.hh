@@ -1,4 +1,4 @@
-/** 
+/**
     \file account-model.hh
     An item model providing transaction data
     Copyright 2010 by Vincent Fourmond
@@ -48,10 +48,10 @@ class AccountModel : public QAbstractItemModel {
 
   /// List of transactions:
   TransactionList * transactions;
-  
+
   /// Or this way:
   TransactionPtrList * transactionsPtr;
-  
+
 
 protected:
   /// Returns the transaction corresponding to the index, or NULL if
@@ -66,7 +66,7 @@ protected:
 
   /// Returns a small icon (16x16) representing a given status
   static const QIcon & statusIcon(const QString & status);
-  
+
 public:
   AccountModel(TransactionList * transactions);
   AccountModel(TransactionPtrList * transactions);
@@ -91,7 +91,7 @@ public:
   /// Returns the QModelIndex corresponding to the given transaction
   QModelIndex index(Transaction * transaction);
 
-  virtual QModelIndex index(int row, int column, 
+  virtual QModelIndex index(int row, int column,
 			    const QModelIndex & parent = QModelIndex() ) const;
 
   virtual QModelIndex parent(const QModelIndex&) const;
@@ -102,24 +102,24 @@ public:
 
   virtual QVariant data(const QModelIndex&, int) const;
 
-  virtual QVariant headerData(int section, Qt::Orientation orientation, 
+  virtual QVariant headerData(int section, Qt::Orientation orientation,
 			      int role) const ;
 
   virtual Qt::ItemFlags flags(const QModelIndex & index) const;
 
-  virtual bool setData(const QModelIndex & index, const QVariant & value, 
-		       int role = Qt::EditRole);  
+  virtual bool setData(const QModelIndex & index, const QVariant & value,
+		       int role = Qt::EditRole);
 
 public slots:
-  
+
   /// Radically changes things that have changed ;-)...
   void accountChanged();
 
 protected:
-  
+
   /// Number of transactions in the list
   int transactionCount() const {
-    if(transactions) 
+    if(transactions)
       return transactions->count();
     if(transactionsPtr)
       return transactionsPtr->count();
@@ -137,17 +137,17 @@ class AccountItemDelegate : public QStyledItemDelegate {
   Wallet * wallet;
 public:
   AccountItemDelegate(Wallet * w);
-  
+
   /// Reimplementations
-  virtual QWidget * createEditor(QWidget * parent, 
-				 const QStyleOptionViewItem & option, 
+  virtual QWidget * createEditor(QWidget * parent,
+				 const QStyleOptionViewItem & option,
 				 const QModelIndex & index) const;
 
-  virtual void setEditorData(QWidget * editor, 
+  virtual void setEditorData(QWidget * editor,
 			     const QModelIndex & index) const;
 
 
-  virtual void setModelData(QWidget * editor, QAbstractItemModel * model, 
+  virtual void setModelData(QWidget * editor, QAbstractItemModel * model,
 			    const QModelIndex & index) const;
 };
 
@@ -157,15 +157,15 @@ class LinksItemDelegate : public QStyledItemDelegate {
 public:
 
   /// Reimplementations
-  virtual QWidget * createEditor(QWidget * parent, 
-				 const QStyleOptionViewItem & option, 
+  virtual QWidget * createEditor(QWidget * parent,
+				 const QStyleOptionViewItem & option,
 				 const QModelIndex & index) const;
 
-  virtual void setEditorData(QWidget * editor, 
+  virtual void setEditorData(QWidget * editor,
 			     const QModelIndex & index) const;
 
 
-  virtual void setModelData(QWidget * editor, QAbstractItemModel * model, 
+  virtual void setModelData(QWidget * editor, QAbstractItemModel * model,
 			    const QModelIndex & index) const;
 };
 

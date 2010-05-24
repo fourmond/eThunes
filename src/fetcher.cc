@@ -27,9 +27,9 @@ using namespace Ruby;
 bool Fetcher::rubyInitialized = false;
 
 VALUE Fetcher::mNet;
-  
+
 VALUE Fetcher::cFetcher;
-  
+
 Fetcher::Fetcher() : followRedirections(true)
 {
   manager = new QNetworkAccessManager(this);
@@ -61,10 +61,10 @@ void Fetcher::initializeRuby()
   cFetcher = rb_define_class_under(mNet, "Fetcher", rb_cObject);
 
   /// \todo define class functions.
-  rb_define_method(cFetcher, "get", 
+  rb_define_method(cFetcher, "get",
 		   (VALUE (*)(...)) getWrapper, 1);
 
-  rb_define_method(cFetcher, "post", 
+  rb_define_method(cFetcher, "post",
 		   (VALUE (*)(...)) postWrapper, 2);
 
 
@@ -72,15 +72,15 @@ void Fetcher::initializeRuby()
   rubyInitialized = true;
 }
 
-Fetcher::OngoingRequest * Fetcher::get(const QNetworkRequest & request, 
+Fetcher::OngoingRequest * Fetcher::get(const QNetworkRequest & request,
 				       VALUE code, int redirections)
 {
   QNetworkReply * reply = manager->get(request);
   return registerRequest(reply, code, redirections);
 }
 
-Fetcher::OngoingRequest * Fetcher::registerRequest(QNetworkReply * reply, 
-						   VALUE code, 
+Fetcher::OngoingRequest * Fetcher::registerRequest(QNetworkReply * reply,
+						   VALUE code,
 						   int redirections)
 {
   OngoingRequest & r = ongoingRequests[reply];
@@ -91,7 +91,7 @@ Fetcher::OngoingRequest * Fetcher::registerRequest(QNetworkReply * reply,
   return &r;
 }
 
-Fetcher::OngoingRequest * Fetcher::post(const QNetworkRequest & request, 
+Fetcher::OngoingRequest * Fetcher::post(const QNetworkRequest & request,
 					const AttributeHash & parameters,
 					VALUE code)
 {
@@ -131,7 +131,7 @@ VALUE Fetcher::postWrapper(VALUE obj, VALUE str, VALUE hash)
 {
   Fetcher * f = fromValue(obj);
   AttributeHash val;
-  f->post(QNetworkRequest(QUrl(valueToQString(str))), 
+  f->post(QNetworkRequest(QUrl(valueToQString(str))),
 	  AttributeHash::fromRuby(hash), rb_block_proc());
   return Qnil;
 }
@@ -147,7 +147,7 @@ void Fetcher::replyFinished(QNetworkReply* r)
   }
   // err << "Reply " << r << endl
   //     << "\tfor URL" << r->url().toString() << endl;
-  
+
   // // Dumping cookie jar:
   // QTextStream o(stdout);
   // /// \todo Customize the display of this ?
@@ -163,7 +163,7 @@ void Fetcher::replyFinished(QNetworkReply* r)
       get(QNetworkRequest(target), ongoingRequests[r].code, nb);
     else
       err << "Maximum number of redirections hit, stopping" << endl;
-    
+
   }
   else {
     VALUE code = ongoingRequests[r].code;
@@ -172,6 +172,6 @@ void Fetcher::replyFinished(QNetworkReply* r)
     rb_ary_push(ary, res->wrapToRuby());
     RescueWrapper2Args<VALUE, VALUE>::wrapCall(rb_proc_call, code, ary);
   }
-  // In any case, we 
+  // In any case, we
   ongoingRequests[r].done = true;
 }

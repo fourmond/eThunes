@@ -1,4 +1,4 @@
-/** 
+/**
     \file navigationwidget.hh
     The widget handling the tab-based navigation.
     Copyright 2010 by Vincent Fourmond
@@ -46,7 +46,7 @@ public:
   virtual ~NavigationWidget();
 
   /// Adds a page to the NavigationWidget
-  /// 
+  ///
   /// \todo many interesting things to be done at a later time.
   void addPage(NavigationPage * page);
 
@@ -60,8 +60,8 @@ public:
 
   /// Gets the current NavigationPage
   /// Commented out as dangerous for now.
-  // 
-  // NavigationPage * currentPage() const { return 
+  //
+  // NavigationPage * currentPage() const { return
   //     static_cast<NavigationPage *>(currentWidget());}  ;
 
 public slots:

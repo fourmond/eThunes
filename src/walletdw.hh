@@ -1,4 +1,4 @@
-/** 
+/**
     \file walletdw.hh
     DashboarWidget for the wallet class
     Copyright 2010 by Vincent Fourmond

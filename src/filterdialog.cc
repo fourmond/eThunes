@@ -1,5 +1,5 @@
 /*
-    filterdialog.cc: dialog boxes for filter 
+    filterdialog.cc: dialog boxes for filter
     Copyright 2010 by Vincent Fourmond
 
     This program is free software; you can redistribute it and/or modify
@@ -28,12 +28,12 @@ FilterDialog::FilterDialog(Wallet *w)
 
   QHBoxLayout * hb = new QHBoxLayout;
   l1->addLayout(hb);
-  
+
   list = new QListWidget(this);
   hb->addWidget(list);
   connect(list, SIGNAL(itemDoubleClicked(QListWidgetItem *)),
 	  SLOT(editCurrent()));
-  
+
   QVBoxLayout * l2 = new QVBoxLayout;
   QPushButton * bt = new QPushButton(tr("New filter"));
   connect(bt, SIGNAL(clicked()), SLOT(newFilter()));
@@ -80,7 +80,7 @@ void FilterDialog::runFilters()
 
 void FilterDialog::editCurrent()
 {
-  FilterEditDialog * edit = 
+  FilterEditDialog * edit =
     new FilterEditDialog(wallet, &wallet->filters[list->currentRow()]);
   connect(edit, SIGNAL(finished(int)), SLOT(updateFilterList()));
   edit->show();
@@ -96,7 +96,7 @@ FilterEditDialog::FilterEditDialog(Wallet *w, Filter * f)
   QHBoxLayout * hb = new QHBoxLayout;
   hb->addWidget(new QLabel(tr("Filter: ")));
   QLineEdit * edit = new QLineEdit(filter->name);
-  connect(edit, SIGNAL(textChanged(const QString &)), 
+  connect(edit, SIGNAL(textChanged(const QString &)),
 	  SLOT(nameChanged(const QString &)));
   hb->addWidget(edit);
   l1->addLayout(hb);
@@ -109,12 +109,12 @@ FilterEditDialog::FilterEditDialog(Wallet *w, Filter * f)
   hb = new QHBoxLayout;
   hb->addWidget(new QLabel(tr("Target category: ")));
   edit = new QLineEdit(filter->category);
-  connect(edit, SIGNAL(textChanged(const QString &)), 
+  connect(edit, SIGNAL(textChanged(const QString &)),
 	  SLOT(categoryChanged(const QString &)));
   hb->addWidget(edit);
   l1->addLayout(hb);
 
-  
+
   QPushButton * bt = new QPushButton(tr("Close"));
   connect(bt, SIGNAL(clicked()), SLOT(close()));
   l1->addWidget(bt);
@@ -140,22 +140,22 @@ FilterElementWidget::FilterElementWidget(FilterElement * el)
   attributeSelection->addItem(tr("Name"), QVariant(FilterElement::Name));
   if(element->transactionAttribute == FilterElement::Name)
     attributeSelection->setCurrentIndex(attributeSelection->count()-1);
-    
+
   attributeSelection->addItem(tr("Memo"), QVariant(FilterElement::Memo));
   if(element->transactionAttribute == FilterElement::Memo)
     attributeSelection->setCurrentIndex(attributeSelection->count()-1);
-  connect(attributeSelection, SIGNAL(activated(int)), 
+  connect(attributeSelection, SIGNAL(activated(int)),
 	  SLOT(targetChanged(int)));
 
-  hb->addWidget(attributeSelection);  
+  hb->addWidget(attributeSelection);
 
   QLineEdit * edit = new QLineEdit();
   edit->setText(element->match);
-  connect(edit, SIGNAL(textChanged(const QString &)), 
+  connect(edit, SIGNAL(textChanged(const QString &)),
 	  SLOT(textChanged(const QString &)));
 
-  hb->addWidget(edit);  
-  
+  hb->addWidget(edit);
+
 
   /// \todo Regexp ?
 
@@ -169,6 +169,6 @@ void FilterElementWidget::textChanged(const QString & str)
 void FilterElementWidget::targetChanged(int t)
 {
   // Ugly, but, well, works...
-  *((int*)&element->transactionAttribute) = 
+  *((int*)&element->transactionAttribute) =
     attributeSelection->itemData(t).toInt();
 }

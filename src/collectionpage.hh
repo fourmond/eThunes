@@ -1,4 +1,4 @@
-/** 
+/**
     \file collectionpage.hh
     A page displaying informations about the categories
     Copyright 2010 by Vincent Fourmond
@@ -59,10 +59,10 @@ protected:
 public:
 
   CollectionPage(Collection * c);
-  
+
   /// Returns the title of the page
   virtual QString pageTitle();
-  
+
   virtual ~CollectionPage();
 
   /// Returns the CollectionPage for the given collection, or create

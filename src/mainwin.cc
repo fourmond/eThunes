@@ -25,7 +25,7 @@
 
    First, it is important to go on with the banking part. The most
    important work on that side is:
-   
+
    \li provide categories, subcategories and tags, and, following
    statistics of all kinds
 
@@ -39,7 +39,7 @@
    \li retrieve automatically bills, payments and the like, using
    HTTP(S) and appropriate Regex-like parsers (with automatic
    notifications of items found).
-   
+
    \li organise them into folders easy to browse (both in the
    underlying physical FS and in the way to present the data).
 
@@ -61,7 +61,7 @@
    levels
 
    \section todo-short Shorter term things to do
-   
+
    \li It is more and more important to make sure that the objects
    communicate well about their status changes: updates of the windows
    + dirty flag for saving.
@@ -86,7 +86,7 @@
    pages, to maximize code reuse.
 
    \section ideas Vague ideas
-   
+
    \li Customize the frequency at which new documents should be polled
    from master sites ?
 
@@ -108,7 +108,7 @@ MainWin::MainWin()
   cabinet = new Cabinet();
   connect(cabinet, SIGNAL(dirtyChanged(bool)), SLOT(dirtyChanged(bool)));
   fileNameChanged(QString());
-  
+
   setupFrame();
   setupActions();
   setupMenus();
@@ -261,7 +261,7 @@ void MainWin::tryQuit()
     if(QMessageBox::question(this, tr("Quit with unsaved changes ?"),
 			     tr("The wallet has unsaved changes, do you still "
 				"want to quit ?"),
-			     QMessageBox::Ok|QMessageBox::No, 
+			     QMessageBox::Ok|QMessageBox::No,
 			     QMessageBox::No) == QMessageBox::No)
       return;
   }
@@ -270,14 +270,14 @@ void MainWin::tryQuit()
 
 void MainWin::testCollectionDefinitionDocument()
 {
-  QString type = 
+  QString type =
     QInputDialog::getItem(this, tr("Collection definition to test"),
 			  tr("Collection definition"),
 			  CollectionDefinition::availableDefinitions(), 0,
 			  false);
   if(type.isEmpty())
     return;
-  CollectionDefinition * def = 
+  CollectionDefinition * def =
     CollectionDefinition::loadWithoutRegistering(type);
   if(! def)
     return;			// Though things go wrong !
@@ -286,13 +286,13 @@ void MainWin::testCollectionDefinitionDocument()
   QString filter = filters[filters.keys()[0]];
 
   do {
-    QString file = 
-      QFileDialog::getOpenFileName(this, 
+    QString file =
+      QFileDialog::getOpenFileName(this,
 				   tr("Please select a file to test"),
 				   QString(),
 				   QStringList(filters.keys()).join(";;"),
 				   &filter);
-  
+
     if(file.isEmpty())
       return;
 

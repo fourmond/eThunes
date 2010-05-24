@@ -1,4 +1,4 @@
-/** 
+/**
     \file transactionlistwidget.hh
     A page displaying more information about an account
     Copyright 2010 by Vincent Fourmond
@@ -27,9 +27,9 @@
 ///
 /// \todo Activate multiple selection and provide popup menus to
 /// choose categories.
-/// 
+///
 /// \todo Optionally remove the balance ?
-/// 
+///
 class TransactionListWidget : public QWidget {
 
   Q_OBJECT;
@@ -40,11 +40,11 @@ protected:
   void setupTreeView();
 
 public:
-  
+
   TransactionListWidget(QWidget * parent = 0);
-  TransactionListWidget(TransactionList *transactions, 
+  TransactionListWidget(TransactionList *transactions,
 			QWidget * parent = 0);
-  TransactionListWidget(TransactionPtrList *transactions, 
+  TransactionListWidget(TransactionPtrList *transactions,
 			QWidget * parent = 0);
 
   void showTransactions(TransactionList *transactions);
@@ -58,7 +58,7 @@ public:
 
   /// The model that does it.
   AccountModel * model;
-  
+
   ~TransactionListWidget();
 
 signals:
@@ -68,7 +68,7 @@ public slots:
 
   /// Shows the given transaction
   void showTransaction(Transaction * transaction);
-  
+
 };
 
 #endif

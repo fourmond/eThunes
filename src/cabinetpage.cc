@@ -34,10 +34,10 @@ CabinetPage::CabinetPage(Cabinet * c) : cabinet(c)
 
   layout->addLayout(hb);
   updateContents();
-  connect(cabinet, SIGNAL(filenameChanged(const QString&)), 
+  connect(cabinet, SIGNAL(filenameChanged(const QString&)),
 	  SLOT(updateContents()));
 
-  connect(cabinet, SIGNAL(filenameChanged(const QString&)), 
+  connect(cabinet, SIGNAL(filenameChanged(const QString&)),
 	  SIGNAL(filenameChanged(const QString&)));
 }
 
@@ -67,8 +67,8 @@ void CabinetPage::save()
 
 void CabinetPage::saveAs()
 {
-  QString str = 
-    QFileDialog::getSaveFileName(this, 
+  QString str =
+    QFileDialog::getSaveFileName(this,
 				 tr("Save cabinet as"),
 				 QString(),
 				 tr("XML cabinet files (*.xml)"));
@@ -79,8 +79,8 @@ void CabinetPage::saveAs()
 
 void CabinetPage::load()
 {
-  QString file = 
-    QFileDialog::getOpenFileName(this, 
+  QString file =
+    QFileDialog::getOpenFileName(this,
 				 tr("Select cabinet to load"),
 				 QString(),
 				 tr("XML cabinet files (*.xml)"));

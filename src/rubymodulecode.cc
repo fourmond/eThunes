@@ -28,9 +28,9 @@ using namespace Ruby;
 SerializationAccessor * RubyModuleCode::serializationAccessor()
 {
   SerializationAccessor * ac = new SerializationAccessor(this);
-  ac->addAttribute("module-name", 
+  ac->addAttribute("module-name",
 		   new SerializationItemScalar<QString>(&name, true));
-  ac->addAttribute("code", 
+  ac->addAttribute("code",
 		   new SerializationItemScalar<QString>(&code));
 ;
   return ac;
@@ -46,7 +46,7 @@ void RubyModuleCode::ensureLoadModule()
   module = rb_eval_string((const char*)name.toLocal8Bit());
 }
 
-RubyModuleCode::RubyModuleCode() : module(0) 
+RubyModuleCode::RubyModuleCode() : module(0)
 {
 }
 
@@ -61,26 +61,26 @@ void RubyModuleCode::parseDocumentMetaDataInternal(const QString & doctype,
   target.setFromRuby(result);
 }
 
-AttributeHash RubyModuleCode::parseDocumentMetaData(const QString &doctype, 
+AttributeHash RubyModuleCode::parseDocumentMetaData(const QString &doctype,
 						    const AttributeHash & contents)
 {
   ensureLoadModule();			// Make sure the module is loaded.
   AttributeHash retVal;
-  RescueMemberWrapper3Args<RubyModuleCode, const QString &, 
+  RescueMemberWrapper3Args<RubyModuleCode, const QString &,
     const AttributeHash &, AttributeHash &>::
     wrapCall(this, &RubyModuleCode::parseDocumentMetaDataInternal,
 	     doctype, contents, retVal);
   return retVal;
 }
 
-bool RubyModuleCode::canFetch() 
+bool RubyModuleCode::canFetch()
 {
   ensureLoadModule();
   return rb_respond_to(module, rb_intern("fetch"));
 }
 
 void RubyModuleCode::fetchNewDocumentsInternal(const AttributeHash & credentials,
-					       const QList<AttributeHash> &existingDocuments, int /* dummy */) 
+					       const QList<AttributeHash> &existingDocuments, int /* dummy */)
 {
   ensureLoadModule();
   Fetcher * n = new Fetcher();
@@ -88,15 +88,15 @@ void RubyModuleCode::fetchNewDocumentsInternal(const AttributeHash & credentials
   VALUE ary = rb_ary_new();
   for(int i = 0; i < existingDocuments.size(); i++)
     rb_ary_push(ary, existingDocuments[i].toRuby());
-  rb_funcall(module, func, 3, n->wrapToRuby(), 
+  rb_funcall(module, func, 3, n->wrapToRuby(),
 	     credentials.toRuby(), ary);
 }
 
 void RubyModuleCode::fetchNewDocuments(const AttributeHash & credentials,
-				       const QList<AttributeHash> &existingDocuments) 
+				       const QList<AttributeHash> &existingDocuments)
 {
-  RescueMemberWrapper3Args<RubyModuleCode, const AttributeHash &, 
+  RescueMemberWrapper3Args<RubyModuleCode, const AttributeHash &,
 			   const QList<AttributeHash> &, int >
-    ::wrapCall(this, &RubyModuleCode::fetchNewDocumentsInternal, 
+    ::wrapCall(this, &RubyModuleCode::fetchNewDocumentsInternal,
 	       credentials, existingDocuments, 0);
 }

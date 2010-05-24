@@ -1,4 +1,4 @@
-/** 
+/**
     \file fetcher.hh
     The web fetcher class...
     Copyright 2010 by Vincent Fourmond
@@ -56,8 +56,8 @@ class Fetcher : public QObject {
 
 protected:
 
-  static inline Fetcher * fromValue(VALUE v) { 
-    Fetcher * f;  
+  static inline Fetcher * fromValue(VALUE v) {
+    Fetcher * f;
     Data_Get_Struct(v,Fetcher,f);
     return f;
   };
@@ -66,7 +66,7 @@ protected:
   /// Private class to handle ongoing download requests
   class OngoingRequest {
   public:
-    
+
     /// The reply, as provided by QNetworkAccessManager
     QPointer<QNetworkReply> reply;
 
@@ -86,7 +86,7 @@ protected:
 
   /// Register a request in the hash, and setup the right things about
   /// it.
-  OngoingRequest * registerRequest(QNetworkReply * reply, 
+  OngoingRequest * registerRequest(QNetworkReply * reply,
 				   VALUE code, int redirections = 0);
 
   /// Requests currently underway
@@ -102,10 +102,10 @@ protected:
 
   /// The "Net" module
   static VALUE mNet;
-  
+
   /// The "Fetcher" class
   static VALUE cFetcher;
-  
+
   /// Whether the Ruby definitions of this class have been loaded.
   static bool rubyInitialized;
 
@@ -116,21 +116,21 @@ protected:
   static VALUE getWrapper(VALUE obj, VALUE str);
 
   /// Spawns a get request.
-  OngoingRequest * get(const QNetworkRequest & request, VALUE block, 
+  OngoingRequest * get(const QNetworkRequest & request, VALUE block,
 		       int redirections = 0);
 
   /// The wrapper for post
   static VALUE postWrapper(VALUE obj, VALUE str, VALUE hash);
 
   /// Spawns a post request with the given parameters.
-  OngoingRequest * post(const QNetworkRequest & request, 
+  OngoingRequest * post(const QNetworkRequest & request,
 			const AttributeHash & params,
 			VALUE block);
 
 
   // /// The wrapper for post
   // static VALUE cookiesWrapper(VALUE obj);
-  
+
   // /// A very basic wrapping for cookies
   // AttributeHash cookies();
 
@@ -158,7 +158,7 @@ public:
 public slots:
 
 protected slots:
-  
+
   void replyFinished(QNetworkReply*);
 };
 #endif

@@ -1,4 +1,4 @@
-/** 
+/**
     \file managedfile.hh
     How files managed by QMoney should be handled.
     Copyright 2010 by Vincent Fourmond
@@ -47,7 +47,7 @@ public:
   /// previous file.
   void newFilePath(const QString & path);
 
-  ManagedFile(Cabinet * c = NULL, const QString  &newPath = QString()) : 
+  ManagedFile(Cabinet * c = NULL, const QString  &newPath = QString()) :
     cabinet(c) {
     if(! newPath.isEmpty())
       newFilePath(newPath);
@@ -79,7 +79,7 @@ public:
   /// Returns the current absolute file path.
   QString filePath() const { return currentPath; };
 
-  QString relativeFilePath() const { 
+  QString relativeFilePath() const {
     return baseDirectory().relativeFilePath(currentPath);
   };
 

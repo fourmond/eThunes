@@ -1,4 +1,4 @@
-/** 
+/**
     \file link.hh
     Base class for objects that can be the destination of links
     Copyright 2008,2010 by Vincent Fourmond
@@ -61,7 +61,7 @@ protected:
 };
 
 
-/// A list of links. 
+/// A list of links.
 class LinkList : public QList<Link> {
 public:
   /// Adds a link to the given target, making sure there are no

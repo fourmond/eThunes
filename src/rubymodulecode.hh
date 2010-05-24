@@ -1,4 +1,4 @@
-/** 
+/**
     \file rubymodulecode.hh
     Code underlying a Collection (Ruby module variant)
     Copyright 2010 by Vincent Fourmond
@@ -26,7 +26,7 @@
 
 /// In this way to see the code, functions are reachable using module
 /// functions (or rather "class functions" ?)
-/// 
+///
 /// \li the function to parse and extract meta-data from document type
 /// "type" is named parse_type, takes ... and returns ... (- should
 /// automatically be converted to _)
@@ -63,13 +63,13 @@ protected:
 				 int dummy);
 
 
-  /// Loads the module if necessary. 
+  /// Loads the module if necessary.
   void ensureLoadModule();
 
   /// The module; 0 means not loaded yet
   VALUE module;
 
-  inline VALUE mModule() { 
+  inline VALUE mModule() {
     if(!module)
       ensureLoadModule();
     return module;

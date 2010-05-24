@@ -47,13 +47,13 @@ QList<QNetworkCookie> CookieSet::toList() const
   return ret;
 }
 
-void CookieSet::dumpTree(QTextStream & stream, 
+void CookieSet::dumpTree(QTextStream & stream,
 			 const QString & prefix) const
 {
   QStringList names = keys();
   names.sort();
   for(int i = 0; i < names.size(); i++)
-    stream << prefix << names[i] << " = " 
+    stream << prefix << names[i] << " = "
 	   << value(names[i]).value() << endl;
 }
 
@@ -116,7 +116,7 @@ QList<QNetworkCookie> CookiesByPath::allCookies() const
   return list;
 }
 
-void CookiesByPath::dumpTree(QTextStream & stream, 
+void CookiesByPath::dumpTree(QTextStream & stream,
 			     const QString & prefix) const
 {
   QStringList paths = keys();
@@ -171,7 +171,7 @@ QList<QNetworkCookie> CookiesByHost::allCookies() const
   return list;
 }
 
-void CookiesByHost::dumpTree(QTextStream & stream, 
+void CookiesByHost::dumpTree(QTextStream & stream,
 			     const QString & prefix) const
 {
   QStringList domains = keys();
@@ -189,7 +189,7 @@ QList<QNetworkCookie> CookieJar::cookiesForUrl(const QUrl & url) const
   QList<QNetworkCookie> l2;
   for(int i = 0; i < l.size(); i++) {
     const QNetworkCookie &c = l[i];
-    if(c.isSecure() && url.scheme() != "https") 
+    if(c.isSecure() && url.scheme() != "https")
       continue;			// Drop secure cookies on non-https
 				// requests
     l2 << c;
@@ -197,7 +197,7 @@ QList<QNetworkCookie> CookieJar::cookiesForUrl(const QUrl & url) const
   return l2;
 }
 
-bool CookieJar::setCookiesFromUrl(const QList<QNetworkCookie> & cookieList, 
+bool CookieJar::setCookiesFromUrl(const QList<QNetworkCookie> & cookieList,
 				  const QUrl & url)
 {
   for(int i = 0; i < cookieList.size(); i++) {

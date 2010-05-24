@@ -1,4 +1,4 @@
-/** 
+/**
     \file linkable.hh
     Base class for objects that can be the destination of links
     Copyright 2008,2010 by Vincent Fourmond

@@ -1,4 +1,4 @@
-/** 
+/**
     \file filter.hh
     The Filter class
     Copyright 2010 by Vincent Fourmond
@@ -36,7 +36,7 @@ public:
     Name,
     Memo
   } transactionAttribute;
-  
+
   /// The string to match it against.
   QString match;
 

@@ -1,5 +1,5 @@
-/** 
-    \file mainwin.hh 
+/**
+    \file mainwin.hh
     Main window for QMoney
     Copyright 2008 by Vincent Fourmond
 
@@ -56,7 +56,7 @@ class MainWin : public QMainWindow {
 
   /// The dashboard
   CabinetPage * dashboard;
-  
+
 public:
   MainWin();
   ~MainWin();
@@ -68,7 +68,7 @@ public slots:
 
   /// Change the title of the windows to reflect the file name
   void fileNameChanged(const QString & newName);
-  
+
   /// Try to quit, but prompt for saving before if dirty.
   void tryQuit();
 

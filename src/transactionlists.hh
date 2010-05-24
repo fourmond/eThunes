@@ -1,4 +1,4 @@
-/** 
+/**
     \file transactionlists.hh
     Various Transaction lists
     Copyright 2010 by Vincent Fourmond
@@ -58,7 +58,7 @@ public:
   TransactionListStatistics();
 
 
-  /// A hash of Transaction::monthID -> BasicStatistics 
+  /// A hash of Transaction::monthID -> BasicStatistics
   QHash<int, BasicStatistics> monthlyStats;
 
   /// Adds the given Transaction to the statistics
@@ -140,7 +140,7 @@ public:
   /// respect to dates. Both dates are inclusive.
   ///
   /// \todo this one should also be part of TransactionPtrList.
-  TransactionPtrList transactionsWithinRange(const QDate & before, 
+  TransactionPtrList transactionsWithinRange(const QDate & before,
 					     const QDate & after);
 };
 

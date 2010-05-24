@@ -47,13 +47,13 @@ Category::~Category()
 class SerializeQColor : public SerializationItem {
   QColor *target;
 public:
-  SerializeQColor(QColor *t, bool attr) { target = t; 
+  SerializeQColor(QColor *t, bool attr) { target = t;
     isAttribute = attr;};
 
   virtual void setFromVariant(const QVariant &v) {
     setFromString(v.toString());
   };
-  
+
   virtual void setFromString(const QString &str) {
     target->setNamedColor(str);
   };
@@ -68,7 +68,7 @@ public:
   virtual QVariant valueToVariant() {
     return QVariant(valueToString());
   };
-  
+
 };
 
 
@@ -76,11 +76,11 @@ public:
 SerializationAccessor * Category::serializationAccessor()
 {
   SerializationAccessor * ac = new SerializationAccessor(this);
-  ac->addAttribute("name", 
+  ac->addAttribute("name",
 		   new SerializationItemScalar<QString>(&name, true));
-  ac->addAttribute("color", 
+  ac->addAttribute("color",
 		   new SerializeQColor(&color, true));
-  ac->addAttribute("category", 
+  ac->addAttribute("category",
 		   new SerializationQHash<Category>(&subCategories));
   return ac;
 }
@@ -114,13 +114,13 @@ Category * CategoryHash::namedSubCategory(const QString &name, bool create)
   }
 }
 
-void CategoryHash::dumpContents(QString prefix) const 
+void CategoryHash::dumpContents(QString prefix) const
 {
   QTextStream o(stdout);
   QStringList l = keys();
   for(int i = 0; i < l.size(); i++) {
     o << prefix << l[i] << " (" << &(const_cast<CategoryHash *>(this)->
-				     operator[](l[i])) 
+				     operator[](l[i]))
       << ")" << endl;
     operator[](l[i]).subCategories.dumpContents(prefix + "  ");
   }
@@ -145,12 +145,12 @@ bool Category::isChildOf(const Category * category)
   return false;
 }
 
-int Category::count() const 
+int Category::count() const
 {
   return 1 + subCategories.categoryCount();
 }
 
-int CategoryHash::categoryCount() const 
+int CategoryHash::categoryCount() const
 {
   const_iterator i = constBegin();
   int nb = 0;
@@ -168,13 +168,13 @@ QColor Category::categoryColor() const
   return parent->categoryColor();
 }
 
-QStringList CategoryHash::categoryNames() const 
+QStringList CategoryHash::categoryNames() const
 {
   QStringList res;
   const_iterator i = constBegin();
   while (i != constEnd()) {
-    res << i.value().fullName() 
-	<< i.value().subCategories.categoryNames(); 
+    res << i.value().fullName()
+	<< i.value().subCategories.categoryNames();
     ++i;
   }
   return res;

@@ -28,7 +28,7 @@
 
 LinksHandler * LinksHandler::handler = NULL;
 
-LinksHandler * LinksHandler::getHandler() 
+LinksHandler * LinksHandler::getHandler()
 {
   if(!handler)
     handler = new LinksHandler();
@@ -38,7 +38,7 @@ LinksHandler * LinksHandler::getHandler()
 
 void LinksHandler::attachObject(QObject * obj)
 {
-  connect(obj, SIGNAL(linkActivated(const QString &)), 
+  connect(obj, SIGNAL(linkActivated(const QString &)),
 	  SLOT(followLink(const QString &)));
 }
 
@@ -88,21 +88,21 @@ void LinksHandler::followLink(const QString & str)
   NavigationPage * page = NULL;
   QWidget * widget = NULL;
   if(protocol == "account")
-    page = 
+    page =
       AccountPage::getAccountPage(decodePointer<Account>(target));
   else if(protocol == "transaction") {
     Transaction * transaction = decodePointer<Transaction>(target);
-    AccountPage * acPage = 
+    AccountPage * acPage =
       AccountPage::getAccountPage(transaction->account);
     acPage->showTransaction(transaction);
     page = acPage;
   }
   else if(protocol == "categories")
-    page = 
+    page =
       CategoryPage::getCategoryPage(decodePointer<Wallet>(target));
   else if(protocol == "document") {
     Document * document = decodePointer<Document>(target);
-    page = 
+    page =
       CollectionPage::getCollectionPage(document->collection);
   }
   else if(protocol == "filters")

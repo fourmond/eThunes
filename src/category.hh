@@ -1,4 +1,4 @@
-/** 
+/**
     \file category.hh
     Class representing a Category to which a Transaction can belong
     Copyright 2010 by Vincent Fourmond

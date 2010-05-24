@@ -30,7 +30,7 @@ Document * DocumentsModel::indexedDocument(QModelIndex index) const
   return static_cast<Document *>(index.internalPointer());
 }
 
-QModelIndex DocumentsModel::index(int row, int column, 
+QModelIndex DocumentsModel::index(int row, int column,
 				 const QModelIndex & parent) const
 {
   if(parent.isValid()) {
@@ -38,7 +38,7 @@ QModelIndex DocumentsModel::index(int row, int column,
       return QModelIndex();
     if(row >= documents->count())
       return QModelIndex();
-    return createIndex(row, column, 
+    return createIndex(row, column,
 		       (*documents)[row]);
   }
   else
@@ -69,13 +69,13 @@ int DocumentsModel::rowCount(const QModelIndex & index) const
 }
 
 int DocumentsModel::columnCount(const QModelIndex & /*index*/) const
-{  
+{
   return LastColumn;
 }
 
-QVariant DocumentsModel::headerData(int section, 
-				  Qt::Orientation /*orientation*/, 
-				  int role) const 
+QVariant DocumentsModel::headerData(int section,
+				  Qt::Orientation /*orientation*/,
+				  int role) const
 {
   if(role == Qt::DisplayRole) {
     switch(section) {

@@ -1,4 +1,4 @@
-/** 
+/**
     \file collection.hh
     Collections and their definitions
     Copyright 2010 by Vincent Fourmond
@@ -28,7 +28,7 @@
 
 class Cabinet;
 
-/// This class represents the definition of a Collection object. 
+/// This class represents the definition of a Collection object.
 ///
 ///
 /// \todo There should be a global hash definition name ->
@@ -43,7 +43,7 @@ public:
   QHash<QString, DocumentDefinition> documentTypes;
 
   /// Returns a pointer to the named document definition
-  DocumentDefinition * documentDefinition(const QString & name) 
+  DocumentDefinition * documentDefinition(const QString & name)
   {
     if(documentTypes.contains(name))
       return &documentTypes[name];
@@ -116,7 +116,7 @@ protected:
   static QStringList definitionPath;
 
   /// Loads a named definition from a file named name + ".def.xml" in
-  /// the search path. 
+  /// the search path.
   static void loadFromFile(const QString &name);
 
   /// This hash contains the loaded named collection definitions
@@ -140,7 +140,7 @@ public:
 
   /// The underlying definition for this collection.
   CollectionDefinition * definition;
-  
+
   /// Returns the file name format for the given Document.
   QString documentFileNameFormat(const Document * doc) const {
     return documentFileNameFormat(doc->definition);
@@ -198,7 +198,7 @@ public:
   // We can't use signals as the QObject copy constructor is private,
   // which prevents it from being used inside a QList, probably for
   // very good reasons too...
-  // 
+  //
   // signals:
   //   /// Emitted whenever the documents have changed somehow.
   //   void documentsChanged();
@@ -208,14 +208,14 @@ protected:
   /// \todo Possibly provide some caching, and some interaction with
   /// other Collection objects.
   bool fileClashes(const QString &) const;
-  
+
 
   /// Checks whether a document with the same file name exists or not.
-  bool fileClashes(DocumentDefinition * def, 
+  bool fileClashes(DocumentDefinition * def,
 		   const AttributeHash & attrs) const {
     return fileClashes(attrs.formatString(documentFileNameFormat(def)));
   };
-  
+
 };
 
 /// A group of collections, when it is convenient to group several

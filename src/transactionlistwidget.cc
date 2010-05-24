@@ -20,14 +20,14 @@
 #include <account.hh>
 #include <transactionlistwidget.hh>
 
-TransactionListWidget::TransactionListWidget(TransactionList *transactions, 
+TransactionListWidget::TransactionListWidget(TransactionList *transactions,
 					     QWidget * parent) :
   QWidget(parent), model(NULL) {
   setupFrame();
   showTransactions(transactions);
 }
 
-TransactionListWidget::TransactionListWidget(TransactionPtrList *transactions, 
+TransactionListWidget::TransactionListWidget(TransactionPtrList *transactions,
 					     QWidget * parent) :
   QWidget(parent), model(NULL)  {
   setupFrame();
@@ -59,7 +59,7 @@ void TransactionListWidget::showTransactions(TransactionPtrList *transactions)
 void TransactionListWidget::setupFrame()
 {
   QVBoxLayout * layout = new QVBoxLayout(this);
-  
+
   view = new QTreeView(this);
   layout->addWidget(view);
 }
@@ -98,7 +98,7 @@ TransactionListWidget::~TransactionListWidget()
   delete model;
 }
 
-void TransactionListWidget::showTransaction(Transaction * transaction) 
+void TransactionListWidget::showTransaction(Transaction * transaction)
 {
   view->setCurrentIndex(model->index(transaction));
 }

@@ -34,7 +34,7 @@ OFXImport OFXImport::importFromFile(QIODevice * stream)
 
   // Debugging output:
   QTextStream debug(stderr);
-  
+
   // A regular expression that matches a header string.
   QRegExp headerRE("^\\s*(\\w+):(.*)$");
   // A regular expression that matches a tag
@@ -117,7 +117,7 @@ OFXImport OFXImport::importFromFile(QIODevice * stream)
 	  currentTransaction->amount = amount;
 	}
       }
-      
+
       // Now, account-related tags
       else if(tagRE.cap(1).compare("BANKACCTFROM", Qt::CaseInsensitive) == 0) {
 	retVal.accounts.append(Account());
@@ -137,13 +137,13 @@ OFXImport OFXImport::importFromFile(QIODevice * stream)
       }
       else if(tagRE.cap(1).compare("ACCTTYPE", Qt::CaseInsensitive) == 0) {
 	if(currentAccount) {
-	  if(tagRE.cap(2).trimmed().compare("SAVINGS", 
+	  if(tagRE.cap(2).trimmed().compare("SAVINGS",
 					    Qt::CaseInsensitive) == 0)
 	    currentAccount->type = Account::Savings;
 	}
       }
 
-      
+
     }
     else if(endOfTagRE.indexIn(line) == 0) {
       // Now, we look what is the tag we've just finished to parse...

@@ -1,4 +1,4 @@
-/** 
+/**
     \file documentsmodel.hh
     An item model providing statistics about categories for a given wallet.
     Copyright 2010 by Vincent Fourmond
@@ -43,30 +43,30 @@ public:
   enum {
     FileColum,
     NameColumn,
-    CollectionColumn, 
-    DoctypeColumn, 
+    CollectionColumn,
+    DoctypeColumn,
     DisplayColumn,
     AttributesColumn,
     LastColumn
   };
 
 
-  virtual QModelIndex index(int row, int column, 
+  virtual QModelIndex index(int row, int column,
 			    const QModelIndex & parent = QModelIndex() ) const;
-  
+
   virtual QModelIndex parent(const QModelIndex&) const;
-  
+
   virtual int rowCount(const QModelIndex&) const;
 
   virtual int columnCount(const QModelIndex&) const;
 
   virtual QVariant data(const QModelIndex&, int) const;
 
-  virtual QVariant headerData(int section, Qt::Orientation orientation, 
+  virtual QVariant headerData(int section, Qt::Orientation orientation,
 			      int role) const ;
 
 public slots:
-  
+
 };
 
 #endif

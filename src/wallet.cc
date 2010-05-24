@@ -39,7 +39,7 @@ void Wallet::importAccountData(const OFXImport & data, bool runFilters)
       accounts.append(data.accounts[i]);
       ac = &accounts[j];
     }
-    ac->importTransactions(data.transactions, 
+    ac->importTransactions(data.transactions,
 			   runFilters ? this : NULL);
     ac->wallet = this;		// Make sure the wallet attribute is
 				// set correctly
@@ -51,11 +51,11 @@ void Wallet::importAccountData(const OFXImport & data, bool runFilters)
 SerializationAccessor * Wallet::serializationAccessor()
 {
   SerializationAccessor * ac = new SerializationAccessor(this);
-  ac->addAttribute("account", 
+  ac->addAttribute("account",
 		   new SerializationQList<Account>(&accounts));
-  ac->addAttribute("filter", 
+  ac->addAttribute("filter",
 		   new SerializationQList<Filter>(&filters));
-  ac->addAttribute("category", 
+  ac->addAttribute("category",
 		   new SerializationQHash<Category>(&categories));
   return ac;
 }
@@ -104,11 +104,11 @@ void Wallet::clearContents()
 Wallet * Wallet::walletCurrentlyRead = NULL;
 
 void Wallet::prepareSerializationRead()
-{ 
+{
   clearContents();
   walletCurrentlyRead = this;
 }
-  
+
 void Wallet::finishedSerializationRead()
 {
   walletCurrentlyRead = NULL;
@@ -133,7 +133,7 @@ void Wallet::runFilters()
   emit(accountsChanged());
 }
 
-TransactionPtrList Wallet::categoryTransactions(const Category * category, 
+TransactionPtrList Wallet::categoryTransactions(const Category * category,
 						bool parents)
 {
   TransactionPtrList vals;
@@ -146,7 +146,7 @@ void Wallet::setDirty(bool d)
 {
   if(d == dirty)
     return;
-  
+
   dirty = d;
   emit(dirtyChanged(dirty));
 }

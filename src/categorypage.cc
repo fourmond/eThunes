@@ -33,7 +33,7 @@ CategoryPage::CategoryPage(Wallet * w) : wallet(w)
   view->setContextMenuPolicy(Qt::CustomContextMenu);
   view->setAlternatingRowColors(true);
   updateContents();
-  connect(view, SIGNAL(customContextMenuRequested(const QPoint &)), 
+  connect(view, SIGNAL(customContextMenuRequested(const QPoint &)),
 	  SLOT(categoriesContextMenu(const QPoint &)));
 }
 
@@ -59,14 +59,14 @@ CategoryPage * CategoryPage::getCategoryPage(Wallet * wallet)
 void CategoryPage::updateContents()
 {
   // // For now, we only display top-leve categories
-  // QString text = "<table><tr><th><strong>" + tr("Category") + "</strong></th>" 
+  // QString text = "<table><tr><th><strong>" + tr("Category") + "</strong></th>"
   //   "<th><strong>" + tr("Total") + "</strong></th></tr>";
   // QStringList toplevelCategories = wallet->categories.keys();
   // toplevelCategories.sort();
   // for(int i = 0; i < toplevelCategories.count(); i++) {
   //   Category * c = &(wallet->categories[toplevelCategories[i]]);
   //   int amount = 0;
-  //   QList<Transaction *> transactions = 
+  //   QList<Transaction *> transactions =
   //     wallet->categoryTransactions(c);
   //   for(int j = 0; j < transactions.size(); j++)
   //     amount += transactions[j]->amount;
@@ -84,9 +84,9 @@ void CategoryPage::categoriesContextMenu(const QPoint & pos)
   if(c) {
     // We popup a menu for modifying a few things.
     QMenu * menu = new QMenu();
-    menu->addAction("Change category color",this, 
+    menu->addAction("Change category color",this,
 		    SLOT(changeCurrentColor()));
-    menu->addAction("Display category transactions",this, 
+    menu->addAction("Display category transactions",this,
 		    SLOT(displayCurrentTransactions()));
     menu->exec(view->viewport()->mapToGlobal(pos));
   }

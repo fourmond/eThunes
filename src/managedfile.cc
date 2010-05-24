@@ -25,7 +25,7 @@
 SerializationAccessor * ManagedFile::serializationAccessor()
 {
   SerializationAccessor * ac = new SerializationAccessor(this);
-  ac->addAttribute("path", 
+  ac->addAttribute("path",
 		   new SerializationItemScalar<QString>(&currentPath, true));
   return ac;
 }
@@ -65,7 +65,7 @@ bool ManagedFile::isFileManaged() const
 void ManagedFile::moveFile(const QString &newPath)
 {
   ensureDirectoryExists(newPath);
-  QFile::rename(currentPath, newPath); 
+  QFile::rename(currentPath, newPath);
   /// \tdexception Check the rename went fine
   currentPath = newPath;
 }
@@ -73,7 +73,7 @@ void ManagedFile::moveFile(const QString &newPath)
 void ManagedFile::copyFile(const QString &newPath)
 {
   ensureDirectoryExists(newPath);
-  QFile::copy(currentPath, newPath); 
+  QFile::copy(currentPath, newPath);
   /// \tdexception Check the copy went fine
   currentPath = newPath;
 }

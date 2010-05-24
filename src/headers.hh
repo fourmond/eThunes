@@ -1,4 +1,4 @@
-/** 
+/**
     \file headers.hh precompiled headers for QMoney
     Copyright 2008 by Vincent Fourmond
 

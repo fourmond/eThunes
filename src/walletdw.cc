@@ -32,7 +32,7 @@ WalletDW::WalletDW(Wallet * w) : wallet(w)
   summary = new QLabel();
   layout->addWidget(summary);
   LinksHandler::handleObject(summary);
-  // connect(summary, SIGNAL(linkActivated(const QString &)), 
+  // connect(summary, SIGNAL(linkActivated(const QString &)),
   // 	  SLOT(showURL(const QString &)));
 
   connect(wallet, SIGNAL(accountsChanged()),
@@ -55,7 +55,7 @@ void WalletDW::updateSummary()
   text += LinksHandler::linkToFilters(wallet, tr("%1 filters").
 				      arg(wallet->filters.count()))
     + "<p>\n";
-  
+
   /// \todo Maybe the facility for building up tables should end up
   /// somewhere as global utilities ?
   text += "<table>\n";
@@ -64,29 +64,29 @@ void WalletDW::updateSummary()
   for(int i = 0; i < wallet->accounts.size(); i++) {
     Account * ac = &wallet->accounts[i];
     text += QString("<tr><td" + cellStyle +">") +
-      LinksHandler::linkTo(ac, ac->name()) + 
+      LinksHandler::linkTo(ac, ac->name()) +
       QString("</td><td align='right'>%1</td></tr>\n").
       arg(Transaction::formatAmount(ac->balance()));
     totalBalance += ac->balance();
   }
   text += "<tr></tr>";
-  text += (QString("<tr><td><strong>") + tr("Total") + 
+  text += (QString("<tr><td><strong>") + tr("Total") +
 	   "</strong></td><td><strong>%1</strong></td></tr>\n").
     arg(Transaction::formatAmount(totalBalance));
   text += "</table>\n";
-  
+
   summary->setText(text);
 }
 
 WalletDW::~WalletDW()
 {
-  
+
 }
 
 void WalletDW::fileImportDialog()
 {
-  QStringList files = 
-    QFileDialog::getOpenFileNames(this, 
+  QStringList files =
+    QFileDialog::getOpenFileNames(this,
 				  tr("Select files to import"),
 				  QString(),
 				  tr("OFX files (*.ofx)"));

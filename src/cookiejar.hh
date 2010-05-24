@@ -1,4 +1,4 @@
-/** 
+/**
     \file cookiejar.hh
     The web cookiejar class...
     Copyright 2010 by Vincent Fourmond
@@ -35,13 +35,13 @@ public:
   /// Converts this hash into a flat list.
   QList<QNetworkCookie> toList() const;
 
-  void dumpTree(QTextStream & stream, 
+  void dumpTree(QTextStream & stream,
 		const QString & prefix  = QString()) const;
 };
 
 /// A set of CookieSet indexed by their path.
 class CookiesByPath : public QHash<QString, CookieSet> {
- 
+
   /// Returns a list of Paths relevant for the given path, in the
   /// reverse order of their relevance.
   static QStringList subPaths(const QString & path);
@@ -61,7 +61,7 @@ public:
   /// Returns all cookies held by this object
   QList<QNetworkCookie> allCookies() const;
 
-  void dumpTree(QTextStream & stream, 
+  void dumpTree(QTextStream & stream,
 		const QString & prefix  = QString()) const;
 };
 
@@ -84,11 +84,11 @@ public:
   /// Returns all cookies held by this object
   QList<QNetworkCookie> allCookies() const;
 
-  void dumpTree(QTextStream & stream, 
+  void dumpTree(QTextStream & stream,
 		const QString & prefix  = QString()) const;
 };
 
-/// This is a CookieJar 
+/// This is a CookieJar
 class CookieJar : public QNetworkCookieJar {
 
   CookiesByHost cookies;
@@ -96,7 +96,7 @@ class CookieJar : public QNetworkCookieJar {
 public:
 
   virtual QList<QNetworkCookie>	cookiesForUrl(const QUrl & url) const;
-  virtual bool setCookiesFromUrl(const QList<QNetworkCookie> & cookieList, 
+  virtual bool setCookiesFromUrl(const QList<QNetworkCookie> & cookieList,
 				 const QUrl & url);
 
   /// Prints out a list of cookies
@@ -110,7 +110,7 @@ public:
   /// Dumps the contents of the cookie jar in a tree-like fashion
   /// (representing the internal structure of the jar).
   ///
-  /// This function probably should not be used 
+  /// This function probably should not be used
   void dumpTree(QTextStream & stream) const {
     cookies.dumpTree(stream);
   };

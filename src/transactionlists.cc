@@ -31,7 +31,7 @@ void BasicStatistics::addTransaction(const Transaction * t)
 {
   number += 1;
   totalAmount += t->amount;
-  if(t->account && (firstMonthID < 0 || 
+  if(t->account && (firstMonthID < 0 ||
 		    t->account->firstMonthID() < firstMonthID))
     firstMonthID = t->account->firstMonthID();
   if(t->amount < 0)
@@ -40,7 +40,7 @@ void BasicStatistics::addTransaction(const Transaction * t)
     totalCredit += t->amount;
 }
 
-TransactionListStatistics::TransactionListStatistics() 
+TransactionListStatistics::TransactionListStatistics()
 {
 }
 
@@ -115,7 +115,7 @@ int TransactionList::removeDuplicates(const TransactionList & other)
       if(other.at(j) < at(i))
 	j++;
       else
-	i++; 
+	i++;
     }
   }
   return retval;

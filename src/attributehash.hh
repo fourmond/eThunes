@@ -1,6 +1,6 @@
-/** 
+/**
     \file attributehash.hh
-    The attribute hash 
+    The attribute hash
     Copyright 2010 by Vincent Fourmond
 
     This program is free software; you can redistribute it and/or modify
@@ -41,11 +41,11 @@
 ///
 /// For serialization: reimplement the writeXML/readXML of
 /// SerializationAttribute
-class AttributeHash : public QHash<QString, QVariant>, 
+class AttributeHash : public QHash<QString, QVariant>,
 		      public SerializationAttribute {
 
   // these two functions are for internal use.
-  
+
   /// For internal use (exception wrapping);
   void setFromRubyInternal(VALUE hash);
 
@@ -106,12 +106,12 @@ public:
   ///
   /// Optionnally %{key%spec} uses a certain format conversion ; see
   /// the documentation of formatVariant for more documentation.
-  /// 
+  ///
   /// \warning Keys that contain % will not be interpreted correctly !
   QString formatString(const QString & format) const;
 
   /// Formats the given variant according to the given format:
-  /// 
+  ///
   /// \li A: v is an integer converted to an amount using
   /// Transaction::formatAmount();
   /// \li M: the month, from 01 to 12

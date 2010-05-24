@@ -24,8 +24,8 @@ DocumentsPage::DocumentsPage(Cabinet * c) : cabinet(c)
 {
   QVBoxLayout * layout = new QVBoxLayout(this);
   documents = cabinet->allDocuments();
-  
-  
+
+
   model = new DocumentsModel(&documents);
   view = new QTreeView();
   layout->addWidget(view);
@@ -38,7 +38,7 @@ DocumentsPage::DocumentsPage(Cabinet * c) : cabinet(c)
 
   for(int i = 0; i < DocumentsModel::LastColumn; i++)
     view->resizeColumnToContents(i);
-  // connect(view, SIGNAL(customContextMenuRequested(const QPoint &)), 
+  // connect(view, SIGNAL(customContextMenuRequested(const QPoint &)),
   // 	  SLOT(categoriesContextMenu(const QPoint &)));
 }
 

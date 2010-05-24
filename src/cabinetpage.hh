@@ -1,4 +1,4 @@
-/** 
+/**
     \file cabinetpage.hh
     A page displaying informations about the categories
     Copyright 2010 by Vincent Fourmond
@@ -57,12 +57,12 @@ public:
     return cabinet->fullFilePath();
   }
 
-  
+
   CabinetPage(Cabinet * c);
-  
+
   /// Returns the title of the page
   virtual QString pageTitle();
-  
+
   virtual ~CabinetPage();
 
 signals:

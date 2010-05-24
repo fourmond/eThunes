@@ -27,7 +27,7 @@ using namespace Ruby;
 bool Result::rubyInitialized = false;
 
 VALUE Result::cResult;
-  
+
 Result::Result(QNetworkReply * r) : reply(r)
 {
   data = reply->readAll();
@@ -56,8 +56,8 @@ VALUE Result::rawHeadersAccessor(VALUE v)
   Result * f = fromValue(v);
   VALUE hash = rb_hash_new();
   QList<QByteArray> headers = f->reply->rawHeaderList();
-  for(int i = 0; i < headers.size(); i++) 
-    rb_hash_aset(hash, byteArrayToValue(headers[i]), 
+  for(int i = 0; i < headers.size(); i++)
+    rb_hash_aset(hash, byteArrayToValue(headers[i]),
 		 byteArrayToValue(f->reply->rawHeader(headers[i])));
   return hash;
 }
@@ -89,9 +89,9 @@ VALUE Result::inspect(VALUE v)
   QString retval = QString().sprintf("#<Net::Result 0x%lx ",(unsigned long) v);
   retval += "url: '";
   retval += f->reply->url().toString() + "' ";
-  if(f->reply->error() == QNetworkReply::NoError) 
+  if(f->reply->error() == QNetworkReply::NoError)
     retval += "ok";
-  else 
+  else
     retval += "error: " + f->reply->errorString();
   retval += ">";
   return qStringToValue(retval);
@@ -105,22 +105,22 @@ void Result::initializeRuby(VALUE mNet)
 
   cResult = rb_define_class_under(mNet, "Result", rb_cObject);
 
-  rb_define_method(cResult, "contents", 
+  rb_define_method(cResult, "contents",
   		   (VALUE (*)(...)) contentsAccessor, 0);
 
-  rb_define_method(cResult, "raw_headers", 
+  rb_define_method(cResult, "raw_headers",
   		   (VALUE (*)(...)) rawHeadersAccessor, 0);
 
-  rb_define_method(cResult, "url", 
+  rb_define_method(cResult, "url",
   		   (VALUE (*)(...)) urlAccessor, 0);
 
-  rb_define_method(cResult, "ok?", 
+  rb_define_method(cResult, "ok?",
   		   (VALUE (*)(...)) wentOK, 0);
 
-  rb_define_method(cResult, "error", 
+  rb_define_method(cResult, "error",
   		   (VALUE (*)(...)) errorString, 0);
 
-  rb_define_method(cResult, "inspect", 
+  rb_define_method(cResult, "inspect",
   		   (VALUE (*)(...)) inspect, 0);
 
 

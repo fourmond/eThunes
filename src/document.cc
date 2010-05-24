@@ -24,7 +24,7 @@
 SerializationAccessor * DocumentDefinition::serializationAccessor()
 {
   SerializationAccessor * ac = new SerializationAccessor(this);
-  ac->addAttribute("name", 
+  ac->addAttribute("name",
 		   new SerializationItemScalar<QString>(&name, true));
   ac->addAttribute("display-format",
 		   new SerializationItemScalar<QString>(&displayFormat));
@@ -56,7 +56,7 @@ public:
   virtual void setFromVariant(const QVariant &v) {
     setFromString(v.toString());
   };
-  
+
   virtual void setFromString(const QString &str) {
     /// \tdexception Probably check for NULL ?
     *target = Collection::collectionBeingSerialized->definition->
@@ -75,7 +75,7 @@ public:
   virtual QVariant valueToVariant() {
     return QVariant(valueToString());
   };
-  
+
 };
 
 
@@ -84,9 +84,9 @@ SerializationAccessor * Document::serializationAccessor()
 {
   SerializationAccessor * ac = new SerializationAccessor(this);
   ac->addAttribute("attributes", &attributes);
-  ac->addAttribute("definition", 
+  ac->addAttribute("definition",
 		   new SerializeDocumentDefinitionPointer(&definition));
-  
+
   ac->addAttribute("attachement",
 		   new SerializationQList<ManagedFile>(&attachedFiles));
   addLinkAttributes(ac);
@@ -148,7 +148,7 @@ QString Document::canonicalFileName(int i) const
 
 bool Document::isFileCanonical(int file) const
 {
-  return attachedFiles[file].relativeFilePath() == 
+  return attachedFiles[file].relativeFilePath() ==
     canonicalFileName(file);
 }
 

@@ -1,4 +1,4 @@
-/** 
+/**
     \file categorymodel.hh
     An item model providing statistics about categories for a given wallet.
     Copyright 2010 by Vincent Fourmond
@@ -31,7 +31,7 @@ class CategoryModel : public QAbstractItemModel {
   Wallet * wallet;
 
 protected:
-  
+
 
   /// Returns a pointer to the CategoryHash relevant to the given
   /// index (ie subcategories)
@@ -49,18 +49,18 @@ public:
 
   enum {
     NameColumn,
-    CurrentMonthColumn, 
-    LastMonthColumn, 
-    AverageMonthColumn, 
+    CurrentMonthColumn,
+    LastMonthColumn,
+    AverageMonthColumn,
     AmountColumn,
     DebitColumn,
     CreditColumn,
-    NumberColumn, 
+    NumberColumn,
     LastColumn
   };
 
 
-  virtual QModelIndex index(int row, int column, 
+  virtual QModelIndex index(int row, int column,
 			    const QModelIndex & parent = QModelIndex() ) const;
 
   virtual QModelIndex parent(const QModelIndex&) const;
@@ -71,16 +71,16 @@ public:
 
   virtual QVariant data(const QModelIndex&, int) const;
 
-  virtual QVariant headerData(int section, Qt::Orientation orientation, 
+  virtual QVariant headerData(int section, Qt::Orientation orientation,
 			      int role) const ;
 
   // virtual Qt::ItemFlags flags(const QModelIndex & index) const;
 
-  // virtual bool setData(const QModelIndex & index, const QVariant & value, 
-  // 		       int role = Qt::EditRole);  
+  // virtual bool setData(const QModelIndex & index, const QVariant & value,
+  // 		       int role = Qt::EditRole);
 
 public slots:
-  
+
 };
 
 #endif

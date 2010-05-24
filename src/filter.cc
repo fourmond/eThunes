@@ -22,11 +22,11 @@
 SerializationAccessor * FilterElement::serializationAccessor()
 {
   SerializationAccessor * ac = new SerializationAccessor(this);
-  ac->addAttribute("attribute", 
+  ac->addAttribute("attribute",
 		   new SerializationItemScalar<int>((int*)&transactionAttribute, true));
-  ac->addAttribute("regexp", 
+  ac->addAttribute("regexp",
 		   new SerializationItemScalar<bool>(&regexp, true));
-  ac->addAttribute("match", 
+  ac->addAttribute("match",
 		   new SerializationItemScalar<QString>(&match));
   return ac;
 
@@ -39,29 +39,29 @@ bool FilterElement::matches(Transaction * t)
   case Name: targetString = t->name;break;
   case Memo: targetString = t->memo;break;
   }
-  
+
   if(regexp)
     return targetString.contains(QRegExp(match));
   else
     return targetString.contains(match);
 }
 
-Filter::Filter() : active(true), matchAny(true) 
+Filter::Filter() : active(true), matchAny(true)
 {
 }
 
 SerializationAccessor * Filter::serializationAccessor()
 {
   SerializationAccessor * ac = new SerializationAccessor(this);
-  ac->addAttribute("name", 
+  ac->addAttribute("name",
 		   new SerializationItemScalar<QString>(&name, true));
-  ac->addAttribute("category", 
+  ac->addAttribute("category",
 		   new SerializationItemScalar<QString>(&category, true));
-  ac->addAttribute("matchany", 
+  ac->addAttribute("matchany",
 		   new SerializationItemScalar<bool>(&matchAny, true));
-  ac->addAttribute("active", 
+  ac->addAttribute("active",
 		   new SerializationItemScalar<bool>(&active, true));
-  ac->addAttribute("elements", 
+  ac->addAttribute("elements",
 		   new SerializationQList<FilterElement>(&elements));
   return ac;
 

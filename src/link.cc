@@ -25,9 +25,9 @@
 SerializationAccessor * Link::serializationAccessor()
 {
   SerializationAccessor * ac = new SerializationAccessor(this);
-  ac->addAttribute("id", 
+  ac->addAttribute("id",
 		   new SerializationItemScalar<QString>(&linkID, true));
-  ac->addAttribute("type", 
+  ac->addAttribute("type",
 		   new SerializationItemScalar<QString>(&typeName, true));
   return ac;
 }
@@ -39,7 +39,7 @@ void Link::finishedSerializationRead()
 
 void Link::prepareSerializationWrite()
 {
-  if(! target) 
+  if(! target)
     return;
   typeName = target->typeName();
   linkID = target->uniqueID();
@@ -61,7 +61,7 @@ int Link::finalizePendingLinks(Cabinet * cabinet)
       link->target = cabinet->wallet.namedTransaction(link->linkID);
     if(! link->target)
       dangling++;
-      
+
   }
   linksToBeFinalized.clear();
   return dangling;
@@ -79,7 +79,7 @@ QStringList LinkList::htmlLinkList() const
 {
   QStringList ret;
   for(int i=0; i < size(); i++)
-    ret << LinksHandler::linkTo(value(i).target, 
+    ret << LinksHandler::linkTo(value(i).target,
 				value(i).target->publicTypeName());
   return ret;
 }

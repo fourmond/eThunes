@@ -1,4 +1,4 @@
-/** 
+/**
     \file filterdialog.hh
     The dialog boxes for modifying filters of a Wallet.
     Copyright 2010 by Vincent Fourmond
@@ -58,7 +58,7 @@ class FilterElementWidget : public QWidget {
   QComboBox * attributeSelection;
 public:
   FilterElementWidget(FilterElement * el);
-  
+
 public slots:
 
   void targetChanged(int);
@@ -69,10 +69,10 @@ public slots:
 
 class FilterEditDialog : public QDialog {
   Q_OBJECT;
-  
+
   /// The target wallet, for the record, and for category list ?
   Wallet * wallet;
-  
+
   /// The target filter
   ///
   /// \todo work on a copy ?

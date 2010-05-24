@@ -23,7 +23,7 @@ void Serialization::readNextToken(QXmlStreamReader * reader)
   do {
     reader->readNext();
   }
-  while((reader->isWhitespace() || reader->isComment()) 
+  while((reader->isWhitespace() || reader->isComment())
 	&& (! reader->atEnd()));
 }
 
@@ -39,7 +39,7 @@ QString SerializationItem::valueToString()
   return valueToVariant().toString();
 }
 
-void SerializationItem::writeXML(const QString & name, 
+void SerializationItem::writeXML(const QString & name,
 				 QXmlStreamWriter * writer)
 {
   // We don't write if empty ? Seems reasonable ?
@@ -47,7 +47,7 @@ void SerializationItem::writeXML(const QString & name,
   /// !
   QString value = valueToString();
   if(! value.isEmpty()) {
-    if( isXMLAttribute()) 
+    if( isXMLAttribute())
       writer->writeAttribute(name, value);
     else
       writer->writeTextElement(name, value);
@@ -84,7 +84,7 @@ void SerializationList::readXML(QXmlStreamReader * reader)
   delete a;
 }
 
-void SerializationList::writeXML(const QString & name, 
+void SerializationList::writeXML(const QString & name,
 				 QXmlStreamWriter * writer)
 {
   for(int i = 0; i < listSize();i++) {
@@ -114,7 +114,7 @@ SerializationAccessor::~SerializationAccessor()
 
 /// \todo raise exception when name already exists (in
 /// simpleAttributes or elsewhere)
-void SerializationAccessor::addAttribute(QString name, 
+void SerializationAccessor::addAttribute(QString name,
 					 SerializationAttribute * ser)
 {
   attributes[name] = ser;
@@ -142,7 +142,7 @@ void SerializationAccessor::dumpValues()
 
 
 // Implementation of the XML writing
-void SerializationAccessor::writeXML(const QString & name, 
+void SerializationAccessor::writeXML(const QString & name,
 				     QXmlStreamWriter * writer )
 {
   if(target)
@@ -178,23 +178,23 @@ void SerializationAccessor::readXML(QXmlStreamReader * reader)
     target->prepareSerializationRead();
 
   if(! reader->isStartElement()) {
-    fprintf(stderr, "We have trouble at line %ld: we should be at a start element\n", 
+    fprintf(stderr, "We have trouble at line %ld: we should be at a start element\n",
 	    (long) reader->lineNumber());
     return;
   }
-  
+
   // First, we read the attributes
   {
     // This is a scope for the lazy guy...
     const QXmlStreamAttributes & attr =  reader->attributes();
     for(int i = 0; i < attr.size(); i++) {
-      SerializationAttribute * a = 
+      SerializationAttribute * a =
 	attributes.value(attr[i].name().toString(), 0);
-	
+
       if(a && a->isXMLAttribute())
 	a->readFromString(attr[i].value().toString());
-      else 
-	fprintf(stderr, "Unexpected XML attribute: '%s' = '%s' at line %ld %p\n", 
+      else
+	fprintf(stderr, "Unexpected XML attribute: '%s' = '%s' at line %ld %p\n",
 		(const char*) attr[i].name().toString().toLocal8Bit(),
 		(const char*) attr[i].value().toString().toLocal8Bit(),
 		(long) reader->lineNumber(), a);
@@ -211,11 +211,11 @@ void SerializationAccessor::readXML(QXmlStreamReader * reader)
     }
 
     // Now, find the elements.
-    SerializationAttribute * attr = 
+    SerializationAttribute * attr =
       attributes.value(reader->name().toString(), 0);
     if(! attr) {
       /// \tdexception on unkown attributes !
-      fprintf(stderr, "Unkown attribute: %s !\n", 
+      fprintf(stderr, "Unkown attribute: %s !\n",
 	      (const char*)reader->name().toString().toLocal8Bit());
       return;
     }
@@ -254,7 +254,7 @@ void SerializationHash::readXML(QXmlStreamReader * reader)
   value(key)->readXML(reader);
 }
 
-void SerializationHash::writeXML(const QString & name, 
+void SerializationHash::writeXML(const QString & name,
 				 QXmlStreamWriter * writer)
 {
   QStringList k = keys();

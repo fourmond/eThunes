@@ -28,7 +28,7 @@ CollectionsDW::CollectionsDW(Cabinet * c) : cabinet(c)
   QVBoxLayout * layout = new QVBoxLayout(this);
   summary = new QLabel();
   layout->addWidget(summary);
-  connect(summary, SIGNAL(linkActivated(const QString &)), 
+  connect(summary, SIGNAL(linkActivated(const QString &)),
 	  SLOT(showURL(const QString &)));
 
   connect(cabinet, SIGNAL(collectionsPossiblyChanged()),
@@ -60,13 +60,13 @@ void CollectionsDW::updateSummary()
   text += "</table><p>\n";
 
   text += "<a href='all-documents'>See all documents</a><p>\n";
-  
+
   summary->setText(text);
 }
 
 CollectionsDW::~CollectionsDW()
 {
-  
+
 }
 
 void CollectionsDW::showURL(const QString & link)
@@ -107,14 +107,14 @@ void CollectionsDW::addCollectionDialog()
 {
   /// \todo this should be a proper dialog box, with both selections
   /// at the same time and a decent display of the things.
-  QString type = 
+  QString type =
     QInputDialog::getItem(this, tr("Choose collection type"),
 			  tr("Choose collection type"),
 			  CollectionDefinition::availableDefinitions(), 0,
 			  false);
   if(type.isEmpty())
     return;
-  QString name =     
+  QString name =
     QInputDialog::getText(this, tr("Name of the new collection"),
 			  tr("Please input new collection name"));
   if(name.isEmpty())
@@ -127,7 +127,7 @@ void CollectionsDW::addDocumentsDialog(Collection * collection)
 {
   if(!collection)
     return;
-  QHash<QString, QString> filters = 
+  QHash<QString, QString> filters =
     collection->definition->documentFileFilters();
   QString filter = filters[filters.keys()[0]];
 
@@ -138,18 +138,18 @@ void CollectionsDW::addDocumentsDialog(Collection * collection)
   ///
   /// It probably isn't necessary.
 
-  QStringList files = 
-    QFileDialog::getOpenFileNames(this, 
+  QStringList files =
+    QFileDialog::getOpenFileNames(this,
 				  tr("Please select files to import into %1").
 				  arg(collection->name),
 				  QString(),
 				  QStringList(filters.keys()).join(";;"),
 				  &filter);
   QTextStream o(stderr);
-  for(int i = 0; i < files.size(); i++) 
+  for(int i = 0; i < files.size(); i++)
     if( ! collection->importFile(filters[filter], files[i]))
       o << "Could not import file " << files[i] << endl;
-	
+
   if(files.size() > 0)
     updateSummary();
 }

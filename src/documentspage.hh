@@ -1,4 +1,4 @@
-/** 
+/**
     \file documentspage.hh
     A page displaying informations about the categories
     Copyright 2010 by Vincent Fourmond
@@ -53,14 +53,14 @@ protected:
   /// The Cabinet we're taking care of.
   Cabinet * cabinet;
 
-  
+
 public:
-  
+
   DocumentsPage(Cabinet * c);
-  
+
   /// Returns the title of the page
   virtual QString pageTitle();
-  
+
   virtual ~DocumentsPage();
 
   /// Returns the AccountPage for the given account, or create it if

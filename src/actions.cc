@@ -19,7 +19,7 @@
 #include <headers.hh>
 #include <actions.hh>
 
-QAction * ActionsHash::addAction(QString codename, QAction * action, 
+QAction * ActionsHash::addAction(QString codename, QAction * action,
 				 const QKeySequence & shortcut,
 				 QString tooltip)
 {

@@ -1,4 +1,4 @@
-/** 
+/**
     \file collectionsdw.hh
     DashboarWidget for a list of collections
     Copyright 2010 by Vincent Fourmond

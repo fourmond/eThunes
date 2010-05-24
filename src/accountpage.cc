@@ -26,15 +26,15 @@ QHash<Account *, AccountPage *> AccountPage::accountPages;
 AccountPage::AccountPage(Account * ac) : account(ac)
 {
   QVBoxLayout * layout = new QVBoxLayout(this);
-  
+
   accountSummary = new QLabel();
   layout->addWidget(accountSummary);
   updateAccountSummary();
-  
+
   view = new TransactionListWidget(&(account->transactions),this);
   layout->addWidget(view);
 
-  connect(accountSummary, SIGNAL(linkActivated(const QString &)), 
+  connect(accountSummary, SIGNAL(linkActivated(const QString &)),
 	  SLOT(handleLinks(const QString &)));
 }
 

@@ -27,10 +27,10 @@ SerializationAccessor * CollectionDefinition::serializationAccessor()
   /// "beingSerialized" things, as the serializationAccessor function
   /// is necessarily called for every single time.
   code.definition = this;
-  
-  ac->addAttribute("document-type", 
+
+  ac->addAttribute("document-type",
 		   new SerializationQHash<DocumentDefinition>(&documentTypes));
-  ac->addAttribute("ruby-class-code", 
+  ac->addAttribute("ruby-class-code",
 		   &code);
   return ac;
 }
@@ -38,7 +38,7 @@ SerializationAccessor * CollectionDefinition::serializationAccessor()
 void CollectionDefinition::dumpContents()
 {
   QTextStream o(stdout);
-  QHash<QString, DocumentDefinition>::const_iterator i = 
+  QHash<QString, DocumentDefinition>::const_iterator i =
     documentTypes.constBegin();
   while (i != documentTypes.constEnd()) {
     o << "Type : " << i.value().name << endl;
@@ -104,10 +104,10 @@ QStringList CollectionDefinition::availableDefinitions()
 QHash<QString, QString> CollectionDefinition::documentFileFilters()
 {
   QHash<QString, QString> filters;
-  QHash<QString, DocumentDefinition>::const_iterator i = 
+  QHash<QString, DocumentDefinition>::const_iterator i =
     documentTypes.constBegin();
   while(i != documentTypes.constEnd()) {
-    filters[QString("%1 (*.pdf)").arg(i.value().definitionName())] = 
+    filters[QString("%1 (*.pdf)").arg(i.value().definitionName())] =
       i.key();
     i++;
   }
@@ -118,7 +118,7 @@ CollectionDefinition * CollectionDefinition::namedDefinition(const QString & nam
 {
   if(! loadedDefinitions.contains(name))
     loadFromFile(name);
-  return loadedDefinitions.value(name, NULL); 
+  return loadedDefinitions.value(name, NULL);
 }
 
 
@@ -132,7 +132,7 @@ public:
   virtual void setFromVariant(const QVariant &v) {
     setFromString(v.toString());
   };
-  
+
   virtual void setFromString(const QString &str) {
     /// \tdexception Probably check for NULL ?
     *target = CollectionDefinition::namedDefinition(str);
@@ -150,7 +150,7 @@ public:
   virtual QVariant valueToVariant() {
     return QVariant(valueToString());
   };
-  
+
 };
 
 
@@ -159,17 +159,17 @@ public:
 SerializationAccessor * Collection::serializationAccessor()
 {
   SerializationAccessor * ac = new SerializationAccessor(this);
-  ac->addAttribute("definition", 
+  ac->addAttribute("definition",
 		   new SerializeCollectionDefinitionPointer(&definition));
-  ac->addAttribute("name", 
+  ac->addAttribute("name",
 		   new SerializationItemScalar<QString>(&name, true));
   // Now, we try the list stuff...
-  ac->addAttribute("document", 
+  ac->addAttribute("document",
 		   new SerializationQList<Document>(&documents));
   return ac;
 }
 
-Document * Collection::importFile(const QString & doctype, 
+Document * Collection::importFile(const QString & doctype,
 				  const QString & file)
 {
   Document doc;
@@ -185,7 +185,7 @@ Document * Collection::importFile(const QString & doctype,
   /// prompt the user for them (maybe only in certain cases, when
   /// there is no code attached to the Collection, for instance, which
   /// would be the case for the misc collection)
-  
+
   doc.attributes = attrs;
   doc.definition = &definition->documentTypes[doctype];
   doc.collection = this;

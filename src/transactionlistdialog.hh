@@ -1,4 +1,4 @@
-/** 
+/**
     \file transactionlistdialog.hh
     A small generic dialog box to display list of pointers
     Copyright 2010 by Vincent Fourmond
@@ -28,7 +28,7 @@
 #include <transactionlistwidget.hh>
 
 /// Dialog box to display transaction lists
-/// 
+///
 /// \todo this class should handle resizing properly.
 ///
 /// \todo Provide a way to display read-only transactions ! (this
@@ -50,7 +50,7 @@ protected:
 
   /// The list of transactions to be displayed.
   TransactionPtrList list;
-  
+
 public:
   TransactionListDialog();
 
@@ -63,7 +63,7 @@ public slots:
   /// from the first transaction if it is NULL (which means no
   /// delegate is created for Category edition)
   void displayList(const TransactionPtrList & list, const QString & label);
-  
+
   /// Displays the checks of the given account.
   void displayChecks(Account * account);
 

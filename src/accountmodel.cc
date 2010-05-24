@@ -28,7 +28,7 @@ QHash<QString, QIcon> AccountModel::statusIcons;
 const QIcon & AccountModel::statusIcon(const QString & status)
 {
   if(! statusIcons.contains(status)) {
-    if(QFile::exists("icons:accountmodel-" + status + ".png")) 
+    if(QFile::exists("icons:accountmodel-" + status + ".png"))
       statusIcons[status] = QIcon("icons:accountmodel-" + status + ".png");
     else
       statusIcons[status] = QIcon(QPixmap(16,16));
@@ -41,7 +41,7 @@ AccountModel::AccountModel(TransactionList * t) :
 {
   if(transactions->size() > 0) {
     if((*transactions)[0].account && (*transactions)[0].account->wallet)
-      connect((*transactions)[0].account->wallet, 
+      connect((*transactions)[0].account->wallet,
 	      SIGNAL(accountsChanged()),
 	      SLOT(accountChanged())); /// \todo This is suboptimal, but better than nothing
   }
@@ -52,7 +52,7 @@ AccountModel::AccountModel(TransactionPtrList * t) :
 {
   if(transactionsPtr->size() > 0) {
     if((*transactionsPtr)[0]->account && (*transactionsPtr)[0]->account->wallet)
-      connect((*transactionsPtr)[0]->account->wallet, 
+      connect((*transactionsPtr)[0]->account->wallet,
 	      SIGNAL(accountsChanged()),
 	      SLOT(accountChanged())); /// \todo This is suboptimal, but better than nothing
   }
@@ -105,11 +105,11 @@ Transaction * AccountModel::indexedTransaction(QModelIndex index) const
   return NULL;
 }
 
-QModelIndex AccountModel::index(int row, int column, 
+QModelIndex AccountModel::index(int row, int column,
 				const QModelIndex & parent) const
 {
   // printf("Index: %d %d %d\n", row, column, parent.internalId());
-  if(parent.isValid()) 
+  if(parent.isValid())
     return createIndex(row, column, row);
   else
     return createIndex(row, column, -1);
@@ -119,7 +119,7 @@ QModelIndex AccountModel::parent(const QModelIndex & index) const
 {
   // printf("Parent: %d %d %d\n", index.row(), index.column(), index.internalId());
   if(index.isValid()) {
-    if(index.internalId() >= 0) 
+    if(index.internalId() >= 0)
       return createIndex(0, 0, -1);
     else
       return QModelIndex();
@@ -132,22 +132,22 @@ int AccountModel::rowCount(const QModelIndex & index) const
 {
   // printf("row: %d %d %d\n", index.row(), index.column(), index.internalId());
   if(index.isValid()) {
-    if(index.internalId() >= 0) 
+    if(index.internalId() >= 0)
       return 0;
-    else 
+    else
       return transactionCount();
   }
   return 0;
 }
 
 int AccountModel::columnCount(const QModelIndex & /*index*/) const
-{  
+{
   return LastColumn;
 }
 
-QVariant AccountModel::headerData(int section, 
-				  Qt::Orientation /*orientation*/, 
-				  int role) const 
+QVariant AccountModel::headerData(int section,
+				  Qt::Orientation /*orientation*/,
+				  int role) const
 {
   if(role == Qt::DisplayRole) {
     switch(section) {
@@ -190,7 +190,7 @@ QVariant AccountModel::data(const QModelIndex& index, int role) const
   if(role == Qt::EditRole) {
     switch(index.column()) {
     case CategoryColumn: return QVariant(t->categoryName());
-    case LinksColumn: if(t->links.size()) 
+    case LinksColumn: if(t->links.size())
 	return t->links.htmlLinkList().join(", ");
       return QVariant();
     default:
@@ -224,7 +224,7 @@ QVariant AccountModel::data(const QModelIndex& index, int role) const
   // if(role == Qt::BackgroundRole) {
   //   QColor background;
   //   int month = t->date.month() - 1;
-  //   background.setHsv(month * 170 % 360, 0, 
+  //   background.setHsv(month * 170 % 360, 0,
   // 		      (index.row() % 2 ? 220 : 240));
   //   return QBrush(background);
   // }
@@ -236,8 +236,8 @@ QVariant AccountModel::data(const QModelIndex& index, int role) const
       return QBrush(color);
     }
 
-    if(t->category && 
-       (index.column() == CategoryColumn || 
+    if(t->category &&
+       (index.column() == CategoryColumn ||
 	index.column() == NameColumn))
       return QBrush(t->category->categoryColor());
     if(index.column() == AmountColumn) {
@@ -269,7 +269,7 @@ Qt::ItemFlags AccountModel::flags(const QModelIndex & index) const
   return 0;
 }
 
-bool AccountModel::setData(const QModelIndex & index, const QVariant & value, 
+bool AccountModel::setData(const QModelIndex & index, const QVariant & value,
 			   int role)
 {
   Transaction *t = indexedTransaction(index);
@@ -287,7 +287,7 @@ bool AccountModel::setData(const QModelIndex & index, const QVariant & value,
 void AccountModel::accountChanged()
 {
   emit(dataChanged(index(0,0, index(0,0,QModelIndex())),
-		   index(transactions->size()-1,LastColumn-1, 
+		   index(transactions->size()-1,LastColumn-1,
 			 index(0,0,QModelIndex()))));
 }
 
@@ -299,8 +299,8 @@ AccountItemDelegate::AccountItemDelegate(Wallet * w) :
 {
 }
 
-QWidget * AccountItemDelegate::createEditor(QWidget * parent, 
-					    const QStyleOptionViewItem & /*option*/, 
+QWidget * AccountItemDelegate::createEditor(QWidget * parent,
+					    const QStyleOptionViewItem & /*option*/,
 					    const QModelIndex & /*index*/ ) const
 {
   QComboBox * box = new QComboBox(parent);
@@ -310,7 +310,7 @@ QWidget * AccountItemDelegate::createEditor(QWidget * parent,
   return box;
 }
 
-void AccountItemDelegate::setEditorData(QWidget * editor, 
+void AccountItemDelegate::setEditorData(QWidget * editor,
 					const QModelIndex & index) const
 {
   QComboBox * box = static_cast<QComboBox*>(editor);
@@ -318,8 +318,8 @@ void AccountItemDelegate::setEditorData(QWidget * editor,
 }
 
 
-void AccountItemDelegate::setModelData(QWidget * editor, 
-				       QAbstractItemModel * model, 
+void AccountItemDelegate::setModelData(QWidget * editor,
+				       QAbstractItemModel * model,
 				       const QModelIndex & index) const
 {
   QComboBox * box = static_cast<QComboBox*>(editor);
@@ -330,8 +330,8 @@ void AccountItemDelegate::setModelData(QWidget * editor,
 ///////////////////////////////////////////////////////////////
 
 
-QWidget * LinksItemDelegate::createEditor(QWidget * parent, 
-					  const QStyleOptionViewItem & /*option*/, 
+QWidget * LinksItemDelegate::createEditor(QWidget * parent,
+					  const QStyleOptionViewItem & /*option*/,
 					  const QModelIndex & /*index*/ ) const
 {
   QLabel * label = new QLabel(parent);
@@ -339,7 +339,7 @@ QWidget * LinksItemDelegate::createEditor(QWidget * parent,
   return label;
 }
 
-void LinksItemDelegate::setEditorData(QWidget * editor, 
+void LinksItemDelegate::setEditorData(QWidget * editor,
 				      const QModelIndex & index) const
 {
   QLabel * label = static_cast<QLabel*>(editor);
@@ -347,8 +347,8 @@ void LinksItemDelegate::setEditorData(QWidget * editor,
 }
 
 
-void LinksItemDelegate::setModelData(QWidget * /*editor*/, 
-				     QAbstractItemModel * /*model*/, 
+void LinksItemDelegate::setModelData(QWidget * /*editor*/,
+				     QAbstractItemModel * /*model*/,
 				     const QModelIndex & /*index*/) const
 {
 }

@@ -32,7 +32,7 @@ public:
   virtual void setFromVariant(const QVariant &v) {
     setFromString(v.toString());
   };
-  
+
   virtual void setFromString(const QString &str) {
     *target = Wallet::walletCurrentlyRead->categories.
       namedSubCategory(str, true);
@@ -49,7 +49,7 @@ public:
   virtual QVariant valueToVariant() {
     return QVariant(valueToString());
   };
-  
+
 };
 
 void Transaction::dump(QIODevice * dev)
@@ -61,7 +61,7 @@ void Transaction::dump(QIODevice * dev)
 void Transaction::dump(QTextStream & stream)
 {
   stream << "Transaction: \"" << name << "\" of "
-	 << amount/100.0 << " (" 
+	 << amount/100.0 << " ("
 	 << date.toString("dd/MM/yyyy") << ")" << endl;
   if(account)
     stream << " -> account: " << account->name() << endl;
@@ -85,7 +85,7 @@ Transaction::Transaction() :
 }
 
 bool Transaction::operator<(const Transaction & t) const
-{ 
+{
   if(date != t.date)
     return date < t.date;
   else if(name != t.name)
@@ -98,9 +98,9 @@ bool Transaction::operator<(const Transaction & t) const
 }
 
 bool Transaction::operator==(const Transaction & t) const
-{ 
+{
   return (date == t.date) &&
-    (name == t.name) && (amount == t.amount) && (memo == t.memo) && 
+    (name == t.name) && (amount == t.amount) && (memo == t.memo) &&
     (! account || !t.account || account->isSameAccount(*t.account)) ;
 }
 
@@ -109,17 +109,17 @@ bool Transaction::operator==(const Transaction & t) const
 SerializationAccessor * Transaction::serializationAccessor()
 {
   SerializationAccessor * ac = new SerializationAccessor(this);
-  ac->addAttribute("amount", 
+  ac->addAttribute("amount",
 		   new SerializationItemScalar<int>(&amount, true));
-  ac->addAttribute("date", 
+  ac->addAttribute("date",
 		   new SerializationItemScalar<QDate>(&date, true));
-  ac->addAttribute("name", 
+  ac->addAttribute("name",
 		   new SerializationItemScalar<QString>(&name));
-  ac->addAttribute("memo", 
+  ac->addAttribute("memo",
 		   new SerializationItemScalar<QString>(&memo));
-  ac->addAttribute("check-number", 
+  ac->addAttribute("check-number",
 		   new SerializationItemScalar<QString>(&checkNumber));
-  ac->addAttribute("category", 
+  ac->addAttribute("category",
   		   new SerializeCategoryPointer(&category));
 
   addLinkAttributes(ac);
@@ -172,6 +172,6 @@ QString Transaction::transactionID() const
 }
 
 QString Transaction::uniqueID() const
-{ 
+{
   return account->accountID() + "##" + transactionID();
 }

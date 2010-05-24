@@ -1,4 +1,4 @@
-/** 
+/**
     \file collectioncode.hh
     Code underlying a Collection
     Copyright 2010 by Vincent Fourmond
@@ -67,7 +67,7 @@ public:
   CollectionDefinition * definition;
 
   CollectionCode() : definition(NULL) {;};
-  
+
   /// Parses the given document and returns the attributes found as a
   /// AttributeHash (or thrown an exception ?).
   ///
@@ -138,7 +138,7 @@ public:
 
 
   /// Whether the underlying code supports fetching
-  virtual bool canFetch() { return false;}; 
+  virtual bool canFetch() { return false;};
 
   /// Looks up new documents in the given website for the given
   /// credentials.

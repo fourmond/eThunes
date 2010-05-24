@@ -23,7 +23,7 @@
 
 void Linkable::addLinkAttributes(SerializationAccessor * accessor)
 {
-  accessor->addAttribute("link", 
+  accessor->addAttribute("link",
 			 new SerializationQList<Link>(&links));
 }
 

@@ -35,7 +35,7 @@ int Account::importTransactions(TransactionList t, Wallet * filters)
   for(int i = 0; i < t.size(); i++)
     t[i].account = this;
   t.sortByDate();
-  //  int dups = 
+  //  int dups =
   t.removeDuplicates(transactions);
   if(filters)
     filters->runFilters(&t);
@@ -49,26 +49,26 @@ int Account::importTransactions(TransactionList t, Wallet * filters)
   // Now, we sort and update the balance
   transactions.sortByDate();
   transactions.computeBalance();
-  
+
   return t.size();
 }
 
 SerializationAccessor * Account::serializationAccessor()
 {
   SerializationAccessor * ac = new SerializationAccessor(this);
-  ac->addAttribute("number", 
+  ac->addAttribute("number",
 		   new SerializationItemScalar<QString>(&accountNumber));
-  ac->addAttribute("public-name", 
+  ac->addAttribute("public-name",
 		   new SerializationItemScalar<QString>(&publicName, true));
-  ac->addAttribute("bank-id", 
+  ac->addAttribute("bank-id",
 		   new SerializationItemScalar<QString>(&bankID));
-  ac->addAttribute("branch-id", 
+  ac->addAttribute("branch-id",
 		   new SerializationItemScalar<QString>(&branchID));
-  ac->addAttribute("type", 
+  ac->addAttribute("type",
 		   new SerializationItemScalar<int>((int*)(&type)));
 
   // Now, we try the list stuff...
-  ac->addAttribute("transaction", 
+  ac->addAttribute("transaction",
 		   new SerializationQList<Transaction>(&transactions));
   return ac;
 }
@@ -84,13 +84,13 @@ void Account::clearContents()
   transactions.clear();
 }
 
-QList<Transaction *> Account::categoryTransactions(const Category * category, 
+QList<Transaction *> Account::categoryTransactions(const Category * category,
 						   bool parents)
 {
   QList<Transaction *> found;
   for(int i = 0; i < transactions.size(); i++) {
     Transaction * t = &transactions[i];
-    if(t->category == category || (parents && t->category 
+    if(t->category == category || (parents && t->category
 				   && t->category->isChildOf(category)))
       found.push_back(t);
   }
@@ -128,7 +128,7 @@ TransactionPtrList Account::recentTransactions()
 Transaction * Account::namedTransaction(const QString & name)
 {
   /// \todo This will eventually be *very* slow...
-  for(int i = 0; i < transactions.size(); i++) 
+  for(int i = 0; i < transactions.size(); i++)
     if(transactions[i].transactionID() == name)
       return &transactions[i];
   return NULL;

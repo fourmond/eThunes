@@ -29,7 +29,7 @@ CollectionPage::CollectionPage(Collection * c) : collection(c)
   summary = new QLabel();
 
   LinksHandler::handleObject(summary);
-  connect(LinksHandler::getHandler(), 
+  connect(LinksHandler::getHandler(),
 	  SIGNAL(unhandledLink(const QString &)),
 	  SLOT(openURL(const QString &)));
   layout->addWidget(summary);
@@ -58,9 +58,9 @@ void CollectionPage::updateContents()
   /// though I like the Label approach.
   QString str = tr("<b>Collection : </b>%1<p>").
     arg(collection->name);
-  QHash<DocumentDefinition *, QList<Document *> > dd = 
+  QHash<DocumentDefinition *, QList<Document *> > dd =
     collection->typeDocuments();
-  QHash<DocumentDefinition * , QList<Document *> >::const_iterator i = 
+  QHash<DocumentDefinition * , QList<Document *> >::const_iterator i =
     dd.constBegin();
   while(i != dd.constEnd()) {
     str += QString("<h2>%1</h2><p>").arg(i.key()->definitionName());
@@ -74,18 +74,18 @@ void CollectionPage::updateContents()
       for(int k = 1; k < doc->attachmentsNumber(); k++)
 	str += QString(" <a href='file://%1'>").arg(doc->filePath(k)) +
 	  "<img src='/usr/share/icons/hicolor/16x16/apps/adobe.pdf.png'/></a>";
-      str += "<a href='attach:" + doc->canonicalFileName() + 
+      str += "<a href='attach:" + doc->canonicalFileName() +
 	"'> (attach file)</a>"; /// \todo tr around.
       for(int l = 0; l < doc->links.size(); l++)
 	if(doc->links[l].target) // {
 	  str += " " +
 	    LinksHandler::linkTo(doc->links[l].target,
 				 doc->links[l].target->publicTypeName());
-	//   QString link2 = 
+	//   QString link2 =
 	//     LinksHandler::linkTo(static_cast<Transaction*>(doc->links[l].target),
 	// 			 "biniou");
 	//   QTextStream o(stdout);
-	//   o << link << endl 
+	//   o << link << endl
 	//     << link2 << endl;
 
 	//   str += " " + link;
@@ -94,7 +94,7 @@ void CollectionPage::updateContents()
     }
     i++;
   }
-  
+
   // temporary code for testing Ruby fetching code.
   if(collection->definition->code.canFetch())
     str += "<p><a href='download'>Download new elements</a>";
@@ -133,7 +133,7 @@ void CollectionPage::openURL(const QString &str)
 	doc->addLink(collection->cabinet->
 		     matchingTransaction(doc));
     }
-    updateContents(); 
+    updateContents();
     /// \todo Display of what was found / log ?
   }
   else if(str == "download") {
@@ -144,7 +144,7 @@ void CollectionPage::openURL(const QString &str)
 
 
     // a["login"] = QInputDialog::getText(this, tr("login"), tr("login"));
-    // a["passwd"] = QInputDialog::getText(this, tr("passwd"), tr("passwd"), 
+    // a["passwd"] = QInputDialog::getText(this, tr("passwd"), tr("passwd"),
     // 					QLineEdit::Password);
     collection->definition->code.fetchNewDocuments(a,b);
   }
@@ -152,8 +152,8 @@ void CollectionPage::openURL(const QString &str)
 
 void CollectionPage::promptForFileAttachment(Document * doc)
 {
-  QString file = 
-    QFileDialog::getOpenFileName(this, 
+  QString file =
+    QFileDialog::getOpenFileName(this,
 				 tr("Attach a file to %1").arg(doc->canonicalFileName()));
   if(file.isEmpty())
     return;

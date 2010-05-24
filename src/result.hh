@@ -1,4 +1,4 @@
-/** 
+/**
     \file result.hh
     The result of a Web query, a kind of (ruby) wrapper around QNetworkReply
     Copyright 2010 by Vincent Fourmond
@@ -26,8 +26,8 @@ class Result {
 
 protected:
 
-  static inline Result * fromValue(VALUE v) { 
-    Result * f;  
+  static inline Result * fromValue(VALUE v) {
+    Result * f;
     Data_Get_Struct(v,Result,f);
     return f;
   };
@@ -40,7 +40,7 @@ protected:
 
   /// The "Result" class
   static VALUE cResult;
-  
+
   /// Whether the Ruby definitions of this class have been loaded.
   static bool rubyInitialized;
 

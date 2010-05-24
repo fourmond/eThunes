@@ -1,4 +1,4 @@
-/** 
+/**
     \file linkshandler.hh
     A class for handling all kinds of links
     Copyright 2010 by Vincent Fourmond
@@ -41,10 +41,10 @@ protected:
 
   static LinksHandler * handler;
 
-  
+
 
   /// Wraps the link into an <a> element if str isn't empty.
-  static QString wrapLink(const QString &link, 
+  static QString wrapLink(const QString &link,
 			  const QString &str = QString());
 public:
 
@@ -56,7 +56,7 @@ public:
 
   /// Attaches an object; it must have the linkActivated and
   /// linkHovered signals.
-  static void handleObject(QObject * object) { 
+  static void handleObject(QObject * object) {
     getHandler()->attachObject(object);
   };
 
@@ -64,14 +64,14 @@ public:
   static QString linkTo(Account * account, const QString & text = QString());
 
   /// Returns the text for a link to a Transaction.
-  static QString linkTo(Transaction * transaction, 
+  static QString linkTo(Transaction * transaction,
 			const QString & text = QString());
 
   /// Returns the text for a link to a Linkable object.
-  static QString linkTo(Linkable * link, 
+  static QString linkTo(Linkable * link,
 			const QString & text = QString());
 
-  
+
 
   /// Returns the text for a link to the CategoryPage for the given
   /// Wallet
@@ -86,7 +86,7 @@ public slots:
   void followLink(const QString & str);
 
 signals:
-  
+
   /// This signal is emitted in case of an unhandled link
   void unhandledLink(const QString & str);
 

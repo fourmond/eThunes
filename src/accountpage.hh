@@ -1,4 +1,4 @@
-/** 
+/**
     \file accountpage.hh
     A page displaying more information about an account
     Copyright 2010 by Vincent Fourmond
@@ -43,12 +43,12 @@ class AccountPage : public NavigationPage {
   static QHash<Account *, AccountPage *> accountPages;
 
 public:
-  
+
   AccountPage(Account * a);
-  
+
   /// Returns the title of the page
   virtual QString pageTitle();
-  
+
   virtual ~AccountPage();
 
 public slots:
@@ -73,7 +73,7 @@ public:
   /// it doesn't exist yet.
   static AccountPage * getAccountPage(Account * account);
 
-  
+
 };
 
 #endif

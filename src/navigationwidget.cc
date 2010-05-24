@@ -54,7 +54,7 @@ void NavigationWidget::gotoPage(NavigationPage * page)
 {
   if(theWidget->indexOf(page) >= 0)
     theWidget->setCurrentWidget(page);
-  else 
+  else
     openUpNewPage(page, true);
 }
 

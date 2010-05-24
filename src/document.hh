@@ -1,4 +1,4 @@
-/** 
+/**
     \file document.hh
     Documents and their definitions
     Copyright 2010 by Vincent Fourmond
@@ -77,10 +77,10 @@ public:
   int transactionDateTolerance;
 
   /// The name of the attribute holding the amount of the
-  /// corresponding Transaction. 
+  /// corresponding Transaction.
   QString relevantAmount;
 
- 
+
   /// @}
 
   virtual SerializationAccessor * serializationAccessor();
@@ -163,7 +163,7 @@ public:
   void attachAuxiliaryFile(const QString & path);
 
   /// The path of the file attached to this Document
-  QString filePath(int i = 0) const { 
+  QString filePath(int i = 0) const {
     if(attachedFiles.size() > i)
       return attachedFiles[i].filePath();
     return QString();
@@ -182,7 +182,7 @@ public:
 
   /// Whether the file is canonical or not.
   bool isFileCanonical(int file) const;
-  
+
   /// Brings the given file attached to the document into ownership of
   /// the Cabinet, ie copy it to the right place if the current path
   /// is external, or simply renames it if that isn't the case.

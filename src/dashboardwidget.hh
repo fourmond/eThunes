@@ -1,4 +1,4 @@
-/** 
+/**
     \file dashboardwidget.hh
     Base class for widgets that will end up in the Dashboard
     Copyright 2010 by Vincent Fourmond
@@ -26,7 +26,7 @@ class DashboardWidget : public QWidget {
 
 public:
   virtual ~DashboardWidget();
-  
+
 };
 
 #endif

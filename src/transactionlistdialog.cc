@@ -20,7 +20,7 @@
 #include <transactionlistdialog.hh>
 #include <wallet.hh>
 
-TransactionListDialog::TransactionListDialog() 
+TransactionListDialog::TransactionListDialog()
 {
   // First, a VBox:
   QVBoxLayout * l1 = new QVBoxLayout(this);
@@ -56,7 +56,7 @@ void TransactionListDialog::displayChecks(Account * account)
 	      tr("Account: %1").arg(account->name()));
 }
 
-void TransactionListDialog::displayCategory(Category * category, 
+void TransactionListDialog::displayCategory(Category * category,
 					    Wallet * wallet)
 {
   displayList(wallet->categoryTransactions(category),

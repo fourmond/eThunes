@@ -1,4 +1,4 @@
-/** 
+/**
     \file actions.hh a hash storing actions conveniently
     Copyright 2008 by Vincent Fourmond
 
@@ -27,8 +27,8 @@ public:
 		      const QObject * receiver, const char * member,
 		      const QKeySequence & shortcut = 0,
 		      QString tooltip = QString());
-  
-  QAction * addAction(QString codename, QAction * action, 
+
+  QAction * addAction(QString codename, QAction * action,
 		      const QKeySequence & shortcut = 0,
 		      QString tooltip = QString());
 };

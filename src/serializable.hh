@@ -1,4 +1,4 @@
-/** 
+/**
     \file serializable.hh
     Infrastructure for data serialization (XML, Settings...)
     Copyright 2010 by Vincent Fourmond
@@ -46,7 +46,7 @@ public:
   /// an XML attribute and not as text ? (a virtual function)
   ///
   /// @{
-  
+
   /// Writes the contents of the element to the QXmlStreamWriter
   virtual void writeXML(const QString & name, QXmlStreamWriter * writer) = 0;
 
@@ -64,7 +64,7 @@ public:
   };
 
 public:
-  
+
   /// @}
 
   virtual ~SerializationAttribute() { ;};
@@ -91,7 +91,7 @@ protected:
   bool isAttribute;
 public:
   SerializationItem() : isAttribute(false) {;};
-  
+
   /// Sets the value from a String
   virtual void setFromString(const QString & str);
   virtual void setFromVariant(const QVariant & v) = 0;
@@ -147,7 +147,7 @@ public:
 
   /// Returns the SerializationAccessor element at nth element of the list
   virtual SerializationAccessor * accessorAt(int n) = 0;
-  
+
   /// @}
 
   /// \name Setter functions
@@ -196,7 +196,7 @@ public:
 
   /// Creates an empty element with the named key
   virtual void newElement(const QString & key) = 0;
-  
+
   /// @}
 
   /// \name Setter functions
@@ -218,9 +218,9 @@ public:
 
   /// Reads from the given XML stream into the attributes. It assumes
   /// that the reader is at the startElement stuff. It only reads
-  /// *one* element of the hash. 
+  /// *one* element of the hash.
   virtual void readXML(QXmlStreamReader * reader);
-  
+
 };
 
 
@@ -242,7 +242,7 @@ public:
 class SerializationAccessor {
 public:
 
-  /// Generic pointer to the target ? 
+  /// Generic pointer to the target ?
   Serializable * target;
 
   /// This hash holds all the attributes, whether they be simple
@@ -302,22 +302,22 @@ public:
   /// Functions called at some time in the reading or writing process,
   /// for instance to ensure the attributes are in a well-defined
   /// state.
-  /// 
+  ///
   /// @{
 
   /// This hook is called before the loading, to prepare it (and in
   /// particular, to clean attributes that should be empty)
-  virtual void prepareSerializationRead() {;}; 
+  virtual void prepareSerializationRead() {;};
 
   /// This hook is called after the loading, to ensure all "derived
   /// attributes" are setup properly.
-  virtual void finishedSerializationRead() {;}; 
+  virtual void finishedSerializationRead() {;};
 
   /// This hook is called before the writing, to prepare it
-  virtual void prepareSerializationWrite() {;}; 
+  virtual void prepareSerializationWrite() {;};
 
   /// This hook is called after the writing.
-  virtual void finishedSerializationWrite() {;}; 
+  virtual void finishedSerializationWrite() {;};
 
   /// @}
 
@@ -326,14 +326,14 @@ public:
   /// Functions to save/load Serializable objects from various
   /// sources.
   /// @{
-  
+
   /// Writes the Serializable object into the writer as name.
   virtual void writeXML(const QString & name, QXmlStreamWriter * writer);
 
 
   /// Reads the Serializable object from the reader.
   virtual void readXML(QXmlStreamReader * reader);
-  
+
   /// @}
 
   /// Serializable object definitely should *not* be free by

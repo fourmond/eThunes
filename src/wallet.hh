@@ -1,4 +1,4 @@
-/** 
+/**
     \file wallet.hh
     Class representing a collection of accounts.
     Copyright 2010 by Vincent Fourmond
@@ -71,7 +71,7 @@ public:
   /// The list of Transaction objects that belong to one category. If
   /// \p parents is true (default), then we also look for category in
   /// the transactions ancestry.
-  TransactionPtrList categoryTransactions(const Category * category, 
+  TransactionPtrList categoryTransactions(const Category * category,
 					  bool parents = true);
 
   /// @}
@@ -100,7 +100,7 @@ public:
   static Wallet * walletCurrentlyRead;
 
   virtual void prepareSerializationRead();
-  
+
   virtual void finishedSerializationRead();
 
   /// Returns the Account whose Account::accountID() matches name.
@@ -139,11 +139,11 @@ public slots:
 
 public:
   /// Whether the Wallet has pending modifications
-  bool isDirty() const { return dirty; }; 
+  bool isDirty() const { return dirty; };
 
 
   /// Returns all the transactions within the given date range.
-  TransactionPtrList transactionsWithinRange(const QDate & before, 
+  TransactionPtrList transactionsWithinRange(const QDate & before,
 					     const QDate & after);
 };
 

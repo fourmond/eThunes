@@ -39,7 +39,7 @@ CategoryHash * CategoryModel::indexedCategoryHash(QModelIndex index) const
 }
 
 
-QModelIndex CategoryModel::index(int row, int column, 
+QModelIndex CategoryModel::index(int row, int column,
 				 const QModelIndex & parent) const
 {
   if(parent.isValid()) {
@@ -50,7 +50,7 @@ QModelIndex CategoryModel::index(int row, int column,
     l.sort();
     if(row >= l.count())
       return QModelIndex();
-    return createIndex(row, column, 
+    return createIndex(row, column,
 		       &(h->operator[](l[row])));
   }
   else
@@ -81,13 +81,13 @@ int CategoryModel::rowCount(const QModelIndex & index) const
 }
 
 int CategoryModel::columnCount(const QModelIndex & /*index*/) const
-{  
+{
   return LastColumn;
 }
 
-QVariant CategoryModel::headerData(int section, 
-				  Qt::Orientation /*orientation*/, 
-				  int role) const 
+QVariant CategoryModel::headerData(int section,
+				  Qt::Orientation /*orientation*/,
+				  int role) const
 {
   if(role == Qt::DisplayRole) {
     switch(section) {
@@ -118,9 +118,9 @@ QVariant CategoryModel::data(const QModelIndex& index, int role) const
     TransactionPtrList list = wallet->categoryTransactions(c);
     TransactionListStatistics stats;
     switch(index.column()) {
-    case NameColumn: 
+    case NameColumn:
       return QVariant(c->name);
-    case AmountColumn: 
+    case AmountColumn:
       stats = list.statistics();
       return QVariant(Transaction::formatAmount(stats.totalAmount));
     case CurrentMonthColumn:
@@ -131,11 +131,11 @@ QVariant CategoryModel::data(const QModelIndex& index, int role) const
       stats = list.statistics();
       return QVariant(Transaction::
 		      formatAmount(stats.lastMonthStats().totalAmount));
-    case CreditColumn: 
+    case CreditColumn:
       stats = list.statistics();
       return QVariant(Transaction::
 		      formatAmount(stats.totalCredit));
-    case DebitColumn: 
+    case DebitColumn:
       stats = list.statistics();
       return QVariant(Transaction::
 		      formatAmount(stats.totalDebit));
@@ -143,7 +143,7 @@ QVariant CategoryModel::data(const QModelIndex& index, int role) const
       stats = list.statistics();
       return QVariant(Transaction::
 		      formatAmount(stats.monthlyAverageAmount()));
-    case NumberColumn: 
+    case NumberColumn:
       return QVariant(list.count());
     default:
       return QVariant();
@@ -155,8 +155,8 @@ QVariant CategoryModel::data(const QModelIndex& index, int role) const
     case CurrentMonthColumn:
     case LastMonthColumn:
     case AverageMonthColumn:
-    case DebitColumn: 
-    case CreditColumn: 
+    case DebitColumn:
+    case CreditColumn:
       return QVariant(Qt::AlignRight);
     default:
       return QVariant();
@@ -182,7 +182,7 @@ QVariant CategoryModel::data(const QModelIndex& index, int role) const
 //   return 0;
 // }
 
-// bool CategoryModel::setData(const QModelIndex & index, const QVariant & value, 
+// bool CategoryModel::setData(const QModelIndex & index, const QVariant & value,
 // 			   int role)
 // {
 //   // Transaction *t = indexedTransaction(index);

@@ -1,4 +1,4 @@
-/** 
+/**
     \file transaction.hh
     Transaction, and transaction lists
     Copyright 2008,2010 by Vincent Fourmond
@@ -35,16 +35,16 @@ class Account;
 /// Members are public for ease of use.
 ///
 /// \todo We are missing several attributes:
-/// 
+///
 /// \li first, it would be interesting to add tags in addition to
 ///   categories, to be able to estimate the cost of something in a
 ///   way orthogonal to caterogies. Typical use: "Trip to Venice" ?
-///   
+///
 /// \li second, we need means to "subdivise" an atomic transaction into
 ///   several parts, because it often is the case that one bill falls
 ///   into several categories (this could be modified without
 ///   unlocking)
-///   
+///
 /// \li third, it would be interesting to save somewhere the "origin" of
 ///   the transaction: does it come straight from the bank or has it
 ///   been entered manually (or modified manually) ? This would allow
@@ -81,7 +81,7 @@ public:
 
   /// Returns a date from a monthID
   static inline QDate dateFromID(int monthID, int day = 1) {
-    return QDate(monthID/12, monthID % 12 + 1, day); 
+    return QDate(monthID/12, monthID % 12 + 1, day);
   };
 
   /// Returns the monthID for this month
@@ -106,7 +106,7 @@ public:
   ///
   /// These are locked by default: the user cannot modify them unless
   /// he explicitly unlocks them.
-  /// 
+  ///
   /// @{
 
   /// The amount of the transation, in cents
@@ -132,7 +132,7 @@ public:
 
   /// \name User-defined attributes
   ///
-  /// (and possibly accessors too) 
+  /// (and possibly accessors too)
   /// @{
 
   /// Whether the transaction is locked for manual modification or not.
@@ -142,7 +142,7 @@ public:
   /// The main category. NULL means no category.
   Category * category;
 
-  
+
   /// Sets the category from the given String. If wallet is NULL, it
   /// is taken to be account->wallet, which shouldn't be NULL.
   void setCategoryFromName(const QString & str, Wallet * wallet = NULL);
@@ -182,7 +182,7 @@ public:
   int monthID() const { return monthID(date); };
 
   /// Implements the comparison for sorting. Based on the date.
-  /// 
+  ///
   /// \todo implement a full sort so that two slightly different items
   /// won't be equal
   bool operator<(const Transaction & t) const;
@@ -208,12 +208,12 @@ public:
 
   virtual QString uniqueID() const;
 
-  virtual QString typeName() const { 
-    return "transaction"; 
+  virtual QString typeName() const {
+    return "transaction";
   };
 
-  virtual QString publicTypeName() const { 
-    return QObject::tr("Transaction"); 
+  virtual QString publicTypeName() const {
+    return QObject::tr("Transaction");
   };
 
 

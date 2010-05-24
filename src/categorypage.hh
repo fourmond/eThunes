@@ -1,4 +1,4 @@
-/** 
+/**
     \file categorypage.hh
     A page displaying informations about the categories
     Copyright 2010 by Vincent Fourmond
@@ -42,15 +42,15 @@ protected:
 
   /// And the corresponding view:
   QTreeView * view;
-  
-  
+
+
 public:
-  
+
   CategoryPage(Wallet * a);
-  
+
   /// Returns the title of the page
   virtual QString pageTitle();
-  
+
   virtual ~CategoryPage();
 
   /// Returns the AccountPage for the given account, or create it if

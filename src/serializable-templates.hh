@@ -1,4 +1,4 @@
-/** 
+/**
     \file serializable-templates.hh
     Template classes for serialization
     Copyright 2010 by Vincent Fourmond
@@ -17,7 +17,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     \todo This file is seriously getting crowded; possibly splitting
-    is in order?  
+    is in order?
 */
 
 #ifndef __SERIALIZABLE_TEMPLATES_HH
@@ -25,7 +25,7 @@
 
 #ifndef CALL_MEMBER_FN
 /// \todo this should be moved somewhere appropriate
-#define CALL_MEMBER_FN(object,ptrToMember) ((object).*(ptrToMember)) 
+#define CALL_MEMBER_FN(object,ptrToMember) ((object).*(ptrToMember))
 #endif
 
 /// This template class class should be used for any reasonably
@@ -88,39 +88,39 @@ class SerializationQList : public SerializationList {
   QList<T> * target;
 public:
   SerializationQList(QList<T> * t) { target = t;};
-  
+
   virtual int listSize() { return target->size();};
 
-  virtual SerializationAccessor * accessorAt(int n) { 
+  virtual SerializationAccessor * accessorAt(int n) {
     return target->operator[](n).serializationAccessor();};
 
-  virtual void augment() { 
+  virtual void augment() {
     target->append(T());
   };
-  
+
 };
 
 /// This class provides serialization for QList of objects that do not
 /// inherit Serializable, but that can be serialized using
 /// SerializationItemScalar
-template <typename T> 
+template <typename T>
 class SerializationScalarQList : public SerializationList {
   QList<T> * target;
   QString attribute;
 public:
-  SerializationScalarQList(QList<T> * t, QString a) : 
+  SerializationScalarQList(QList<T> * t, QString a) :
     target(t), attribute(a) {;};
 
   virtual int listSize() { return target->size();};
 
-  virtual void augment() { 
+  virtual void augment() {
     target->append(T());
   };
 
-  virtual SerializationAccessor * accessorAt(int n) { 
+  virtual SerializationAccessor * accessorAt(int n) {
     SerializationAccessor *a = new SerializationAccessor(NULL);
-    a->addAttribute(attribute, 
-		    new SerializationItemScalar<T>(&target->operator[](n), 
+    a->addAttribute(attribute,
+		    new SerializationItemScalar<T>(&target->operator[](n),
 						   true));
     return a;
   };
@@ -133,14 +133,14 @@ template <class T>
 class SerializationQHash : public SerializationHash {
   QHash<QString, T> * target;
 public:
-  SerializationQHash(QHash<QString, T> * t, QString kn = "name") { 
+  SerializationQHash(QHash<QString, T> * t, QString kn = "name") {
     target = t;
     keyName = kn;
   };
-  
+
   virtual QStringList keys() { return target->keys();};
 
-  virtual Serializable * value(const QString &key) { 
+  virtual Serializable * value(const QString &key) {
     return &target->operator[](key);
   };
 

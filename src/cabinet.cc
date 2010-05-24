@@ -34,7 +34,7 @@ SerializationAccessor * Cabinet::serializationAccessor()
 {
   SerializationAccessor * ac = new SerializationAccessor(this);
   ac->addAttribute("wallet", &wallet);
-  ac->addAttribute("collection", 
+  ac->addAttribute("collection",
 		   new SerializationQList<Collection>(&collections));
   return ac;
 }
@@ -84,11 +84,11 @@ Cabinet * Cabinet::cabinetBeingSerialized = NULL;
 
 
 void Cabinet::prepareSerializationRead()
-{ 
+{
   clearContents();
   cabinetBeingSerialized = this;
 }
-  
+
 void Cabinet::finishedSerializationRead()
 {
   cabinetBeingSerialized = NULL;
@@ -102,7 +102,7 @@ void Cabinet::setDirty(bool d)
 {
   if(d == dirty)
     return;
-  
+
   dirty = d;
   emit(dirtyChanged(dirty));
 }
@@ -113,7 +113,7 @@ QDir Cabinet::baseDirectory()
   return QDir(f.canonicalPath());
 }
 
-Collection * Cabinet::addNewCollection(const QString &name, 
+Collection * Cabinet::addNewCollection(const QString &name,
 				       CollectionDefinition * def)
 {
   collections.append(Collection());
@@ -131,7 +131,7 @@ void Cabinet::registerDocument(Document * doc, bool signal)
   QString name = doc->canonicalFileName();
   if(namedDocument(name)) {
     fprintf(stderr, "We have a document clash !\n");
-    /// \tdexception do something here on documents clash 
+    /// \tdexception do something here on documents clash
   }
   documentsByName[name] = doc;
   if(signal) {
@@ -158,11 +158,11 @@ QList<Document *> Cabinet::allDocuments()
 TransactionPtrList Cabinet::transactionMatchingCandidates(Document * document)
 {
   DocumentDefinition * def = document->definition;
-  if(def->relevantDate.isEmpty() || 
+  if(def->relevantDate.isEmpty() ||
      ! document->attributes.contains(def->relevantDate))
     return TransactionPtrList();	// No need to go further
   QDate base = document->attributes[def->relevantDate].toDate();
-  return wallet.transactionsWithinRange(base.addDays(-2), 
+  return wallet.transactionsWithinRange(base.addDays(-2),
 					base.addDays(def->transactionDateTolerance));
 }
 
@@ -170,11 +170,11 @@ Transaction * Cabinet::matchingTransaction(Document * document)
 {
   TransactionPtrList candidates = transactionMatchingCandidates(document);
   for(int i = 0; i < candidates.size(); i++) {
-    if(document->collection->definition->code.scoreForTransaction(document, 
+    if(document->collection->definition->code.scoreForTransaction(document,
 								  candidates[i]) > 1000)
       return candidates[i];
     /// \todo This is very primitive...
   }
   return NULL;
-  
+
 }
