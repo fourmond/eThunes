@@ -148,19 +148,22 @@ void Fetcher::replyFinished(QNetworkReply* r)
   // err << "Reply " << r << endl
   //     << "\tfor URL" << r->url().toString() << endl;
   
-  // Here, if the request is a redirection, we mention that and follow
-  // it, unless followRedirection is false
-  QString target = r->attribute(QNetworkRequest::RedirectionTargetAttribute).
-    toString();
-  if(followRedirections && ! target.isEmpty()) {
-    // That looks like a redirection
-    err // << "Reply to  URL " << r->url().toString() << endl
-	<< " -> redirects to " << target << endl;
+  // // Dumping cookie jar:
+  // QTextStream o(stdout);
+  // /// \todo Customize the display of this ?
+  // o << "Cookie jar:" << endl;
+  // cookieJar->dumpContents();
+  // cookieJar->dumpTree(o);
+  if(followRedirections && r->hasRawHeader("location")) {
+    // That looks very much like a redirection
+    QUrl target = r->attribute(QNetworkRequest::RedirectionTargetAttribute).toUrl();
+    err << " -> redirects to " << target.toString() << endl;
     int nb = ongoingRequests[r].maxHops - 1;
     if(nb)
-      get(QNetworkRequest(QUrl(target)), ongoingRequests[r].code, nb);
-    else 
+      get(QNetworkRequest(target), ongoingRequests[r].code, nb);
+    else
       err << "Maximum number of redirections hit, stopping" << endl;
+    
   }
   else {
     VALUE code = ongoingRequests[r].code;

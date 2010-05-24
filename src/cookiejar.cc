@@ -47,6 +47,17 @@ QList<QNetworkCookie> CookieSet::toList() const
   return ret;
 }
 
+void CookieSet::dumpTree(QTextStream & stream, 
+			 const QString & prefix) const
+{
+  QStringList names = keys();
+  names.sort();
+  for(int i = 0; i < names.size(); i++)
+    stream << prefix << names[i] << " = " 
+	   << value(names[i]).value() << endl;
+}
+
+
 ////////////////////////////////////////////////////////////
 
 QString CookiesByPath::normalizePath(const QString & path)
@@ -61,8 +72,7 @@ QString CookiesByPath::normalizePath(const QString & path)
 QStringList CookiesByPath::subPaths(const QString & path)
 {
   QString rp = path;
-  while(rp.startsWith("/"))	// Strip initial / as it will confuse
-				// split.
+  while(rp.startsWith("/"))
     rp.remove(0,1);
   QStringList paths = rp.split("/");
   QStringList ret;
@@ -70,6 +80,7 @@ QStringList CookiesByPath::subPaths(const QString & path)
     ret << normalizePath(paths.join("/"));
     paths.removeLast();
   }
+  ret << "/"; 			// Always
   return ret;
 }
 
@@ -77,6 +88,10 @@ CookieSet CookiesByPath::cookiesForPath(const QString & path) const
 {
   QStringList paths = subPaths(path);
   CookieSet ret;
+  // QTextStream o(stdout);
+  // o << "Looking into these paths for " << path << endl;
+  // o << paths.join(", ") << endl;
+
   for(int i = 0; i < paths.size(); i++)
     if(contains(paths[i]))
       ret.complements(value(paths[i]));
@@ -89,6 +104,29 @@ CookiesByPath & CookiesByPath::operator<<(const QNetworkCookie & cookie)
   operator[](path) << cookie;
   return *this;
 }
+
+QList<QNetworkCookie> CookiesByPath::allCookies() const
+{
+  const_iterator i = constBegin();
+  QList<QNetworkCookie> list;
+  while(i != constEnd()) {
+    list += i.value().toList();
+    i++;
+  }
+  return list;
+}
+
+void CookiesByPath::dumpTree(QTextStream & stream, 
+			     const QString & prefix) const
+{
+  QStringList paths = keys();
+  paths.sort();
+  for(int i = 0; i < paths.size(); i++) {
+    stream << prefix << "Path: " << paths[i] << endl;
+    value(paths[i]).dumpTree(stream, prefix + "\t");
+  }
+}
+
 
 ////////////////////////////////////////////////////////
 
@@ -122,12 +160,41 @@ CookieSet CookiesByHost::cookiesForUrl(const QUrl & url) const
 }
 
 
+QList<QNetworkCookie> CookiesByHost::allCookies() const
+{
+  const_iterator i = constBegin();
+  QList<QNetworkCookie> list;
+  while(i != constEnd()) {
+    list += i.value().allCookies();
+    i++;
+  }
+  return list;
+}
 
+void CookiesByHost::dumpTree(QTextStream & stream, 
+			     const QString & prefix) const
+{
+  QStringList domains = keys();
+  domains.sort();
+  for(int i = 0; i < domains.size(); i++) {
+    stream << prefix << "Domain: " << domains[i] << endl;
+    value(domains[i]).dumpTree(stream, prefix + "\t");
+  }
+}
 
 ////////////////////////////////////////////////////////
 QList<QNetworkCookie> CookieJar::cookiesForUrl(const QUrl & url) const
 {
-  return cookies.cookiesForUrl(url).toList();
+  QList<QNetworkCookie> l = cookies.cookiesForUrl(url).toList();
+  QList<QNetworkCookie> l2;
+  for(int i = 0; i < l.size(); i++) {
+    const QNetworkCookie &c = l[i];
+    if(c.isSecure() && url.scheme() != "https") 
+      continue;			// Drop secure cookies on non-https
+				// requests
+    l2 << c;
+  }
+  return l2;
 }
 
 bool CookieJar::setCookiesFromUrl(const QList<QNetworkCookie> & cookieList, 
@@ -142,4 +209,20 @@ bool CookieJar::setCookiesFromUrl(const QList<QNetworkCookie> & cookieList,
     cookies << c;
   }
   return true;
+}
+
+void CookieJar::dumpCookieList(const QList<QNetworkCookie> &list)
+{
+  QTextStream out(stdout);
+  for(int i = 0; i < list.size(); i++) {
+    const QNetworkCookie & c = list[i];
+    QString value = c.value();
+    if(value.size() > 30)
+      value = value.left(30) + "...";
+    out << "\t" << c.name() << " : " << value
+	<< " (" << c.domain() << " - " << c.path() << ")";
+    if(c.isSecure())
+      out << " SECURE";
+    out << endl;
+  }
 }

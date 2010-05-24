@@ -34,6 +34,9 @@ public:
 
   /// Converts this hash into a flat list.
   QList<QNetworkCookie> toList() const;
+
+  void dumpTree(QTextStream & stream, 
+		const QString & prefix  = QString()) const;
 };
 
 /// A set of CookieSet indexed by their path.
@@ -55,6 +58,11 @@ public:
   /// less relevant ones.
   CookieSet cookiesForPath(const QString & path) const;
 
+  /// Returns all cookies held by this object
+  QList<QNetworkCookie> allCookies() const;
+
+  void dumpTree(QTextStream & stream, 
+		const QString & prefix  = QString()) const;
 };
 
 /// A set of CookiesByPath indexed by their host
@@ -72,6 +80,12 @@ public:
   /// host and the proper paths and so on...)
   CookieSet cookiesForUrl(const QUrl & url) const;
 
+
+  /// Returns all cookies held by this object
+  QList<QNetworkCookie> allCookies() const;
+
+  void dumpTree(QTextStream & stream, 
+		const QString & prefix  = QString()) const;
 };
 
 /// This is a CookieJar 
@@ -84,5 +98,22 @@ public:
   virtual QList<QNetworkCookie>	cookiesForUrl(const QUrl & url) const;
   virtual bool setCookiesFromUrl(const QList<QNetworkCookie> & cookieList, 
 				 const QUrl & url);
+
+  /// Prints out a list of cookies
+  static void dumpCookieList(const QList<QNetworkCookie> &list);
+
+  /// Dumps the contents of the cookie jar to standard out
+  void dumpContents() const {
+    dumpCookieList(cookies.allCookies());
+  };
+
+  /// Dumps the contents of the cookie jar in a tree-like fashion
+  /// (representing the internal structure of the jar).
+  ///
+  /// This function probably should not be used 
+  void dumpTree(QTextStream & stream) const {
+    cookies.dumpTree(stream);
+  };
+
 };
 #endif

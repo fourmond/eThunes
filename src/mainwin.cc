@@ -52,6 +52,14 @@
    \li This requires as well to design few various HTTP groping
    classes that will look for patterns in very specific things.
 
+   \li \b logging I should write a class to be used a little like a
+   QTextStream that would support colors and fonts and the like using
+   standard stream manipulators. Idea: some of these could be
+   "one-shot" only, that is to only apply to the next argument.
+
+   \li I should provide several objects corresponding to different
+   levels
+
    \section todo-short Shorter term things to do
    
    \li It is more and more important to make sure that the objects
