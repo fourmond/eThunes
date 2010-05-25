@@ -36,7 +36,8 @@ SOURCES += src/qmain.cc src/account.cc src/mainwin.cc src/actions.cc \
 	src/linkshandler.cc src/linkable.cc \
 	src/link.cc src/transactionlistwidget.cc \
 	src/fetcher.cc src/result.cc \
-	src/cookiejar.cc
+	src/cookiejar.cc src/log.cc \
+	src/logstream.cc
 
 HEADERS += src/account.hh src/mainwin.hh src/actions.hh \
 	src/ofximport.hh src/accountmodel.hh \
@@ -57,4 +58,5 @@ HEADERS += src/account.hh src/mainwin.hh src/actions.hh \
 	src/linkshandler.hh src/linkable.hh \
 	src/link.hh src/transactionlistwidget.hh \
 	src/fetcher.hh src/result.hh \
-	src/cookiejar.hh
+	src/cookiejar.hh src/log.hh \
+	src/logstream.hh
