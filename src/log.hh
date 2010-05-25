@@ -31,7 +31,7 @@ class LogStream;
 /// standard meaning. This class implements a signalling scheme making
 /// it easy to simply listen to some log levels/severities.
 ///
-/// \li LogStream streams that send their data to a given channel and severity
+/// \li LogStream streams that send their data to a given channel and severity 
 /// level (that optionally could be changed ?)
 class Log : public QObject {
 
@@ -41,10 +41,32 @@ public:
 
   static Log * logger();
   
+  typedef enum {
+    Debug,
+    Information,
+    Warning,
+    Error
+  } LogLevel;
 
-  static LogStream biniou();
+  
+
+  LogStream debug(const QString & channel = QString());
+
+  /// Logs a string; in particular, in real this just sends a signal
+  /// everywhere.
+  ///
+  /// \todo Maybe this should also write to a file ? Although there
+  /// would be no reason why, we just need a proper object with the
+  /// proper slots...
+  void logString(const QString & message, LogLevel l, 
+		 const QString & channel = QString());
 
 signals:
-};
+  /// \todo There should be two kind of signals:
+  /// \li one that just forwards all incoming messages of logString()
+  /// 
+  /// \li one that filters according to a policy that should be
+  /// implemented somewhere ?
+;
 
 #endif

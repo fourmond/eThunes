@@ -31,6 +31,9 @@ class LogStream {
 
   /// The target string
   QString buffer;
+
+  /// The target Log object
+  Log * target;
 public:
   
   /// temporary for now,
