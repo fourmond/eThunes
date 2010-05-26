@@ -19,6 +19,9 @@
 #include <headers.hh>
 #include <log.hh>
 
+Log::Log() : spy(0)
+{
+}
 
 Log * Log::theUniqueLogger = 0;
 
@@ -27,4 +30,39 @@ Log * Log::logger()
   if(! theUniqueLogger)
     theUniqueLogger = new Log();
   return theUniqueLogger;
+}
+
+QString Log::logLevelName(LogLevel l)
+{
+  switch(l) {
+  case Debug: return tr("debug");
+  case Info: return tr("info");
+  case Warning: return tr("warning");
+  case Error: return tr("error");
+  };
+  return "????";
+}
+
+void Log::logString(const QString & message, LogLevel l, 
+		    const QString & channel)
+{
+  QString final = QString("[") + logLevelName(l);
+  if(! channel.isEmpty())
+    final += ", " + channel;
+  final += "] " + message;
+  QString plain = toPlainText(final);
+  emit(plainMessage(plain, l, channel));
+  emit(htmlMessage(toHTML(final), l, channel));
+  if(spy)
+    spy->write(plain.toLocal8Bit());
+}
+
+QString Log::toHTML(const QString &str)
+{
+  return str;
+}
+
+QString Log::toPlainText(const QString & str)
+{
+  return str;
 }

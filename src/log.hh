@@ -21,8 +21,6 @@
 #ifndef __LOG_HH
 #define __LOG_HH
 
-class LogStream;
-
 /// The log system of QMoney is composed of two different parts
 /// 
 /// \li an application wide instance of Log, whose role is to get
@@ -34,32 +32,43 @@ class LogStream;
 /// \li LogStream streams that send their data to a given channel and severity 
 /// level (that optionally could be changed ?)
 class Log : public QObject {
+  Q_OBJECT;
 
   /// The application-wide logger
   static Log * theUniqueLogger;
+
+  friend class LogStream;
+
+  /// Converts an HTML-formatted text that potentially contains <raw>
+  /// tags into a text suitable for plain text output (specifically to
+  /// stdout).
+  static QString toPlainText(const QString &txt);
+
+  /// Does the same thing, but for HTML output.
+  static QString toHTML(const QString &txt);
+
 public:
+  
+  Log();
 
   static Log * logger();
   
   typedef enum {
     Debug,
-    Information,
+    Info,
     Warning,
     Error
   } LogLevel;
 
-  
+  static QString logLevelName(LogLevel l);
 
-  LogStream debug(const QString & channel = QString());
-
-  /// Logs a string; in particular, in real this just sends a signal
-  /// everywhere.
+  /// IF this pointer isn't NULL, all plain log messages are written
+  /// out there.
   ///
-  /// \todo Maybe this should also write to a file ? Although there
-  /// would be no reason why, we just need a proper object with the
-  /// proper slots...
-  void logString(const QString & message, LogLevel l, 
-		 const QString & channel = QString());
+  /// \todo This is more a hack than anything else, but it
+  /// will surely help in a close future.
+  QIODevice * spy;
+
 
 signals:
   /// \todo There should be two kind of signals:
@@ -67,6 +76,35 @@ signals:
   /// 
   /// \li one that filters according to a policy that should be
   /// implemented somewhere ?
-;
+  
+  /// A plain text formatted message, such as would be suitable for
+  /// display in stdin
+  void plainMessage(const QString & message, LogLevel l, 
+		    const QString & channel);
+
+  /// The message as would be suitable for display in an HTML log
+  /// browser.
+  void htmlMessage(const QString & message, LogLevel l, 
+		   const QString & channel);
+
+protected:
+  /// Logs a string; in particular, in real this just sends a signal
+  /// everywhere.
+  ///
+  /// \todo Maybe this should also write to a file ? Although there
+  /// would be no reason why, we just need a proper object with the
+  /// proper slots...
+  ///
+  /// This function accepts HTML input in message, with a small
+  /// additional feature: a string within <raw>...</raw> is left
+  /// untouched to text output, and tweaked to be HTML-safe for HTML
+  /// output.
+  ///
+  /// \warning This is internal specification and could change at any
+  /// time. Use stream manipulators !
+  void logString(const QString & message, LogLevel l, 
+		 const QString & channel = QString());
+
+};
 
 #endif

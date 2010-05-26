@@ -23,6 +23,11 @@
 
 #include <log.hh>
 
+/// Use this class just as you would use a QTextStream.
+///
+/// \todo I should write up some manipulators and some functions to
+/// tweak the format of the output (in particular, bold, color, and
+/// the like...)
 class LogStream {
   
   /// The internal stream used to build up the string to be forwarded
@@ -34,10 +39,33 @@ class LogStream {
 
   /// The target Log object
   Log * target;
+
+  /// The log level
+  Log::LogLevel level;
+
+  /// The log channel
+  QString channel;
+
+  /// Sends out to the target
+  void flushToLog();
 public:
   
-  /// temporary for now,
-  LogStream();
+  /// Builds up a log stream with the given level, channel and target.
+  ///
+  /// Mostly, you will only ever need something like that:
+  ///   LogStream o(); // or
+  ///   LogStream o(Log::debug);
+  LogStream(Log::LogLevel level = Log::Info, 
+	    const QString & channel = QString(),
+	    Log * target = 0);
+
+  ~LogStream();
+
+  void setLogLevel(Log::LogLevel l) {
+    level = l;
+  };
+  
+  Log::LogLevel logLevel() const { return level;};
 
   template<typename T> LogStream & operator<<(const T& t) {
     (*internalStream) << t;

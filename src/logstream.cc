@@ -19,18 +19,33 @@
 #include <headers.hh>
 #include <logstream.hh>
 
-LogStream::LogStream()
+LogStream::LogStream(Log::LogLevel l, const QString & c, Log * t) : 
+  level(l), channel(c)
 {
   internalStream = new QTextStream(&buffer);
+  if(t)
+    target = t;
+  else
+    target = Log::logger();
+}
+
+void LogStream::flushToLog()
+{
+  target->logString(buffer, level, channel);
+  buffer.clear();
 }
 
 LogStream & LogStream::operator<<(QTextStreamFunction t)
 {
   (*internalStream) << t;
-  if(t == endl) {
-    QTextStream o(stdout);
-    o << "String logged: " << buffer;
-    buffer.clear();
-  }
+  if(t == endl || t == flush)
+    flushToLog();
   return *this;
+}
+
+LogStream::~LogStream()
+{
+  if(! buffer.isEmpty())
+    flushToLog(); 
+  delete internalStream;
 }
