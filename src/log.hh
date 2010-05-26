@@ -31,6 +31,10 @@
 ///
 /// \li LogStream streams that send their data to a given channel and severity 
 /// level (that optionally could be changed ?)
+///
+/// \todo Now, what should be done is to create a simple logbrowser
+/// dialog box that would be created first thing from the mainwindow's
+/// constructor and that would display the log acquired so far.
 class Log : public QObject {
   Q_OBJECT;
 
