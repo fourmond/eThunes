@@ -126,3 +126,11 @@ void Result::initializeRuby(VALUE mNet)
 
   rubyInitialized = true;
 }
+
+QTemporaryFile * Result::saveToTemporaryFile() const
+{
+  QTemporaryFile * file = new QTemporaryFile;
+  file->open();
+  saveReply(file);
+  return file;
+}

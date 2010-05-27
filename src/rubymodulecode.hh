@@ -53,15 +53,14 @@ public:
   virtual bool canFetch();
 
   virtual void fetchNewDocuments(const AttributeHash & credentials,
-  				 const QList<AttributeHash> &existingDocuments);
+  				 const QList<AttributeHash> &existingDocuments,
+  				 Collection * target);
 
 protected:
 
-  // For convenient exception wrapping
   void fetchNewDocumentsInternal(const AttributeHash & credentials,
-				 const QList<AttributeHash> &existingDocuments,
-				 int dummy);
-
+  				 const QList<AttributeHash> &existingDocuments,
+  				 Collection * target);
 
   /// Loads the module if necessary.
   void ensureLoadModule();

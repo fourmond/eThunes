@@ -27,6 +27,8 @@ class Result {
 protected:
 
   static inline Result * fromValue(VALUE v) {
+    /// \todo Ensure v has the correct type, else we're just begging
+    /// for segfaults.
     Result * f;
     Data_Get_Struct(v,Result,f);
     return f;
@@ -66,6 +68,9 @@ protected:
   /// the .inspect function to help debugging.
   static VALUE inspect(VALUE obj);
 
+  /// These two 
+  friend class Fetcher;
+
 public:
 
   /// Constructs a Result object from the given reply.
@@ -82,5 +87,13 @@ public:
   ///
   /// \warning initializeRuby() must have been called beforehand.
   VALUE wrapToRuby();
+
+  /// Saves the contents of the reply to a temporary file.
+  QTemporaryFile * saveToTemporaryFile() const ;
+
+  /// Saves to an IO device. 
+  void saveReply(QIODevice * target) const {
+    target->write(data);
+  };
 };
 #endif

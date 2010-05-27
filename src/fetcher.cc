@@ -22,6 +22,11 @@
 #include <fetcher.hh>
 #include <result.hh>
 
+#include <collection.hh>
+
+#include <logstream.hh>
+
+
 using namespace Ruby;
 
 bool Fetcher::rubyInitialized = false;
@@ -30,7 +35,9 @@ VALUE Fetcher::mNet;
 
 VALUE Fetcher::cFetcher;
 
-Fetcher::Fetcher() : followRedirections(true)
+Fetcher::Fetcher() : followRedirections(true), 
+		     targetWallet(0),
+		     targetCollection(0)
 {
   manager = new QNetworkAccessManager(this);
   cookieJar = new CookieJar();
@@ -66,6 +73,9 @@ void Fetcher::initializeRuby()
 
   rb_define_method(cFetcher, "post",
 		   (VALUE (*)(...)) postWrapper, 2);
+
+  rb_define_method(cFetcher, "add_document",
+		   (VALUE (*)(...)) addDocumentWrapper, 2);
 
 
   Result::initializeRuby(mNet);
@@ -172,6 +182,42 @@ void Fetcher::replyFinished(QNetworkReply* r)
     rb_ary_push(ary, res->wrapToRuby());
     RescueWrapper2Args<VALUE, VALUE>::wrapCall(rb_proc_call, code, ary);
   }
-  // In any case, we
+  // In any case, the request is done.
   ongoingRequests[r].done = true;
+  /// \todo Here, we should find a way to ask for the fetcher's
+  /// destruction when all requests have been finished.
+}
+
+bool Fetcher::addDocument(Result * result, const QString & doctype)
+{
+  bool retval = false;
+  if(targetCollection) {
+    // Here, we save the document to a temporary file, and fire ahead
+    QTemporaryFile * file = result->saveToTemporaryFile();
+    retval = targetCollection->importFile(doctype, file->fileName());
+
+    /// \todo When we will be using the poppler library to parse PDF
+    /// files directly, rather than spawning pdftotext which is
+    /// cumbersome and not that great, we should get rid of the
+    /// temporary file.
+    delete file;		// We dispose of the temporary file.
+  }
+  else if(targetWallet) {
+    /// \todo...
+  }
+  else {
+    LogStream o(Log::Error);
+    o << "Should be fowarding a document from Fetcher (" << this
+      << ") but there is no target" << endl;
+  }
+  return retval;
+}
+
+VALUE Fetcher::addDocumentWrapper(VALUE obj, VALUE result, 
+				  VALUE doctype)
+{
+  Fetcher * f = fromValue(obj);
+  Result * r = Result::fromValue(result);
+  f->addDocument(r, valueToQString(doctype));
+  return Qtrue;
 }

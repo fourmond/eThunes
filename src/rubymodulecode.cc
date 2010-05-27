@@ -80,10 +80,11 @@ bool RubyModuleCode::canFetch()
 }
 
 void RubyModuleCode::fetchNewDocumentsInternal(const AttributeHash & credentials,
-					       const QList<AttributeHash> &existingDocuments, int /* dummy */)
+					       const QList<AttributeHash> &existingDocuments, Collection * c)
 {
   ensureLoadModule();
   Fetcher * n = new Fetcher();
+  n->setTarget(c);
   ID func = rb_intern("fetch");
   VALUE ary = rb_ary_new();
   for(int i = 0; i < existingDocuments.size(); i++)
@@ -93,10 +94,10 @@ void RubyModuleCode::fetchNewDocumentsInternal(const AttributeHash & credentials
 }
 
 void RubyModuleCode::fetchNewDocuments(const AttributeHash & credentials,
-				       const QList<AttributeHash> &existingDocuments)
+				       const QList<AttributeHash> &existingDocuments, Collection * c)
 {
   RescueMemberWrapper3Args<RubyModuleCode, const AttributeHash &,
-			   const QList<AttributeHash> &, int >
+			   const QList<AttributeHash> &, Collection *>
     ::wrapCall(this, &RubyModuleCode::fetchNewDocumentsInternal,
-	       credentials, existingDocuments, 0);
+	       credentials, existingDocuments, c);
 }

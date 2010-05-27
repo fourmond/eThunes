@@ -27,6 +27,7 @@
 
 class CollectionDefinition;
 class Transaction;
+class Collection;
 
 /// This class provides means to embed code to do at least some of the
 /// following things:
@@ -140,10 +141,11 @@ public:
   /// Whether the underlying code supports fetching
   virtual bool canFetch() { return false;};
 
-  /// Looks up new documents in the given website for the given
-  /// credentials.
+  /// Write a small class to marshal both a Collection and a Wallet,
+  /// or make a base class to both ?
   virtual void fetchNewDocuments(const AttributeHash & credentials,
-  				 const QList<AttributeHash> &existingDocuments) = 0;
+  				 const QList<AttributeHash> &existingDocuments,
+  				 Collection * target) = 0;
 
 protected:
 };

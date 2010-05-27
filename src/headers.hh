@@ -60,6 +60,7 @@
 #include <QTextStream>
 #include <QProcess>
 #include <QPointer>
+#include <QTemporaryFile>
 
 // Network
 #include <QNetworkAccessManager>

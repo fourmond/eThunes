@@ -24,6 +24,12 @@
 #include <attributehash.hh>
 #include <cookiejar.hh>
 
+// Targets
+class Collection;
+class Wallet;
+
+// Result
+class Result;
 
 /// The base class for fetching data over the internet. It is based on
 /// QNetworkAccessManager and can be wrapped into a Ruby VALUE using
@@ -139,7 +145,36 @@ protected:
   /// generally want.
   bool followRedirections;
 
+
+  /// Wallet target. Only one of targetWallet and targetCollection
+  /// shouldn't be NULL
+  Wallet * targetWallet;
+
+  /// Target Collection
+  Collection * targetCollection;
+
+  /// Adds a document to the target of the Fetcher object (ie, either
+  /// the Wallet or the Collection). The contents of the Result are
+  /// fed to the target.
+  ///
+  /// Return value is true if document was added, false otherwise.
+  bool addDocument(Result * result, const QString & doctype);
+
+  /// The wrapper for addDocument()
+  static VALUE addDocumentWrapper(VALUE obj, VALUE result, 
+				  VALUE doctype);
+
 public:
+
+  void setTarget(Collection * c) {
+    targetCollection = c;
+    targetWallet = 0;
+  };
+
+  void setTarget(Wallet * w) {
+    targetCollection = 0;
+    targetWallet = w;
+  };
 
   /// \todo Eventually (soon) a Fetcher class should target a
   /// collection ? Or something else ? (a common base class of

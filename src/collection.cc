@@ -243,5 +243,5 @@ void Collection::fetchNewDocumentsForUser(const AttributeHash &user)
   QList<AttributeHash> docs;
   for(int i = 0; i < documents.size(); i++)
     docs << documents[i].documentAttributes();
-  definition->code.fetchNewDocuments(user, docs);
+  definition->code.fetchNewDocuments(user, docs, this);
 }

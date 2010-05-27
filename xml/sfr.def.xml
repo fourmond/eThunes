@@ -45,7 +45,9 @@ module SFR
       if current_docs.key?(b[:name])
         puts "Not downloading bill #{b[:name]}, we have it"
       else
-        puts "We should consider dowloading #{b[:name]}"
+        fetcher.get(b[:absolute_target]) do |res|
+          fetcher.add_document(res, "facture")
+        end
       end
     end
   end
