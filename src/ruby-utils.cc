@@ -28,9 +28,7 @@ VALUE Ruby::globalRescueFunction(VALUE /*dummy*/, VALUE exception)
   return Qnil;
 }
 
-/// \todo Somehow, I don't seem to get it as a namespace
-/// variable. Funny.
-static bool rubyInitialized = false;
+bool Ruby::rubyInitialized = false;
 
 
 void Ruby::ensureInitRuby()

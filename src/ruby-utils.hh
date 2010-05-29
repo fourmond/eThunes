@@ -28,6 +28,9 @@
 /// This namespace contains a whole bunch of Ruby-related functions and
 namespace Ruby {
 
+  /// Whether Ruby has been initialized or not
+  extern bool rubyInitialized;
+
   /// A static function handling Ruby exceptions when using classes such
   /// as RescueWrapper1Arg
   ///
