@@ -18,6 +18,7 @@
 
 #include <headers.hh>
 #include <account.hh>
+#include <wallet.hh>
 #include <transactionlistwidget.hh>
 
 TransactionListWidget::TransactionListWidget(TransactionList *transactions,
@@ -77,7 +78,16 @@ void TransactionListWidget::setupTreeView()
   // Now fun
   view->setItemDelegateForColumn(AccountModel::LinksColumn,
 				 new LinksItemDelegate);
-  // This ain't gonna work, but it's worth a try ;-)...
+
+  // Multiple selection
+  view->setSelectionMode(QAbstractItemView::ExtendedSelection);
+  
+  connect(view,SIGNAL(customContextMenuRequested(const QPoint &)),
+	  SLOT(fireUpContextMenu(const QPoint &)));
+  view->setContextMenuPolicy(Qt::CustomContextMenu);
+
+
+
   QModelIndex root = model->index(0,0,QModelIndex());
   /// \todo We need to intercept the signals from the model saying
   /// columns have been inserted to ensure all have their persistent
@@ -85,7 +95,7 @@ void TransactionListWidget::setupTreeView()
   for(int i = 0; i < model->rowCount(root); i++)
     view->openPersistentEditor(root.child(i, AccountModel::LinksColumn));
 
-
+  /// This is a must.
   view->setAlternatingRowColors(true);
 
   // We make sure the columns have the right size.
@@ -101,4 +111,93 @@ TransactionListWidget::~TransactionListWidget()
 void TransactionListWidget::showTransaction(Transaction * transaction)
 {
   view->setCurrentIndex(model->index(transaction));
+}
+
+int TransactionListWidget::naturalWidth() const 
+{
+  int size = 0;
+  for(int i = 0; i < AccountModel::LastColumn; i++)
+    if(! view->isColumnHidden(i))
+      size += view->columnWidth(i);
+  return size;
+}
+
+QSize TransactionListWidget::sizeHint() const 
+{
+  /// \todo This is already significantly better than before, but I
+  /// think the function gets called before the columns are resized,
+  /// so it does not work too well...
+  QSize size;
+  size.setWidth(naturalWidth());
+  // An estimate of the size ?
+  size.setHeight(300);
+  return size;
+}
+
+void TransactionListWidget::fireUpContextMenu(const QPoint & pos)
+{
+  // We fire up a neat menu to select categories, for instance.
+  QMenu menu;
+  QMenu * subMenu = new QMenu(tr("Set category"));
+  subMenu->addAction(tr("Clear"));
+  subMenu->addSeparator();
+  fillMenuWithCategoryHash(subMenu, &wallet()->categories);
+  // TODO: do that for the "category submenu..."
+  connect(subMenu, SIGNAL(triggered(QAction *)),
+	  SLOT(setCategoryActionFired(QAction *)));
+  menu.addMenu(subMenu);
+  menu.exec(view->viewport()->mapToGlobal(pos));
+}
+
+void TransactionListWidget::fillMenuWithCategoryHash(QMenu * menu, 
+						     CategoryHash * ch)
+{
+  QStringList subCategories = ch->keys();
+  for(int i = 0; i < subCategories.count(); i++)
+    fillMenuWithCategory(menu, &ch->operator[](subCategories[i]));
+}
+
+
+
+void TransactionListWidget::fillMenuWithCategory(QMenu * menu, 
+						 Category * category)
+{
+  QAction * a = new QAction(this);
+  a->setData(category->fullName());
+  if(category->subCategories.size()) {
+    // Complex case:
+    QMenu * subMenu = new QMenu(category->name);
+    a->setText(tr("This category"));
+    subMenu->addAction(a);
+    subMenu->addSeparator();
+    fillMenuWithCategoryHash(subMenu, &category->subCategories);
+    menu->addMenu(subMenu);
+  }
+  else {
+    a->setText(category->name);
+    menu->addAction(a);
+  }
+}
+
+
+TransactionPtrList TransactionListWidget::selectedTransactions() const
+{
+  TransactionPtrList list;
+  QModelIndexList l = view->selectionModel()->selectedIndexes();
+  for(int i = 0; i < l.size(); i++)
+    list << model->indexedTransaction(l[i]);
+  return list;
+}
+
+void TransactionListWidget::setCategoryActionFired(QAction * action)
+{
+
+  TransactionPtrList selected = selectedTransactions();
+  for(int i = 0; i < selected.count(); i++)
+    selected[i]->setCategoryFromName(action->data().toString());
+}
+
+Wallet * TransactionListWidget::wallet() const
+{
+  return model->account()->wallet;
 }

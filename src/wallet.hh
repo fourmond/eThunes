@@ -65,9 +65,10 @@ public:
   ///
   /// @{
 
-  /// Returns the Category object corresponding to the given name.
-  Category * namedCategory(QString name);
-
+  /// Returns the Category object corresponding to the given name, or
+  /// NULL if there isn't.
+  Category * namedCategory(const QString &name);
+  
   /// The list of Transaction objects that belong to one category. If
   /// \p parents is true (default), then we also look for category in
   /// the transactions ancestry.

@@ -39,6 +39,12 @@ protected:
 
   void setupTreeView();
 
+  /// Fills the menu with the given Category and its children.
+  void fillMenuWithCategory(QMenu * menu, Category * category);
+
+  /// Fills the menu with the given CategoryHash
+  void fillMenuWithCategoryHash(QMenu * menu, CategoryHash * ch);
+
 public:
 
   TransactionListWidget(QWidget * parent = 0);
@@ -61,6 +67,18 @@ public:
 
   ~TransactionListWidget();
 
+  /// Returns the natural width of the widget, ie the one it would
+  /// really wish to have to accomodate for all the columns.
+  int naturalWidth() const;
+
+  virtual QSize sizeHint() const;
+
+  /// Returns a list of the currently selected transactions.
+  TransactionPtrList selectedTransactions() const;
+
+  /// Returns the Wallet associated !
+  Wallet * wallet() const;
+
 signals:
 
 
@@ -68,6 +86,14 @@ public slots:
 
   /// Shows the given transaction
   void showTransaction(Transaction * transaction);
+  
+  /// Fires up a context menu for the given item.
+  void fireUpContextMenu(const QPoint & pos);
+
+protected slots:
+
+  /// To be fired up from the context menu.
+  void setCategoryActionFired(QAction * action);
 
 };
 

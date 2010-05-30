@@ -33,12 +33,6 @@
 /// \li color lines/specific parts according to the category
 /// More ideas ?
 ///
-/// \todo This class should be more general and handle list of
-/// Transaction * instead of the current TransactionList; this would
-/// make it fairly trivial to view/modify transactions based on other
-/// criteria (Category, for intance) rather than the current model
-/// here. I'd better modify this before it is too painful to do.
-///
 /// \todo Tanya says it would be much nicer if the transactions were
 /// grouped by month in a tree-like fashion. This is easy, but maybe a
 /// little long ?
@@ -54,10 +48,6 @@ class AccountModel : public QAbstractItemModel {
 
 
 protected:
-  /// Returns the transaction corresponding to the index, or NULL if
-  /// invalid or root.
-  Transaction * indexedTransaction(QModelIndex index) const;
-
   /// returns transaction at the given index.
   Transaction * indexedTransaction(int idx) const;
 
@@ -70,6 +60,11 @@ protected:
 public:
   AccountModel(TransactionList * transactions);
   AccountModel(TransactionPtrList * transactions);
+
+  /// Returns the transaction corresponding to the index, or NULL if
+  /// invalid or root.
+  Transaction * indexedTransaction(QModelIndex index) const;
+
 
   enum {
     RecentColumn,		/// Whether the transaction is new or not ?

@@ -69,6 +69,9 @@ public slots:
 
   /// Displays the transactions of the given Category
   void displayCategory(Category * category, Wallet * wallet);
+
+  // /// Resize the dialog to contents
+  // void resizeToContents();
 };
 
 #endif

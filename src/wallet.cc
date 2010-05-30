@@ -178,3 +178,8 @@ Transaction * Wallet::namedTransaction(const QString & name)
     return account->namedTransaction(transactionID);
   return NULL;
 }
+
+Category * Wallet::namedCategory(const QString & name)
+{
+  return categories.namedSubCategory(name, false);
+}

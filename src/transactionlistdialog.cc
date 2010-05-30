@@ -62,3 +62,10 @@ void TransactionListDialog::displayCategory(Category * category,
   displayList(wallet->categoryTransactions(category),
 	      tr("Category: %1").arg(category->fullName()));
 }
+
+// void TransactionListDialog::resizeToContents()
+// {
+//   QSize sz = view->size();
+//   sz.setWidth(view->naturalWidth());
+//   view->resize(sz);
+// }
