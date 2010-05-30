@@ -90,6 +90,30 @@
    \li Customize the frequency at which new documents should be polled
    from master sites ?
 
+   \section yet-ideas Yet other Vague ideas
+
+   \li the filters dialog should move to a real page
+
+   \li provide automatic completion for category in the filter
+
+   \li categories could be created also from the context menu
+   
+   \li from the context menu, it should be possible to create a filter
+   from a series of transactions (at least two, most probably)
+
+   \li Start working on pie charts and the like ? Using a base
+   category for Salaries (and not counting everything positive as
+   salaries, as this wouldn't make too much sense). This mean adding a
+   tag for the category that will hold salaries.
+   
+   \li Find a way to obfuscate amounts (probably from within
+   formatAmount()) using a command-line switch, so I can show to
+   others without actually saying too much about how much we have
+   ;-)...
+
+   \li Eventually, I will have to start to write up some
+   documentation...
+
 */
 
 #include <headers.hh>
