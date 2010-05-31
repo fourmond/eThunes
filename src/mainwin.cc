@@ -19,78 +19,18 @@
 /**
    \mainpage Projects for QMoney
 
-   There are several things I would like to do with this program.
+   The main things that should be done
 
-   \section todo-banking Banking side
+   \section todo-mine Things to do
 
-   First, it is important to go on with the banking part. The most
-   important work on that side is:
-
-   \li provide categories, subcategories and tags, and, following
-   statistics of all kinds
-
-   \section todo-admin Administration
-
-   I want to turn this program into something more generally useful
-   for performing administration tasks of households (but possibly
-   small-scale businesses ?). This would be a storage place for bills,
-   certificates, and all kinds of electronic documents (PDF ?). It would:
-
-   \li retrieve automatically bills, payments and the like, using
-   HTTP(S) and appropriate Regex-like parsers (with automatic
-   notifications of items found).
-
-   \li organise them into folders easy to browse (both in the
-   underlying physical FS and in the way to present the data).
-
-   \li This would require finding a way to make sure we don't download
-   the contents twice.
-
-   \li Maybe it would be nice to display the HTML page to the user
-   when the program fails to find something on it ?
-
-   \li This requires as well to design few various HTTP groping
-   classes that will look for patterns in very specific things.
-
-   \li \b logging I should write a class to be used a little like a
-   QTextStream that would support colors and fonts and the like using
-   standard stream manipulators. Idea: some of these could be
-   "one-shot" only, that is to only apply to the next argument.
-
-   \li I should provide several objects corresponding to different
-   levels
-
-   \section todo-short Shorter term things to do
-
-   \li It is more and more important to make sure that the objects
-   communicate well about their status changes: updates of the windows
-   + dirty flag for saving.
-
-   \section todo-next Things to do next week:
-
-   \li write a class to handle all kinds of links (ie redirecting
-   QDesktopServices openURL stuff + generating links based on
-   pointers)
-
-   \li Finish the connection between Transaction and Document
-
-   \li Write a Delegate for columns that might provide links (using a
-   QLabel)
-
-   \li Write a few classes for getting things from the web: logging
-   in, getting a list of what could be downloaded, comparing with
-   current contents of the Collection (that could be done on the Ruby
-   side of the things), getting the documents.
-
-   \li Write a Ruby code that gets links and forms out of (X)HTML
-   pages, to maximize code reuse.
-
-   \section ideas Vague ideas
+   \li A signalling mechanism should be written for Document and
+   Transaction, and for basically anything that should be stored into
+   a Qt container, which therefore cannot be a child of QObject; this
+   would require setting up a shared class that would listen signals
+   (with pointers to the relevant object ?)
 
    \li Customize the frequency at which new documents should be polled
    from master sites ?
-
-   \section yet-ideas Yet other Vague ideas
 
    \li the filters dialog should move to a real page
 
@@ -101,6 +41,13 @@
    \li from the context menu, it should be possible to create a filter
    from a series of transactions (at least two, most probably)
 
+   \li Write a DocumentPage that would hold only one Document; this
+   will of course need access to libpoppler, at 
+   http://people.freedesktop.org/~aacid/docs/qt4/
+
+   \li Write a "test filter" button to make sure not too many/too
+   little transactions match the given filter.
+
    \li Start working on pie charts and the like ? Using a base
    category for Salaries (and not counting everything positive as
    salaries, as this wouldn't make too much sense). This mean adding a
@@ -110,6 +57,10 @@
    formatAmount()) using a command-line switch, so I can show to
    others without actually saying too much about how much we have
    ;-)...
+   
+   \li Write some code for a transaction matcher
+
+   \li Finish up the logger
 
    \li Eventually, I will have to start to write up some
    documentation...
