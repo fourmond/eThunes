@@ -25,6 +25,7 @@
 #include <categorypage.hh>
 #include <filterdialog.hh>
 #include <collectionpage.hh>
+#include <filterpage.hh>
 
 LinksHandler * LinksHandler::handler = NULL;
 
@@ -106,7 +107,7 @@ void LinksHandler::followLink(const QString & str)
       CollectionPage::getCollectionPage(document->collection);
   }
   else if(protocol == "filters")
-    widget = new FilterDialog(decodePointer<Wallet>(target));
+    page = FilterPage::getFilterPage(decodePointer<Wallet>(target));
   else {
     emit(unhandledLink(str));
     return;
