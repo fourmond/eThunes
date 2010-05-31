@@ -24,6 +24,7 @@
 #include <filter.hh>
 #include <navigationpage.hh>
 #include <wallet.hh>
+#include <categorycombo.hh>
 
 class FilterPage : public NavigationPage {
   Q_OBJECT;
@@ -33,10 +34,17 @@ class FilterPage : public NavigationPage {
   /// The list displaying the current filters.
   QListWidget * list;
 
+  /// This takes the contents of the currently selected filter before
+  /// it is modified, so as to act as a backup
+  Filter * backupFilter; 
+
   Filter * currentlySelectedFilter() const;
 
   /// The name of the Filter
   QLineEdit * filterNameEdit;
+
+  /// The combo box to edit target category
+  CategoryCombo * targetCategoryCombo;
 
   /// A correspondance Wallet -> FilterPage, though in principle only
   /// one Wallet should ever be used ;-)...

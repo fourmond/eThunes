@@ -29,7 +29,7 @@ FilterPage * FilterPage::getFilterPage(Wallet * w)
   return filterPages[w];
 }
 
-FilterPage::FilterPage(Wallet *w)
+FilterPage::FilterPage(Wallet *w) : backupFilter(0)
 {
   wallet = w;
   QVBoxLayout * l1 = new QVBoxLayout(this);
@@ -47,7 +47,7 @@ FilterPage::FilterPage(Wallet *w)
   QPushButton * bt = new QPushButton(tr("New filter"));
   connect(bt, SIGNAL(clicked()), SLOT(newFilter()));
   l2->addWidget(bt);
-  bt = new QPushButton(tr("Edit filter"));
+  bt = new QPushButton(tr("Edit as new"));
   connect(bt, SIGNAL(clicked()), SLOT(editCurrent()));
   l2->addWidget(bt);
   l2->addSpacing(10);
@@ -78,22 +78,24 @@ FilterPage::FilterPage(Wallet *w)
   hb = new QHBoxLayout;
   hb->addWidget(new QLabel(tr("Target category: ")));
   // Here, use combo box !
-  QLineEdit * edit = new QLineEdit(/*filter->category*/);
-  connect(edit, SIGNAL(textChanged(const QString &)),
-	  SLOT(categoryChanged(const QString &)));
-  hb->addWidget(edit);
+  targetCategoryCombo = new CategoryCombo(wallet);
+  // connect(edit, SIGNAL(textChanged(const QString &)),
+  // 	  SLOT(categoryChanged(const QString &)));
+  hb->addWidget(targetCategoryCombo);
   l1->addLayout(hb);
 
 
+  hb = new QHBoxLayout;
   bt = new QPushButton(tr("Undo changes"));
   connect(bt, SIGNAL(clicked()), SLOT(undoFilterChanges()));
-  l1->addWidget(bt);
+  hb->addWidget(bt);
   bt = new QPushButton(tr("Test filter"));
-  l1->addWidget(bt);
+  hb->addWidget(bt);
   bt = new QPushButton(tr("Run filter"));
-  l1->addWidget(bt);
+  hb->addWidget(bt);
   // connect(bt, SIGNAL(clicked()), SLOT(undoFilterChanges()));
-  l1->addWidget(bt);
+  hb->addWidget(bt);
+  l1->addLayout(hb);
 
   updateFilterList();
 }
