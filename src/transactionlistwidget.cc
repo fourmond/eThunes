@@ -153,6 +153,7 @@ void TransactionListWidget::fillMenuWithCategoryHash(QMenu * menu,
 						     CategoryHash * ch)
 {
   QStringList subCategories = ch->keys();
+  subCategories.sort(); // Will be much easier to read !
   for(int i = 0; i < subCategories.count(); i++)
     fillMenuWithCategory(menu, &ch->operator[](subCategories[i]));
 }
