@@ -22,6 +22,8 @@
 #include <wallet.hh>
 
 #include <linkshandler.hh>
+// For the delegate
+#include <categorycombo.hh>
 
 QHash<QString, QIcon> AccountModel::statusIcons;
 
@@ -303,18 +305,15 @@ QWidget * AccountItemDelegate::createEditor(QWidget * parent,
 					    const QStyleOptionViewItem & /*option*/,
 					    const QModelIndex & /*index*/ ) const
 {
-  QComboBox * box = new QComboBox(parent);
-  box->setEditable(true);
-  if(wallet)
-    box->addItems(wallet->categories.categoryNames());
+  CategoryCombo * box = new CategoryCombo(wallet, parent);
   return box;
 }
 
 void AccountItemDelegate::setEditorData(QWidget * editor,
 					const QModelIndex & index) const
 {
-  QComboBox * box = static_cast<QComboBox*>(editor);
-  box->setEditText(index.data(Qt::EditRole).toString());
+  static_cast<CategoryCombo*>(editor)
+    ->setEditText(index.data(Qt::EditRole).toString());
 }
 
 
@@ -322,8 +321,7 @@ void AccountItemDelegate::setModelData(QWidget * editor,
 				       QAbstractItemModel * model,
 				       const QModelIndex & index) const
 {
-  QComboBox * box = static_cast<QComboBox*>(editor);
-  model->setData(index, box->currentText());
+  model->setData(index, static_cast<CategoryCombo*>(editor)->currentText());
 }
 
 
