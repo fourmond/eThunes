@@ -29,9 +29,9 @@ FilterPage * FilterPage::getFilterPage(Wallet * w)
   return filterPages[w];
 }
 
-FilterPage::FilterPage(Wallet *w) : backupFilter(0)
+FilterPage::FilterPage(Wallet *w) : wallet(w), 
+				    backupFilter(0), currentFilter(0)
 {
-  wallet = w;
   QVBoxLayout * l1 = new QVBoxLayout(this);
   l1->addWidget(new QLabel(tr("Filters for the account")));
 
@@ -40,35 +40,44 @@ FilterPage::FilterPage(Wallet *w) : backupFilter(0)
 
   list = new QListWidget(this);
   hb->addWidget(list);
-  connect(list, SIGNAL(itemDoubleClicked(QListWidgetItem *)),
-	  SLOT(editCurrent()));
+  connect(list, 
+	  SIGNAL(currentItemChanged(QListWidgetItem *, QListWidgetItem *)),
+  	  SLOT(filterChanged()));
 
   QVBoxLayout * l2 = new QVBoxLayout;
   QPushButton * bt = new QPushButton(tr("New filter"));
   connect(bt, SIGNAL(clicked()), SLOT(newFilter()));
   l2->addWidget(bt);
-  bt = new QPushButton(tr("Edit as new"));
-  connect(bt, SIGNAL(clicked()), SLOT(editCurrent()));
+  bt = new QPushButton(tr("Delete filter"));
+  // connect(bt, SIGNAL(clicked()), SLOT(runFilters()));
   l2->addWidget(bt);
-  l2->addSpacing(10);
+  bt = new QPushButton(tr("Edit as new")); 
+  // connect(bt, SIGNAL(clicked()), SLOT(runFilters()));
+  l2->addWidget(bt);
+  bt = new QPushButton(tr("Move up")); 
+  // connect(bt, SIGNAL(clicked()), SLOT(runFilters()));
+  l2->addWidget(bt);
+  bt = new QPushButton(tr("Move down")); 
+  // connect(bt, SIGNAL(clicked()), SLOT(runFilters()));
+  l2->addWidget(bt);
   bt = new QPushButton(tr("Run all filters"));
   connect(bt, SIGNAL(clicked()), SLOT(runFilters()));
   l2->addWidget(bt);
-  l2->addSpacing(10);
-  bt = new QPushButton(tr("Close"));
-  connect(bt, SIGNAL(clicked()), SLOT(close()));
-  l2->addWidget(bt);
+  l2->addStretch(1);
   hb->addLayout(l2);
 
   // Now, we start another
 
   hb = new QHBoxLayout;
   hb->addWidget(new QLabel(tr("Current filter: ")));
-  filterNameEdit = new QLineEdit(/*filter->name*/);
+  filterNameEdit = new QLineEdit();
   connect(filterNameEdit, SIGNAL(textChanged(const QString &)),
 	  SLOT(filterNameChanged(const QString &)));
   hb->addWidget(filterNameEdit);
   l1->addLayout(hb);
+
+  /// \todo We really need to find a way to actually edit the filters,
+  /// and in particular to 
 
   // if(! f->elements.size())
   //   f->elements.push_back(FilterElement());
@@ -79,13 +88,14 @@ FilterPage::FilterPage(Wallet *w) : backupFilter(0)
   hb->addWidget(new QLabel(tr("Target category: ")));
   // Here, use combo box !
   targetCategoryCombo = new CategoryCombo(wallet);
-  // connect(edit, SIGNAL(textChanged(const QString &)),
-  // 	  SLOT(categoryChanged(const QString &)));
+  connect(targetCategoryCombo, SIGNAL(textChanged(const QString &)),
+  	  SLOT(filterCategoryChanged(const QString &)));
   hb->addWidget(targetCategoryCombo);
   l1->addLayout(hb);
 
 
   hb = new QHBoxLayout;
+  //  hb->addStretch(1);
   bt = new QPushButton(tr("Undo changes"));
   connect(bt, SIGNAL(clicked()), SLOT(undoFilterChanges()));
   hb->addWidget(bt);
@@ -98,6 +108,8 @@ FilterPage::FilterPage(Wallet *w) : backupFilter(0)
   l1->addLayout(hb);
 
   updateFilterList();
+  filterChanged(); // to make sure things that should be disabled are
+		   // in fact disabled ;-)...
 }
 
 void FilterPage::updateFilterList()
@@ -114,8 +126,6 @@ void FilterPage::newFilter()
   f->name = tr("New filter");
   updateFilterList();
   list->setCurrentRow(list->count()-1);
-  // And edit
-  editCurrent();
 }
 
 
@@ -124,32 +134,69 @@ void FilterPage::runFilters()
   wallet->runFilters();
 }
 
-void FilterPage::editCurrent()
+void FilterPage::filterChanged()
 {
-  // FilterEditPage * edit =
-  //   new FilterEditPage(wallet, &wallet->filters[list->currentRow()]);
-  // connect(edit, SIGNAL(finished(int)), SLOT(updateFilterList()));
-  // edit->show();
+  if(backupFilter)
+    delete backupFilter;
+
+  if(list->currentRow() >= 0 && list->currentRow() < wallet->filters.size()) {
+    currentFilter = &wallet->filters[list->currentRow()];
+    backupFilter = new Filter(*currentFilter);
+
+    filterNameEdit->setEnabled(true);
+    filterNameEdit->setText(currentFilter->name);
+
+    // Now, update various things:
+    targetCategoryCombo->setEnabled(true);
+    targetCategoryCombo->setEditText(currentFilter->category);
+
+  }
+  else {
+    currentFilter = 0;
+    backupFilter = 0;
+
+    filterNameEdit->setEnabled(false);
+    targetCategoryCombo->setEnabled(false);
+    
+  }
+  
 }
 
 void FilterPage::undoFilterChanges()
 {
+  if(list->currentRow() >= 0 && list->currentRow() < wallet->filters.size()) {
+    wallet->filters.replace(list->currentRow(), *backupFilter);
+    updateCurrentListItem();
+    filterChanged();
+  }
 }
 
 
-// FilterEditPage::FilterEditPage(Wallet *w, Filter * f)
-// {
-//   wallet = w;
-//   filter = f;
+void FilterPage::filterNameChanged(const QString & str)
+{
+  if(currentFilter) {
+    currentFilter->name = str;
+    updateCurrentListItem();
+  }
+}
 
-// }
+void FilterPage::filterCategoryChanged(const QString & str)
+{
+  if(currentFilter)
+    currentFilter->category = str;
+}
 
-// void FilterEditPage::nameChanged(const QString & str)
-// {
-//   filter->name = str;
-// }
 
-// void FilterEditPage::categoryChanged(const QString & str)
-// {
-//   filter->category = str;
-// }
+void FilterPage::fillListItemWithFilter(QListWidgetItem * item, 
+					Filter * filter) const 
+{
+  item->setText(filter->name);
+  // Something else ?
+}
+
+void FilterPage::updateCurrentListItem()
+{
+  QListWidgetItem * item;
+  if(currentFilter && (item = list->currentItem()))
+    fillListItemWithFilter(item, currentFilter);
+}

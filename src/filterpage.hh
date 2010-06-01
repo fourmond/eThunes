@@ -38,8 +38,6 @@ class FilterPage : public NavigationPage {
   /// it is modified, so as to act as a backup
   Filter * backupFilter; 
 
-  Filter * currentlySelectedFilter() const;
-
   /// The name of the Filter
   QLineEdit * filterNameEdit;
 
@@ -49,6 +47,9 @@ class FilterPage : public NavigationPage {
   /// A correspondance Wallet -> FilterPage, though in principle only
   /// one Wallet should ever be used ;-)...
   static QHash<Wallet *, FilterPage *> filterPages;
+
+  /// Kept up-to-date by filterChanged();
+  Filter * currentFilter;
 
 public:
   FilterPage(Wallet * w);
@@ -66,18 +67,36 @@ public slots:
   /// Updates the filter list according to what the wallet has.
   void updateFilterList();
 
-  /// Edits the current filter
-  void editCurrent();
-
   /// Run filters
   void runFilters();
 
+  /// Copies back the contents of the
   void undoFilterChanges();
 
-protected slots:
-  
-  // /// Display the given filter down
-  // void displayFilter();
+  /// Called when the currently selected filter has changed: simply
+  /// updates
+  void filterChanged();
+
+  /// Called when the name has changed.
+  void filterNameChanged(const QString & text);
+
+  /// Called when the category
+  void filterCategoryChanged(const QString & text);
+
+protected:
+  /// Fills in the information of the filter to the target 
+  void fillListItemWithFilter(QListWidgetItem * item, Filter * filter) const ;
+
+  /// Returns a newly created QListWidgetItem for the given filter
+  QListWidgetItem * filterItem(Filter * filter) const {
+    QListWidgetItem * item = new QListWidgetItem;
+    fillListItemWithFilter(item, filter);
+    return item;
+  };
+
+  /// Updates the currently selected item (ie, copies data back from
+  /// the filter to the list).
+  void updateCurrentListItem(); 
 };
 
 #endif
