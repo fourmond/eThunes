@@ -23,6 +23,7 @@
 
 #include <filter.hh>
 #include <wallet.hh>
+#include <filterelements.hh>
 
 class FilterDialog : public QDialog {
   Q_OBJECT;
@@ -45,26 +46,6 @@ public slots:
 
   /// Run filters
   void runFilters();
-};
-
-/// A small widget to edit a FilterElement
-class FilterElementWidget : public QWidget {
-  Q_OBJECT;
-
-  /// The target FilterElement
-  FilterElement * element;
-
-  /// The attribute selection combo box
-  QComboBox * attributeSelection;
-public:
-  FilterElementWidget(FilterElement * el);
-
-public slots:
-
-  void targetChanged(int);
-
-  void textChanged(const QString & str);
-
 };
 
 class FilterEditDialog : public QDialog {
