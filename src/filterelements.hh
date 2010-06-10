@@ -36,6 +36,23 @@ class FilterElementWidget : public QWidget {
 
   /// Text edition
   QLineEdit * edit;
+
+
+  /// \name Buttons
+  ///
+  /// These buttons can be displayed or not using
+  /// displayButtons(). They have no effect on the FilterElementWidget
+  /// or its target FilterElement, but appropriate signals are emitted
+  /// when needed.
+  ///
+  /// @{
+
+  /// The + button to insert an element after this one.
+  QPushButton * plusButton;
+
+  /// The - button to delete this element.
+  QPushButton * minusButton;
+  /// @}
   
 public:
   FilterElementWidget(FilterElement * el = NULL);
@@ -48,12 +65,48 @@ public slots:
   
   void setFilterElement(FilterElement * el);
 
+  /// To turn on/off the display of +/- buttons.
+  void displayButtons(bool yes = true);
+
+  /// Whether or not the widget is visible
+  void tweakVisibility(bool visible);
+
+signals:
+
+  void plusPushed(FilterElement * el, FilterElementWidget * w);
+  void minusPushed(FilterElement * el, FilterElementWidget * w);
+
+private slots:
+  
+  void onMinusPushed();
+  void onPlusPushed();
 };
 
 /// A more comprehensive widget that edits a whole QList of
 /// FilterElement.
 class FilterElementListWidget : public QWidget {
+  Q_OBJECT;
   
+  /// The target list of FilterElement
+  QList<FilterElement> * target;
+
+  /// The main layout of the "list"
+  QVBoxLayout * mainLayout;
+
+  /// The list of currently available FilterElementWidget
+  QList<FilterElementWidget *> widgets;
+
+  /// Returns the widget displaying element n
+  FilterElementWidget * getNumberedWidget(int n);
+
+
+public:
+
+  FilterElementListWidget();
+
+  /// Sets the target list; can be NULL. If the target list has no
+  /// elements, a new one will be added.
+  void setTarget(QList<FilterElement> * t);
 };
 
 #endif

@@ -22,6 +22,7 @@
 #define __FILTERPAGE_HH
 
 #include <filter.hh>
+#include <filterelements.hh>
 #include <navigationpage.hh>
 #include <wallet.hh>
 #include <categorycombo.hh>
@@ -37,6 +38,9 @@ class FilterPage : public NavigationPage {
   /// This takes the contents of the currently selected filter before
   /// it is modified, so as to act as a backup
   Filter * backupFilter;
+
+  /// Handling of the element list.
+  FilterElementListWidget * elementList;
 
   /// The name of the Filter
   QLineEdit * filterNameEdit;

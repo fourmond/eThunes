@@ -1,5 +1,5 @@
 /*
-    filterdialog.cc: dialog boxes for filter
+    filterpage.cc: a real page for editing filters
     Copyright 2010 by Vincent Fourmond
 
     This program is free software; you can redistribute it and/or modify
@@ -19,7 +19,6 @@
 
 #include <headers.hh>
 #include <filterpage.hh>
-#include <filterdialog.hh>	// For FilterElementWidget
 
 QHash<Wallet *, FilterPage *> FilterPage::filterPages;
 
@@ -77,13 +76,8 @@ FilterPage::FilterPage(Wallet *w) : wallet(w),
   hb->addWidget(filterNameEdit);
   l1->addLayout(hb);
 
-  /// \todo We really need to find a way to actually edit the filters,
-  /// and in particular to
-
-  // if(! f->elements.size())
-  //   f->elements.push_back(FilterElement());
-  // for(int i = 0; i < f->elements.size(); i++)
-  //   l1->addWidget(new FilterElementWidget(&f->elements[i]));
+  elementList = new FilterElementListWidget;
+  l1->addWidget(elementList);
 
   hb = new QHBoxLayout;
   hb->addWidget(new QLabel(tr("Target category: ")));
@@ -151,6 +145,7 @@ void FilterPage::filterChanged()
     targetCategoryCombo->setEnabled(true);
     targetCategoryCombo->setEditText(currentFilter->category);
 
+    elementList->setTarget(&currentFilter->elements);
   }
   else {
     currentFilter = 0;
@@ -158,6 +153,8 @@ void FilterPage::filterChanged()
 
     filterNameEdit->setEnabled(false);
     targetCategoryCombo->setEnabled(false);
+
+    elementList->setTarget(NULL);
 
   }
 

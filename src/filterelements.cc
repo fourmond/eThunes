@@ -39,25 +39,59 @@ FilterElementWidget::FilterElementWidget(FilterElement * el) : element(NULL)
 
   hb->addWidget(edit);
 
+  plusButton = new QPushButton("+");
+  hb->addWidget(plusButton);
+  connect(plusButton, SIGNAL(clicked(bool)),
+	  SLOT(onPlusPushed()));
+
+  minusButton = new QPushButton("-");
+  hb->addWidget(minusButton);
+  connect(minusButton, SIGNAL(clicked(bool)),
+	  SLOT(onMinusPushed()));
+
 
   /// \todo Regexp ?
   setFilterElement(el);
+}
+
+void FilterElementWidget::onMinusPushed()
+{
+  emit(minusPushed(element, this));
+}
+
+void FilterElementWidget::onPlusPushed()
+{
+  emit(plusPushed(element, this));
+}
+
+void FilterElementWidget::displayButtons(bool yes)
+{
+  minusButton->setVisible(yes);
+  plusButton->setVisible(yes);
 }
 
 void FilterElementWidget::setFilterElement(FilterElement * el)
 {
   element = el;
   if(! element) {
-    setEnabled(false); 		// Or could be hidden ?
+    tweakVisibility(false); 		// Or could be hidden ?
     return;
   }
 
-  setEnabled(true);
+  tweakVisibility(true);
   edit->setText(element->match);
   if(element->transactionAttribute == FilterElement::Name)
     attributeSelection->setCurrentIndex(attributeSelection->count()-2);
   else if(element->transactionAttribute == FilterElement::Memo)
     attributeSelection->setCurrentIndex(attributeSelection->count()-1);
+}
+
+void FilterElementWidget::tweakVisibility(bool visible)
+{
+  // in here, we hide everything but a small label at the beginning of
+  // the line
+  setEnabled(visible);
+  // attributeSelection->setVisible(visible);
 }
 
 void FilterElementWidget::textChanged(const QString & str)
@@ -72,4 +106,43 @@ void FilterElementWidget::targetChanged(int t)
   if(element)
     *((int*)&element->transactionAttribute) =
       attributeSelection->itemData(t).toInt();
+}
+
+//////////////////////////////////////////////////////////////////////
+
+FilterElementListWidget::FilterElementListWidget() :
+  target(NULL)
+{
+  mainLayout = new QVBoxLayout(this);
+  mainLayout->setSpacing(2); // small by default
+
+  getNumberedWidget(0); // We only ensure there is one element visible
+}
+
+FilterElementWidget * FilterElementListWidget::getNumberedWidget(int i)
+{
+  while(widgets.size() <= i) {
+    FilterElementWidget * w = new FilterElementWidget;
+    mainLayout->addWidget(w);
+    widgets.append(w);
+  }
+  return widgets[i];
+}
+
+void FilterElementListWidget::setTarget(QList<FilterElement> * t)
+{
+  target = t;
+  if(! target) {
+    for(int i = 0; i < widgets.size(); i++)
+      widgets[i]->setFilterElement(NULL);
+    return;
+  }
+  if(target->size() == 0)
+    target->append(FilterElement());
+  int max = widgets.size();
+  if(max < target->size())
+    max = target->size();
+  for(int i = 0; i < max; i++)
+    getNumberedWidget(i)->
+      setFilterElement(target->size() > i ? &target->operator[](i) : NULL);
 }
