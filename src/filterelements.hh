@@ -33,15 +33,27 @@ class FilterElementWidget : public QWidget {
 
   /// The attribute selection combo box
   QComboBox * attributeSelection;
+
+  /// Text edition
+  QLineEdit * edit;
+  
 public:
-  FilterElementWidget(FilterElement * el);
+  FilterElementWidget(FilterElement * el = NULL);
 
 public slots:
 
   void targetChanged(int);
 
   void textChanged(const QString & str);
+  
+  void setFilterElement(FilterElement * el);
 
+};
+
+/// A more comprehensive widget that edits a whole QList of
+/// FilterElement.
+class FilterElementListWidget : public QWidget {
+  
 };
 
 #endif

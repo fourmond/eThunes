@@ -19,27 +19,21 @@
 #include <headers.hh>
 #include <filterelements.hh>
 
-FilterElementWidget::FilterElementWidget(FilterElement * el)
+FilterElementWidget::FilterElementWidget(FilterElement * el) : element(NULL)
 {
-  element = el;
   QHBoxLayout * hb = new QHBoxLayout(this);
   hb->addWidget(new QLabel(tr("Applies to:")));
   attributeSelection = new QComboBox;
   attributeSelection->setEditable(false);
-  attributeSelection->addItem(tr("Name"), QVariant(FilterElement::Name));
-  if(element->transactionAttribute == FilterElement::Name)
-    attributeSelection->setCurrentIndex(attributeSelection->count()-1);
 
+  attributeSelection->addItem(tr("Name"), QVariant(FilterElement::Name));
   attributeSelection->addItem(tr("Memo"), QVariant(FilterElement::Memo));
-  if(element->transactionAttribute == FilterElement::Memo)
-    attributeSelection->setCurrentIndex(attributeSelection->count()-1);
   connect(attributeSelection, SIGNAL(activated(int)),
 	  SLOT(targetChanged(int)));
 
   hb->addWidget(attributeSelection);
 
-  QLineEdit * edit = new QLineEdit();
-  edit->setText(element->match);
+  edit = new QLineEdit();
   connect(edit, SIGNAL(textChanged(const QString &)),
 	  SLOT(textChanged(const QString &)));
 
@@ -47,17 +41,35 @@ FilterElementWidget::FilterElementWidget(FilterElement * el)
 
 
   /// \todo Regexp ?
+  setFilterElement(el);
+}
 
+void FilterElementWidget::setFilterElement(FilterElement * el)
+{
+  element = el;
+  if(! element) {
+    setEnabled(false); 		// Or could be hidden ?
+    return;
+  }
+
+  setEnabled(true);
+  edit->setText(element->match);
+  if(element->transactionAttribute == FilterElement::Name)
+    attributeSelection->setCurrentIndex(attributeSelection->count()-2);
+  else if(element->transactionAttribute == FilterElement::Memo)
+    attributeSelection->setCurrentIndex(attributeSelection->count()-1);
 }
 
 void FilterElementWidget::textChanged(const QString & str)
 {
-  element->match = str;
+  if(element)
+    element->match = str;
 }
 
 void FilterElementWidget::targetChanged(int t)
 {
   // Ugly, but, well, works...
-  *((int*)&element->transactionAttribute) =
-    attributeSelection->itemData(t).toInt();
+  if(element)
+    *((int*)&element->transactionAttribute) =
+      attributeSelection->itemData(t).toInt();
 }
