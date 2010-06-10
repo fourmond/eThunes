@@ -22,7 +22,6 @@
 #define __FILTERELEMENTS_HH
 
 #include <filter.hh>
-#include <wallet.hh>
 
 /// A small widget to edit a FilterElement
 class FilterElementWidget : public QWidget {
@@ -73,8 +72,8 @@ public slots:
 
 signals:
 
-  void plusPushed(FilterElement * el, FilterElementWidget * w);
-  void minusPushed(FilterElement * el, FilterElementWidget * w);
+  void plusPushed(FilterElementWidget * w);
+  void minusPushed(FilterElementWidget * w);
 
 private slots:
   
@@ -84,6 +83,8 @@ private slots:
 
 /// A more comprehensive widget that edits a whole QList of
 /// FilterElement.
+///
+/// \todo This class should eventually hold a scrollable area
 class FilterElementListWidget : public QWidget {
   Q_OBJECT;
   
@@ -99,6 +100,9 @@ class FilterElementListWidget : public QWidget {
   /// Returns the widget displaying element n
   FilterElementWidget * getNumberedWidget(int n);
 
+  int findWidgetIndex(FilterElementWidget * w) const {
+    return widgets.indexOf(w);
+  };
 
 public:
 
@@ -107,6 +111,14 @@ public:
   /// Sets the target list; can be NULL. If the target list has no
   /// elements, a new one will be added.
   void setTarget(QList<FilterElement> * t);
+
+public slots:
+  
+  /// Inserts an element after the given FilterElementWidget
+  void insertElement(FilterElementWidget * w);
+
+  //  void deleteElement(FilterElementWidget * w);
+
 };
 
 #endif

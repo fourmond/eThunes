@@ -56,12 +56,12 @@ FilterElementWidget::FilterElementWidget(FilterElement * el) : element(NULL)
 
 void FilterElementWidget::onMinusPushed()
 {
-  emit(minusPushed(element, this));
+  emit(minusPushed(this));
 }
 
 void FilterElementWidget::onPlusPushed()
 {
-  emit(plusPushed(element, this));
+  emit(plusPushed(this));
 }
 
 void FilterElementWidget::displayButtons(bool yes)
@@ -116,7 +116,7 @@ FilterElementListWidget::FilterElementListWidget() :
   mainLayout = new QVBoxLayout(this);
   mainLayout->setSpacing(2); // small by default
 
-  getNumberedWidget(0); // We only ensure there is one element visible
+  getNumberedWidget(3); // We only ensure there is one element visible
 }
 
 FilterElementWidget * FilterElementListWidget::getNumberedWidget(int i)
@@ -125,6 +125,9 @@ FilterElementWidget * FilterElementListWidget::getNumberedWidget(int i)
     FilterElementWidget * w = new FilterElementWidget;
     mainLayout->addWidget(w);
     widgets.append(w);
+    connect(w, SIGNAL(plusPushed(FilterElementWidget *)),
+	    SLOT(insertElement(FilterElementWidget *)));
+    w->show();
   }
   return widgets[i];
 }
@@ -145,4 +148,13 @@ void FilterElementListWidget::setTarget(QList<FilterElement> * t)
   for(int i = 0; i < max; i++)
     getNumberedWidget(i)->
       setFilterElement(target->size() > i ? &target->operator[](i) : NULL);
+}
+
+void FilterElementListWidget::insertElement(FilterElementWidget * w)
+{
+  int idx = findWidgetIndex(w);
+  if(idx < 0 || !target)
+    return; 			// But, really, this shouldn't happen
+  target->insert(idx + 1, FilterElement()); 
+  setTarget(target); // not satisfying, but not too bad, in real
 }
