@@ -36,7 +36,7 @@ class FilterPage : public NavigationPage {
 
   /// This takes the contents of the currently selected filter before
   /// it is modified, so as to act as a backup
-  Filter * backupFilter; 
+  Filter * backupFilter;
 
   /// The name of the Filter
   QLineEdit * filterNameEdit;
@@ -84,7 +84,7 @@ public slots:
   void filterCategoryChanged(const QString & text);
 
 protected:
-  /// Fills in the information of the filter to the target 
+  /// Fills in the information of the filter to the target
   void fillListItemWithFilter(QListWidgetItem * item, Filter * filter) const ;
 
   /// Returns a newly created QListWidgetItem for the given filter
@@ -96,7 +96,7 @@ protected:
 
   /// Updates the currently selected item (ie, copies data back from
   /// the filter to the list).
-  void updateCurrentListItem(); 
+  void updateCurrentListItem();
 };
 
 #endif

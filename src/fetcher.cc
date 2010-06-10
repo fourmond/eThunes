@@ -35,7 +35,7 @@ VALUE Fetcher::mNet;
 
 VALUE Fetcher::cFetcher;
 
-Fetcher::Fetcher() : followRedirections(true), 
+Fetcher::Fetcher() : followRedirections(true),
 		     targetWallet(0),
 		     targetCollection(0)
 {
@@ -213,7 +213,7 @@ bool Fetcher::addDocument(Result * result, const QString & doctype)
   return retval;
 }
 
-VALUE Fetcher::addDocumentWrapper(VALUE obj, VALUE result, 
+VALUE Fetcher::addDocumentWrapper(VALUE obj, VALUE result,
 				  VALUE doctype)
 {
   Fetcher * f = fromValue(obj);

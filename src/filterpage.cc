@@ -16,9 +16,10 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+
 #include <headers.hh>
 #include <filterpage.hh>
-#include <filterdialog.hh>	// For FilterElementWidget 
+#include <filterdialog.hh>	// For FilterElementWidget
 
 QHash<Wallet *, FilterPage *> FilterPage::filterPages;
 
@@ -29,7 +30,7 @@ FilterPage * FilterPage::getFilterPage(Wallet * w)
   return filterPages[w];
 }
 
-FilterPage::FilterPage(Wallet *w) : wallet(w), 
+FilterPage::FilterPage(Wallet *w) : wallet(w),
 				    backupFilter(0), currentFilter(0)
 {
   QVBoxLayout * l1 = new QVBoxLayout(this);
@@ -40,7 +41,7 @@ FilterPage::FilterPage(Wallet *w) : wallet(w),
 
   list = new QListWidget(this);
   hb->addWidget(list);
-  connect(list, 
+  connect(list,
 	  SIGNAL(currentItemChanged(QListWidgetItem *, QListWidgetItem *)),
   	  SLOT(filterChanged()));
 
@@ -51,13 +52,13 @@ FilterPage::FilterPage(Wallet *w) : wallet(w),
   bt = new QPushButton(tr("Delete filter"));
   // connect(bt, SIGNAL(clicked()), SLOT(runFilters()));
   l2->addWidget(bt);
-  bt = new QPushButton(tr("Edit as new")); 
+  bt = new QPushButton(tr("Edit as new"));
   // connect(bt, SIGNAL(clicked()), SLOT(runFilters()));
   l2->addWidget(bt);
-  bt = new QPushButton(tr("Move up")); 
+  bt = new QPushButton(tr("Move up"));
   // connect(bt, SIGNAL(clicked()), SLOT(runFilters()));
   l2->addWidget(bt);
-  bt = new QPushButton(tr("Move down")); 
+  bt = new QPushButton(tr("Move down"));
   // connect(bt, SIGNAL(clicked()), SLOT(runFilters()));
   l2->addWidget(bt);
   bt = new QPushButton(tr("Run all filters"));
@@ -77,7 +78,7 @@ FilterPage::FilterPage(Wallet *w) : wallet(w),
   l1->addLayout(hb);
 
   /// \todo We really need to find a way to actually edit the filters,
-  /// and in particular to 
+  /// and in particular to
 
   // if(! f->elements.size())
   //   f->elements.push_back(FilterElement());
@@ -157,9 +158,9 @@ void FilterPage::filterChanged()
 
     filterNameEdit->setEnabled(false);
     targetCategoryCombo->setEnabled(false);
-    
+
   }
-  
+
 }
 
 void FilterPage::undoFilterChanges()
@@ -187,8 +188,8 @@ void FilterPage::filterCategoryChanged(const QString & str)
 }
 
 
-void FilterPage::fillListItemWithFilter(QListWidgetItem * item, 
-					Filter * filter) const 
+void FilterPage::fillListItemWithFilter(QListWidgetItem * item,
+					Filter * filter) const
 {
   item->setText(filter->name);
   // Something else ?

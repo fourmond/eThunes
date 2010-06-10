@@ -1,4 +1,4 @@
-/** 
+/**
     \file log.hh
     Log class for application-wide logging
     Copyright 2010 by Vincent Fourmond
@@ -22,14 +22,14 @@
 #define __LOG_HH
 
 /// The log system of QMoney is composed of two different parts
-/// 
+///
 /// \li an application wide instance of Log, whose role is to get
 /// string data from various sources, classifying them though channels
 /// (possibly to be implemented later on) and severities, with the
 /// standard meaning. This class implements a signalling scheme making
 /// it easy to simply listen to some log levels/severities.
 ///
-/// \li LogStream streams that send their data to a given channel and severity 
+/// \li LogStream streams that send their data to a given channel and severity
 /// level (that optionally could be changed ?)
 ///
 /// \todo Now, what should be done is to create a simple logbrowser
@@ -52,11 +52,11 @@ class Log : public QObject {
   static QString toHTML(const QString &txt);
 
 public:
-  
+
   Log();
 
   static Log * logger();
-  
+
   typedef enum {
     Debug,
     Info,
@@ -77,18 +77,18 @@ public:
 signals:
   /// \todo There should be two kind of signals:
   /// \li one that just forwards all incoming messages of logString()
-  /// 
+  ///
   /// \li one that filters according to a policy that should be
   /// implemented somewhere ?
-  
+
   /// A plain text formatted message, such as would be suitable for
   /// display in stdin
-  void plainMessage(const QString & message, LogLevel l, 
+  void plainMessage(const QString & message, LogLevel l,
 		    const QString & channel);
 
   /// The message as would be suitable for display in an HTML log
   /// browser.
-  void htmlMessage(const QString & message, LogLevel l, 
+  void htmlMessage(const QString & message, LogLevel l,
 		   const QString & channel);
 
 protected:
@@ -106,7 +106,7 @@ protected:
   ///
   /// \warning This is internal specification and could change at any
   /// time. Use stream manipulators !
-  void logString(const QString & message, LogLevel l, 
+  void logString(const QString & message, LogLevel l,
 		 const QString & channel = QString());
 
 };

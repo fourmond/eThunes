@@ -161,7 +161,7 @@ protected:
   bool addDocument(Result * result, const QString & doctype);
 
   /// The wrapper for addDocument()
-  static VALUE addDocumentWrapper(VALUE obj, VALUE result, 
+  static VALUE addDocumentWrapper(VALUE obj, VALUE result,
 				  VALUE doctype);
 
 public:

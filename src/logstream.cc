@@ -19,7 +19,7 @@
 #include <headers.hh>
 #include <logstream.hh>
 
-LogStream::LogStream(Log::LogLevel l, const QString & c, Log * t) : 
+LogStream::LogStream(Log::LogLevel l, const QString & c, Log * t) :
   level(l), channel(c)
 {
   internalStream = new QTextStream(&buffer);
@@ -46,6 +46,6 @@ LogStream & LogStream::operator<<(QTextStreamFunction t)
 LogStream::~LogStream()
 {
   if(! buffer.isEmpty())
-    flushToLog(); 
+    flushToLog();
   delete internalStream;
 }

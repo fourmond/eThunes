@@ -86,7 +86,7 @@ public slots:
 
   /// Shows the given transaction
   void showTransaction(Transaction * transaction);
-  
+
   /// Fires up a context menu for the given item.
   void fireUpContextMenu(const QPoint & pos);
 

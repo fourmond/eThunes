@@ -19,7 +19,7 @@
 #include <headers.hh>
 #include <categorycombo.hh>
 
-CategoryCombo::CategoryCombo(Wallet * w, QWidget * parent) : 
+CategoryCombo::CategoryCombo(Wallet * w, QWidget * parent) :
   QComboBox(parent), wallet(w)
 {
   setEditable(true);

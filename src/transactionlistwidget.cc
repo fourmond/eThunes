@@ -81,7 +81,7 @@ void TransactionListWidget::setupTreeView()
 
   // Multiple selection
   view->setSelectionMode(QAbstractItemView::ExtendedSelection);
-  
+
   connect(view,SIGNAL(customContextMenuRequested(const QPoint &)),
 	  SLOT(fireUpContextMenu(const QPoint &)));
   view->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -113,7 +113,7 @@ void TransactionListWidget::showTransaction(Transaction * transaction)
   view->setCurrentIndex(model->index(transaction));
 }
 
-int TransactionListWidget::naturalWidth() const 
+int TransactionListWidget::naturalWidth() const
 {
   int size = 0;
   for(int i = 0; i < AccountModel::LastColumn; i++)
@@ -122,7 +122,7 @@ int TransactionListWidget::naturalWidth() const
   return size;
 }
 
-QSize TransactionListWidget::sizeHint() const 
+QSize TransactionListWidget::sizeHint() const
 {
   /// \todo This is already significantly better than before, but I
   /// think the function gets called before the columns are resized,
@@ -149,7 +149,7 @@ void TransactionListWidget::fireUpContextMenu(const QPoint & pos)
   menu.exec(view->viewport()->mapToGlobal(pos));
 }
 
-void TransactionListWidget::fillMenuWithCategoryHash(QMenu * menu, 
+void TransactionListWidget::fillMenuWithCategoryHash(QMenu * menu,
 						     CategoryHash * ch)
 {
   QStringList subCategories = ch->keys();
@@ -160,7 +160,7 @@ void TransactionListWidget::fillMenuWithCategoryHash(QMenu * menu,
 
 
 
-void TransactionListWidget::fillMenuWithCategory(QMenu * menu, 
+void TransactionListWidget::fillMenuWithCategory(QMenu * menu,
 						 Category * category)
 {
   QAction * a = new QAction(this);

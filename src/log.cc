@@ -43,7 +43,7 @@ QString Log::logLevelName(LogLevel l)
   return "????";
 }
 
-void Log::logString(const QString & message, LogLevel l, 
+void Log::logString(const QString & message, LogLevel l,
 		    const QString & channel)
 {
   QString final = QString("[") + logLevelName(l);

@@ -37,12 +37,12 @@
    \li provide automatic completion for category in the filter
 
    \li categories could be created also from the context menu
-   
+
    \li from the context menu, it should be possible to create a filter
    from a series of transactions (at least two, most probably)
 
    \li Write a DocumentPage that would hold only one Document; this
-   will of course need access to libpoppler, at 
+   will of course need access to libpoppler, at
    http://people.freedesktop.org/~aacid/docs/qt4/
 
    \li Write a "test filter" button to make sure not too many/too
@@ -52,12 +52,12 @@
    category for Salaries (and not counting everything positive as
    salaries, as this wouldn't make too much sense). This mean adding a
    tag for the category that will hold salaries.
-   
+
    \li Find a way to obfuscate amounts (probably from within
    formatAmount()) using a command-line switch, so I can show to
    others without actually saying too much about how much we have
    ;-)...
-   
+
    \li Write some code for a transaction matcher
 
    \li Finish up the logger

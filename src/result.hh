@@ -68,7 +68,7 @@ protected:
   /// the .inspect function to help debugging.
   static VALUE inspect(VALUE obj);
 
-  /// These two 
+  /// These two
   friend class Fetcher;
 
 public:
@@ -91,7 +91,7 @@ public:
   /// Saves the contents of the reply to a temporary file.
   QTemporaryFile * saveToTemporaryFile() const ;
 
-  /// Saves to an IO device. 
+  /// Saves to an IO device.
   void saveReply(QIODevice * target) const {
     target->write(data);
   };

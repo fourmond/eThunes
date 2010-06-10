@@ -1,4 +1,4 @@
-/** 
+/**
     \file logstream.hh
     LogStream class: data stream for logging;
     Copyright 2010 by Vincent Fourmond
@@ -29,7 +29,7 @@
 /// tweak the format of the output (in particular, bold, color, and
 /// the like...)
 class LogStream {
-  
+
   /// The internal stream used to build up the string to be forwarded
   /// to Log.
   QTextStream * internalStream;
@@ -49,13 +49,13 @@ class LogStream {
   /// Sends out to the target
   void flushToLog();
 public:
-  
+
   /// Builds up a log stream with the given level, channel and target.
   ///
   /// Mostly, you will only ever need something like that:
   ///   LogStream o(); // or
   ///   LogStream o(Log::debug);
-  LogStream(Log::LogLevel level = Log::Info, 
+  LogStream(Log::LogLevel level = Log::Info,
 	    const QString & channel = QString(),
 	    Log * target = 0);
 
@@ -64,7 +64,7 @@ public:
   void setLogLevel(Log::LogLevel l) {
     level = l;
   };
-  
+
   Log::LogLevel logLevel() const { return level;};
 
   template<typename T> LogStream & operator<<(const T& t) {
