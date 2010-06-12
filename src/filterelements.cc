@@ -115,6 +115,7 @@ FilterElementListWidget::FilterElementListWidget() :
 {
   // setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
   QWidget * subWidget = new QWidget(this);
+  setFrameStyle(NoFrame);
   setWidget(subWidget);
   mainLayout = new QVBoxLayout(subWidget);
   mainLayout->setSpacing(0); // small by default
