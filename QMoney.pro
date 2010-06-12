@@ -11,6 +11,10 @@ QT += xml network
 
 PRECOMPILED_HEADER = src/headers.hh
 
+# Use a build/ directory for building
+MOC_DIR = build
+OBJECTS_DIR = build
+
 # Handling of Ruby sources, but rather bad for now
 # Bad for now
 INCLUDEPATH += /usr/lib/ruby/1.8/x86_64-linux
