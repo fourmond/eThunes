@@ -49,7 +49,6 @@ FilterElementWidget::FilterElementWidget(FilterElement * el) : element(NULL)
   connect(minusButton, SIGNAL(clicked(bool)),
 	  SLOT(onMinusPushed()));
 
-
   /// \todo Regexp ?
   setFilterElement(el);
 }
@@ -75,6 +74,7 @@ void FilterElementWidget::setFilterElement(FilterElement * el)
   element = el;
   if(! element) {
     tweakVisibility(false); 		// Or could be hidden ?
+    edit->setText("");
     return;
   }
 
@@ -127,6 +127,8 @@ FilterElementWidget * FilterElementListWidget::getNumberedWidget(int i)
     widgets.append(w);
     connect(w, SIGNAL(plusPushed(FilterElementWidget *)),
 	    SLOT(insertElement(FilterElementWidget *)));
+    connect(w, SIGNAL(minusPushed(FilterElementWidget *)),
+	    SLOT(deleteElement(FilterElementWidget *)));
     w->show();
   }
   return widgets[i];
@@ -158,3 +160,13 @@ void FilterElementListWidget::insertElement(FilterElementWidget * w)
   target->insert(idx + 1, FilterElement()); 
   setTarget(target); // not satisfying, but not too bad, in real
 }
+
+void FilterElementListWidget::deleteElement(FilterElementWidget * w)
+{
+  int idx = findWidgetIndex(w);
+  if(idx < 0 || !target)
+    return; 			// But, really, this shouldn't happen
+  target->removeAt(idx); 
+  setTarget(target); // not satisfying, but not too bad, in real
+}
+

@@ -117,7 +117,9 @@ public slots:
   /// Inserts an element after the given FilterElementWidget
   void insertElement(FilterElementWidget * w);
 
-  //  void deleteElement(FilterElementWidget * w);
+  /// Deletes the element corresponding to the given
+  /// FilterElementWidget
+  void deleteElement(FilterElementWidget * w);
 
 };
 
