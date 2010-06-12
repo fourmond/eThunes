@@ -55,6 +55,9 @@ class FilterPage : public NavigationPage {
   /// Kept up-to-date by filterChanged();
   Filter * currentFilter;
 
+  /// A button group that manages the ALL/ANY choice (ie Filter.matchAny)
+  QButtonGroup * allOrAny;
+
 public:
   FilterPage(Wallet * w);
 
@@ -86,6 +89,9 @@ public slots:
 
   /// Called when the category
   void filterCategoryChanged(const QString & text);
+
+  /// Sets all or any.
+  void setAllOrAny(int b);
 
 protected:
   /// Fills in the information of the filter to the target

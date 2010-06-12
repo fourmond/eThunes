@@ -35,6 +35,9 @@ FilterPage::FilterPage(Wallet *w) : wallet(w),
   QVBoxLayout * l1 = new QVBoxLayout(this);
   l1->addWidget(new QLabel(tr("Filters for the account")));
 
+
+  ////////////////////////////////////////
+  /// The top list, along with buttons on the RHS
   QHBoxLayout * hb = new QHBoxLayout;
   l1->addLayout(hb);
 
@@ -66,7 +69,30 @@ FilterPage::FilterPage(Wallet *w) : wallet(w),
   l2->addStretch(1);
   hb->addLayout(l2);
 
-  // Now, we start another
+  ////////////////////////////////////////
+  /// The line to choose all or any
+  allOrAny = new QButtonGroup(this); // Exclusive by default
+
+  hb = new QHBoxLayout;
+  hb->addWidget(new QLabel(tr("Matches ")));
+
+  QRadioButton * radioButton = new QRadioButton(tr("All"));
+  hb->addWidget(radioButton);
+  allOrAny->addButton(radioButton, 0);
+
+  radioButton = new QRadioButton(tr("Any"));
+  hb->addWidget(radioButton);
+  allOrAny->addButton(radioButton, 1);
+
+  hb->addWidget(new QLabel(tr(" of the following")));
+  hb->addStretch(1);
+  l1->addLayout(hb);
+  connect(allOrAny, SIGNAL(buttonClicked(int)),
+	  SLOT(setAllOrAny(int)));
+ 
+		
+  
+  
 
   hb = new QHBoxLayout;
   hb->addWidget(new QLabel(tr("Current filter: ")));
@@ -145,6 +171,11 @@ void FilterPage::filterChanged()
     targetCategoryCombo->setEnabled(true);
     targetCategoryCombo->setEditText(currentFilter->category);
 
+    QAbstractButton * bt = 
+      allOrAny->button(currentFilter->matchAny ? 1 : 0);
+    if(bt)
+      bt->setChecked(true);
+
     elementList->setTarget(&currentFilter->elements);
   }
   else {
@@ -197,4 +228,10 @@ void FilterPage::updateCurrentListItem()
   QListWidgetItem * item;
   if(currentFilter && (item = list->currentItem()))
     fillListItemWithFilter(item, currentFilter);
+}
+
+void FilterPage::setAllOrAny(int b)
+{
+  if(currentFilter)
+    currentFilter->matchAny = b;
 }

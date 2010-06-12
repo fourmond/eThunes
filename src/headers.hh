@@ -32,7 +32,8 @@
 #include <QHBoxLayout>
 #include <QPushButton>
 #include <QToolButton>
-
+#include <QButtonGroup>
+#include <QRadioButton>
 #include <QTabBar>
 #include <QTabWidget>
 
