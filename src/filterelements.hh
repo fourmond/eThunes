@@ -85,13 +85,13 @@ private slots:
 /// FilterElement.
 ///
 /// \todo This class should eventually hold a scrollable area
-class FilterElementListWidget : public QWidget {
+class FilterElementListWidget : public QScrollArea {
   Q_OBJECT;
   
   /// The target list of FilterElement
   QList<FilterElement> * target;
 
-  /// The main layout of the "list"
+  /// The main layout of the "list". It should be noted that 
   QVBoxLayout * mainLayout;
 
   /// The list of currently available FilterElementWidget

@@ -113,10 +113,20 @@ void FilterElementWidget::targetChanged(int t)
 FilterElementListWidget::FilterElementListWidget() :
   target(NULL)
 {
-  mainLayout = new QVBoxLayout(this);
-  mainLayout->setSpacing(2); // small by default
+  // setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+  QWidget * subWidget = new QWidget(this);
+  setWidget(subWidget);
+  mainLayout = new QVBoxLayout(subWidget);
+  mainLayout->setSpacing(0); // small by default
+  subWidget->show();
 
-  getNumberedWidget(3); // We only ensure there is one element visible
+  mainLayout->setSizeConstraint(QLayout::SetMinAndMaxSize);
+
+  // The trick is to ensure that the subwidget is large enough using a strut.
+  mainLayout->addStrut(maximumViewportSize().width());
+  mainLayout->setSpacing(0);
+
+  getNumberedWidget(1); // We only ensure there is one element visible
 }
 
 FilterElementWidget * FilterElementListWidget::getNumberedWidget(int i)

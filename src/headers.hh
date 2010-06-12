@@ -36,6 +36,7 @@
 #include <QRadioButton>
 #include <QTabBar>
 #include <QTabWidget>
+#include <QScrollArea>
 
 #include <QListWidget>
 #include <QComboBox>
