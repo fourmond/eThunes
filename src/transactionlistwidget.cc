@@ -71,9 +71,9 @@ void TransactionListWidget::setupTreeView()
   view->setRootIndex(model->index(0,0));
   view->setRootIsDecorated(false);
 
-  view->setItemDelegateForColumn(AccountModel::CategoryColumn,
-				 new AccountItemDelegate(model->
-							 account()->wallet));
+  if(wallet())
+    view->setItemDelegateForColumn(AccountModel::CategoryColumn,
+				   new AccountItemDelegate(wallet()));
 
   // Now fun
   view->setItemDelegateForColumn(AccountModel::LinksColumn,
@@ -141,7 +141,8 @@ void TransactionListWidget::fireUpContextMenu(const QPoint & pos)
   QMenu * subMenu = new QMenu(tr("Set category"));
   subMenu->addAction(tr("Clear"));
   subMenu->addSeparator();
-  fillMenuWithCategoryHash(subMenu, &wallet()->categories);
+  if(wallet())
+    fillMenuWithCategoryHash(subMenu, &wallet()->categories);
   // TODO: do that for the "category submenu..."
   connect(subMenu, SIGNAL(triggered(QAction *)),
 	  SLOT(setCategoryActionFired(QAction *)));
@@ -200,5 +201,7 @@ void TransactionListWidget::setCategoryActionFired(QAction * action)
 
 Wallet * TransactionListWidget::wallet() const
 {
-  return model->account()->wallet;
+  if(model->account())
+    return model->account()->wallet;
+  return NULL;
 }
