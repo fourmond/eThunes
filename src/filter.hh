@@ -44,7 +44,7 @@ public:
   bool regexp;
 
   /// Whether the element matches a target transaction or not.
-  bool matches(Transaction * t);
+  bool matches(const Transaction * t) const;
 
   FilterElement() : transactionAttribute(Name), regexp(false) {;};
 };
@@ -75,11 +75,14 @@ public:
 
   Filter();
 
-  /// Whether or not
-  bool matches(Transaction * t);
+  /// Whether or not target this Filter matches Transaction
+  bool matches(const Transaction * t) const;
 
   /// Loops over the list and sets the categories according to the tests.
   void processList(TransactionList * l);
+
+  /// Returns the matching transactions of the given list.
+  TransactionPtrList matchingTransactions(TransactionList * l) const;
 };
 
 #endif

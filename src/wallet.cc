@@ -133,6 +133,14 @@ void Wallet::runFilters()
   emit(accountsChanged());
 }
 
+TransactionPtrList Wallet::transactionsForFilter(const Filter * filter)
+{
+  TransactionPtrList ret;
+  for(int i = 0; i < accounts.size(); i++)
+    ret += filter->matchingTransactions(&accounts[i].transactions);
+  return ret;
+}
+
 TransactionPtrList Wallet::categoryTransactions(const Category * category,
 						bool parents)
 {

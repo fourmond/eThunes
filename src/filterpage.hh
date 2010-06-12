@@ -93,6 +93,8 @@ public slots:
   /// Sets all or any.
   void setAllOrAny(int b);
 
+  void testCurrentFilter();
+
 protected:
   /// Fills in the information of the filter to the target
   void fillListItemWithFilter(QListWidgetItem * item, Filter * filter) const ;

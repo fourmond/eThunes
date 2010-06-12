@@ -110,6 +110,9 @@ public:
   /// Returns the Transaction whose Transaction::uniqueID() matches name.
   Transaction * namedTransaction(const QString & name);
 
+  /// Returns all the Transaction that match the given filter.
+  TransactionPtrList transactionsForFilter(const Filter * filter);
+
 signals:
 
   /// This signal is emitted whenever the account data has changed for

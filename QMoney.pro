@@ -15,6 +15,10 @@ PRECOMPILED_HEADER = src/headers.hh
 MOC_DIR = build
 OBJECTS_DIR = build
 
+# Really, this should be the default, since it means segfault in the
+# best case
+QMAKE_CXXFLAGS += -Werror=return-type 
+
 # Handling of Ruby sources, but rather bad for now
 # Bad for now
 INCLUDEPATH += /usr/lib/ruby/1.8/x86_64-linux

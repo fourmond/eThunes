@@ -32,7 +32,7 @@ SerializationAccessor * FilterElement::serializationAccessor()
 
 }
 
-bool FilterElement::matches(Transaction * t)
+bool FilterElement::matches(const Transaction * t) const
 {
   QString targetString;
   switch(transactionAttribute) {
@@ -67,7 +67,7 @@ SerializationAccessor * Filter::serializationAccessor()
 
 }
 
-bool Filter::matches(Transaction * t)
+bool Filter::matches(const Transaction * t) const
 {
   for(int i = 0; i < elements.size(); i++) {
     bool ok = elements[i].matches(t);
@@ -87,4 +87,13 @@ void Filter::processList(TransactionList * l)
 				   // exists, please override.
       t->setCategoryFromName(category);
   }
+}
+
+TransactionPtrList Filter::matchingTransactions(TransactionList * l) const
+{
+  TransactionPtrList ret;
+  for(int i = 0; i < l->size(); i++)
+    if(matches(&l->operator[](i)))
+      ret << &l->operator[](i);
+  return ret;
 }

@@ -19,6 +19,7 @@
 
 #include <headers.hh>
 #include <filterpage.hh>
+#include <transactionlistdialog.hh>
 
 QHash<Wallet *, FilterPage *> FilterPage::filterPages;
 
@@ -121,6 +122,7 @@ FilterPage::FilterPage(Wallet *w) : wallet(w),
   connect(bt, SIGNAL(clicked()), SLOT(undoFilterChanges()));
   hb->addWidget(bt);
   bt = new QPushButton(tr("Test filter"));
+  connect(bt, SIGNAL(clicked()), SLOT(testCurrentFilter()));
   hb->addWidget(bt);
   bt = new QPushButton(tr("Run filter"));
   hb->addWidget(bt);
@@ -234,4 +236,16 @@ void FilterPage::setAllOrAny(int b)
 {
   if(currentFilter)
     currentFilter->matchAny = b;
+}
+
+void FilterPage::testCurrentFilter()
+{
+  if(currentFilter) {
+    TransactionListDialog * dlg = new 
+      TransactionListDialog();
+    dlg->displayList(wallet->transactionsForFilter(currentFilter),
+		     tr("Transactions for filter %1").
+		     arg(currentFilter->name));
+    dlg->show();
+  }
 }
