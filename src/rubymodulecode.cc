@@ -54,9 +54,11 @@ void RubyModuleCode::parseDocumentMetaDataInternal(const QString & doctype,
 						   const AttributeHash & contents,
 						   AttributeHash & target)
 {
+  QString funcName = QString("parse_") + doctype;
+  funcName.replace("-","_");
   ensureLoadModule();
   VALUE hash = contents.toRuby();
-  ID func = rb_intern((const char*)(QString("parse_") + doctype).toLocal8Bit());
+  ID func = rb_intern((const char*)funcName.toLocal8Bit());
   VALUE result = rb_funcall(module, func, 1, hash);
   target.setFromRuby(result);
 }

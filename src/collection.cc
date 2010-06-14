@@ -28,6 +28,10 @@ SerializationAccessor * CollectionDefinition::serializationAccessor()
   /// is necessarily called for every single time.
   code.definition = this;
 
+  ac->addAttribute("public-name",
+		   new SerializationItemScalar<QString>(&publicName, true));
+  ac->addAttribute("description",
+		   new SerializationItemScalar<QString>(&description));
   ac->addAttribute("document-type",
 		   new SerializationQHash<DocumentDefinition>(&documentTypes));
   ac->addAttribute("ruby-class-code",
