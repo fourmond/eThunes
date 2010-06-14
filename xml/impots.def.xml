@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<collection-definition public-name="Impots Français">
+  <description>
+    Gestion des impots et autres taxes que l'on paie en france, et qui
+    sont accessibles sur le site http://impots.gouv.fr
+  </description>
+  <document-type name="avis-imposition">
+    <display-format>Avis d'imposition %{annee} (revenus de %{annee-concernee}), numéro fiscal %{numero-fiscal}</display-format>
+    <filename-format>Impots/Avis-imposition-%{numero-fiscal}-%{annee}.pdf</filename-format>
+    <public-name>Avis d'imposition</public-name>
+  </document-type>
+  <document-type name="accuse-reception">
+    <display-format>Accusé de réception de déclaration %{annee} (revenus de %{annee-concernee}), numéro fiscal %{numero-fiscal}</display-format>
+    <filename-format>Impots/Accuse-reception-%{numero-fiscal}-%{annee}.pdf</filename-format>
+    <public-name>Accusé de réception de déclaration (signés)</public-name>
+  </document-type>
+  <document-type name="declaration">
+    <display-format>Déclaration %{annee} (revenus de %{annee-concernee}), numéro fiscal %{numero-fiscal}</display-format>
+    <filename-format>Impots/Declaration-%{numero-fiscal}-%{annee}.pdf</filename-format>
+    <public-name>Déclaration de revenus</public-name>
+  </document-type>
+  <ruby-class-code module-name="Impots">
+    <code><![CDATA[
+module Impots
+  def self.parse_avis_imposition(doc)
+    res = {}
+    if doc['text'] =~ /revenus\s*de\s*l.*ann.*(\d{4})/
+      # Cas 2009
+      res['annee-concernee'] = $1
+      if doc['text'] =~ /Num[^:]+scal\s*(?:\(vous\))?\s*:\s*(\d+)/
+        res['numero-fiscal'] = $1
+      end
+    elsif doc['text'] =~ /^DE\s*(\d{4})/
+      res['annee-concernee'] = $1
+      if doc['text'] =~ /N u m [^:]* r o f i s c a l : (\d+)/
+        res['numero-fiscal'] = $1
+      end
+    end
+    if res['annee-concernee']
+      res['annee'] = (res['annee-concernee'].to_i + 1).to_s
+    end
+    return res
+  end
+
+  def self.parse_accuse_reception(doc)
+    res = {}
+    if doc['text'] =~ /claration\s*des\s*revenus\s*(\d{4})/
+      res['annee-concernee'] = $1
+    end
+    if doc['text'] =~ /fiscal\s*du\s*soumissionnaire\s*:\s*(\d+)/
+        res['numero-fiscal'] = $1
+    end
+    if res['annee-concernee']
+      res['annee'] = (res['annee-concernee'].to_i + 1).to_s
+    end
+    return res
+  end
+
+  def self.parse_declaration(doc)
+    res = {}
+    if doc['text'] =~ /CLARATION\s*DES\s*REVENUS\s*(\d{4})/
+      res['annee-concernee'] = $1
+    end
+    if doc['text'] =~ /^(\d{13})\s*C/
+        res['numero-fiscal'] = $1
+    end
+    if res['annee-concernee']
+      res['annee'] = (res['annee-concernee'].to_i + 1).to_s
+    end
+    return res
+  end
+
+end
+]]>
+    </code>
+  </ruby-class-code>
+</collection-definition>
