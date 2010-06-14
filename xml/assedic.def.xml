@@ -4,7 +4,7 @@
   <document-type name="avis">
     <display-format>Avis de %{mois%date:MM/yyyy} pour %{identifiant}</display-format>
     <filename-format>Assedic/Avis-%{identifiant}-%{mois%date:yyyy-MM}.pdf</filename-format>
-    <public-name>Déclaration de situtation</public-name>
+    <public-name>Déclaration de situation</public-name>
   </document-type>
   <ruby-class-code module-name="Assedic">
     <code><![CDATA[
