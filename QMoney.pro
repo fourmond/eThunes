@@ -22,7 +22,7 @@ QMAKE_CXXFLAGS += -Werror=return-type
 # Handling of Ruby sources, but rather bad for now
 # Bad for now
 INCLUDEPATH += /usr/lib/ruby/1.8/x86_64-linux
-LIBS += -lruby1.8
+LIBS += -lruby1.8 -lpoppler-qt4
 
 # Input files
 SOURCES += src/qmain.cc src/account.cc src/mainwin.cc src/actions.cc \

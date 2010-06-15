@@ -87,4 +87,8 @@
 // use it in classes
 #include <ruby.h>
 
+// Poppler classes
+#include <poppler/qt4/poppler-qt4.h>
+
+
 #endif

@@ -21,27 +21,49 @@
 #include <transaction.hh>
 
 
+static AttributeHash popplerReadAllPages(Poppler::Document * doc)
+{
+  AttributeHash val;
+  QString layout;
+  QString plain;
+  if(! doc)
+    return val;
+  for(int i = 0; i < doc->numPages(); i++) {
+    Poppler::Page * page = doc->page(i);
+    layout += page->text(QRectF());
+    QList<Poppler::TextBox *> boxes = page->textList();
+    for(int j = 0; j < boxes.size(); j++) {
+      plain += boxes[j]->text();
+      if(boxes[j]->hasSpaceAfter())
+	plain += " ";
+      else
+	plain += "\n"; 		// This seems about right, even though
+				// it surely won't work on some
+				// examples
+      delete boxes[j];
+    }
+    delete page;
+  }
+  val["text"] = plain;
+  val["text-layout"] = layout;
+  return val;
+}
+
+
 /// \todo this function should use Poppler::Page::text and
 /// textList... It will be much much faster, and also provide
 /// rendering ?
 AttributeHash CollectionCode::readPDF(QString file)
 {
   AttributeHash retval;
-  QStringList args;
-  args << "-enc" << "UTF-8" << file << "-";
-  QProcess p;
-  p.start("pdftotext", args);
-  p.waitForFinished();
-  /// \tdexception This calls for proper error handling
-  QString contents = p.readAllStandardOutput();
-  retval["text"] = contents;
-  args.clear();
-  args << "-enc" << "UTF-8" << "-layout" << file << "-";
-  p.start("pdftotext", args);
-  p.waitForFinished();
-  /// \tdexception This calls for proper error handling
-  contents = p.readAllStandardOutput();
-  retval["text-layout"] = contents;
+  // Now using Poppler
+  Poppler::Document * doc = Poppler::Document::load(file);
+  if(doc) {
+    retval = popplerReadAllPages(doc);
+    delete doc;
+  }
+
+  /// \todo here: get some informations ?
 
   return retval;
 }
