@@ -63,7 +63,7 @@ AttributeHash CollectionCode::readPDF(QString file)
     delete doc;
   }
 
-  /// \todo here: get some informations ?
+  /// \todo here: get some more information ?
 
   return retval;
 }
