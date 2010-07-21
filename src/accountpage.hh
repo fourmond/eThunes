@@ -26,6 +26,11 @@
 #include <transactionlistwidget.hh>
 
 /// This NavigationPage displays the contents of an account.
+///
+/// \todo It feels like I need some text searchbox here. Incremental
+/// search with Ctrl+F (and going on),
+/// (emacs|iceweasel)-like. Temporary storage of the transactions
+/// found would help speedup incremental search.
 class AccountPage : public NavigationPage {
 
   Q_OBJECT;
