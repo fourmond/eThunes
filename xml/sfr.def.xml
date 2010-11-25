@@ -54,12 +54,15 @@ module SFR
 
   def self.fetch(fetcher, creds, docs)
     vals = {'username' => creds['login'],
-             'password' => creds['passwd'],
-	     'service' => 'https://www.sfr.fr/j_spring_cas_security_check',
-	     'spring-security-redirect' => '/do/creationMail/redirect/redirect?provenance=',
-	     'identifier' => ''}
+      'password' => creds['passwd'],
+      'internal' => 'W', 
+      'identifier' => ''
+    }
 
-    fetcher.post("https://www.sfr.fr/cas/login?noRattachement=true",vals) do |res|
+	     # 'service' => 'https://www.sfr.fr/j_spring_cas_security_check',
+	     # 'spring-security-redirect' => '/do/creationMail/redirect/redirect?provenance=',
+ 
+    fetcher.post("https://www.sfr.fr/cas/login?domain=sfr&service=https%3A%2F%2Fwww.sfr.fr%2Faccueil%2Fj_spring_cas_security_check&target=%2Faccueil%2Fadsl.html",vals) do |res|
       if res.ok?
 	fetcher.get('https://moncompte-neufbox.sfr.fr/moncompte-webapp/moncompte/hub/accueil.action?javascript=true') do |res|
 	  if res.ok?
