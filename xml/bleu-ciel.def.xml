@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<collection-definition>
+  <!-- Comment -->
+  <document-type name="facture">
+    <display-format>Facture du %{date%date:d/MM/yyyy}: %{montant%A} (%{ref-client} -- %{facture})</display-format>
+    <filename-format>EDF/Facture-%{date%date:yyyy-MM}.pdf</filename-format>
+    <public-name>Facture</public-name>
+    <relevant-date>prelevement</relevant-date>
+    <relevant-amount>montant</relevant-amount>
+    <date-tolerance>9</date-tolerance>
+  </document-type>
+  <ruby-class-code module-name="BleuCiel">
+    <code><![CDATA[
+module BleuCiel
+  def self.parse_facture(doc)
+    res = {}
+    if doc['text'] =~ /Facture\s+du\s+(\d+)\s*(#{Dates::FrenchMonthRE})\s*(\d+)/i
+      res['date'] = Time.local($3.to_i, Dates::parse_french_month($2), $1.to_i)
+    end
+    if doc['text'] =~ /N(.|..)\s*facture\s*:\s*(\S+)/i
+      res['facture'] = $2.chomp
+    end
+    if doc['text'] =~ /N(.|..)\s*client\s*:\s*([\d\s]+)/i
+      res['ref-client'] = $2.chomp
+    end
+    if doc['text-layout'] =~ /montant\s*\s*(?:non\s*)?\S+\s*(le\s*(\d+)\/(\d+)\/(\d+))?\s*([-\d]+)[.,](\d+).*?TTC/i
+      if $1
+        res['prelevement'] = Time.local($4.to_i, $3.to_i, $2.to_i)
+      else
+        res['prelevement'] = res['date'] + 7 * 24 * 3600
+      end
+      units = $5.to_i * 100
+      if units > 0
+        units += $6.to_i
+      else
+        units -= $6.to_i
+      end
+      res['montant'] = units
+    end
+    return res
+  end
+
+end
+]]>
+    </code>
+  </ruby-class-code>
+</collection-definition>
