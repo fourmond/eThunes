@@ -11,12 +11,12 @@
 module HK
   def self.parse_DA(doc)
     res = {}
-    if doc['text'] =~ /(\d+)\s*(#{Dates::FrenchMonthRE})\s*(\d+)/
+    if doc['text-layout'] =~ /(\d+)(?:er)?\s*(#{Dates::FrenchMonthRE})\s*(\d+)/
       year = $3
       res['date'] = Time.local(year.to_i, Dates::parse_french_month($2),$1.to_i)
       res['year'] = year.to_i - 1
     end
-    if doc['text-layout'] =~ /Droit\s+net.*#{year}(?:\s*=)?\s+(\d+)[.,](\d+)\s*e/s
+    if doc['text-layout'] =~ /Droit\s+net.*#{year}(?:\s*=)?\s+(\d+)\s*[.,]\s*(\d+)\s*e/s
       res['amount'] = $1.to_i * 100 + $2.to_i
     end
     return res
