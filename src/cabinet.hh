@@ -26,7 +26,7 @@
 #include <collection.hh>
 
 /// The main container. This class is the main container for all data
-/// QMoney (which should change name some time soon)
+/// eThunes (which should change name some time soon)
 ///
 /// \todo Add the possibility to add "free" documents, ie Document
 /// objects that do not belong to any real Collection and that would

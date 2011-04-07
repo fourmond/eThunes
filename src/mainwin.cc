@@ -1,5 +1,5 @@
 /*
-    mainwin.cc: Main window for QMoney
+    mainwin.cc: Main window for eThunes
     Copyright 2008 by Vincent Fourmond
 
     This program is free software; you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 */
 
 /**
-   \mainpage Projects for QMoney
+   \mainpage Projects for eThunes
 
    The main things that should be done
 
@@ -122,7 +122,7 @@ void MainWin::setupActions()
 					   /// and reimplement the
 					   /// handler for closing
 		    QKeySequence(tr("Ctrl+Q")),
-		    tr("Exit from QMoney"));
+		    tr("Exit from eThunes"));
 
   actions.addAction(this, "save", tr("&Save"),
 		    dashboard, SLOT(save()),
@@ -197,7 +197,7 @@ void MainWin::setupMenus()
 // constructor for QSettings is *private*.
 
 #define ownSettings QSettings settings("tanyaivinco.homelinux.org",	\
-				       "QMoney");			\
+				       "eThunes");			\
   settings.beginGroup("mainwin");
 
 void MainWin::saveSettings()
@@ -226,8 +226,8 @@ void MainWin::dirtyChanged(bool dirty)
 void MainWin::fileNameChanged(const QString & newName)
 {
   if(newName.isEmpty())
-    setWindowTitle(tr("QMoney[*]"));
-  setWindowTitle(tr("%1[*] - QMoney").arg(QFileInfo(newName).fileName()));
+    setWindowTitle(tr("eThunes[*]"));
+  setWindowTitle(tr("%1[*] - eThunes").arg(QFileInfo(newName).fileName()));
 }
 
 void MainWin::tryQuit()

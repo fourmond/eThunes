@@ -21,7 +21,7 @@
 #ifndef __LOG_HH
 #define __LOG_HH
 
-/// The log system of QMoney is composed of two different parts
+/// The log system of eThunes is composed of two different parts
 ///
 /// \li an application wide instance of Log, whose role is to get
 /// string data from various sources, classifying them though channels

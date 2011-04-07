@@ -1,6 +1,6 @@
 /**
     \file managedfile.hh
-    How files managed by QMoney should be handled.
+    How files managed by eThunes should be handled.
     Copyright 2010 by Vincent Fourmond
 
     This program is free software; you can redistribute it and/or modify
@@ -25,7 +25,7 @@
 
 class Cabinet;
 
-/// This class holds a file as managed by QMoney.
+/// This class holds a file as managed by eThunes.
 ///
 /// \todo Write the whole class, and convert Document to use this for
 /// both the real document and the attached files.
@@ -60,7 +60,7 @@ public:
   /// Deletes the file ? Only if managed
   void deleteFile(bool onlyIfManaged = true);
 
-  /// Is the file managed by QMoney, ie is it within
+  /// Is the file managed by eThunes, ie is it within
   /// Cabinet::baseDirectory() ?
   bool isFileManaged() const;
 

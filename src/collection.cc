@@ -56,7 +56,7 @@ void CollectionDefinition::dumpContents()
 
 
 /// \todo There should be a way to customize this.
-QStringList CollectionDefinition::definitionPath("/home/vincent/Prog/QMoney/xml");
+QStringList CollectionDefinition::definitionPath("/home/vincent/Prog/eThunes/xml");
 
 CollectionDefinition * CollectionDefinition::loadWithoutRegistering(const QString &name)
 {

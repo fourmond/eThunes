@@ -1,6 +1,6 @@
 /**
    \file qmain.cc
-   entry point of QMoney
+   entry point of eThunes
    Copyright 2008 by Vincent Fourmond
 
    This program is free software; you can redistribute it and/or
@@ -34,9 +34,9 @@ int main(int argc, char ** argv)
   Log::logger()->spy = &log;
 
   // The search path for Ruby code (general-purpose modules)
-  QDir::addSearchPath("ruby", "/home/vincent/Prog/QMoney/ruby");
-  QDir::addSearchPath("icons", "/home/vincent/Prog/QMoney/data");
-  main.setApplicationName("QMoney");
+  QDir::addSearchPath("ruby", "/home/vincent/Prog/eThunes/ruby");
+  QDir::addSearchPath("icons", "/home/vincent/Prog/eThunes/data");
+  main.setApplicationName("eThunes");
   win.show();
   main.exec();
 }
