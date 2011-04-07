@@ -144,6 +144,11 @@ void MainWin::setupActions()
 		    QKeySequence(tr("Ctrl+I")),
 		    tr("Imports transactions into the wallet"));
 
+  actions.addAction(this, "test matching", tr("Test matching transations"),
+		    dashboard->walletDW, SLOT(findInternalMoves()),
+		    QKeySequence(tr("Ctrl+Y")),
+		    tr("Test stuff..."));
+
   actions.addAction(this, "manage filters", tr("&Manage filters"),
 		    dashboard->walletDW, SLOT(manageFilters()),
 		    QKeySequence(),
@@ -182,6 +187,7 @@ void MainWin::setupMenus()
   fileMenu->addAction(actions["save as"]);
   fileMenu->addSeparator();
   fileMenu->addAction(actions["import"]);
+  fileMenu->addAction(actions["test matching"]);
   fileMenu->addAction(actions["manage filters"]);
   fileMenu->addSeparator();
   fileMenu->addAction(actions["quit"]);

@@ -141,6 +141,13 @@ public slots:
   /// Sets the dirty flag
   void setDirty(bool dirty = true);
 
+  /// Attemps to find internal moves, using
+  /// TransactionPtrList::findInternalMoves()
+  ///
+  /// @todo To be improved later on.
+  void findInternalMoves();
+
+
 public:
   /// Whether the Wallet has pending modifications
   bool isDirty() const { return dirty; };

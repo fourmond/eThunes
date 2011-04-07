@@ -52,6 +52,12 @@ public slots:
   /// Manage  filters
   void manageFilters();
 
+  /// Attemps to find internal moves, using
+  /// TransactionPtrList::findInternalMoves()
+  ///
+  /// @todo To be improved later on.
+  void findInternalMoves();
+
 };
 
 #endif

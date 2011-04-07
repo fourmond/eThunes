@@ -197,7 +197,7 @@ uint qHash(const HashKey & k) {
   return qHash(k.memo) ^ k.amount;
 }
 
-QList<Link *> TransactionPtrList::findInternalMoves(QList<TransactionPtrList *> lists)
+QList<Link *> TransactionPtrList::findInternalMoves(QList<TransactionPtrList> lists)
 {
   QList<Link *> retval;
   // We'll proceed by browsing through all the transactions date by
@@ -208,12 +208,13 @@ QList<Link *> TransactionPtrList::findInternalMoves(QList<TransactionPtrList *> 
   QMultiHash<HashKey, Transaction *> transactions;
   QList<HashKey> tkeys;
   QList<Transaction *> tvalues;
+  QTextStream o(stdout);
 
 
   // Initialize the iterators.
-  for(QList<TransactionPtrList *>::iterator i = lists.begin();
+  for(QList<TransactionPtrList>::iterator i = lists.begin();
       i != lists.end(); i++)
-    iterators.append(QListIterator<Transaction *>(*(*i)));
+    iterators.append(QListIterator<Transaction *>(*i));
 
   while(iterators.size() > 1) {
     dates.clear();
@@ -229,7 +230,8 @@ QList<Link *> TransactionPtrList::findInternalMoves(QList<TransactionPtrList *> 
       }
     }
     if(shouldRestart)
-      continue;			
+      continue;
+
 
     // Fast enough !
     qSort(dates);
@@ -239,17 +241,19 @@ QList<Link *> TransactionPtrList::findInternalMoves(QList<TransactionPtrList *> 
 
       // Then, we catch up.
 
-      QListIterator<Transaction *> it = iterators[dates[0].i];
-      while(it.hasNext() && it.next()->date < dates[1].d)
-	;
+      QListIterator<Transaction *> & it = iterators[dates[0].i];
+      while(it.hasNext() && it.peekNext()->date < dates[1].d) {
+	it.next();
+      }
       // The earliest list is gone, starting from scratch again
       if(! it.hasNext()) {
 	iterators.removeAt(dates[0].i);
 	continue;
       }
-      
-      if(it.peekNext()->date > dates[1].d)
+      if(it.peekNext()->date > dates[1].d) {
+	it.next();
 	continue;
+      }
       
     }
 
@@ -269,13 +273,12 @@ QList<Link *> TransactionPtrList::findInternalMoves(QList<TransactionPtrList *> 
 
     // Now, dead easy: we loop over the keys to find some with more
     // than one value.
-    tkeys = transactions.keys();
+    tkeys = transactions.uniqueKeys();
     for(int i = 0; i < tkeys.size(); i++) {
       if(transactions.count(tkeys[i]) > 1) {
 	// OK, we found possibly duplicate stuff !
 	// For now, we dump them
 	tvalues = transactions.values(tkeys[i]);
-	QTextStream o(stdout);
 	o << "\n\nFound potential canditates: " << endl;
  	for(int j = 0; j < tvalues.size(); j++)
 	  tvalues[j]->dump(o);
@@ -284,7 +287,5 @@ QList<Link *> TransactionPtrList::findInternalMoves(QList<TransactionPtrList *> 
 
   }
   
-
-
   return retval;
 }

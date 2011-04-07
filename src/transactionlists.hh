@@ -108,7 +108,7 @@ public:
   ///
   /// It creates links between transactions found and returns the list
   /// of newly-created links.
-  static QList<Link *> findInternalMoves(QList<TransactionPtrList *> lists);
+  static QList<Link *> findInternalMoves(QList<TransactionPtrList> lists);
 
 };
 

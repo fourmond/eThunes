@@ -104,3 +104,9 @@ void WalletDW::manageFilters()
   FilterDialog * dlg = new FilterDialog(wallet);
   dlg->show();
 }
+
+void WalletDW::findInternalMoves()
+{
+  if(wallet)
+    wallet->findInternalMoves();
+}

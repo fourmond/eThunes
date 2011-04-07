@@ -191,3 +191,13 @@ Category * Wallet::namedCategory(const QString & name)
 {
   return categories.namedSubCategory(name, false);
 }
+
+void Wallet::findInternalMoves()
+{
+  QList<TransactionPtrList> lists;
+  for(int i = 0; i < accounts.size(); i++) {
+    lists.append(accounts[i].transactions.toPtrList());
+  }
+  TransactionPtrList::findInternalMoves(lists);
+}
+
