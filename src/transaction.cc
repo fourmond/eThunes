@@ -75,7 +75,7 @@ void Transaction::dump(QTextStream & stream)
 
 Transaction::Transaction() :
   amount(0),
-  checkNumber(0),
+  checkNumber("0"),
   account(NULL),
   locked(true),
   recent(false),
