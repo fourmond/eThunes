@@ -6,6 +6,14 @@
     <filename-format>Assedic/Avis-%{identifiant}-%{mois%date:yyyy-MM}.pdf</filename-format>
     <public-name>Déclaration de situation</public-name>
   </document-type>
+  <document-type name="paiment">
+    <display-format>Paiment du %{date%date:dd/MM/yyyy} pour %{identifiant} : %{montant%A}</display-format>
+    <filename-format>Assedic/Paiment-%{identifiant}-%{date%date:yyyy-MM}.pdf</filename-format>
+    <public-name>Avis de paiment</public-name>
+    <relevant-date>date</relevant-date>
+    <relevant-amount>montant</relevant-amount>
+    <date-tolerance>5</date-tolerance>
+  </document-type>
   <ruby-class-code module-name="Assedic">
     <code><![CDATA[
 module Assedic
@@ -19,6 +27,20 @@ module Assedic
     end
     if doc['text'] =~ /le\s+(\d+)\/(\d+)\/(\d+)\s+\S+\s+(\d+):(\d+)/
       res['enregistrement'] = Time.local($3.to_i + 2000, $2.to_i, $1.to_i, $4.to_i, $5.to_i)
+    end
+    return res
+  end
+
+  def self.parse_paiment(doc)
+    res = {}
+    if doc['text'] =~ /Identifiant\s*:\s*(\S+)/
+      res['identifiant'] = $1
+    end
+    if doc['text'] =~ %r[REGLEMENT\s*DU\s*(\d+)/(\d+)/(\d+)]i
+      res['date'] = Time.local($3.to_i, $2.to_i, $1.to_i)
+    end
+    if doc['text'] =~ /R..?glement\s*de\s*(\d+),(\d+)/i
+      res['montant'] = $1.to_i * 100 + $2.to_i
     end
     return res
   end
