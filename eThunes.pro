@@ -5,6 +5,8 @@ TEMPLATE = app
 CONFIG += precompile_header debug warn_on thread
 INCLUDEPATH += . src
 
+DEPENDPATH += src
+
 VERSION = 0.0
 
 QT += xml network
