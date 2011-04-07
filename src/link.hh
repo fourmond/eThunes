@@ -29,10 +29,14 @@ class Cabinet;
 class Link : public Serializable {
 public:
   Link() : target(NULL) {;};
-  Link(Linkable * t) : target(t) {;};
+  Link(Linkable * t, const QString & name) : 
+    target(t), linkName(name) {;};
 
   /// The target of the link
   Linkable * target;
+
+  /// A name attached to the target
+  QString linkName;
 
   virtual SerializationAccessor * serializationAccessor();
 
@@ -66,7 +70,7 @@ class LinkList : public QList<Link> {
 public:
   /// Adds a link to the given target, making sure there are no
   /// duplicates.
-  void addLink(Linkable * target);
+  void addLink(Linkable * target, const QString & name = "");
 
   /// Returns a list of html links suitable for use with LinksHandler.
   /// You just need to join the result to get a decent string.

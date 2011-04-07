@@ -29,6 +29,8 @@ SerializationAccessor * Link::serializationAccessor()
 		   new SerializationItemScalar<QString>(&linkID, true));
   ac->addAttribute("type",
 		   new SerializationItemScalar<QString>(&typeName, true));
+  ac->addAttribute("name",
+		   new SerializationItemScalar<QString>(&linkName, true));
   return ac;
 }
 
@@ -67,12 +69,12 @@ int Link::finalizePendingLinks(Cabinet * cabinet)
   return dangling;
 }
 
-void LinkList::addLink(Linkable * target)
+void LinkList::addLink(Linkable * target, const QString & name)
 {
   for(int i = 0; i < size(); i++)
     if(value(i).target == target)
       return;
-  append(Link(target));
+  append(Link(target, name));
 }
 
 QStringList LinkList::htmlLinkList() const

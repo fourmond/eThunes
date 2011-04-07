@@ -49,7 +49,7 @@ public:
 
   /// Adds a link to the given Target (and add this as a link to the
   /// target too). It is a no-op when target is NULL.
-  void addLink(Linkable * target);
+  void addLink(Linkable * target, const QString & name = "");
 
   /// Returns the unique String ID for this object, suitable for
   /// serialization.

@@ -27,10 +27,10 @@ void Linkable::addLinkAttributes(SerializationAccessor * accessor)
 			 new SerializationQList<Link>(&links));
 }
 
-void Linkable::addLink(Linkable * target)
+void Linkable::addLink(Linkable * target, const QString & name)
 {
   if(!target)
     return;
-  links.addLink(target);
-  target->links.addLink(this);
+  links.addLink(target, name);
+  target->links.addLink(this, name);
 }
