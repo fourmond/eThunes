@@ -73,6 +73,7 @@
 
 // Templates
 #include <QHash>
+#include <QMultiHash>
 #include <QList>
 
 // Item-model stuff

@@ -160,3 +160,131 @@ TransactionPtrList TransactionList::transactionsWithinRange(const QDate & before
   return list;
 }
 
+/// Small private helper class.
+class IndexedDate {
+public:
+  QDate d;
+  int i;
+
+  IndexedDate() {;};
+
+  IndexedDate(const QDate & da, int id): d(da), i(id) {
+    ;
+  };
+
+  bool operator<(const IndexedDate & b) const {
+    return d < b.d;
+  };
+};
+
+/// Private class serving as a Key for finding transactions.
+class HashKey {
+public:
+  QString memo;
+  int amount;
+  HashKey() {;};
+  HashKey(const Transaction * t) {
+    memo = t->memo;
+    amount = abs(t->amount);
+  };
+  bool operator==(const HashKey & other) const {
+    return (memo == other.memo) && 
+      (amount == other.amount);
+  };
+};
+
+uint qHash(const HashKey & k) {
+  return qHash(k.memo) ^ k.amount;
+}
+
+QList<Link *> TransactionPtrList::findInternalMoves(QList<TransactionPtrList *> lists)
+{
+  QList<Link *> retval;
+  // We'll proceed by browsing through all the transactions date by
+  // date.
+  QList<QListIterator<Transaction *> > iterators;
+
+  QList<IndexedDate> dates;
+  QMultiHash<HashKey, Transaction *> transactions;
+  QList<HashKey> tkeys;
+  QList<Transaction *> tvalues;
+
+
+  // Initialize the iterators.
+  for(QList<TransactionPtrList *>::iterator i = lists.begin();
+      i != lists.end(); i++)
+    iterators.append(QListIterator<Transaction *>(*(*i)));
+
+  while(iterators.size() > 1) {
+    dates.clear();
+    int shouldRestart = 0;
+    for(int i = 0; i < iterators.size(); i++) {
+      if(! iterators[i].hasNext()) {
+	iterators.removeAt(i);
+	i--;
+	shouldRestart = 1;
+      }
+      else {
+	dates.append(IndexedDate(iterators[i].peekNext()->date, i));
+      }
+    }
+    if(shouldRestart)
+      continue;			
+
+    // Fast enough !
+    qSort(dates);
+
+    // If the first date is too low
+    if(dates[0] < dates[1]) {
+
+      // Then, we catch up.
+
+      QListIterator<Transaction *> it = iterators[dates[0].i];
+      while(it.hasNext() && it.next()->date < dates[1].d)
+	;
+      // The earliest list is gone, starting from scratch again
+      if(! it.hasNext()) {
+	iterators.removeAt(dates[0].i);
+	continue;
+      }
+      
+      if(it.peekNext()->date > dates[1].d)
+	continue;
+      
+    }
+
+    // OK, so now, we should at least have date[0] == date[1]
+
+    // Now, we pull all the transactions with the same date into one
+    // big list and we sort it.
+    QDate theDate = dates[0].d;
+    transactions.clear();
+    for(int i = 0; i < iterators.size(); i++) {
+      while(iterators[i].hasNext() && 
+	    iterators[i].peekNext()->date == theDate) {
+	Transaction * t = iterators[i].next();
+	transactions.insert(HashKey(t), t);
+      }
+    }
+
+    // Now, dead easy: we loop over the keys to find some with more
+    // than one value.
+    tkeys = transactions.keys();
+    for(int i = 0; i < tkeys.size(); i++) {
+      if(transactions.count(tkeys[i]) > 1) {
+	// OK, we found possibly duplicate stuff !
+	// For now, we dump them
+	tvalues = transactions.values(tkeys[i]);
+	QTextStream o(stdout);
+	o << "\n\nFound potential canditates: " << endl;
+ 	for(int j = 0; j < tvalues.size(); j++)
+	  tvalues[j]->dump(o);
+      }
+    }
+
+  }
+  
+
+
+  return retval;
+}

@@ -91,6 +91,25 @@ public:
 
   /// Returns various interesting statistics about the list.
   TransactionListStatistics statistics() const;
+
+  /// Browses through the TransactionList given here trying to find
+  /// transaction that could correspond to both ends of the same
+  /// operation, characterized by
+  /// 
+  /// \li same date
+  /// \li different account
+  /// \li opposed amounts
+  /// \li same memo
+  ///
+  /// This will possibly give false positives, but it's the best we
+  /// can do.
+  ///
+  /// @warning This function assumes that the transactions are sorted !
+  ///
+  /// It creates links between transactions found and returns the list
+  /// of newly-created links.
+  static QList<Link *> findInternalMoves(QList<TransactionPtrList *> lists);
+
 };
 
 /// This class represents a list of Transaction objects, ready for
@@ -142,6 +161,8 @@ public:
   /// \todo this one should also be part of TransactionPtrList.
   TransactionPtrList transactionsWithinRange(const QDate & before,
 					     const QDate & after);
+
+  
 };
 
 #endif
