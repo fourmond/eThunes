@@ -76,6 +76,10 @@ public:
   /// You just need to join the result to get a decent string.
   QStringList htmlLinkList() const;
 
+  /// Returns a list of links bearing the given name
+  QList<Link *> namedLinks(const QString & name);
+  QList<const Link *> namedLinks(const QString & name) const;
+
 };
 
 #endif

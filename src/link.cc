@@ -85,3 +85,21 @@ QStringList LinkList::htmlLinkList() const
 				value(i).target->publicTypeName());
   return ret;
 }
+
+QList<Link *> LinkList::namedLinks(const QString & name)
+{
+  QList<Link *> retval;
+  for(int i = 0; i < size(); i++)
+    if(value(i).linkName == name)
+      retval.append(& operator[](i));
+  return retval;
+}
+
+QList<const Link *> LinkList::namedLinks(const QString & name) const
+{
+  QList<const Link *> retval;
+  for(int i = 0; i < size(); i++)
+    if(value(i).linkName == name)
+      retval.append(& operator[](i));
+  return retval;
+}
