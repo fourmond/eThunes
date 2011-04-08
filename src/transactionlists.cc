@@ -279,9 +279,23 @@ QList<Link *> TransactionPtrList::findInternalMoves(QList<TransactionPtrList> li
 	// OK, we found possibly duplicate stuff !
 	// For now, we dump them
 	tvalues = transactions.values(tkeys[i]);
-	o << "\n\nFound potential canditates: " << endl;
- 	for(int j = 0; j < tvalues.size(); j++)
-	  tvalues[j]->dump(o);
+	if(tvalues.size() > 2) {
+	  /// @todo log this properly !
+	  o << "Error: cannot deal with more than two matching transactions !" 
+	    << endl;
+	}
+	else {
+	  // We check the assumptions:
+	  Transaction * t1, * t2;
+	  t1 = tvalues[0]; t2 = tvalues[1];
+	  if(! t1->account->isSameAccount(*t2->account) &&
+	     (t1->amount + t2->amount) == 0) {
+	    if(t1->links.namedLinks("internal move").count() == 0) {
+	      t1->addLink(t2, "internal move");
+	      retval += t1->links.namedLinks("internal move");
+	    }
+	  }
+	}
       }
     }
 
