@@ -25,3 +25,13 @@ LogStorage::LogStorage()
   connect(Log::logger(), SIGNAL(htmlMessage(const LogMessage &)),
 	  SLOT(receiveMessage(const LogMessage &)));
 }
+
+
+QList<LogMessage> LogStorage::getMessages(Log::LogLevel l)
+{
+  QList<LogMessage> msg;
+  for(int i = 0; i < messages.size(); i++)
+    if(messages[i].level >= l)
+      msg.append(messages[i]);
+  return msg;
+}

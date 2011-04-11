@@ -37,6 +37,9 @@ public:
   /// log...
   LogStorage();
 
+  /// Returns the list of messages above the given log level
+  QList<LogMessage> getMessages(Log::LogLevel l = Log::Debug);
+
 signals:
     
   void receivedMessage(const LogMessage & message);
