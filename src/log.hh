@@ -21,6 +21,9 @@
 #ifndef __LOG_HH
 #define __LOG_HH
 
+
+class LogMessage;
+
 /// The log system of eThunes is composed of two different parts
 ///
 /// \li an application wide instance of Log, whose role is to get
@@ -83,13 +86,11 @@ signals:
 
   /// A plain text formatted message, such as would be suitable for
   /// display in stdin
-  void plainMessage(const QString & message, LogLevel l,
-		    const QString & channel);
+  void plainMessage(const LogMessage & message);
 
   /// The message as would be suitable for display in an HTML log
   /// browser.
-  void htmlMessage(const QString & message, LogLevel l,
-		   const QString & channel);
+  void htmlMessage(const LogMessage & message);
 
 protected:
   /// Logs a string; in particular, in real this just sends a signal
@@ -110,5 +111,25 @@ protected:
 		 const QString & channel = QString());
 
 };
+
+/// A log message
+class LogMessage {
+public:
+  /// The text of the message
+  QString message;
+
+  /// The log level
+  Log::LogLevel level;
+
+  /// The channel (unused for now ?)
+  QString channel;
+
+  LogMessage() : level(Log::Debug) { ;};
+
+  LogMessage(const QString & msg, Log::LogLevel l, 
+	     const QString & c) : message(msg), level(l), channel(c) { ;};
+};
+
+Q_DECLARE_METATYPE(LogMessage);
 
 #endif

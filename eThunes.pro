@@ -49,7 +49,7 @@ SOURCES += src/qmain.cc src/account.cc src/mainwin.cc src/actions.cc \
 	src/cookiejar.cc src/log.cc \
 	src/logstream.cc src/filterpage.cc \
 	src/categorycombo.cc src/filterelements.cc \
-	src/documentpage.cc
+	src/documentpage.cc src/logstorage.cc
 
 HEADERS += src/account.hh src/mainwin.hh src/actions.hh \
 	src/ofximport.hh src/accountmodel.hh \
@@ -73,4 +73,4 @@ HEADERS += src/account.hh src/mainwin.hh src/actions.hh \
 	src/cookiejar.hh src/log.hh \
 	src/logstream.hh src/filterpage.hh \
 	src/categorycombo.hh src/filterelements.hh \
-	src/documentpage.hh
+	src/documentpage.hh src/logstorage.hh

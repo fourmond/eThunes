@@ -51,8 +51,8 @@ void Log::logString(const QString & message, LogLevel l,
     final += ", " + channel;
   final += "] " + message;
   QString plain = toPlainText(final);
-  emit(plainMessage(plain, l, channel));
-  emit(htmlMessage(toHTML(final), l, channel));
+  emit(plainMessage(LogMessage(plain, l, channel)));
+  emit(htmlMessage(LogMessage(toHTML(final), l, channel)));
   if(spy)
     spy->write(plain.toLocal8Bit());
 }
