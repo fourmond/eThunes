@@ -73,6 +73,8 @@
 #include <accountmodel.hh>
 #include <mainwin.hh>
 
+#include <logviewer.hh>
+
 #include <filterdialog.hh>
 
 // temporary ?
@@ -154,6 +156,12 @@ void MainWin::setupActions()
 		    QKeySequence(),
 		    tr("Creates and edit filters"));
 
+  actions.addAction(this, "view log", tr("View log"),
+		    this, SLOT(displayLog()),
+		    QKeySequence(),
+		    tr("View log messages, useful to know what "
+		       "is really happenning"));
+
   // Tab-related actions
   actions.addAction(this, "next tab", tr("&Next tab"),
 		    navigationWidget, SLOT(switchToNextTab()),
@@ -189,6 +197,7 @@ void MainWin::setupMenus()
   fileMenu->addAction(actions["import"]);
   fileMenu->addAction(actions["test matching"]);
   fileMenu->addAction(actions["manage filters"]);
+  fileMenu->addAction(actions["view log"]);
   fileMenu->addSeparator();
   fileMenu->addAction(actions["quit"]);
 
@@ -291,4 +300,10 @@ void MainWin::testCollectionDefinitionDocument()
     o << "Display text: " << outAttrs.formatString(dd->displayFormat) << endl;
     o << "File name: " << outAttrs.formatString(dd->fileNameFormat) << endl;
   } while(true);
+}
+
+void MainWin::displayLog()
+{
+  LogViewer * viewer = new LogViewer();
+  viewer->show();
 }

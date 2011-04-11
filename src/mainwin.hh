@@ -76,6 +76,11 @@ public slots:
   /// not register it !) and tries to load document from it, dumping
   /// useful data.
   void testCollectionDefinitionDocument();
+
+
+  /// Fires up a LogViewer instance to watch the log.
+  void displayLog();
+
 };
 
 #endif

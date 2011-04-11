@@ -33,6 +33,7 @@ LogViewer::LogViewer(LogStorage * s)
   viewer = new QTextEdit();
   viewer->setReadOnly(true);
   viewer->setAcceptRichText(true);
+  l1->addWidget(viewer);
 
   populateViewer();
 }
