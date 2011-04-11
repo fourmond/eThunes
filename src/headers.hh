@@ -51,6 +51,9 @@
 #include <QColorDialog>
 #include <QMessageBox>
 
+// A rich text viewer (and editor?). 
+#include <QTextEdit>
+
 // Desktop stuff
 #include <QUrl>
 #include <QDesktopServices>
