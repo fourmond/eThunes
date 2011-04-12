@@ -82,6 +82,7 @@
 
 MainWin::MainWin()
 {
+  storage = new LogStorage();
   cabinet = new Cabinet();
   connect(cabinet, SIGNAL(dirtyChanged(bool)), SLOT(dirtyChanged(bool)));
   fileNameChanged(QString());
@@ -304,6 +305,6 @@ void MainWin::testCollectionDefinitionDocument()
 
 void MainWin::displayLog()
 {
-  LogViewer * viewer = new LogViewer();
+  LogViewer * viewer = new LogViewer(storage);
   viewer->show();
 }

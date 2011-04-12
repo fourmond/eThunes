@@ -25,6 +25,8 @@
 #include <cabinet.hh>
 #include <cabinetpage.hh>
 
+#include <logstorage.hh>
+
 #include <navigationwidget.hh>
 
 /// The main window
@@ -56,6 +58,9 @@ class MainWin : public QMainWindow {
 
   /// The dashboard
   CabinetPage * dashboard;
+
+  /// Storage for the log messages
+  LogStorage * storage;
 
 public:
   MainWin();
