@@ -93,8 +93,15 @@ Fetcher::OngoingRequest * Fetcher::registerRequest(QNetworkReply * reply,
 						   VALUE code,
 						   int redirections)
 {
+  LogStream info(Log::Info);
   OngoingRequest & r = ongoingRequests[reply];
   r.reply = reply;
+  info << "Requesting URL: " << reply->request().url().toString() 
+       << " on behalf of " 
+       << (targetCollection ? "collection " : "the wallet") 
+       << (targetCollection ? targetCollection->name : "") 
+       << endl;
+    
   r.code = code;
   r.done = false;
   r.maxHops = (redirections ?  redirections : 7 /** \todo Customize this */);
@@ -148,13 +155,15 @@ VALUE Fetcher::postWrapper(VALUE obj, VALUE str, VALUE hash)
 
 void Fetcher::replyFinished(QNetworkReply* r)
 {
-  QTextStream err(stderr);
+  LogStream err(Log::Error);
+  LogStream info(Log::Info);
   if(! ongoingRequests.contains(r)) {
     /// \tdexception Raise here ? Or just log ?
     err << "Unkown reply " << r << endl
 	<< "\tfor URL" << r->url().toString() << endl;
     return;
   }
+
   // err << "Reply " << r << endl
   //     << "\tfor URL" << r->url().toString() << endl;
 
@@ -166,8 +175,9 @@ void Fetcher::replyFinished(QNetworkReply* r)
   // cookieJar->dumpTree(o);
   if(followRedirections && r->hasRawHeader("location")) {
     // That looks very much like a redirection
-    QUrl target = r->attribute(QNetworkRequest::RedirectionTargetAttribute).toUrl();
-    err << " -> redirects to " << target.toString() << endl;
+    QUrl target = 
+      r->attribute(QNetworkRequest::RedirectionTargetAttribute).toUrl();
+    info << " -> redirects to " << target.toString() << endl;
     int nb = ongoingRequests[r].maxHops - 1;
     if(nb)
       get(QNetworkRequest(target), ongoingRequests[r].code, nb);

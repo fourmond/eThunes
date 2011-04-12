@@ -19,21 +19,22 @@
 #include <headers.hh>
 #include <ofximport.hh>
 
+#include <logstream.hh>
+
 OFXImport OFXImport::importFromFile(QString file)
 {
   QFile f(file);
+  LogStream log(Log::Info);
   f.open(QIODevice::ReadOnly);
+  log << "Reading transactions from file " << file << endl;
   return importFromFile(&f);
 }
 
 
 OFXImport OFXImport::importFromFile(QIODevice * stream)
 {
-  // Allright, fun starts here ;-) !
-
-
-  // Debugging output:
-  QTextStream debug(stderr);
+  // LogStream debug(LogLevel::Debug);
+  LogStream info(Log::Info);
 
   // A regular expression that matches a header string.
   QRegExp headerRE("^\\s*(\\w+):(.*)$");
@@ -153,5 +154,8 @@ OFXImport OFXImport::importFromFile(QIODevice * stream)
       }
     }
   }
+  info << "Imported " << retVal.transactions.size() 
+       << " transactions spanning " << retVal.accounts.size() 
+       << " accounts" << endl;
   return retVal;
 }

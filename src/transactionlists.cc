@@ -21,6 +21,8 @@
 #include <account.hh>
 #include <wallet.hh>
 
+#include <logstream.hh>
+
 BasicStatistics::BasicStatistics() :
   number(0), totalAmount(0), totalCredit(0),
   totalDebit(0), firstMonthID(-1)
@@ -208,8 +210,7 @@ QList<Link *> TransactionPtrList::findInternalMoves(QList<TransactionPtrList> li
   QMultiHash<HashKey, Transaction *> transactions;
   QList<HashKey> tkeys;
   QList<Transaction *> tvalues;
-  QTextStream o(stdout);
-
+  LogStream err(Log::Error);
 
   // Initialize the iterators.
   for(QList<TransactionPtrList>::iterator i = lists.begin();
@@ -280,9 +281,9 @@ QList<Link *> TransactionPtrList::findInternalMoves(QList<TransactionPtrList> li
 	// For now, we dump them
 	tvalues = transactions.values(tkeys[i]);
 	if(tvalues.size() > 2) {
-	  /// @todo log this properly !
-	  o << "Error: cannot deal with more than two matching transactions !" 
-	    << endl;
+	  err << "findInternalMoves: " 
+	      << "cannot deal with more than two matching transactions !" 
+	      << endl;
 	}
 	else {
 	  // We check the assumptions:

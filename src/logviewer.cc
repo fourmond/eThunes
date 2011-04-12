@@ -34,8 +34,9 @@ LogViewer::LogViewer(LogStorage * s)
   viewer->setReadOnly(true);
   viewer->setAcceptRichText(true);
   l1->addWidget(viewer);
-
   populateViewer();
+  connect(storage, SIGNAL(receivedMessage(const LogMessage &)),
+	  SLOT(addMessage(const LogMessage &)));
 }
 
 
@@ -51,4 +52,5 @@ void LogViewer::populateViewer()
 void LogViewer::addMessage(const LogMessage & msg)
 {
   viewer->append(msg.message);
+  QTextStream o(stdout);
 }
