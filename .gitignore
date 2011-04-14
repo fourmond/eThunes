@@ -7,10 +7,10 @@
 # Generated files:
 *.o
 *.gch
-QMoney
+eThunes
 Makefile
 moc_*.cpp
 doc/
 
 # Private files
-*.ofx
+Download
