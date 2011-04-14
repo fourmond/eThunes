@@ -26,6 +26,7 @@
 #include <account.hh>
 #include <ofximport.hh>
 #include <filter.hh>
+#include <accountgroup.hh>
 
 /// This class represents a collection of accounts. Presumably, there
 /// should be only one Wallet instance in a running program, although
@@ -54,6 +55,9 @@ public:
 
   /// A list of Filter objects to run over the imported transactions.
   QList<Filter> filters;
+
+  /// A list of AccountGroup
+  QList<AccountGroup> accountGroups;
 
   /// Runs the filters on the given transaction list
   void runFilters(TransactionList * list);

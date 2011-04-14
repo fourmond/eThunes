@@ -53,6 +53,8 @@ SerializationAccessor * Wallet::serializationAccessor()
   SerializationAccessor * ac = new SerializationAccessor(this);
   ac->addAttribute("account",
 		   new SerializationQList<Account>(&accounts));
+  ac->addAttribute("groups",
+		   new SerializationQList<AccountGroup>(&accountGroups));
   ac->addAttribute("filter",
 		   new SerializationQList<Filter>(&filters));
   ac->addAttribute("category",
@@ -115,6 +117,10 @@ void Wallet::finishedSerializationRead()
   // Make sure that account.wallet points to here.
   for(int i = 0; i < accounts.size(); i++)
     accounts[i].wallet = this;
+
+  // Then, make sure all the AccountGroup have correct pointers
+  for(int i = 0; i < accountGroups.size(); i++)
+    accountGroups[i].finalizePointers(this);
 
   // Evidently
   allChanged();
