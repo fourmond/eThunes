@@ -50,6 +50,9 @@ public:
   /// Function to be called on each group at the end of the
   /// serialization to ensure the pointers get correct.
   void finalizePointers(Wallet * wallet);
+
+  /// The total balance of the group
+  int balance();
 };
 
 #endif

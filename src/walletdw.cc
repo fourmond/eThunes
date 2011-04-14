@@ -58,7 +58,7 @@ void WalletDW::updateSummary()
 
   /// \todo Maybe the facility for building up tables should end up
   /// somewhere as global utilities ?
-  text += "<table>\n";
+  text += "<h2>Accounts</h2><table>\n";
   text += QString("<tr><th" + cellStyle +">%1</th><th>%2</th></tr>\n").
     arg(tr("Account")).arg(tr("Balance"));
   for(int i = 0; i < wallet->accounts.size(); i++) {
@@ -73,6 +73,17 @@ void WalletDW::updateSummary()
   text += (QString("<tr><td><strong>") + tr("Total") +
 	   "</strong></td><td><strong>%1</strong></td></tr>\n").
     arg(Transaction::formatAmount(totalBalance));
+  text += "</table>\n";
+
+
+  text += "<h2>Groups</h2>\n<table>\n";
+  for(int i = 0; i < wallet->accountGroups.size(); i++) {
+    AccountGroup * g = &wallet->accountGroups[i];
+    text += QString("<tr><td" + cellStyle +">") +
+      g->name + 
+      QString("</td><td align='right'>%1</td></tr>\n").
+      arg(Transaction::formatAmount(g->balance()));
+  }
   text += "</table>\n";
 
   summary->setText(text);

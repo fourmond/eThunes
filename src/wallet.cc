@@ -53,7 +53,7 @@ SerializationAccessor * Wallet::serializationAccessor()
   SerializationAccessor * ac = new SerializationAccessor(this);
   ac->addAttribute("account",
 		   new SerializationQList<Account>(&accounts));
-  ac->addAttribute("groups",
+  ac->addAttribute("group",
 		   new SerializationQList<AccountGroup>(&accountGroups));
   ac->addAttribute("filter",
 		   new SerializationQList<Filter>(&filters));
