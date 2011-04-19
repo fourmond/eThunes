@@ -20,23 +20,26 @@
 
 #include <headers.hh>
 #include <mainwin.hh>
-#include <account.hh>
-#include <ofximport.hh>
-
 #include <log.hh>
+#include <commandline.hh>
+
 
 int main(int argc, char ** argv)
 {
   QApplication main(argc, argv);
-  MainWin win;
   QFile log;
   log.open(stdout, QIODevice::WriteOnly);
   Log::logger()->spy = &log;
+  if(parseCommandLine())
+    return 0;
+
+  MainWin win;
 
   // The search path for Ruby code (general-purpose modules)
   QDir::addSearchPath("ruby", "/home/vincent/Prog/eThunes/ruby");
   QDir::addSearchPath("icons", "/home/vincent/Prog/eThunes/data");
   main.setApplicationName("eThunes");
   win.show();
-  main.exec();
+  return main.exec();
 }
+
