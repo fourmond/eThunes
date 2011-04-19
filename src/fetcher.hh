@@ -128,6 +128,10 @@ protected:
   /// The wrapper for post
   static VALUE postWrapper(VALUE obj, VALUE str, VALUE hash);
 
+
+  /// The wrapper for post
+  static VALUE cookiesWrapper(VALUE obj);
+
   /// Spawns a post request with the given parameters.
   OngoingRequest * post(const QNetworkRequest & request,
 			const AttributeHash & params,

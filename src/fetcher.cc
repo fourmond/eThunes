@@ -77,6 +77,9 @@ void Fetcher::initializeRuby()
   rb_define_method(cFetcher, "add_document",
 		   (VALUE (*)(...)) addDocumentWrapper, 2);
 
+  rb_define_method(cFetcher, "dump_cookies",
+		   (VALUE (*)(...)) cookiesWrapper, 0);
+
 
   Result::initializeRuby(mNet);
   rubyInitialized = true;
@@ -134,6 +137,15 @@ Fetcher::OngoingRequest * Fetcher::post(const QNetworkRequest & request,
 	      "application/x-www-form-urlencoded");
   QNetworkReply * reply = manager->post(re, data);
   return registerRequest(reply, code);
+}
+
+VALUE Fetcher::cookiesWrapper(VALUE obj)
+{
+  Fetcher * f = fromValue(obj);
+  if(f->cookieJar) {
+    f->cookieJar->dumpContents();
+  }
+  return Qnil;
 }
 
 

@@ -74,7 +74,9 @@ public:
   ///
   /// \todo This is more a hack than anything else, but it
   /// will surely help in a close future.
-  QIODevice * spy;
+  ///
+  /// We use a file to ensure the existence of a flush !
+  QFile * spy;
 
 
 signals:

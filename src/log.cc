@@ -53,8 +53,10 @@ void Log::logString(const QString & message, LogLevel l,
   QString plain = toPlainText(final);
   emit(plainMessage(LogMessage(plain, l, channel)));
   emit(htmlMessage(LogMessage(toHTML(final), l, channel)));
-  if(spy)
+  if(spy) {
     spy->write(plain.toLocal8Bit());
+    spy->flush();
+  }
 }
 
 QString Log::toHTML(const QString &str)
