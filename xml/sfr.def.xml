@@ -61,23 +61,46 @@ module SFR
 
 	     # 'service' => 'https://www.sfr.fr/j_spring_cas_security_check',
 	     # 'spring-security-redirect' => '/do/creationMail/redirect/redirect?provenance=',
- 
-    fetcher.post("https://www.sfr.fr/cas/login?domain=sfr&service=https%3A%2F%2Fwww.sfr.fr%2Faccueil%2Fj_spring_cas_security_check&target=%2Faccueil%2Fadsl.html",vals) do |res|
+
+    puts
+    p fetcher.methods
+    puts
+
+    fetcher.get("https://moncompte-neufbox.sfr.fr/moncompte-webapp/moncompte/factures/detailFacture.action") do |res|
       if res.ok?
-	fetcher.get('https://moncompte-neufbox.sfr.fr/moncompte-webapp/moncompte/hub/accueil.action?javascript=true') do |res|
-	  if res.ok?
-	    fetcher.get('https://moncompte-neufbox.sfr.fr/moncompte-webapp/moncompte/factures/detailFacture.action') do |res|
+        # Find the login ticket
+        res.contents =~ /name="loginTicket"\s*value="([^"]+)"/;
+        vals['loginTicket'] = $1
+        puts
+        p vals
+        puts
+
+        puts "initial"
+        fetcher.dump_cookies
+
+        
+        fetcher.post("https://www.sfr.fr/cas/login?service=https://espace-client.sfr.fr/moncompte-webapp/j_spring_cas_security_check",vals) do |res|
+          if res.ok?
+            puts "post-login ?"
+            fetcher.dump_cookies
+            fetcher.get('https://moncompte-neufbox.sfr.fr/moncompte-webapp/moncompte/hub/accueil.action?javascript=true') do |res|
               if res.ok?
-                # We really look hard into all the bills SFR knows about...
-                fetcher.get('https://moncompte-neufbox.sfr.fr/moncompte-webapp/moncompte/factures/detailFactureHisto.action') do |res|
-                  SFR.parse_and_fetch_bills(res, fetcher, docs)
+                puts "and what ?"
+                fetcher.dump_cookies
+                fetcher.get('https://moncompte-neufbox.sfr.fr/moncompte-webapp/moncompte/factures/detailFacture.action') do |res|
+                  if res.ok?
+                    # We really look hard into all the bills SFR knows about...
+                    fetcher.get('https://moncompte-neufbox.sfr.fr/moncompte-webapp/moncompte/factures/detailFactureHisto.action') do |res|
+                      SFR.parse_and_fetch_bills(res, fetcher, docs)
+                    end
+                  end
                 end
               end
-	    end
-	  end
-	end
-      else
-        p [:error, res.error]
+            end
+          else
+            p [:error, res.error]
+          end
+        end
       end
     end
   end
