@@ -40,7 +40,7 @@ void CommandLineOption::handle(QStringList & args)
     QStringList arglist;
     for(int i = 0; i < numberNeeded; i++)
       arglist.append(args.takeFirst());
-    handler(args);
+    handler(arglist);
   }
 }
 
@@ -88,12 +88,37 @@ static void listCollections(const QStringList &)
   }
 }
 
+// First, the handlers
+static void showCollection(const QStringList & s)
+{
+  QTextStream o(stdout);
+  CollectionDefinition * def = 
+    CollectionDefinition::namedDefinition(s.first());
+  if(! def) {
+    o << "Unable to find the collection" << s.first() << endl;
+    return;
+  }
+  o << "Dumping collection " << def->name << ":" << endl
+    << "\tpublic name: " << def->publicName  << endl
+    << "\tdescription: " << def->description << endl;
+
+  QStringList docs = def->documentTypes.keys();
+  docs.sort();
+
+  o << endl << "Available document types: " << endl;
+  for(int i = 0; i < docs.size(); i++)
+    o << " - " << docs[i] << endl;
+}
+
 
 static CommandLineParser * myParser()
 {
   CommandLineParser * parser = new CommandLineParser();
-  *parser << new CommandLineOption("--list-collections", listCollections,
-				   0, "List collections");
+  *parser 
+    << new CommandLineOption("--list-collections", listCollections,
+			     0, "List collections")
+    << new CommandLineOption("--show-collection", showCollection,
+			     1, "Shows the given collection in more details");
   return parser;
 }
 
