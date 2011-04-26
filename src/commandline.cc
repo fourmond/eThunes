@@ -73,6 +73,17 @@ void CommandLineParser::parseCommandLine()
   parseCommandLine(a);
 }
 
+void CommandLineParser::showHelpText(QTextStream & s)
+{
+  QStringList lst = options.keys();
+  lst.sort();
+  for(int i = 0; i < lst.size(); i++) {
+    CommandLineOption * opt = options[lst[i]];
+    s << "\t--" << opt->longKey << "\t" << opt->helpText << endl;
+  }
+}
+
+
 ////////////////////////////////////////////////////////////
 // Now, we switch to the various actual command-line parsing.
 
@@ -111,27 +122,41 @@ static void showCollection(const QStringList & s)
 }
 
 
+static CommandLineParser * parser = NULL;
+
+static void showHelp(const QStringList & )
+{
+  QTextStream o(stdout);
+  o << "Available options:" << endl;
+  parser->showHelpText(o);
+}
+
 static CommandLineParser * myParser()
 {
   CommandLineParser * parser = new CommandLineParser();
   *parser 
     << new CommandLineOption("--list-collections", listCollections,
 			     0, "List collections")
+    << new CommandLineOption("--help", showHelp,
+			     0, "Shows this help")
     << new CommandLineOption("--show-collection", showCollection,
 			     1, "Shows the given collection in more details");
   return parser;
 }
+
 
 bool parseCommandLine()
 {
   QStringList a = QCoreApplication::arguments();
   a.takeFirst();		// That's the program name
   if(a.size() > 0) {
-    // Do processing.
-    CommandLineParser * parser = myParser();
+    // Do processing. (we use the static version
+    /// @todo use real object-oriented interface one day ?
+    parser = myParser();
     parser->parseCommandLine(a);
 
     delete parser;
+    parser = NULL;
     return true;
   }
 

@@ -89,6 +89,9 @@ public:
   /// Parsers the application-wide command-line.
   void parseCommandLine();
 
+  /// Sends help text to the given stream
+  void showHelpText(QTextStream & s);
+
  
 };
 
