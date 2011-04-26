@@ -22,6 +22,7 @@
 // Now, stuff for handlers
 #include <collection.hh>
 
+#include <ruby-utils.hh>
 
 void CommandLineOption::handle(QStringList & args)
 {
@@ -79,7 +80,7 @@ void CommandLineParser::showHelpText(QTextStream & s)
   lst.sort();
   for(int i = 0; i < lst.size(); i++) {
     CommandLineOption * opt = options[lst[i]];
-    s << "\t--" << opt->longKey << "\t" << opt->helpText << endl;
+    s << "\t" << opt->longKey << "\t" << opt->helpText << endl;
   }
 }
 
@@ -121,6 +122,33 @@ static void showCollection(const QStringList & s)
     o << " - " << docs[i] << endl;
 }
 
+static void testDocumentLoading(const QStringList & a)
+{
+  QTextStream o(stdout);
+  QStringList args = a;
+  QString name = args.takeFirst();
+  Ruby::ensureInitRuby();
+  CollectionDefinition * def =
+    CollectionDefinition::namedDefinition(name);
+  if(! def) {
+    o << "Unable to find the collection" << name << endl;
+    return;
+  }
+  name = args.takeFirst();
+  for(int i = 0; i < args.size(); i++) {
+    QString file = args[i];
+    AttributeHash contents = CollectionCode::readPDF(file);
+    o << "File " << file << "'s raw attributes: " << endl;
+    contents.dumpContents();
+    AttributeHash outAttrs = def->code.
+      parseDocumentMetaData(name, contents);
+    o << endl << "Parse attributes:" << endl;
+    outAttrs.dumpContents();
+  }
+  
+
+}
+
 
 static CommandLineParser * parser = NULL;
 
@@ -139,6 +167,8 @@ static CommandLineParser * myParser()
 			     0, "List collections")
     << new CommandLineOption("--help", showHelp,
 			     0, "Shows this help")
+    << new CommandLineOption("--test-document", testDocumentLoading,
+			     -2, "Tries to load the given document")
     << new CommandLineOption("--show-collection", showCollection,
 			     1, "Shows the given collection in more details");
   return parser;

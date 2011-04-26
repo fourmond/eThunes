@@ -30,14 +30,17 @@ int main(int argc, char ** argv)
   QFile log;
   log.open(stdout, QIODevice::WriteOnly);
   Log::logger()->spy = &log;
+
+  // The search path for Ruby code (general-purpose modules)
+  QDir::addSearchPath("ruby", "/home/vincent/Prog/eThunes/ruby");
+  QDir::addSearchPath("icons", "/home/vincent/Prog/eThunes/data");
+
+  // Command-line parsing if applicable
   if(parseCommandLine())
     return 0;
 
   MainWin win;
 
-  // The search path for Ruby code (general-purpose modules)
-  QDir::addSearchPath("ruby", "/home/vincent/Prog/eThunes/ruby");
-  QDir::addSearchPath("icons", "/home/vincent/Prog/eThunes/data");
   main.setApplicationName("eThunes");
   win.show();
   return main.exec();

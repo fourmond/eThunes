@@ -34,7 +34,7 @@ public:
   /// The handler for a given option
   typedef void (* CommandHandler)(const QStringList & args);
 
-  /// The long key, stripped of its --
+  /// The long key, including --
   QString longKey;
 
   /// The number of arguments needed. If negative, it means at least
