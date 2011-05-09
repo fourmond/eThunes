@@ -159,6 +159,7 @@ QVariant AccountModel::headerData(int section,
     case NameColumn: return QVariant(tr("Name"));
     case LinksColumn: return QVariant(tr("Links"));
     case MemoColumn: return QVariant(tr("Memo"));
+    case TagsColumn: return QVariant(tr("Tags"));
     case CategoryColumn: return QVariant(tr("Category"));
     default:
       return QVariant();
@@ -181,6 +182,7 @@ QVariant AccountModel::data(const QModelIndex& index, int role) const
     case BalanceColumn: return QVariant(Transaction::formatAmount(t->balance));
     case NameColumn: return QVariant(t->name);
     case CategoryColumn: return QVariant(t->categoryName());
+    case TagsColumn: return QVariant(t->tagString());
     case MemoColumn: if(!t->memo.isEmpty())
 	return QVariant(t->memo);
       else if(!t->checkNumber.isEmpty())
@@ -192,6 +194,7 @@ QVariant AccountModel::data(const QModelIndex& index, int role) const
   if(role == Qt::EditRole) {
     switch(index.column()) {
     case CategoryColumn: return QVariant(t->categoryName());
+    case TagsColumn: return QVariant(t->tagString());
     case LinksColumn: if(t->links.size())
 	return t->links.htmlLinkList().join(", ");
       return QVariant();
@@ -253,7 +256,6 @@ QVariant AccountModel::data(const QModelIndex& index, int role) const
     }
     return QVariant();
   }
-  /// \todo Add colors here !
   else
     return QVariant();
 }
@@ -262,7 +264,9 @@ Qt::ItemFlags AccountModel::flags(const QModelIndex & index) const
 {
   if(index.isValid()) {
     switch(index.column()) {
-    case CategoryColumn: return Qt::ItemIsSelectable|
+    case CategoryColumn:
+    case TagsColumn:
+      return Qt::ItemIsSelectable|
 	Qt::ItemIsEnabled|Qt::ItemIsEditable;
     default: return Qt::ItemIsSelectable|
 	Qt::ItemIsEnabled;
@@ -275,12 +279,24 @@ bool AccountModel::setData(const QModelIndex & index, const QVariant & value,
 			   int role)
 {
   Transaction *t = indexedTransaction(index);
-  if(index.column() == CategoryColumn && t && role == Qt::EditRole) {
-    t->setCategoryFromName(value.toString());
-    emit(dataChanged(index, index));
-    if(t->account && t->account->wallet)
-      t->account->wallet->didChangeCategories();
-    return true;
+  if(t && role == Qt::EditRole) {
+    switch(index.column()) {
+    case CategoryColumn:
+      t->setCategoryFromName(value.toString());
+      emit(dataChanged(index, index));
+      // This is really cumbersome !
+      if(t->account && t->account->wallet)
+	t->account->wallet->didChangeCategories();
+      return true;
+    case TagsColumn:
+      t->setTagList(value.toString());
+      emit(dataChanged(index, index));
+      // if(t->account && t->account->wallet)
+      // 	t->account->wallet->didChangeCategories();
+      return true;
+    default:
+      return false;
+    }
   }
   return false;
 }

@@ -31,9 +31,11 @@ QString TagList::toString() const
 void TagList::fromString(const QString & str, Wallet * wallet)
 {
   clear();			// Done with the contents
+  QTextStream o(stdout);
   QStringList l = str.split(QRegExp("\\s*,\\s*"), QString::SkipEmptyParts);
-  for(QStringList::iterator i = l.begin(); i != l.end(); i++)
+  for(QStringList::iterator i = l.begin(); i != l.end(); i++) {
     append(wallet->tags.namedTag(*i, true)); // Create if necessary
+  }
 }
 
 
@@ -45,7 +47,9 @@ Tag * TagHash::namedTag(const QString &name, bool create)
     return &(i.value());
   }
   if(create) {
-    return &(*this)[name];
+    Tag * t = &(*this)[name];
+    t->name = name;
+    return t;
   }
   return NULL;
 }

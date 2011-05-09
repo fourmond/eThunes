@@ -160,10 +160,7 @@ public:
 
   /// Sets the tag list, from a comma-separated string. The wallet is
   /// necessary.
-  void setTagList(const QString & str, Wallet * wallet) {
-    tags.fromString(str, wallet);
-  };
-
+  void setTagList(const QString & str, Wallet * wallet = NULL);
 
   /// @}
 
@@ -228,7 +225,7 @@ public:
 private:
 
   /// Same as before, but using the currently serialized wallet.
-  void setTagList(const QString & str);
+  void setTagListPrivate(const QString & str);
   
 
 };

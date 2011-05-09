@@ -66,6 +66,8 @@ public:
   Transaction * indexedTransaction(QModelIndex index) const;
 
 
+  /// @todo The order of the columns should probably be made
+  /// customizable.
   enum {
     RecentColumn,		/// Whether the transaction is new or not ?
     DateColumn,
@@ -74,6 +76,7 @@ public:
     NameColumn,
     BalanceColumn,
     LinksColumn,
+    TagsColumn,			// The column holding the tags.
     MemoColumn,
     LastColumn
   };

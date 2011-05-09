@@ -126,7 +126,7 @@ SerializationAccessor * Transaction::serializationAccessor()
   		   new SerializeCategoryPointer(&category));
   ac->addAttribute("tags",
   		   new SerializationItemAccessors<Transaction>
-		   (this, &Transaction::setTagList, 
+		   (this, &Transaction::setTagListPrivate, 
 		    &Transaction::tagString, 
 		    true));
 
@@ -184,7 +184,21 @@ QString Transaction::uniqueID() const
   return account->accountID() + "##" + transactionID();
 }
 
-void Transaction::setTagList(const QString & str) 
+void Transaction::setTagListPrivate(const QString & str) 
 {
   setTagList(str, Wallet::walletCurrentlyRead);
+}
+
+void Transaction::setTagList(const QString & str, Wallet * w)
+{
+  if(! w) {
+    if(! account || ! account->wallet) {
+      fprintf(stderr, "We have serious problems setting a "
+	      "TagList from a Name\n");
+      return;
+    }
+    w = account->wallet;
+  }
+
+  tags.fromString(str, w);
 }
