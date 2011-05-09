@@ -18,6 +18,15 @@
 
 #include <serializable.hh>
 
+/// @todo I should implement an ID attribute that would be unique to
+/// each serialized object and that could be used to store pointers.
+///
+/// The ID would have to be stored in the XML file. It could simply be
+/// an ever-increasing integer, starting off from the highest one
+/// known. It would need a storage place (ID to pointer), and a
+/// function for attributing a new ID in case of need (not in the
+/// Serialization constructor, else reading will be a problem)
+
 void Serialization::readNextToken(QXmlStreamReader * reader)
 {
   do {

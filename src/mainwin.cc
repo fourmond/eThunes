@@ -25,9 +25,13 @@
 
    \li A signalling mechanism should be written for Document and
    Transaction, and for basically anything that should be stored into
-   a Qt container, which therefore cannot be a child of QObject; this
-   would require setting up a shared class that would listen signals
-   (with pointers to the relevant object ?)
+   a Qt container, which therefore cannot be a child of
+   QObject. Probably the best way to achieve that is to use a single
+   Object for signalling (there won't be too many receivers), and send
+   the pointer to the element that changed -- and possibly its ID
+   too. That could either be yet another base class, or be integrated
+   into the Serialization framework. (because the purpose is
+   eventually the same, isn't it ?)
 
    \li Customize the frequency at which new documents should be polled
    from master sites ?
