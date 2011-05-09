@@ -36,6 +36,15 @@ public:
   /// ignored) list of tags and store them here. A Wallet should be
   /// supplied to get the target
   void fromString(const QString & str, Wallet * wallet);
+
+  /// Sets a Tag
+  void setTag(Tag * tag);
+  
+  /// Clears a Tag
+  void clearTag(Tag * tag);
+
+  /// Whether the given tag is in or not.
+  bool hasTag(Tag * tag) const;
 };
 
 /// A hash of Tag, intended for storage.

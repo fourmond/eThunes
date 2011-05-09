@@ -39,6 +39,20 @@ void TagList::fromString(const QString & str, Wallet * wallet)
 }
 
 
+void TagList::setTag(Tag * t)
+{
+  if(contains(t))
+    return;
+  append(t);
+}
+
+void TagList::clearTag(Tag * t)
+{
+  int i = indexOf(t);
+  if(i >= 0)
+    takeAt(i);
+}
+
 
 Tag * TagHash::namedTag(const QString &name, bool create)
 {

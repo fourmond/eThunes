@@ -39,6 +39,10 @@ protected:
   /// Fills the menu with the given CategoryHash
   void fillMenuWithCategoryHash(QMenu * menu, CategoryHash * ch);
 
+  /// Fills the menu with the given Category and its children.
+  void fillMenuWithTags(QMenu * menu, TagHash * tags, 
+			const QString &action);
+
 public:
 
   TransactionListWidget(QWidget * parent = 0);

@@ -142,17 +142,33 @@ void TransactionListWidget::fireUpContextMenu(const QPoint & pos)
 {
   // We fire up a neat menu to select categories, for instance.
   QMenu menu;
+
   QMenu * subMenu = new QMenu(tr("Set category"));
-  QAction * clearAction = new QAction(tr("Clear"), this);
-  clearAction->setData(QStringList() << "set-category" << "");
-  subMenu->addAction(clearAction);
+  QAction * action = new QAction(tr("Clear"), this);
+  action->setData(QStringList() << "set-category" << "");
+  subMenu->addAction(action);
   subMenu->addSeparator();
   if(wallet())
     fillMenuWithCategoryHash(subMenu, &wallet()->categories);
-  // TODO: do that for the "category submenu..."
-  connect(subMenu, SIGNAL(triggered(QAction *)),
-	  SLOT(contextMenuActionFired(QAction *)));
   menu.addMenu(subMenu);
+
+  subMenu = new QMenu(tr("Clear tag"));
+  if(wallet()) {
+    fillMenuWithTags(subMenu, &wallet()->tags, "clear-tag");
+  }
+  menu.addMenu(subMenu);
+
+  subMenu = new QMenu(tr("Add tag"));
+  if(wallet()) {
+    fillMenuWithTags(subMenu, &wallet()->tags, "add-tag");
+  }
+  menu.addMenu(subMenu);
+
+  
+
+
+  connect(&menu, SIGNAL(triggered(QAction *)),
+	  SLOT(contextMenuActionFired(QAction *)));
   menu.exec(view->viewport()->mapToGlobal(pos));
 }
 
@@ -163,6 +179,19 @@ void TransactionListWidget::fillMenuWithCategoryHash(QMenu * menu,
   subCategories.sort(); // Will be much easier to read !
   for(int i = 0; i < subCategories.count(); i++)
     fillMenuWithCategory(menu, &ch->operator[](subCategories[i]));
+}
+
+void TransactionListWidget::fillMenuWithTags(QMenu * menu, TagHash * tags, 
+					     const QString &action)
+{
+  QStringList t = tags->tagNames();
+  t.sort();
+  for(int i = 0; i < t.count(); i++) {
+    QAction * a = new QAction(t[i], this);
+    a->setData(QStringList() << action << t[i]);
+    menu->addAction(a);
+  }
+  
 }
 
 
@@ -212,9 +241,26 @@ void TransactionListWidget::contextMenuActionFired(QAction * action)
     }
     for(int i = 0; i < selected.count(); i++)
       selected[i]->setCategoryFromName(category);
+    /// @todo handle the signaling here ?
+  } else if(what == "clear-tag") {
+    Tag * t = wallet()->namedTag(l.first());
+    if(t) {
+      for(int i = 0; i < selected.count(); i++)
+	selected[i]->tags.clearTag(t);
+      
+    }
+  } else if(what == "add-tag") { 
+    Tag * t = wallet()->namedTag(l.first());
+    if(t) {
+      for(int i = 0; i < selected.count(); i++)
+	selected[i]->tags.setTag(t);
+    }
+  }
+  else {
+    // Log !
   }
 }
-
+  
 Wallet * TransactionListWidget::wallet() const
 {
   if(model->account())

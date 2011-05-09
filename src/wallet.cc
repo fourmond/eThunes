@@ -200,6 +200,14 @@ Category * Wallet::namedCategory(const QString & name)
   return categories.namedSubCategory(name, false);
 }
 
+Tag * Wallet::namedTag(const QString & name)
+{
+  TagHash::iterator i = tags.find(name);
+  if(i != tags.end())
+    return &(i.value());
+  return NULL;
+}
+
 void Wallet::findInternalMoves()
 {
   QList<TransactionPtrList> lists;
