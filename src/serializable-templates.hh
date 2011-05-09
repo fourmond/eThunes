@@ -55,7 +55,7 @@ template <class C>
 class SerializationItemAccessors : public SerializationItem {
   typedef void (C::*Setter)(const QString &);
   Setter setter;
-  typedef QString (C::*Getter)();
+  typedef QString (C::*Getter)() const;
   Getter getter;
 
   C * targetClass;
@@ -68,15 +68,15 @@ public:
   };
 
   virtual void setFromVariant(const QVariant & v) {
-    CALL_MEMBER_FN(targetClass, setter)(v.toString());
+    CALL_MEMBER_FN(*targetClass, setter)(v.toString());
   };
 
   virtual QVariant valueToVariant() {
-    return CALL_MEMBER_FN(targetClass, getter)();
+    return CALL_MEMBER_FN(*targetClass, getter)();
   };
 
-  virtual QVariant valueToString() {
-    return CALL_MEMBER_FN(targetClass, getter)();
+  virtual QString valueToString() {
+    return CALL_MEMBER_FN(*targetClass, getter)();
   };
 };
 
