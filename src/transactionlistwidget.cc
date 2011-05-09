@@ -23,35 +23,33 @@
 
 TransactionListWidget::TransactionListWidget(TransactionList *transactions,
 					     QWidget * parent) :
-  QWidget(parent), model(NULL) {
+  QWidget(parent), model(NULL), proxy(NULL) {
   setupFrame();
   showTransactions(transactions);
 }
 
 TransactionListWidget::TransactionListWidget(TransactionPtrList *transactions,
 					     QWidget * parent) :
-  QWidget(parent), model(NULL)  {
+  QWidget(parent), model(NULL), proxy(NULL)  {
   setupFrame();
   showTransactions(transactions);
 }
 
 TransactionListWidget::TransactionListWidget(QWidget * parent) :
-  QWidget(parent), model(NULL)  {
+  QWidget(parent), model(NULL), proxy(NULL)  {
   setupFrame();
 }
 
 void TransactionListWidget::showTransactions(TransactionList *transactions)
 {
-  if(model)
-    delete model;
+  delete model;
   model = new AccountModel(transactions);
   setupTreeView();
 }
 
 void TransactionListWidget::showTransactions(TransactionPtrList *transactions)
 {
-  if(model)
-    delete model;
+  delete model;
   model = new AccountModel(transactions);
   setupTreeView();
 
@@ -71,8 +69,28 @@ void TransactionListWidget::setupFrame()
 
 void TransactionListWidget::setupTreeView()
 {
+  delete proxy;
+  proxy = new QSortFilterProxyModel();
+  proxy->setSourceModel(model);
+  // proxy->setFilterRegExp(".*");
+  // proxy->setFilterKeyColumn(4);
+  // proxy->setDynamicSortFilter(true);
+  // view->setModel(proxy);
   view->setModel(model);
-  view->setRootIndex(model->index(0,0));
+
+  QTextStream o(stdout);
+  QModelIndex root = model->index(0,0, QModelIndex());
+  // o << "Original row count: " << model->rowCount(root) << endl
+  //   << (root.isValid() ? " -> valid root " : " -> invalid root") << endl;
+  // root = root.parent();
+  // o << "Original row count: " << model->rowCount(root) << endl
+  //   << (root.isValid() ? " -> valid root " : " -> invalid root") << endl;
+  // root = proxy->mapFromSource(root);
+  // root = proxy->index(0,0);
+  // o << "Final row count: " << proxy->rowCount(root) << endl
+  //   << (root.isValid() ? " -> valid root " : " -> invalid root") << endl;
+  
+  view->setRootIndex(root);
   view->setRootIsDecorated(false);
 
   if(wallet())
@@ -92,7 +110,6 @@ void TransactionListWidget::setupTreeView()
 
 
 
-  QModelIndex root = model->index(0,0,QModelIndex());
   /// \todo We need to intercept the signals from the model saying
   /// columns have been inserted to ensure all have their persistent
   /// editor opened.
@@ -257,7 +274,7 @@ void TransactionListWidget::contextMenuActionFired(QAction * action)
     }
   }
   else {
-    // Log !
+    /// @todo Log !
   }
 }
   

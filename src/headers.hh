@@ -44,6 +44,9 @@
 // Deeply digging into Qt4...
 #include <QStyledItemDelegate>
 
+// Sorting and filtering
+#include <QSortFilterProxyModel>
+
 // Dialogs and the like
 #include <QFileDialog>
 #include <QDialog>

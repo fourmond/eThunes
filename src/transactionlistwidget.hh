@@ -58,6 +58,9 @@ public:
   /// The model holding the data
   AccountModel * model;
 
+  /// A proxy for sorting/filtering
+  QSortFilterProxyModel * proxy;
+
   /// And the widget to actually display stuff
   QTreeView * view;
 
