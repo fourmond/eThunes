@@ -108,6 +108,9 @@ bool Transaction::operator==(const Transaction & t) const
 
 SerializationAccessor * Transaction::serializationAccessor()
 {
+  /// @todo it may be nice to implement a << -chained initialization,
+  /// but that won't work really well as addAttribute needs
+  /// two parameters ;-)...
   SerializationAccessor * ac = new SerializationAccessor(this);
   ac->addAttribute("amount",
 		   new SerializationItemScalar<int>(&amount, true));
@@ -121,6 +124,11 @@ SerializationAccessor * Transaction::serializationAccessor()
 		   new SerializationItemScalar<QString>(&checkNumber));
   ac->addAttribute("category",
   		   new SerializeCategoryPointer(&category));
+  ac->addAttribute("tags",
+  		   new SerializationItemAccessors<Transaction>
+		   (this, &Transaction::setTagList, 
+		    &Transaction::tagString, 
+		    true));
 
   addLinkAttributes(ac);
   return ac;
@@ -174,4 +182,9 @@ QString Transaction::transactionID() const
 QString Transaction::uniqueID() const
 {
   return account->accountID() + "##" + transactionID();
+}
+
+void Transaction::setTagList(const QString & str) 
+{
+  setTagList(str, Wallet::walletCurrentlyRead);
 }

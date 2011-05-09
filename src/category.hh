@@ -25,7 +25,7 @@
 
 class Category;
 
-/// A hash of Category, knowing that they sho
+/// A hash of Category.
 class CategoryHash : public QHash<QString, Category> {
 public:
   /// Returns a pointer to the named (sub) category, or NULL if it

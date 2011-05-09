@@ -27,6 +27,7 @@
 #include <ofximport.hh>
 #include <filter.hh>
 #include <accountgroup.hh>
+#include <tag.hh>
 
 /// This class represents a collection of accounts. Presumably, there
 /// should be only one Wallet instance in a running program, although
@@ -52,6 +53,9 @@ public:
 
   /// The top-level categories of the wallet
   CategoryHash categories;
+
+  /// The tags
+  TagHash tags;
 
   /// A list of Filter objects to run over the imported transactions.
   QList<Filter> filters;

@@ -23,6 +23,7 @@
 
 #include <serializable.hh>
 #include <category.hh>
+#include <tag.hh>
 #include <attributehash.hh>
 #include <linkable.hh>
 
@@ -50,14 +51,6 @@ class Account;
 ///   been entered manually (or modified manually) ? This would allow
 ///   to "enter" transactions manually and then check them against web
 ///   download ?
-///
-///
-/// \todo When the whole "bill" things is implemented, it would
-/// probably be very interesting to be able to link a given bill to
-/// its corresponding transaction, and vice versa.
-///
-/// \todo It would be interesting to display which Transaction objects
-/// are "new", ie just imported ?
 class Transaction : public Linkable {
 public:
 
@@ -132,7 +125,8 @@ public:
 
   /// \name User-defined attributes
   ///
-  /// (and possibly accessors too)
+  /// Along with their accessors.
+  /// 
   /// @{
 
   /// Whether the transaction is locked for manual modification or not.
@@ -155,6 +149,21 @@ public:
   /// user has already seen it). This flag should be set for every
   /// data import.
   bool recent;
+
+  /// The list of tags.
+  TagList tags;
+
+  /// Returns the list of tags, formatted as in TagList::toString.
+  QString tagString() const {
+    return tags.toString();
+  };
+
+  /// Sets the tag list, from a comma-separated string. The wallet is
+  /// necessary.
+  void setTagList(const QString & str, Wallet * wallet) {
+    tags.fromString(str, wallet);
+  };
+
 
   /// @}
 
@@ -216,6 +225,11 @@ public:
     return QObject::tr("Transaction");
   };
 
+private:
+
+  /// Same as before, but using the currently serialized wallet.
+  void setTagList(const QString & str);
+  
 
 };
 

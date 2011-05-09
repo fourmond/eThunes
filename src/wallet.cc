@@ -59,6 +59,8 @@ SerializationAccessor * Wallet::serializationAccessor()
 		   new SerializationQList<Filter>(&filters));
   ac->addAttribute("category",
 		   new SerializationQHash<Category>(&categories));
+  ac->addAttribute("tag",
+		   new SerializationQHash<Tag>(&tags));
   return ac;
 }
 
