@@ -179,6 +179,7 @@ QString Transaction::transactionID() const
     formatString("%{date%date:dd/MM/yy}##%{amount%A}##%{memo}##%{name}");
 }
 
+/// @todo This should be replaced by a unique ID support for all
 QString Transaction::uniqueID() const
 {
   return account->accountID() + "##" + transactionID();

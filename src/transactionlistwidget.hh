@@ -57,13 +57,11 @@ public:
   void showTransactions(TransactionPtrList *transactions);
 
 
-
+  /// The model holding the data
+  AccountModel * model;
 
   /// And the widget to actually display stuff
   QTreeView * view;
-
-  /// The model that does it.
-  AccountModel * model;
 
   ~TransactionListWidget();
 
@@ -76,7 +74,7 @@ public:
   /// Returns a list of the currently selected transactions.
   TransactionPtrList selectedTransactions() const;
 
-  /// Returns the Wallet associated !
+  /// Returns the Wallet associated
   Wallet * wallet() const;
 
 signals:
@@ -93,7 +91,7 @@ public slots:
 protected slots:
 
   /// To be fired up from the context menu.
-  void setCategoryActionFired(QAction * action);
+  void contextMenuActionFired(QAction * action);
 
 };
 

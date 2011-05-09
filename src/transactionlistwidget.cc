@@ -139,13 +139,15 @@ void TransactionListWidget::fireUpContextMenu(const QPoint & pos)
   // We fire up a neat menu to select categories, for instance.
   QMenu menu;
   QMenu * subMenu = new QMenu(tr("Set category"));
-  subMenu->addAction(tr("Clear"));
+  QAction * clearAction = new QAction(tr("Clear"), this);
+  clearAction->setData(QStringList() << "set-category" << "");
+  subMenu->addAction(clearAction);
   subMenu->addSeparator();
   if(wallet())
     fillMenuWithCategoryHash(subMenu, &wallet()->categories);
   // TODO: do that for the "category submenu..."
   connect(subMenu, SIGNAL(triggered(QAction *)),
-	  SLOT(setCategoryActionFired(QAction *)));
+	  SLOT(contextMenuActionFired(QAction *)));
   menu.addMenu(subMenu);
   menu.exec(view->viewport()->mapToGlobal(pos));
 }
@@ -165,7 +167,7 @@ void TransactionListWidget::fillMenuWithCategory(QMenu * menu,
 						 Category * category)
 {
   QAction * a = new QAction(this);
-  a->setData(category->fullName());
+  a->setData(QStringList() << "set-category" << category->fullName());
   if(category->subCategories.size()) {
     // Complex case:
     QMenu * subMenu = new QMenu(category->name);
@@ -191,12 +193,22 @@ TransactionPtrList TransactionListWidget::selectedTransactions() const
   return list;
 }
 
-void TransactionListWidget::setCategoryActionFired(QAction * action)
+void TransactionListWidget::contextMenuActionFired(QAction * action)
 {
-
+  QStringList l = action->data().toStringList();
+  QString what = l.takeFirst();
   TransactionPtrList selected = selectedTransactions();
-  for(int i = 0; i < selected.count(); i++)
-    selected[i]->setCategoryFromName(action->data().toString());
+  if(what == "set-category") {
+    QString category;
+    if(l.size() > 0) {
+      category = l.first();
+    }
+    else {
+      /// @todo implement a dialog box for new categories.
+    }
+    for(int i = 0; i < selected.count(); i++)
+      selected[i]->setCategoryFromName(category);
+  }
 }
 
 Wallet * TransactionListWidget::wallet() const
