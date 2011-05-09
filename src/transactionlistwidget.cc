@@ -54,6 +54,10 @@ void TransactionListWidget::showTransactions(TransactionPtrList *transactions)
     delete model;
   model = new AccountModel(transactions);
   setupTreeView();
+
+  // By default, we hide the balance, as it usually doesnt make sense
+  // for PtrLists
+  hideBalance();
 }
 
 
@@ -216,4 +220,14 @@ Wallet * TransactionListWidget::wallet() const
   if(model->account())
     return model->account()->wallet;
   return NULL;
+}
+
+void TransactionListWidget::showBalance() 
+{
+  view->showColumn(AccountModel::BalanceColumn);
+}
+
+void TransactionListWidget::hideBalance() 
+{
+  view->hideColumn(AccountModel::BalanceColumn);
 }

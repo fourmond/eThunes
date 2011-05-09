@@ -24,12 +24,6 @@
 
 /// This Widget is a thin wrapper around a QTreeView with an
 /// AccoutModel as model.
-///
-/// \todo Activate multiple selection and provide popup menus to
-/// choose categories.
-///
-/// \todo Optionally remove the balance ?
-///
 class TransactionListWidget : public QWidget {
 
   Q_OBJECT;
@@ -87,6 +81,12 @@ public slots:
 
   /// Fires up a context menu for the given item.
   void fireUpContextMenu(const QPoint & pos);
+
+  /// Shows the balance column
+  void showBalance();
+
+  /// Hides the balance column
+  void hideBalance();
 
 protected slots:
 
