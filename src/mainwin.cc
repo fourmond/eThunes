@@ -23,7 +23,19 @@
 
    \section todo-mine Things to do
 
-   \li A signalling mechanism should be written for Document and
+   This list is mostly in priority order.
+
+   \li \b ID 
+   All Serializable items should have a unique ID attribute that could
+   be used to resolve pointers at load/save time, possibly in a
+   type-safe fashion using dynamic_cast and templates.  This framework
+   should be used to serialize all pointers, \b excepted in the cases
+   when serializing a \q name improves readability (Category, Tag come
+   into mind). This ID would be set at serialization time when not
+   existent (ie -1). 
+
+   \li \b Signals 
+   A signalling mechanism should be written for Document and
    Transaction, and for basically anything that should be stored into
    a Qt container, which therefore cannot be a child of
    QObject. Probably the best way to achieve that is to use a single
@@ -67,17 +79,20 @@
    QLabel level (which probably shouldn't be a QLabel, then ?)
 
    \li \b Plugins 
-
    It would be great to add fully customizable plugins in the form of
    Ruby code. An exemple would be for instance for an assistante
    maternelle (as we say in french) to track how much time each child
    is received each day, how much she should be paid and little help
    with the fisc too. That requires a little bit of thinking as far as
    the structure is concerned.
-   
+
 
    \li Customize the frequency at which new documents should be polled
    from master sites ? (from the identities/password saving ?)
+
+   \li Move as many transaction attributes as real XML attributes
+   rather than subchildren, it will save size and improve readability
+   (or so I think)
 
    \li provide automatic completion for category in the filter
 
