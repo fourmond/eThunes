@@ -33,10 +33,51 @@
    into the Serialization framework. (because the purpose is
    eventually the same, isn't it ?)
 
-   \li Customize the frequency at which new documents should be polled
-   from master sites ?
+   \li \b Budgets
+   It should be possible to setup budgets, ie money that either we
+   know we'll spend later on, or simply a prevision of how much should
+   be allocated to something. Budgets should pick up automatically
+   (based on categories, tags, possibly free searches) the
+   corresponding transactions and provide planning information (how
+   much left to spend for that, how much left that isn't included in
+   budgeting...). The main thing to get for now is the idea of
+   periodicity behind. And this is a rather subtle one. 1-month
+   budget, 2-month, 3-month, a year ? Planning necessarily means
+   setting a time frame, but not all budgets should have the same time
+   frame, making it probably more difficult ? 
 
-   \li the filters dialog should move to a real page
+   \li \b Searches 
+   Implement advanced searches, à la find. Possibly a free-text search
+   expression, in the spirit of category:stuff and amount:... ? (just
+   better, though).
+
+   \li \b Dashboard 
+   Dashboard should be fully customizable. For now,
+   the current HVBox approach is just enough to get work done, but
+   isn't nice. Many items could possibly be added there, from the
+   simple summary of the accounts until documents, graphs, and so
+   on. A framework will have to be designed to support that.
+
+   \li \b Collection \b page 
+   The page displaying a collection of documents isn't presented nice
+   for now, and it will not scale well. Instead of using a QLabel, I
+   should use a set of QListView (one for each document type) in icon
+   mode (most probably), separated by a Label (or such) showing the
+   corresponding document type. All these should be collapsible on the
+   QLabel level (which probably shouldn't be a QLabel, then ?)
+
+   \li \b Plugins 
+
+   It would be great to add fully customizable plugins in the form of
+   Ruby code. An exemple would be for instance for an assistante
+   maternelle (as we say in french) to track how much time each child
+   is received each day, how much she should be paid and little help
+   with the fisc too. That requires a little bit of thinking as far as
+   the structure is concerned.
+   
+
+   \li Customize the frequency at which new documents should be polled
+   from master sites ? (from the identities/password saving ?)
 
    \li provide automatic completion for category in the filter
 
@@ -61,8 +102,6 @@
    formatAmount()) using a command-line switch, so I can show to
    others without actually saying too much about how much we have
    ;-)...
-
-   \li Write some code for a transaction matcher
 
    \li Finish up the logger
 
