@@ -84,9 +84,82 @@ TransactionList TransactionList::sublist(const Account &ac)
   return retval;
 }
 
+
+/// Here begins the code for pointer-safe sorting:
+template <typename T> class MyQListIterator {
+public:
+  QList<T> * list;
+
+  int idx;
+
+  /// The exact same thing as QListIterator, but under another name
+  /// and with different semantics.
+  class PointedTo {
+  public:
+    QList<T> * list;
+
+    int idx;
+
+    const T & value() const {
+      return (*list)[idx];
+    };
+
+    PointedTo(const MyQListIterator & i) : list(i.list), idx(i.idx) {;};
+    
+    bool operator <(const PointedTo & b) const {
+      return value() < b.value();
+    };
+
+  };
+  
+  MyQListIterator(QList<T> * l, int i) : list(l), idx(i) {;};
+
+  PointedTo operator*() { return PointedTo(*this);};
+
+  MyQListIterator operator+(int i) const { 
+    return MyQListIterator(list, idx+i);
+  };
+
+  MyQListIterator operator-(int i) const { 
+    return MyQListIterator(list, idx-i);
+  };
+
+  bool operator<(const MyQListIterator & b) const {
+    return idx < b.idx;
+  };
+
+  bool operator!=(const MyQListIterator & b) const {
+    return idx != b.idx;
+  };
+
+  MyQListIterator& operator++() {
+    idx++;
+    return *this;
+  };
+
+  MyQListIterator& operator--() {
+    idx--;
+    return *this;
+  };
+
+  operator int() const {
+    return idx;
+  };
+  
+};
+
+// Funny, this should be explicit and not a template, else g++ is
+// unable to pick it.
+inline void qSwap(MyQListIterator<Transaction>::PointedTo a, 
+                  MyQListIterator<Transaction>::PointedTo b) {
+  a.list->swap(a.idx, b.idx);
+}
+
+
 void TransactionList::sortByDate()
 {
-  qSort(*this);
+  qSort(MyQListIterator<Transaction>(this, 0),
+        MyQListIterator<Transaction>(this, size()));
 }
 
 void TransactionList::computeBalance(int balance)
