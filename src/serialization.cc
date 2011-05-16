@@ -243,3 +243,9 @@ void SerializationHash::writeXML(const QString & name,
   for(int i = 0; i < k.size();i++)
     value(k[i])->writeXML(name, writer);
 }
+
+SerializationAccessor::SerializationAccessor(Serializable * t) { 
+  target = t;
+  if(t)
+    t->addIDSerialization(this);
+}

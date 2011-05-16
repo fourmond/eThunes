@@ -252,8 +252,12 @@ public:
   /// Adds an attribute for this object.
   void addAttribute(QString name, SerializationAttribute * ser);
 
-  /// Creates a SerizalizationAccessor object for the given target
-  SerializationAccessor(Serializable * t) { target = t;};
+  /// Creates a SerizalizationAccessor object for the given target.
+  ///
+  /// It is legal to specify NULL here. It just means that the
+  /// SerializationAccessor is used to serialize something else than a
+  /// child of Serializable. Hmmm, so long as it works ;-)...
+  SerializationAccessor(Serializable * t);
 
   /// Frees the SerializationItem objects referenced by this object.
   ~SerializationAccessor();
