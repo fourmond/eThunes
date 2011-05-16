@@ -117,11 +117,11 @@ SerializationAccessor * Transaction::serializationAccessor()
   ac->addAttribute("date",
 		   new SerializationItemScalar<QDate>(&date, true));
   ac->addAttribute("name",
-		   new SerializationItemScalar<QString>(&name));
+		   new SerializationItemScalar<QString>(&name, true));
   ac->addAttribute("memo",
-		   new SerializationItemScalar<QString>(&memo));
+		   new SerializationItemScalar<QString>(&memo, true));
   ac->addAttribute("check-number",
-		   new SerializationItemScalar<QString>(&checkNumber));
+		   new SerializationItemScalar<QString>(&checkNumber, true));
   ac->addAttribute("category",
   		   new SerializeCategoryPointer(&category));
   ac->addAttribute("tags",
