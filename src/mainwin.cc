@@ -76,7 +76,14 @@
    should use a set of QListView (one for each document type) in icon
    mode (most probably), separated by a Label (or such) showing the
    corresponding document type. All these should be collapsible on the
-   QLabel level (which probably shouldn't be a QLabel, then ?)
+   QLabel level (which probably shouldn't be a QLabel, then
+   ?). Another thing: it would be neat to add a bottom/side panel to
+   this page to display all the information available on a given
+   document. Possibly, links to documents could direct to the
+   collection page with the target document selected ? (and that would
+   lift the requirement for a full poppler view of the things). From
+   this side view, it would be interesting to provide a way to reparse
+   the document ?
 
    \li \b Plugins 
    It would be great to add fully customizable plugins in the form of

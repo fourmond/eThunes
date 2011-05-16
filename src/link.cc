@@ -50,6 +50,9 @@ void Link::prepareSerializationWrite()
 QList<Link*> Link::linksToBeFinalized;
 
 
+/// @todo this function probably isn't the cause, but when a
+/// Transaction gets shifted in the QList, then the link suddenly gets
+/// wrong. I'm puzzled about this, to be honest.
 int Link::finalizePendingLinks(Cabinet * cabinet)
 {
   int dangling = 0;
