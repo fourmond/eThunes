@@ -51,7 +51,8 @@ SOURCES += src/qmain.cc src/account.cc src/mainwin.cc src/actions.cc \
 	src/categorycombo.cc src/filterelements.cc \
 	src/documentpage.cc src/logstorage.cc \
 	src/logviewer.cc src/accountgroup.cc \
-	src/commandline.cc src/tag.cc
+	src/commandline.cc src/tag.cc \
+        src/serialization.cc
 
 HEADERS += src/account.hh src/mainwin.hh src/actions.hh \
 	src/ofximport.hh src/accountmodel.hh \
@@ -77,4 +78,5 @@ HEADERS += src/account.hh src/mainwin.hh src/actions.hh \
 	src/categorycombo.hh src/filterelements.hh \
 	src/documentpage.hh src/logstorage.hh \
 	src/logviewer.hh src/accountgroup.hh \
-	src/commandline.hh src/tag.hh
+	src/commandline.hh src/tag.hh \
+        src/serialization.hh
