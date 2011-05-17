@@ -51,6 +51,9 @@ public:
   /// target too). It is a no-op when target is NULL.
   void addLink(Linkable * target, const QString & name = "");
 
+  /// The number of named links:
+  int hasNamedLinks(const QString & name) const;
+
   /// Returns the unique String ID for this object, suitable for
   /// serialization.
   virtual QString uniqueID() const = 0;

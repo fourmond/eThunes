@@ -34,3 +34,9 @@ void Linkable::addLink(Linkable * target, const QString & name)
   links.addLink(target, name);
   target->links.addLink(this, name);
 }
+
+
+int Linkable::hasNamedLinks(const QString & name) const
+{
+  return links.namedLinks(name).size();
+}
