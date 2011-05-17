@@ -77,10 +77,10 @@ void CollectionPage::updateContents()
       str += "<a href='attach:" + doc->canonicalFileName() +
 	"'> (attach file)</a>"; /// \todo tr around.
       for(int l = 0; l < doc->links.size(); l++)
-	if(doc->links[l].target)
+	if(doc->links[l].linkTarget())
 	  str += " " +
-	    LinksHandler::linkTo(doc->links[l].target,
-				 doc->links[l].target->publicTypeName());
+	    LinksHandler::linkTo(doc->links[l].linkTarget(),
+				 doc->links[l].linkTarget()->publicTypeName());
       str += "\n<br>\n";
     }
     i++;

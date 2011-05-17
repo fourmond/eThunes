@@ -18,15 +18,6 @@
 
 #include <serializable.hh>
 
-/// @todo I should implement an ID attribute that would be unique to
-/// each serialized object and that could be used to store pointers.
-///
-/// The ID would have to be stored in the XML file. It could simply be
-/// an ever-increasing integer, starting off from the highest one
-/// known. It would need a storage place (ID to pointer), and a
-/// function for attributing a new ID in case of need (not in the
-/// Serialization constructor, else reading will be a problem)
-
 QList<Serializable *> Serializable::registeredObjects;
 
 
@@ -39,17 +30,22 @@ SerializationAccessor * Serializable::serializationAccessor()
   return new SerializationAccessor(this);
 }
 
-void Serializable::ensureHasID()
+void Serializable::ensureHasID() const
 {
   if(serializableID >= 0)
     return;                     // Nothing to do
   else {
     /// @todo Not MT-safe. (but there shouldn't be needs for that ?)
     serializableID = registeredObjects.size();
-    registeredObjects.append(this);
+    registeredObjects.append(const_cast<Serializable*>(this));
   }
 }
 
+int Serializable::objectID() const 
+{
+  ensureHasID();
+  return serializableID;
+}
 
 void Serializable::writeXML(const QString & name, QXmlStreamWriter * writer)
 {
@@ -71,6 +67,10 @@ Serializable::~Serializable()
     registeredObjects[serializableID] = NULL;
 }
 
+/// @todo A compaction function could be written to ensure that all
+/// elements in registeredObjects are not NULL. This would help keep
+/// the ID number relatively small and manageable, and could be called
+/// right after Link::finalizePendingLinks().
 Serializable * Serializable::objectFromID(int id)
 {
   if(id < 0)
@@ -101,13 +101,13 @@ void Serializable::serializableIDSet(const QString & g)
   if(ptr && ptr != this) {
     throw QString("Conflict !"); // Probably a little too brutal...
   }
-  registeredObjects[id] = ptr;
+  registeredObjects[id] = this;
   serializableID = id;
 }
 
 void Serializable::addIDSerialization(SerializationAccessor * accs)
 {
-  accs->addAttribute("object-ID",
+  accs->addAttribute("ID",
                      new SerializationItemAccessors<Serializable>
                      (this, &Serializable::serializableIDSet, 
                       &Serializable::serializableIDGet, 

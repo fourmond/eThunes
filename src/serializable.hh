@@ -35,8 +35,9 @@
 class Serializable : public SerializationAttribute {
 
   /// The application-wide unique ID. A value of -1 means that the ID
-  /// hasn't been attributed yet. 
-  int serializableID;
+  /// hasn't been attributed yet. Mutable as the only accessor to that
+  /// always returns the same value, once it's set.
+  mutable int serializableID;
 
   /// The application-wide correspondance between ID and Serializable
   static QList<Serializable *> registeredObjects;
@@ -48,13 +49,17 @@ class Serializable : public SerializationAttribute {
 protected:
 
   /// This functions makes sure that the object has a registered ID.
-  void ensureHasID();
+  void ensureHasID() const;
 
   /// Gets the numbered Serializable
   static Serializable * objectFromID(int id);
-  
 
 public:
+
+  /// Returns the unique objectID for this object, creating it if
+  /// necessary.
+  int objectID() const;
+
 
   Serializable();
 

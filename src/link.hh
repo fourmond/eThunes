@@ -27,13 +27,19 @@ class Linkable;
 class Cabinet;
 
 class Link : public Serializable {
-public:
-  Link() : target(NULL) {;};
-  Link(Linkable * t, const QString & name) : 
-    target(t), linkName(name) {;};
-
+protected:
   /// The target of the link
   Linkable * target;
+
+  
+public:
+  /// Sets the link target
+  void setLinkTarget(Linkable * t);
+  
+  Link() { setLinkTarget(NULL);};
+  Link(Linkable * t, const QString & name) : 
+    linkName(name) { setLinkTarget(t);};
+
 
   /// A name attached to the target
   QString linkName;
@@ -51,10 +57,17 @@ public:
   /// repair by ensuring that a link is always reciprocal.
   static int finalizePendingLinks(Cabinet * cabinet);
 
+  Linkable * linkTarget() const {
+    return target;
+  };
+
 protected:
   /// The ID of the link as stored on disk; the value of
   /// Linkable::uniqueID().
   QString linkID;
+
+  /// The unique object ID of the target. Supercedes linkID
+  int targetID;
 
   /// The type name, as in Linkable::typeName()
   QString typeName;

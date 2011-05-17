@@ -1,6 +1,6 @@
 /*
     linkable.cc: implementation of the Linkable superclass
-    Copyright 2010 by Vincent Fourmond
+    Copyright 2010, 2011 by Vincent Fourmond
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -21,12 +21,15 @@
 #include <linkable.hh>
 #include <cabinet.hh>
 #include <linkshandler.hh>
+#include <logstream.hh>
 
 SerializationAccessor * Link::serializationAccessor()
 {
   SerializationAccessor * ac = new SerializationAccessor(this);
   ac->addAttribute("id",
 		   new SerializationItemScalar<QString>(&linkID, true));
+  ac->addAttribute("target-id",
+		   new SerializationItemScalar<int>(&targetID, true));
   ac->addAttribute("type",
 		   new SerializationItemScalar<QString>(&typeName, true));
   ac->addAttribute("name",
@@ -34,25 +37,42 @@ SerializationAccessor * Link::serializationAccessor()
   return ac;
 }
 
+/// @todo write a template class to hold a type-safe pointer to a
+/// Serializable child, that could be serialized. Linkable would build
+/// upon it, and provide more functionalities to it. This class would
+/// have to have a non-template base class (to store a static array
+/// ?).
+void Link::setLinkTarget(Linkable * t) 
+{
+  target = t;
+  if(t)
+    targetID = t->objectID();
+  else
+    targetID = -1;
+}
+
 void Link::finishedSerializationRead()
 {
   linksToBeFinalized << this;
 }
 
+// @todo : add things here !
 void Link::prepareSerializationWrite()
 {
   if(! target)
     return;
   typeName = target->typeName();
-  linkID = target->uniqueID();
+  linkID = QString();           // Not needed anymore
+  // ensure the ID is correct:
+  if(targetID != target->objectID()) {
+    throw "Bad";                // Surely very bad ;-)...
+  }
 }
 
 QList<Link*> Link::linksToBeFinalized;
 
 
-/// @todo this function probably isn't the cause, but when a
-/// Transaction gets shifted in the QList, then the link suddenly gets
-/// wrong. I'm puzzled about this, to be honest.
+/// @todo In principle, I don't need the reference to Cabinet now.
 int Link::finalizePendingLinks(Cabinet * cabinet)
 {
   int dangling = 0;
@@ -60,12 +80,24 @@ int Link::finalizePendingLinks(Cabinet * cabinet)
   QHash<Linkable *, bool> done;
   for(int i = 0; i < linksToBeFinalized.size(); i++) {
     Link * link = linksToBeFinalized[i];
-    if(link->typeName == "document")
-      link->target = cabinet->namedDocument(link->linkID);
-    else if(link->typeName == "transaction")
-      link->target = cabinet->wallet.namedTransaction(link->linkID);
-    if(! link->target)
+    if(link->targetID >= 0) {
+      Serializable * t = Serializable::objectFromID(link->targetID);
+      Linkable * target = dynamic_cast<Linkable *>(t);
+      link->setLinkTarget(target);
+    }
+    else {                      // old style link
+      LogStream o;
+      o << "Found old-style link (ID: " 
+        << link->linkID << "), converting to new style" << endl;
+      if(link->typeName == "document")
+        link->setLinkTarget(cabinet->namedDocument(link->linkID));
+      else if(link->typeName == "transaction")
+        link->setLinkTarget(cabinet->wallet.namedTransaction(link->linkID));
+    }
+
+    if(! link->target) {
       dangling++;
+    }
 
   }
   linksToBeFinalized.clear();
@@ -75,7 +107,7 @@ int Link::finalizePendingLinks(Cabinet * cabinet)
 void LinkList::addLink(Linkable * target, const QString & name)
 {
   for(int i = 0; i < size(); i++)
-    if(value(i).target == target)
+    if(value(i).linkTarget() == target)
       return;
   append(Link(target, name));
 }
@@ -84,8 +116,8 @@ QStringList LinkList::htmlLinkList() const
 {
   QStringList ret;
   for(int i=0; i < size(); i++)
-    ret << LinksHandler::linkTo(value(i).target,
-				value(i).target->publicTypeName());
+    ret << LinksHandler::linkTo(value(i).linkTarget(),
+				value(i).linkTarget()->publicTypeName());
   return ret;
 }
 
