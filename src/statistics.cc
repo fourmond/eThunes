@@ -19,6 +19,10 @@
 #include <headers.hh>
 #include <statistics.hh>
 
+#include <linkshandler.hh>
+#include <wallet.hh>
+#include <account.hh>
+
 /// @todo ignore transactions that have an "internal move" link.
 void CategorizedStatistics::addTransaction(const Transaction * t)
 {
@@ -51,6 +55,10 @@ Statistics::Statistics(const TransactionPtrList & lst)
 {
   for(int i = 0; i < lst.size(); i++)
     stats.addTransaction(lst[i]);
+  if(lst.size() > 0) 
+    account = lst.first()->account;
+  else
+    account = NULL;
 }
 
 
@@ -61,19 +69,26 @@ Statistics::Statistics(const TransactionPtrList & lst)
 /// @li it should provide graphics display (possibly by alternance)
 /// where each data point would be very visible, with a neat tooltip
 /// and a context menu for showing transactions ?
-/// @li it should also provide slidint
+/// @li it should also provide horizontal sliding
 QString Statistics::htmlStatistics(int months) const
 {
   QList<QStringList> columns;
+  Wallet * wallet = account->wallet;
   for(int i = Transaction::thisMonthID(); 
       i > Transaction::thisMonthID() - months; i--) {
     QStringList c1, c2;
     c1 << QString("<b>%1</b>").
-      arg(Transaction::dateFromID(i).toString("MMM yyyy"));
+      arg(LinksHandler::
+          linkToMonthlyTransactions(account, i,
+                                    Transaction::dateFromID(i).
+                                    toString("MMM yyyy")));
     c2 << "";
     QList<CategorizedStatistics::Item> items = 
       stats[i].categorize();
-    c1 << "Revenues<br/>";
+    c1 << 
+      LinksHandler::linkToMonthlyCategoryTransactions(wallet->namedCategory(items.last().category),
+                                                      account, i,
+                                                      "Revenues<br/>");
     c2 << Transaction::formatAmount(items.last().amount);
     int rest = 0;
     for(int j = 0; j < items.size()-1; j++)
@@ -83,7 +98,10 @@ QString Statistics::htmlStatistics(int months) const
     c2 << Transaction::formatAmount(rest);
 
     for(int j = 0; j < std::min(items.size(), 5); j++) {
-      c1 << items[j].category;
+      QString name = items[j].category;
+      c1 << LinksHandler::
+        linkToMonthlyCategoryTransactions(wallet->namedCategory(name),
+                                          account, i, name);
       c2 << Transaction::formatAmount(items[j].amount);
     }
     columns << c1 << c2;

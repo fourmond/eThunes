@@ -125,6 +125,16 @@ TransactionPtrList Account::recentTransactions()
   return t;
 }
 
+/// @todo far from optimal, but working.
+TransactionPtrList Account::monthlyTransactions(int monthID)
+{
+  TransactionPtrList t;
+  for(int i = 0; i < transactions.size(); i++)
+    if(transactions[i].monthID() == monthID)
+      t << &transactions[i];
+  return t;
+}
+
 Transaction * Account::namedTransaction(const QString & name)
 {
   /// \todo This will eventually be *very* slow...

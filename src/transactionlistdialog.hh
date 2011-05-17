@@ -70,6 +70,16 @@ public slots:
   /// Displays the transactions of the given Category
   void displayCategory(Category * category, Wallet * wallet);
 
+  /// Displays the transactions for the given Month and the given
+  /// account.
+  void displayMonthlyTransactions(Account * account, int monthID);
+
+  /// Displays the transactions for the given Month and the given
+  /// account.
+  void displayMonthlyCategoryTransactions(Category * category,
+                                          Account * account, 
+                                          int monthID);
+
   // /// Resize the dialog to contents
   // void resizeToContents();
 };

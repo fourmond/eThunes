@@ -20,6 +20,7 @@
 #include <cabinetpage.hh>
 
 #include <statistics.hh>
+#include <linkshandler.hh>
 
 CabinetPage::CabinetPage(Cabinet * c) : cabinet(c)
 {
@@ -38,6 +39,8 @@ CabinetPage::CabinetPage(Cabinet * c) : cabinet(c)
 
   stats = new QLabel();
   layout->addWidget(stats);
+  LinksHandler::handleObject(stats);
+  
 
   updateContents();
   connect(cabinet, SIGNAL(filenameChanged(const QString&)),

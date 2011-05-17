@@ -27,6 +27,8 @@
 #include <collectionpage.hh>
 #include <filterpage.hh>
 
+#include <transactionlistdialog.hh>
+
 LinksHandler * LinksHandler::handler = NULL;
 
 LinksHandler * LinksHandler::getHandler()
@@ -81,6 +83,37 @@ QString LinksHandler::linkTo(Linkable * l, const QString & str)
   return wrapLink(l->typeName() + ":" + encodePointer(l), str);
 }
 
+QString LinksHandler::linkToMonthlyTransactions(Account * account, int monthID, 
+                                                const QString & str)
+{
+  return wrapLink(QString("account-month:%1:%2").
+                  arg(encodePointer(account)).
+                  arg(monthID), str);
+}
+
+QString LinksHandler::linkToMonthlyCategoryTransactions(Category * category,
+                                                Account * account, 
+                                                int monthID, 
+                                                const QString & str)
+{
+  return wrapLink(QString("category-month:%1:%2:%3").
+                  arg(encodePointer(account)).
+                  arg(monthID).
+                  arg(encodePointer(category)), str);
+}
+
+
+/// @todo This is starting to seriously lack object-orientedness
+/// here. Ideally, I should write up a whole hierarchy of classes and
+/// rely on virtual functions. A side effect, though: the pointers
+/// would have to be stored somewhere, if only for the sake of knowing
+/// that if we want to free them, it's possible ;-)... Another thing
+/// is that if I use a single interface, I could use a single
+/// protocol, and have it registered by Qt. It would be easier to
+/// support tooltips too.
+///
+/// @todo the name is confusing, because Link and LinksHandler are two
+/// different things, even if they can be connected sometimes.
 void LinksHandler::followLink(const QString & str)
 {
   int index = str.indexOf(":");
@@ -108,6 +141,24 @@ void LinksHandler::followLink(const QString & str)
   }
   else if(protocol == "filters")
     page = FilterPage::getFilterPage(decodePointer<Wallet>(target));
+  else if(protocol == "account-month") {
+    QStringList a = target.split(":");
+    Account * account = decodePointer<Account>(a[0]);
+    int monthID = a[1].toInt();
+    TransactionListDialog * dlg = new TransactionListDialog();
+    dlg->displayMonthlyTransactions(account, monthID);
+    widget = dlg;
+  }
+  else if(protocol == "category-month") {
+    QStringList a = target.split(":");
+    Account * account = decodePointer<Account>(a[0]);
+    int monthID = a[1].toInt();
+    Category * category = decodePointer<Category>(a[2]);
+    TransactionListDialog * dlg = new TransactionListDialog();
+    dlg->displayMonthlyCategoryTransactions(category,
+                                            account, monthID);
+    widget = dlg;
+  }
   else {
     emit(unhandledLink(str));
     return;

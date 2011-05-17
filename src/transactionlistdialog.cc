@@ -53,7 +53,7 @@ void TransactionListDialog::displayList(const TransactionPtrList & l,
 void TransactionListDialog::displayChecks(Account * account)
 {
   displayList(account->checks(),
-	      tr("Account: %1").arg(account->name()));
+	      tr("Checks for account %1").arg(account->name()));
 }
 
 void TransactionListDialog::displayCategory(Category * category,
@@ -61,6 +61,35 @@ void TransactionListDialog::displayCategory(Category * category,
 {
   displayList(wallet->categoryTransactions(category),
 	      tr("Category: %1").arg(category->fullName()));
+}
+
+void TransactionListDialog::displayMonthlyTransactions(Account * account, 
+                                                       int monthID)
+{
+  QDate d = Transaction::dateFromID(monthID);
+  displayList(account->monthlyTransactions(monthID),
+	      tr("Account: %1 -- %2").
+              arg(account->name()).
+              arg(d.toString("MMMM yyyy")));
+  view->showBalance();
+              
+}
+
+void TransactionListDialog::
+displayMonthlyCategoryTransactions(Category * category,
+                                   Account * account, 
+                                   int monthID)
+{
+  QDate d = Transaction::dateFromID(monthID);
+  QList<Transaction *> l = account->categoryTransactions(category);
+  TransactionPtrList l2;
+  for(int i = 0; i < l.size(); i++)
+    if(l[i]->monthID() == monthID)
+      l2.append(l[i]);
+  displayList(l2,
+	      tr("Category: %1 -- %2").
+              arg(category ? category->name : "(uncategorized)").
+              arg(d.toString("MMMM yyyy")));
 }
 
 // void TransactionListDialog::resizeToContents()

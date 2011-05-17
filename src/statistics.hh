@@ -57,6 +57,8 @@ public:
 /// This class computes up various statistics about a series of
 /// transactions: it organizes them by month and top-level categories.
 class Statistics {
+  /// The target account.
+  Account * account;
 public:
   /// Monthly statistics. Hashed by monthID();
   CategorizedMonthlyStatistics stats;

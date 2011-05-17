@@ -25,6 +25,7 @@ class AccountPage;
 class Transaction;
 class Wallet;
 class Linkable;
+class Category;
 
 /// Handles all links by opening the right NavigationPage (or possibly
 /// firing up dialog boxes ?)
@@ -72,7 +73,6 @@ public:
 			const QString & text = QString());
 
 
-
   /// Returns the text for a link to the CategoryPage for the given
   /// Wallet
   static QString linkToCategories(Wallet * w, const QString & text = QString());
@@ -81,6 +81,16 @@ public:
   /// Wallet
   static QString linkToFilters(Wallet * w, const QString & text = QString());
 
+  /// Link to a given month in the target account:
+  static QString linkToMonthlyTransactions(Account * account, int monthID, 
+                                           const QString & text = QString());
+
+  /// Link to a given month in the target account:
+  static QString linkToMonthlyCategoryTransactions(Category * category,
+                                                   Account * account, 
+                                                   int monthID, 
+                                                   const QString & text = QString());
+                                                         
 public slots:
 
   void followLink(const QString & str);

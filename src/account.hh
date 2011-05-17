@@ -134,8 +134,13 @@ public:
   /// Returns the list of recent transactions.
   TransactionPtrList recentTransactions();
 
+  /// Returns the list of the transactions of the given month.
+  TransactionPtrList monthlyTransactions(int monthID);
+
   /// Returns the Transaction whose Transaction::transactionID()
   /// matches name.
+  ///
+  /// @deprecated
   Transaction * namedTransaction(const QString & name);
 };
 
