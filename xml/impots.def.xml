@@ -21,6 +21,7 @@
   </document-type>
   <ruby-class-code module-name="Impots">
     <code><![CDATA[
+#'
 module Impots
   def self.parse_avis_imposition(doc)
     res = {}
@@ -35,9 +36,38 @@ module Impots
       if doc['text'] =~ /N u m [^:]* r o f i s c a l : (\d+)/
         res['numero-fiscal'] = $1
       end
+    elsif doc['text'] =~ /^SUR\s*LE\s*REVENU\s*(\d{4})/
+      # 2010
+      res['annee-concernee'] = ($1.to_i - 1).to_s
+      if doc['text-layout'] =~ /Num[^:]+scal\s*(?:\(vous\))?\s*:\s*(\d+)/
+        res['numero-fiscal'] = $1
+      end
     end
     if res['annee-concernee']
       res['annee'] = (res['annee-concernee'].to_i + 1).to_s
+      if doc['text-layout'] =~ 
+          /mise\s+en\s+recouvrement\s*:\s*(\d+)\/(\d+)\/(\d+)/
+        res['recouvrement'] = Time.local($3.to_i, $2.to_i, $1.to_i)
+      end
+      if doc['text-layout'] =~ 
+          /limite\s+de\s+paiement\s*(?::\s*)?(\d+)\/(\d+)\/(\d+)/
+        res['paiment'] = Time.local($3.to_i, $2.to_i, $1.to_i)
+
+      end
+      if doc['text-layout'] =~ 
+          /Montant de votre imp.*t \(en euros\)\s+(\d+)/
+        res['montant'] = $1.to_i*100
+      end
+      if doc['text-layout'] =~ 
+          /Montant de la restitution \(en euros\)\s+(\d+)/
+        res['montant'] = -($1.to_i*100)
+      end
+      if ! res.key?('montant') && 
+          doc['text-layout'] =~
+          /total de votre imposition nette [^=]+ recouvrer est de\s*=\s*(\d+)/
+        # 2008 et avant ?
+        res['montant'] = $1.to_i*100
+      end
     end
     return res
   end
