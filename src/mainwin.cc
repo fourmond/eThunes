@@ -83,7 +83,9 @@
    collection page with the target document selected ? (and that would
    lift the requirement for a full poppler view of the things). From
    this side view, it would be interesting to provide a way to reparse
-   the document ?
+   the document ? Another thing: most probably, to get the links right,
+   I should use a persistent editor for all objects, like for the links in
+   the transaction view.
 
    \li \b Plugins 
    It would be great to add fully customizable plugins in the form of

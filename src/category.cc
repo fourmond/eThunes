@@ -33,6 +33,13 @@ QString Category::fullName() const
   return parent->fullName() + CategorySeparator + name;
 }
 
+const Category * Category::topLevelCategory() const
+{
+  if(parent)
+    return parent->topLevelCategory();
+  return this;
+}
+
 /// \todo We are seriously leaking memory here. Fix that up by using a
 /// proper copy constructor, rather than the default one.
 Category::~Category()

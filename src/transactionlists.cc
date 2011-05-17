@@ -24,7 +24,8 @@
 #include <logstream.hh>
 
 BasicStatistics::BasicStatistics() :
-  number(0), totalAmount(0), totalCredit(0),
+  number(0), numberCredit(0), numberDebit(0), 
+  totalAmount(0), totalCredit(0),
   totalDebit(0), firstMonthID(-1)
 {
 }
@@ -36,10 +37,14 @@ void BasicStatistics::addTransaction(const Transaction * t)
   if(t->account && (firstMonthID < 0 ||
 		    t->account->firstMonthID() < firstMonthID))
     firstMonthID = t->account->firstMonthID();
-  if(t->amount < 0)
+  if(t->amount < 0) {
     totalDebit += t->amount;
-  else
+    numberDebit ++;
+  }
+  else {
     totalCredit += t->amount;
+    numberCredit ++;
+  }
 }
 
 TransactionListStatistics::TransactionListStatistics()

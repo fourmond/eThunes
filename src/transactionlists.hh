@@ -33,6 +33,12 @@ public:
   /// Number of transactions
   int number;
 
+  /// Number of credit transactions
+  int numberCredit;
+
+  /// Number of debit transactions
+  int numberDebit;
+
   /// Total amount of the transactions
   int totalAmount;
 

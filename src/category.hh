@@ -65,6 +65,10 @@ public:
   /// Returns the full name of this category.
   QString fullName() const;
 
+  /// Returns the top-level category, ie the one which doesn't have a
+  /// parent
+  const Category * topLevelCategory() const;
+
   /// The color of the caterogy. invalid means "unspecified"
   QColor color;
 
