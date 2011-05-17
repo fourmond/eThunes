@@ -138,16 +138,26 @@ static void testDocumentLoading(const QStringList & a)
   for(int i = 0; i < args.size(); i++) {
     QString file = args[i];
     AttributeHash contents = CollectionCode::readPDF(file);
-    o << "File " << file << "'s raw attributes: " << endl;
-    contents.dumpContents();
     AttributeHash outAttrs = def->code.
       parseDocumentMetaData(name, contents);
     o << endl << "Parse attributes:" << endl;
     outAttrs.dumpContents();
   }
-  
-
 }
+
+static void testDocumentParsing(const QStringList & a)
+{
+  QTextStream o(stdout);
+  QStringList args = a;
+  Ruby::ensureInitRuby();
+  for(int i = 0; i < args.size(); i++) {
+    QString file = args[i];
+    AttributeHash contents = CollectionCode::readPDF(file);
+    o << "File " << file << "'s raw attributes: " << endl;
+    contents.dumpContents();
+  }
+}
+
 
 
 static CommandLineParser * parser = NULL;
@@ -167,8 +177,10 @@ static CommandLineParser * myParser()
 			     0, "List collections")
     << new CommandLineOption("--help", showHelp,
 			     0, "Shows this help")
-    << new CommandLineOption("--test-document", testDocumentLoading,
+    << new CommandLineOption("--test-document-load", testDocumentLoading,
 			     -2, "Tries to load the given document")
+    << new CommandLineOption("--test-document-parse", testDocumentParsing,
+			     -1, "Parses the PDF, do not load as document")
     << new CommandLineOption("--show-collection", showCollection,
 			     1, "Shows the given collection in more details");
   return parser;
