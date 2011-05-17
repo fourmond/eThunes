@@ -8,6 +8,9 @@
     <display-format>Avis d'imposition %{annee} (revenus de %{annee-concernee}), numéro fiscal %{numero-fiscal}</display-format>
     <filename-format>Impots/Avis-imposition-%{numero-fiscal}-%{annee}.pdf</filename-format>
     <public-name>Avis d'imposition</public-name>
+    <relevant-date>paiment</relevant-date>
+    <relevant-amount>montant</relevant-amount>
+    <date-tolerance>12</date-tolerance>
   </document-type>
   <document-type name="taxe-habitation">
     <display-format>Taxe d'habitation %{annee}, numéro fiscal %{numero-fiscal}</display-format>
