@@ -45,6 +45,9 @@ protected:
 
   QLabel * summary;
 
+  /// Very basic statistics
+  QLabel * stats;
+
 public:
 
   /// The widget displaying the Wallet. \todo maybe this shouldn't be

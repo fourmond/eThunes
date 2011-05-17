@@ -57,7 +57,8 @@ QString Statistics::htmlStatistics(int months) const
   for(int i = Transaction::thisMonthID(); 
       i > Transaction::thisMonthID() - months; i--) {
     QStringList column;
-    column << Transaction::dateFromID(i).toString("MMM yyyy");
+    column << QString("<b>%1</b>").
+      arg(Transaction::dateFromID(i).toString("MMM yyyy"));
     QList<CategorizedStatistics::Item> items = 
       stats[i].categorize();
     column << QString("Revenues: %1").
@@ -70,7 +71,7 @@ QString Statistics::htmlStatistics(int months) const
 
     for(int j = 0; j < std::min(items.size(), 4); j++)
       column << QString("%1: %2").
-        arg(items[j].category).arg(items[j].amount);
+        arg(items[j].category).arg(Transaction::formatAmount(items[j].amount));
     columns << column;
   }
   QString ret = "<table>\n";

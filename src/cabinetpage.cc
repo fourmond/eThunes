@@ -19,6 +19,8 @@
 #include <headers.hh>
 #include <cabinetpage.hh>
 
+#include <statistics.hh>
+
 CabinetPage::CabinetPage(Cabinet * c) : cabinet(c)
 {
   QVBoxLayout * layout = new QVBoxLayout(this);
@@ -33,6 +35,10 @@ CabinetPage::CabinetPage(Cabinet * c) : cabinet(c)
   hb->addWidget(collectionsDW);
 
   layout->addLayout(hb);
+
+  stats = new QLabel();
+  layout->addWidget(stats);
+
   updateContents();
   connect(cabinet, SIGNAL(filenameChanged(const QString&)),
 	  SLOT(updateContents()));
@@ -55,6 +61,20 @@ void CabinetPage::updateContents()
 {
   summary->setText(tr("<b>Cabinet : </b>%1<p>").
 		   arg(cabinet->fileName()));
+  if(cabinet->wallet.accounts.size() > 0) {
+    // We pick the one with the most transactions:
+    Account * account = NULL;
+    for(int i = 0; i < cabinet->wallet.accounts.size(); i++) {
+      if( ( ! account) ||
+          account->transactions.size() < 
+          cabinet->wallet.accounts[i].transactions.size())
+        account = &cabinet->wallet.accounts[i];
+      Statistics s(account->transactions.toPtrList());
+      stats->setText(s.htmlStatistics(6));
+    }
+  } 
+  else
+    stats->setText("Stuff !");
 }
 
 void CabinetPage::save()
