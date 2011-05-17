@@ -9,6 +9,14 @@
     <filename-format>Impots/Avis-imposition-%{numero-fiscal}-%{annee}.pdf</filename-format>
     <public-name>Avis d'imposition</public-name>
   </document-type>
+  <document-type name="taxe-habitation">
+    <display-format>Taxe d'habitation %{annee}, numéro fiscal %{numero-fiscal}</display-format>
+    <filename-format>Impots/Taxe-habitation-%{numero-fiscal}-%{annee}.pdf</filename-format>
+    <public-name>Taxe d'habitation</public-name>
+    <relevant-date>paiment</relevant-date>
+    <relevant-amount>montant</relevant-amount>
+    <date-tolerance>12</date-tolerance>
+  </document-type>
   <document-type name="accuse-reception">
     <display-format>Accusé de réception de déclaration %{annee} (revenus de %{annee-concernee}), numéro fiscal %{numero-fiscal}</display-format>
     <filename-format>Impots/Accuse-reception-%{numero-fiscal}-%{annee}.pdf</filename-format>
@@ -69,6 +77,44 @@ module Impots
         res['montant'] = $1.to_i*100
       end
     end
+    return res
+  end
+
+  def self.parse_taxe_habitation(doc)
+    res = {}
+    if doc['text-layout'] =~ 
+        /mise\s+en\s+recouvrement\s*:\s*(\d+)\/(\d+)\/(\d+)/
+      annee = $3
+      if annee.to_i < 1900
+        annee = annee.to_i
+        if annee > 20
+          annee = annee + 1900
+        else
+          annee = annee + 2000
+        end
+        annee = annee.to_s
+      end
+      res['annee'] = annee
+      res['recouvrement'] = Time.local(annee.to_i, $2.to_i, $1.to_i)
+    end
+    if doc['text-layout'] =~ 
+        /limite\s+de\s+paiement\s*:\s*(\d+)\/(\d+)\/(\d+)/
+      res['paiment'] = Time.local($3.to_i, $2.to_i, $1.to_i)
+    end
+    if doc['text-layout'] =~ /Num[^:]+scal\s*(?:\(vous\))?\s*:\s*(\d+)/
+      res['numero-fiscal'] = $1
+    elsif doc['text-layout'] =~ /fiscal\s*:\s*([\d\s]+)/
+      num = $1
+      res['numero-fiscal'] = num.gsub(/\s+/,'')
+    end
+    if doc['text-layout'] =~ 
+        /Somme totale à payer \(en euros\)\s+(\d+)/
+      res['montant'] = $1.to_i*100
+    elsif doc['text'] =~ 
+        /de votre imp.{1,5}t[\n\s]+(\d+)/ism
+      res['montant'] = $1.to_i*100
+    end
+
     return res
   end
 
