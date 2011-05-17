@@ -23,6 +23,9 @@
 void CategorizedStatistics::addTransaction(const Transaction * t)
 {
   QString cat;
+  // We ignored transactions flagged as internal move
+  if(t->hasNamedLinks("internal move"))
+    return;
   if(t->category)
     cat = t->category->topLevelCategory()->name;
   else
@@ -51,35 +54,47 @@ Statistics::Statistics(const TransactionPtrList & lst)
 }
 
 
+/// @todo This just doesn't substitute for a proper widget. Here are
+/// few ideas for it:
+/// @li all category names should be links displaying the category
+/// transactions for the corresponding month
+/// @li it should provide graphics display (possibly by alternance)
+/// where each data point would be very visible, with a neat tooltip
+/// and a context menu for showing transactions ?
+/// @li it should also provide slidint
 QString Statistics::htmlStatistics(int months) const
 {
   QList<QStringList> columns;
   for(int i = Transaction::thisMonthID(); 
       i > Transaction::thisMonthID() - months; i--) {
-    QStringList column;
-    column << QString("<b>%1</b>").
+    QStringList c1, c2;
+    c1 << QString("<b>%1</b>").
       arg(Transaction::dateFromID(i).toString("MMM yyyy"));
+    c2 << "";
     QList<CategorizedStatistics::Item> items = 
       stats[i].categorize();
-    column << QString("Revenues: %1").
-      arg(Transaction::formatAmount(items.last().amount));
+    c1 << "Revenues<br/>";
+    c2 << Transaction::formatAmount(items.last().amount);
     int rest = 0;
     for(int j = 0; j < items.size()-1; j++)
       rest += items[j].amount;
-    column << QString("Expenses: %1").
-      arg(Transaction::formatAmount(rest));
 
-    for(int j = 0; j < std::min(items.size(), 4); j++)
-      column << QString("%1: %2").
-        arg(items[j].category).arg(Transaction::formatAmount(items[j].amount));
-    columns << column;
+    c1 << "Expenses";
+    c2 << Transaction::formatAmount(rest);
+
+    for(int j = 0; j < std::min(items.size(), 5); j++) {
+      c1 << items[j].category;
+      c2 << Transaction::formatAmount(items[j].amount);
+    }
+    columns << c1 << c2;
   }
   QString ret = "<table>\n";
   // Won't work when there are very little
-  for(int i = 0; i < 6; i++) {
+  for(int i = 0; i < 8; i++) {
     ret += "<tr>";
     for(int j = 0; j < columns.size(); j++)
-      ret += QString("<td>%1</td>").arg(columns[j][i]);
+      ret += QString("<td %2 style='padding: 1px 3px;'>%1</td>").
+        arg(columns[j][i]).arg( ((j % 2) == 0 ? "" : "align='right'"));
     ret += "</tr>\n";
   }
   ret += "</table>";

@@ -70,7 +70,7 @@ void CabinetPage::updateContents()
           cabinet->wallet.accounts[i].transactions.size())
         account = &cabinet->wallet.accounts[i];
       Statistics s(account->transactions.toPtrList());
-      stats->setText(s.htmlStatistics(6));
+      stats->setText(s.htmlStatistics(8));
     }
   } 
   else
