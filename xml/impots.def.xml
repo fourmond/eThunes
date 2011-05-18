@@ -132,6 +132,11 @@ module Impots
     if res['annee-concernee']
       res['annee'] = (res['annee-concernee'].to_i + 1).to_s
     end
+    if doc['text'] =~ /Date\s*de\s*d[^p]+p[^t]+t\s*:\s*(\d+)\s*(#{Dates::FrenchMonthRE})\s*(\d+)\D+(\d+):(\d+):(\d+)/i
+        res['date-declaration'] = 
+        Time.local($3.to_i, Dates::parse_french_month($2), $1.to_i, 
+                   $4.to_i, $5.to_i, $6.to_i)
+    end
     return res
   end
 
