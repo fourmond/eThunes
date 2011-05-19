@@ -48,6 +48,9 @@ protected:
   /// Very basic statistics
   QLabel * stats;
 
+  /// And a scrollable area to browse through them
+  QScrollArea * statsArea;
+
 public:
 
   /// The widget displaying the Wallet. \todo maybe this shouldn't be

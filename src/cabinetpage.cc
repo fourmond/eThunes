@@ -37,9 +37,14 @@ CabinetPage::CabinetPage(Cabinet * c) : cabinet(c)
 
   layout->addLayout(hb);
 
+
   stats = new QLabel();
-  layout->addWidget(stats);
+  statsArea = new QScrollArea;
+  statsArea->setWidget(stats);
+
+  layout->addWidget(statsArea);
   LinksHandler::handleObject(stats);
+  stats->show();
   
 
   updateContents();
@@ -48,6 +53,7 @@ CabinetPage::CabinetPage(Cabinet * c) : cabinet(c)
 
   connect(cabinet, SIGNAL(filenameChanged(const QString&)),
 	  SIGNAL(filenameChanged(const QString&)));
+  stats->show();
 }
 
 
@@ -73,7 +79,8 @@ void CabinetPage::updateContents()
           cabinet->wallet.accounts[i].transactions.size())
         account = &cabinet->wallet.accounts[i];
       Statistics s(account->transactions.toPtrList());
-      stats->setText(s.htmlStatistics(8));
+      stats->setText(s.htmlStatistics(16));
+      stats->resize(stats->sizeHint());
     }
   } 
   else
