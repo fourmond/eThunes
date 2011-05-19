@@ -74,8 +74,9 @@ QString Statistics::htmlStatistics(int months) const
 {
   QList<QStringList> columns;
   Wallet * wallet = account->wallet;
-  for(int i = Transaction::thisMonthID(); 
-      i > Transaction::thisMonthID() - months; i--) {
+  int target = (months > 0 ? Transaction::thisMonthID() - months : 
+                account->firstMonthID() - 1);
+  for(int i = Transaction::thisMonthID(); i > target; i--) {
     QStringList c1, c2;
     c1 << QString("<b>%1</b>").
       arg(LinksHandler::

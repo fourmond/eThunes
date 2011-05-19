@@ -68,7 +68,8 @@ public:
 
   /// Returns a HTML string suitable for representing statistics of
   /// the given number of months. Returns the stats in form of a HTML
-  /// table.
+  /// table. If months is negative, returns the stats for all the
+  /// months.
   QString htmlStatistics(int months = 5) const;
 };
 
