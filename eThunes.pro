@@ -53,7 +53,7 @@ SOURCES += src/qmain.cc src/account.cc src/mainwin.cc src/actions.cc \
 	src/logviewer.cc src/accountgroup.cc \
 	src/commandline.cc src/tag.cc \
         src/serialization.cc src/statistics.cc src/watchable.cc \
-        src/flowlayout.cc
+        src/flowlayout.cc src/documentlistwidget.cc
 
 HEADERS += src/account.hh src/mainwin.hh src/actions.hh \
 	src/ofximport.hh src/accountmodel.hh \
@@ -81,4 +81,5 @@ HEADERS += src/account.hh src/mainwin.hh src/actions.hh \
 	src/logviewer.hh src/accountgroup.hh \
 	src/commandline.hh src/tag.hh \
         src/serialization.hh src/statistics.hh src/watchable.hh \
-        src/watchablecontainers.hh  src/flowlayout.hh
+        src/watchablecontainers.hh  src/flowlayout.hh \
+        src/documentlistwidget.hh

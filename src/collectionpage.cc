@@ -20,6 +20,7 @@
 #include <collectionpage.hh>
 #include <transactionlistdialog.hh>
 #include <linkshandler.hh>
+#include <documentlistwidget.hh>
 
 QHash<Collection *, CollectionPage *> CollectionPage::collectionPages;
 
@@ -33,6 +34,8 @@ CollectionPage::CollectionPage(Collection * c) : collection(c)
 	  SIGNAL(unhandledLink(const QString &)),
 	  SLOT(openURL(const QString &)));
   layout->addWidget(summary);
+  documentListView = new DocumentListWidget();
+  layout->addWidget(documentListView);
   connect(c->cabinet, SIGNAL(documentsChanged(Collection *)),
 	  SLOT(updateContents()));
 
@@ -62,6 +65,9 @@ void CollectionPage::updateContents()
     collection->typeDocuments();
   QHash<DocumentDefinition * , QList<Document *> >::const_iterator i =
     dd.constBegin();
+  
+  documentListView->showDocuments(i.value());
+
   while(i != dd.constEnd()) {
     str += QString("<h2>%1</h2><p>").arg(i.key()->definitionName());
     str += " <a href='look-matching'>Look for matching transactions</a><p>";

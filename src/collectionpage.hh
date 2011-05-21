@@ -26,6 +26,8 @@
 #include <walletdw.hh>
 #include <collectionsdw.hh>
 
+class DocumentListWidget;
+
 /// This NavigationPage displays a Collection.
 ///
 /// \todo It should be possible to reparse all the documents of a
@@ -41,6 +43,8 @@ protected:
   /// The displayed Collection
   Collection * collection;
 
+  /// A temporary widget to display a list of documents
+  DocumentListWidget * documentListView;
 
   /// The actual contents of the display.
   ///
