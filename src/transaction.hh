@@ -91,6 +91,7 @@ public:
 
   /// @}
 
+protected:
 
   /// \name Bank-given attributes
   ///
@@ -117,10 +118,6 @@ public:
   /// The check number, if applicable
   QString checkNumber;
 
-  /// The account of the transaction. NULL means no account, ie the
-  /// transaction is invalid.
-  Account * account;
-
   /// @}
 
   /// \name User-defined attributes
@@ -137,14 +134,6 @@ public:
   Category * category;
 
 
-  /// Sets the category from the given String. If wallet is NULL, it
-  /// is taken to be account->wallet, which shouldn't be NULL.
-  void setCategoryFromName(const QString & str, Wallet * wallet = NULL);
-
-  /// Returns the full name of the Category, suitable for saving, or
-  /// an empty string when there isn't a category.
-  QString categoryName() const ;
-
   /// Whether the transaction has been added recently or not (when the
   /// user has already seen it). This flag should be set for every
   /// data import.
@@ -152,15 +141,6 @@ public:
 
   /// The list of tags.
   TagList tags;
-
-  /// Returns the list of tags, formatted as in TagList::toString.
-  QString tagString() const {
-    return tags.toString();
-  };
-
-  /// Sets the tag list, from a comma-separated string. The wallet is
-  /// necessary.
-  void setTagList(const QString & str, Wallet * wallet = NULL);
 
   /// @}
 
@@ -176,6 +156,135 @@ public:
   bool balanceMeaningful;
 
   /// @}
+
+  /// We make OFXImport a friend class that
+  friend class OFXImport;
+
+public:
+
+  /// \name Accessors
+  /// @{ 
+  /// Returns the list of tags, formatted as in TagList::toString.
+  QString tagString() const {
+    return tags.toString();
+  };
+
+  /// Sets the tag list, from a comma-separated string. The wallet is
+  /// necessary.
+  void setTagList(const QString & str, Wallet * wallet = NULL);
+
+  /// Clears the given tag
+  void clearTag(Tag * t) {
+    tags.clearTag(t);
+  }; 
+
+  /// Sets the given tag
+  void setTag(Tag * t) {
+    tags.setTag(t);
+  }; 
+
+
+  /// Sets the "recent" status of the Transaction.
+  void setRecent(bool rec = true) {
+    setAttribute(recent, rec, "recent");
+  };
+
+  /// Whether the Transaction is marked as recent or not.
+  bool isRecent() const {
+    return recent;
+  };
+
+  /// Sets the balance
+  void setBalance(int b) {
+    setAttribute(balance, b, "balance");
+  };
+
+  /// Gets the balance
+  int getBalance() const {
+    return balance;
+  };
+
+  /// Gets the balance as a string
+  QString getBalanceString() const {
+    return formatAmount(balance);
+  };
+
+
+  /// Sets the category from the given String. If wallet is NULL, it
+  /// is taken to be account->wallet, which shouldn't be NULL.
+  void setCategoryFromName(const QString & str, Wallet * wallet = NULL);
+
+  /// Returns the full name of the Category, suitable for saving, or
+  /// an empty string when there isn't a category.
+  QString categoryName() const ;
+
+  /// Returns the category.
+  Category * getCategory() const {
+    return category;
+  };
+
+  /// sets the category.
+  void setCategory(Category * c) {
+    setAttribute(category, c, "category");
+  };
+
+  /// Returns the string representing the check number, or the empty
+  /// string if the Transaction doesn't originate from a check.
+  const QString & getCheckNumber() const {
+    return checkNumber;
+  };
+
+  /// Returns the date
+  const QDate & getDate() const {
+    return date;
+  };
+
+  /// Returns the amount of the transaction.
+  int getAmount() const {
+    return amount;
+  };
+
+  /// Returns the amount of the transaction as a string.
+  QString getAmountString() const {
+    return formatAmount(amount);
+  };
+
+  /// Returns the name of the transaction.
+  const QString &getName() const {
+    return name;
+  };
+
+  /// Returns the memo. For display purposes, you'd rather want
+  /// getDescription().
+  const QString & getMemo() const {
+    return memo;
+  };
+
+  /// Returns a string made either of the memo or
+  QString getDescription() const {
+    if(! memo.isEmpty()) 
+      return memo;
+    if(! checkNumber.isEmpty())
+      return QObject::tr("Check: %1").arg(checkNumber);
+    return QString();
+  };
+
+  /// @}
+
+public:
+
+  /// \name Public attributes
+  ///
+  /// @{
+
+  /// The account of the transaction. NULL means no account, ie the
+  /// transaction is invalid.
+  Account * account;
+
+  
+  /// @}
+
+public:
 
   Transaction();
 

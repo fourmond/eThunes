@@ -263,14 +263,14 @@ void TransactionListWidget::contextMenuActionFired(QAction * action)
     Tag * t = wallet()->namedTag(l.first());
     if(t) {
       for(int i = 0; i < selected.count(); i++)
-	selected[i]->tags.clearTag(t);
+	selected[i]->clearTag(t);
       
     }
   } else if(what == "add-tag") { 
     Tag * t = wallet()->namedTag(l.first());
     if(t) {
       for(int i = 0; i < selected.count(); i++)
-	selected[i]->tags.setTag(t);
+	selected[i]->setTag(t);
     }
   }
   else {

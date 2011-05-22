@@ -154,7 +154,7 @@ public:
   /// Mark the transactions as "recent"
   void markRecent() {
     for(int i = 0; i < size(); i++)
-      operator[](i).recent = true;
+      operator[](i).setRecent();
   };
 
   /// Transforms into a pointer list, for further manipulations.

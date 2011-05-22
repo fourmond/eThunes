@@ -36,8 +36,8 @@ bool FilterElement::matches(const Transaction * t) const
 {
   QString targetString;
   switch(transactionAttribute) {
-  case Name: targetString = t->name;break;
-  case Memo: targetString = t->memo;break;
+  case Name: targetString = t->getName();break;
+  case Memo: targetString = t->getMemo();break;
   }
 
   if(regexp)
@@ -83,8 +83,8 @@ void Filter::processList(TransactionList * l)
 {
   for(int i = 0; i < l->size(); i++) {
     Transaction * t = &l->operator[](i);
-    if(!t->category && matches(t)) // Does not set when category
-				   // exists, please override.
+    if(!t->getCategory() && matches(t)) // Does not set when category
+				        // exists, please override.
       t->setCategoryFromName(category);
   }
 }

@@ -152,7 +152,7 @@ void Transaction::setCategoryFromName(const QString & str, Wallet * w)
     w = account->wallet;
   }
   // We create by default ?
-  category = w->categories.namedSubCategory(str, true);
+  setCategory(w->categories.namedSubCategory(str, true));
 }
 
 

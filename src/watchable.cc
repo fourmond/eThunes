@@ -26,12 +26,6 @@ const Watchdog * Watchable::watchDog() const
   return watchdog;
 }
 
-void Watchable::attributeChanged(const QString & name)
-{
-  if(watchdog)
-    watchdog->attributeChanged(name, this);
-}
-
 Watchable::~Watchable()
 {
 }

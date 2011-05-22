@@ -30,8 +30,8 @@ void CategorizedStatistics::addTransaction(const Transaction * t)
   // We ignored transactions flagged as internal move
   if(t->hasNamedLinks("internal move"))
     return;
-  if(t->category)
-    cat = t->category->topLevelCategory()->name;
+  if(t->getCategory())
+    cat = t->getCategory()->topLevelCategory()->name;
   else
     cat = "(uncategorized)";
   (*this)[cat].addTransaction(t);

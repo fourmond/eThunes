@@ -33,16 +33,16 @@ BasicStatistics::BasicStatistics() :
 void BasicStatistics::addTransaction(const Transaction * t)
 {
   number += 1;
-  totalAmount += t->amount;
+  totalAmount += t->getAmount();
   if(t->account && (firstMonthID < 0 ||
 		    t->account->firstMonthID() < firstMonthID))
     firstMonthID = t->account->firstMonthID();
-  if(t->amount < 0) {
-    totalDebit += t->amount;
+  if(t->getAmount() < 0) {
+    totalDebit += t->getAmount();
     numberDebit ++;
   }
   else {
-    totalCredit += t->amount;
+    totalCredit += t->getAmount();
     numberCredit ++;
   }
 }
@@ -173,9 +173,10 @@ void TransactionList::computeBalance(int balance)
   /// a checkBalance function ?
   for(int i = 0; i< size(); i++) {
     Transaction & t = operator[](i); // Rather inelegant, I find...
-    balance += t.amount;
-    t.balance = balance;
-    t.balanceMeaningful = true;
+    balance += t.getAmount();
+    t.setBalance(balance);
+    // t.balanceMeaningful = true;
+    // for now useless ?
   }
 }
 
@@ -232,9 +233,10 @@ TransactionPtrList TransactionList::transactionsWithinRange(const QDate & before
   if(before > after)
     return list;
   for(int i = 0; i < size(); i++) {
-    if(value(i).date >= before && value(i).date <= after)
+    if(value(i).getDate() >= before && 
+       value(i).getDate() <= after)
       list << &(operator[](i));
-    if(value(i).date > after)
+    if(value(i).getDate() > after)
       break;
   }
   return list;
@@ -264,8 +266,8 @@ public:
   int amount;
   HashKey() {;};
   HashKey(const Transaction * t) {
-    memo = t->memo;
-    amount = abs(t->amount);
+    memo = t->getMemo();
+    amount = abs(t->getAmount());
   };
   bool operator==(const HashKey & other) const {
     return (memo == other.memo) && 
@@ -305,7 +307,7 @@ QList<Link *> TransactionPtrList::findInternalMoves(QList<TransactionPtrList> li
 	shouldRestart = 1;
       }
       else {
-	dates.append(IndexedDate(iterators[i].peekNext()->date, i));
+	dates.append(IndexedDate(iterators[i].peekNext()->getDate(), i));
       }
     }
     if(shouldRestart)
@@ -321,7 +323,7 @@ QList<Link *> TransactionPtrList::findInternalMoves(QList<TransactionPtrList> li
       // Then, we catch up.
 
       QListIterator<Transaction *> & it = iterators[dates[0].i];
-      while(it.hasNext() && it.peekNext()->date < dates[1].d) {
+      while(it.hasNext() && it.peekNext()->getDate() < dates[1].d) {
 	it.next();
       }
       // The earliest list is gone, starting from scratch again
@@ -329,7 +331,7 @@ QList<Link *> TransactionPtrList::findInternalMoves(QList<TransactionPtrList> li
 	iterators.removeAt(dates[0].i);
 	continue;
       }
-      if(it.peekNext()->date > dates[1].d) {
+      if(it.peekNext()->getDate() > dates[1].d) {
 	it.next();
 	continue;
       }
@@ -344,7 +346,7 @@ QList<Link *> TransactionPtrList::findInternalMoves(QList<TransactionPtrList> li
     transactions.clear();
     for(int i = 0; i < iterators.size(); i++) {
       while(iterators[i].hasNext() && 
-	    iterators[i].peekNext()->date == theDate) {
+	    iterators[i].peekNext()->getDate() == theDate) {
 	Transaction * t = iterators[i].next();
 	transactions.insert(HashKey(t), t);
       }
@@ -368,7 +370,7 @@ QList<Link *> TransactionPtrList::findInternalMoves(QList<TransactionPtrList> li
 	  Transaction * t1, * t2;
 	  t1 = tvalues[0]; t2 = tvalues[1];
 	  if(! t1->account->isSameAccount(*t2->account) &&
-	     (t1->amount + t2->amount) == 0) {
+	     (t1->getAmount() + t2->getAmount()) == 0) {
 	    if(t1->links.namedLinks("internal move").count() == 0) {
 	      t1->addLink(t2, "internal move");
 	      retval += t1->links.namedLinks("internal move");

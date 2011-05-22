@@ -70,9 +70,16 @@ public:
 
 protected:
   
-  void attributeChanged(const QString & name = QString());
+  /// Sends message through the watchdog that an attribute has
+  /// changed.
+  void attributeChanged(const char * name) {
+    if(watchdog)
+      watchdog->attributeChanged(name, this);
+  }
 
-  template<typename T> void setAttribute(T & dest, const T& source, const QString & name = "") {
+  /// A helper function to 
+  template<typename T> void setAttribute(T & dest, const T& source, 
+                                         const char * name =  "") {
     if(dest == source)
       return;
     dest = source;

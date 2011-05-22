@@ -90,8 +90,10 @@ QList<Transaction *> Account::categoryTransactions(const Category * category,
   QList<Transaction *> found;
   for(int i = 0; i < transactions.size(); i++) {
     Transaction * t = &transactions[i];
-    if(t->category == category || (parents && t->category
-				   && t->category->isChildOf(category)))
+    if(t->getCategory() == category || 
+       (parents && t->getCategory() && 
+        t->getCategory()->isChildOf(category))
+       )
       found.push_back(t);
   }
   return found;
@@ -110,7 +112,7 @@ TransactionPtrList Account::checks()
 {
   TransactionPtrList t;
   for(int i = 0; i < transactions.size(); i++)
-    if(! transactions[i].checkNumber.isEmpty())
+    if(! transactions[i].getCheckNumber().isEmpty())
       t << &transactions[i];
   qSort(t.begin(), t.end(), Transaction::compareCheckNumbers);
   return t;
@@ -120,7 +122,7 @@ TransactionPtrList Account::recentTransactions()
 {
   TransactionPtrList t;
   for(int i = 0; i < transactions.size(); i++)
-    if(transactions[i].recent)
+    if(transactions[i].isRecent())
       t << &transactions[i];
   return t;
 }

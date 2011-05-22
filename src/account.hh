@@ -103,7 +103,7 @@ public:
   };
 
   /// Returns the current balance, in cents
-  int balance() const { return transactions.last().balance; };
+  int balance() const { return transactions.last().getBalance(); };
 
   /// Implementation of the Serialization accessor
   virtual SerializationAccessor * serializationAccessor();

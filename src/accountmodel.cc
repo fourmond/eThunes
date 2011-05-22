@@ -177,16 +177,13 @@ QVariant AccountModel::data(const QModelIndex& index, int role) const
     return QVariant();
   if(role == Qt::DisplayRole) {
     switch(index.column()) {
-    case DateColumn: return QVariant(t->date);
-    case AmountColumn: return QVariant(Transaction::formatAmount(t->amount));
-    case BalanceColumn: return QVariant(Transaction::formatAmount(t->balance));
-    case NameColumn: return QVariant(t->name);
+    case DateColumn: return QVariant(t->getDate());
+    case AmountColumn: return QVariant(t->getAmountString());
+    case BalanceColumn: return QVariant(t->getBalanceString());
+    case NameColumn: return QVariant(t->getName());
     case CategoryColumn: return QVariant(t->categoryName());
     case TagsColumn: return QVariant(t->tagString());
-    case MemoColumn: if(!t->memo.isEmpty())
-	return QVariant(t->memo);
-      else if(!t->checkNumber.isEmpty())
-	return QVariant(tr("Check: %1").arg(t->checkNumber));
+    case MemoColumn: return t->getDescription();
     default:
       return QVariant();
     }
@@ -204,7 +201,7 @@ QVariant AccountModel::data(const QModelIndex& index, int role) const
   }
   if(role == Qt::DecorationRole) {
     if(index.column() == RecentColumn) {
-      if(t->recent)
+      if(t->isRecent())
 	return statusIcon("recent");
       else
 	return statusIcon("default");
@@ -221,7 +218,9 @@ QVariant AccountModel::data(const QModelIndex& index, int role) const
     }
   }
 
-  if(role == Qt::FontRole && (index.column() == BalanceColumn || t->recent)) {
+  if(role == Qt::FontRole && 
+     (index.column() == BalanceColumn 
+      || t->isRecent())) {
     QFont font;
     font.setBold(true);
     return font;
@@ -236,19 +235,19 @@ QVariant AccountModel::data(const QModelIndex& index, int role) const
   if(role == Qt::ForegroundRole) {
     if(index.column() == DateColumn) {
       QColor color;
-      int month = t->date.month() - 1;
+      int month = t->getDate().month() - 1;
       color.setHsv(month * 170 % 360, 255, 100);
       return QBrush(color);
     }
 
-    if(t->category &&
+    if(t->getCategory() &&
        (index.column() == CategoryColumn ||
 	index.column() == NameColumn))
-      return QBrush(t->category->categoryColor());
+      return QBrush(t->getCategory()->categoryColor());
     if(index.column() == AmountColumn) {
       QColor color;
       /// \todo Provide customization of the colors
-      if(t->amount < 0)
+      if(t->getAmount() < 0)
 	color.setHsv(240,200,130);
       else
 	color.setHsv(120,200,130);
