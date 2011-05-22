@@ -19,7 +19,29 @@
 #include <watchable.hh>
 
 
-const Watchdog * Watchable::watchDog() const
+Watchdog::Watchdog(const Watchable * w) : target(w) {
+  connect(this, SIGNAL(attributeChanged(const Watchable *, const QString &)),
+          SIGNAL(changed(const Watchable *)));
+}
+
+void Watchdog::catchChange(const Watchable * source)
+{
+  QHash<const Watchable*, QString>::const_iterator i = 
+    watchedChildren.find(source);
+  if(i != watchedChildren.end())
+    emit(attributeChanged(target, i.value()));
+}
+
+void Watchdog::watchChild(const Watchable* child, 
+                          const QString & attrName)
+{
+  watchedChildren[child] = attrName;
+  connect(child->watchDog(), SIGNAL(changed(const Watchable *)),
+          SLOT(catchChange(const Watchable *)));
+}
+
+
+Watchdog * Watchable::watchDog() const
 {
   if(! watchdog)
     watchdog = new Watchdog(this);
@@ -28,4 +50,5 @@ const Watchdog * Watchable::watchDog() const
 
 Watchable::~Watchable()
 {
+  delete watchdog;
 }

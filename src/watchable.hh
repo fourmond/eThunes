@@ -36,15 +36,29 @@ class Watchdog : public QObject {
 
 
   /// Private constructor so only Watchable can build one.
-  Watchdog(const Watchable * w) : target(w) {;};
+  Watchdog(const Watchable * w);
+
+  /// A correspondance watched object -> attribute name
+  QHash<const Watchable*, QString> watchedChildren;
+
+  /// Watch a child
+  void watchChild(const Watchable* child, const QString & attrName);
 
 signals:
   /// Emitted when one of the attributes of the watched target
   /// changed.
-  void attributeChanged(const QString & name, const Watchable * source);
+  void attributeChanged(const Watchable * source, const QString & name);
 
   /// Emitted when the number of items (if the object is a list) changed
   void numberChanged(const Watchable * source);
+
+  /// Emitted whenever the object changed.
+  void changed(const Watchable * source);
+
+private slots:
+  
+  /// Catch any change in objects underneath
+  void catchChange(const Watchable * source);
 };
 
 /// This is the base class for all classes that 
@@ -60,7 +74,7 @@ public:
 
   /// Used to obtain the watchdog for that, or create one if
   /// necessary.
-  const Watchdog * watchDog() const;
+  Watchdog * watchDog() const;
 
   /// This cast can be used directly to use connect with a Watchable
   /// object.
@@ -74,7 +88,7 @@ protected:
   /// changed.
   void attributeChanged(const char * name) {
     if(watchdog)
-      watchdog->attributeChanged(name, this);
+      watchdog->attributeChanged(this, name);
   }
 
   /// A helper function to 
@@ -84,6 +98,11 @@ protected:
       return;
     dest = source;
     attributeChanged(name);
+  };
+
+  /// Setup watching a child
+  void watchChild(const Watchable* child, const QString & attrName) {
+    watchDog()->watchChild(child, attrName);
   };
 };
 
