@@ -31,3 +31,7 @@ void Watchable::attributeChanged(const QString & name)
   if(watchdog)
     watchdog->attributeChanged(name, this);
 }
+
+Watchable::~Watchable()
+{
+}

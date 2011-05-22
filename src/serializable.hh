@@ -21,6 +21,7 @@
 #ifndef __SERIALIZABLE_HH
 #define __SERIALIZABLE_HH
 #include <serialization.hh>
+#include <watchable.hh>
 
 
 /// All classes that should be serialized at some point should include
@@ -32,7 +33,7 @@
 ///
 /// It is a child of SerializationAttribute in order to make it
 /// dreadfull easy to embed complex objects in attributes ;-)...
-class Serializable : public SerializationAttribute {
+class Serializable : public SerializationAttribute, public Watchable {
 
   /// The application-wide unique ID. A value of -1 means that the ID
   /// hasn't been attributed yet. Mutable as the only accessor to that
