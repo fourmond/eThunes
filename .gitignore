@@ -10,7 +10,7 @@
 eThunes
 Makefile
 moc_*.cpp
-doc/
+dox/
 
 # Private files
 Download
