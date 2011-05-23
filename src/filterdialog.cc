@@ -63,7 +63,7 @@ void FilterDialog::updateFilterList()
 
 void FilterDialog::newFilter()
 {
-  wallet->filters.push_back(Filter());
+  wallet->filters.append(Filter());
   Filter * f = &wallet->filters.last();
   f->name = tr("New filter");
   updateFilterList();

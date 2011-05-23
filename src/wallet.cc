@@ -52,11 +52,11 @@ SerializationAccessor * Wallet::serializationAccessor()
 {
   SerializationAccessor * ac = new SerializationAccessor(this);
   ac->addAttribute("account",
-		   new SerializationQList<Account>(&accounts));
+		   new SerializationWatchableList<Account>(&accounts));
   ac->addAttribute("group",
-		   new SerializationQList<AccountGroup>(&accountGroups));
+		   new SerializationWatchableList<AccountGroup>(&accountGroups));
   ac->addAttribute("filter",
-		   new SerializationQList<Filter>(&filters));
+		   new SerializationWatchableList<Filter>(&filters));
   ac->addAttribute("category",
 		   new SerializationQHash<Category>(&categories));
   ac->addAttribute("tag",

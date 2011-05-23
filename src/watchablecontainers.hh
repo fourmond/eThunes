@@ -68,19 +68,29 @@ public:
     return data.last();
   };
 
+  T & last() {
+    return data.last();
+  };
+
   const T & at(int i ) const {
     return data.at(i);
   };
 
 
-  void removeAt(int i) {
+  virtual void removeAt(int i) {
     data.removeAt(i);
+    numberChanged();
   };
 
-  /// Appends
-  void append(const T& d) {
+  /// Appends. We make it a virtual function
+  virtual void append(const T& d) {
     data.append(d);
     numberChanged();
+  };
+
+  void replace(int i, const T & v) {
+    attributeChanged("members");
+    data.replace(i, v);
   };
 
   WatchedList<T> & operator<<(const T& a) {
@@ -90,8 +100,9 @@ public:
 
   /// Append list
   void append(const WatchedList& list) {
-    data.append(list.data);
-    numberChanged();
+    for(typename QList<T>::const_iterator i = list.data.begin(); 
+        i != list.data.end(); i++)
+      append(*i);
   };
 
   int size() const {
@@ -103,7 +114,7 @@ public:
   };
 
   /// Clears
-  void clear() {
+  virtual void clear() {
     data.clear();
     numberChanged();
   };

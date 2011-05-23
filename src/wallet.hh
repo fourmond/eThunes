@@ -28,13 +28,14 @@
 #include <filter.hh>
 #include <accountgroup.hh>
 #include <tag.hh>
+#include <watchablecontainers.hh>
 
 /// This class represents a collection of accounts. Presumably, there
 /// should be only one Wallet instance in a running program, although
 /// I probably shouldn't rely on this assumption.
 ///
-/// \todo maybe this should be a Q_OBJECT sending signals when
-/// information has changed ?
+/// \todo This should stop to be a Q_OBJECT, we already have another
+/// framework.
 class Wallet : public QObject, public Serializable {
   Q_OBJECT;
 
@@ -49,7 +50,7 @@ public:
   Wallet();
 
   /// The accounts held within the wallet.
-  QList<Account> accounts;
+  WatchableList<Account> accounts;
 
   /// The top-level categories of the wallet
   CategoryHash categories;
@@ -58,10 +59,10 @@ public:
   TagHash tags;
 
   /// A list of Filter objects to run over the imported transactions.
-  QList<Filter> filters;
+  WatchableList<Filter> filters;
 
   /// A list of AccountGroup
-  QList<AccountGroup> accountGroups;
+  WatchableList<AccountGroup> accountGroups;
 
   /// Runs the filters on the given transaction list
   void runFilters(TransactionList * list);

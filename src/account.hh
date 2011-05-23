@@ -40,6 +40,9 @@ public:
   /// the bank.
   ///
   /// @{
+  ///
+  /// @todo These attributes will have to be signalled one day, but as
+  /// they hardly ever change, I don't really see the point.
 
   /// The different kinds of accounts (not much here, admittedly...)
   enum  AccountType {
@@ -124,6 +127,8 @@ public:
 
   /// Returns the Transaction objects of the account that belong to
   /// the given Category, or possibly to one of its descendants.
+  ///
+  /// @todo make that a TransactionPtrList one day ?
   QList<Transaction *> categoryTransactions(const Category * category,
 					    bool parents = true);
 
