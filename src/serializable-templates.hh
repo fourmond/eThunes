@@ -23,6 +23,8 @@
 #ifndef __SERIALIZABLE_TEMPLATES_HH
 #define __SERIALIZABLE_TEMPLATES_HH
 
+#include <watchablecontainers.hh>
+
 #ifndef CALL_MEMBER_FN
 /// \todo this should be moved somewhere appropriate
 #define CALL_MEMBER_FN(object,ptrToMember) ((object).*(ptrToMember))
@@ -80,14 +82,13 @@ public:
   };
 };
 
-
 /// This template class deals with the specific case of QList of
 /// children of Serializable (but not pointers).
-template <class T>
-class SerializationQList : public SerializationList {
-  QList<T> * target;
+template <class T, class C>
+class SerializationTemplateList : public SerializationList {
+  C * target;
 public:
-  SerializationQList(QList<T> * t) { target = t;};
+  SerializationTemplateList(C * t) { target = t;};
 
   virtual int listSize() { return target->size();};
 
@@ -98,6 +99,22 @@ public:
     target->append(T());
   };
 
+};
+
+
+template <class T> 
+class SerializationQList : public SerializationTemplateList<T, QList<T> > {
+public:
+  SerializationQList(QList<T> * t) : 
+    SerializationTemplateList<T, QList<T> >(t) {;};
+};
+
+template <class T> 
+class SerializationWatchableList : 
+  public SerializationTemplateList<T, WatchableList<T> > {
+public:
+  SerializationWatchableList(WatchableList<T> * t) : 
+    SerializationTemplateList<T, WatchableList<T> >(t) {;};
 };
 
 /// This class provides serialization for QList of objects that do not

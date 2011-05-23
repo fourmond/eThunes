@@ -80,12 +80,12 @@ TransactionListStatistics TransactionPtrList::statistics() const
   return stats;
 }
 
-TransactionList TransactionList::sublist(const Account &ac)
+TransactionList TransactionList::sublist(const Account &ac) const
 {
   TransactionList retval;
   for(int i = 0; i < size(); i++)
-    if(at(i).account && at(i).account->isSameAccount(ac))
-      retval << at(i);
+    if(operator[](i).account && operator[](i).account->isSameAccount(ac))
+      retval << operator[](i);
   return retval;
 }
 
@@ -163,8 +163,8 @@ inline void qSwap(MyQListIterator<Transaction>::PointedTo a,
 
 void TransactionList::sortByDate()
 {
-  qSort(MyQListIterator<Transaction>(this, 0),
-        MyQListIterator<Transaction>(this, size()));
+  qSort(MyQListIterator<Transaction>(&rawData(), 0),
+        MyQListIterator<Transaction>(&rawData(), size()));
 }
 
 void TransactionList::computeBalance(int balance)
@@ -233,10 +233,10 @@ TransactionPtrList TransactionList::transactionsWithinRange(const QDate & before
   if(before > after)
     return list;
   for(int i = 0; i < size(); i++) {
-    if(value(i).getDate() >= before && 
-       value(i).getDate() <= after)
+    if(at(i).getDate() >= before && 
+       at(i).getDate() <= after)
       list << &(operator[](i));
-    if(value(i).getDate() > after)
+    if(at(i).getDate() > after)
       break;
   }
   return list;

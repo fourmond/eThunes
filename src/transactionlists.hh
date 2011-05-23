@@ -22,6 +22,7 @@
 #define __TRANSACTIONLISTS_HH
 
 #include <transaction.hh>
+#include <watchablecontainers.hh>
 
 /// Statistics inherent to a series of transactions, from whichever
 /// way they are organized.
@@ -120,11 +121,12 @@ public:
 
 /// This class represents a list of Transaction objects, ready for
 /// storage, with a few additional functionalities.
-class TransactionList : public QList<Transaction> {
+class TransactionList : public WatchableList<Transaction> {
 public:
 
   TransactionList() {;};
-  TransactionList(const  QList<Transaction> & l) : QList<Transaction>(l) {;};
+  TransactionList(const  QList<Transaction> & l) : 
+    WatchableList<Transaction>(l) {;};
 
   /// Sorts the list according to the transaction date.
   void sortByDate();
@@ -132,7 +134,7 @@ public:
   /// Returns a sublist in the same order as this one containing only
   /// transactions dealing with the given account (as per
   /// Account.isSameAccount()).
-  TransactionList sublist(const Account & account);
+  TransactionList sublist(const Account & account) const;
 
   /// Compute the balance for each element of the list. Does not sort
   /// the list beforehand. You'll have to do it yourself.

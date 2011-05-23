@@ -22,6 +22,8 @@
 Watchdog::Watchdog(const Watchable * w) : target(w) {
   connect(this, SIGNAL(attributeChanged(const Watchable *, const QString &)),
           SIGNAL(changed(const Watchable *)));
+  connect(this, SIGNAL(numberChanged(const Watchable *)),
+          SIGNAL(changed(const Watchable *)));
 }
 
 void Watchdog::catchChange(const Watchable * source)

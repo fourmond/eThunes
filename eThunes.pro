@@ -79,4 +79,5 @@ HEADERS += src/account.hh src/mainwin.hh src/actions.hh \
 	src/documentpage.hh src/logstorage.hh \
 	src/logviewer.hh src/accountgroup.hh \
 	src/commandline.hh src/tag.hh \
-        src/serialization.hh src/statistics.hh src/watchable.hh
+        src/serialization.hh src/statistics.hh src/watchable.hh \
+        src/watchablecontainers.hh

@@ -91,6 +91,13 @@ protected:
       watchdog->attributeChanged(this, name);
   }
 
+  /// Sends message through the watchdog that the number of elements
+  /// has changed.
+  void numberChanged() {
+    if(watchdog)
+      watchdog->numberChanged(this);
+  }
+
   /// A helper function to 
   template<typename T> void setAttribute(T & dest, const T& source, 
                                          const char * name =  "") {

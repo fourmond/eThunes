@@ -69,7 +69,7 @@ SerializationAccessor * Account::serializationAccessor()
 
   // Now, we try the list stuff...
   ac->addAttribute("transaction",
-		   new SerializationQList<Transaction>(&transactions));
+		   new SerializationWatchableList<Transaction>(&transactions));
   return ac;
 }
 
