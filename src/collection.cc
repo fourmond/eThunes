@@ -52,9 +52,6 @@ void CollectionDefinition::dumpContents()
 }
 
 
-
-
-
 /// \todo There should be a way to customize this.
 QStringList CollectionDefinition::definitionPath("/home/vincent/Prog/eThunes/xml");
 
@@ -169,7 +166,7 @@ SerializationAccessor * Collection::serializationAccessor()
 		   new SerializationItemScalar<QString>(&name, true));
   // Now, we try the list stuff...
   ac->addAttribute("document",
-		   new SerializationQList<Document>(&documents));
+		   new SerializationWatchableList<Document>(&documents));
   return ac;
 }
 
@@ -195,7 +192,7 @@ Document * Collection::importFile(const QString & doctype,
   doc.collection = this;
   doc.setFilePath(file);
   doc.bringFileIntoOwnership();
-  documents.push_back(doc);
+  documents.append(doc);
 
   cabinet->registerDocument(&documents.last());
   return &documents.last();

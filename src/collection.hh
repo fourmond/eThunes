@@ -25,6 +25,8 @@
 #include <document.hh>
 #include <rubymodulecode.hh>
 
+#include <watchablecontainers.hh>
+
 
 class Cabinet;
 
@@ -166,7 +168,7 @@ public:
   };
 
   /// All the documents, regardless of their type.
-  QList<Document> documents;
+  WatchableList<Document> documents;
 
   /// Returns the list of Document objects corresponding to each
   /// DocumentDefinition present in this Collection.
