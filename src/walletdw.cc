@@ -32,10 +32,8 @@ WalletDW::WalletDW(Wallet * w) : wallet(w)
   summary = new QLabel();
   layout->addWidget(summary);
   LinksHandler::handleObject(summary);
-  // connect(summary, SIGNAL(linkActivated(const QString &)),
-  // 	  SLOT(showURL(const QString &)));
 
-  connect(wallet, SIGNAL(accountsChanged()),
+  connect(*wallet, SIGNAL(changed(const Watchable *)),
 	  SLOT(updateSummary()));
 
   // We introduce contents into the summary.

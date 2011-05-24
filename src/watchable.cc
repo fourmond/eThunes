@@ -42,6 +42,12 @@ void Watchdog::watchChild(const Watchable* child,
           SLOT(catchChange(const Watchable *)));
 }
 
+void Watchdog::unwatchChild(const Watchable* child)
+{
+  if(watchedChildren.remove(child))
+    child->watchDog()->disconnect(this);
+}
+
 
 Watchdog * Watchable::watchDog() const
 {

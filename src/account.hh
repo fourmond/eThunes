@@ -68,7 +68,7 @@ public:
 
   /// @}
 
-  Account() : wallet(NULL) {;};
+  Account();
 
   /// The Wallet to which this account belongs to.
   Wallet * wallet;
@@ -106,7 +106,9 @@ public:
   };
 
   /// Returns the current balance, in cents
-  int balance() const { return transactions.last().getBalance(); };
+  int balance() const { if(transactions.size() > 0)
+      return transactions.last().getBalance(); return 0;
+  };
 
   /// Implementation of the Serialization accessor
   virtual SerializationAccessor * serializationAccessor();

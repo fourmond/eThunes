@@ -83,7 +83,7 @@ public:
   };
 
   /// Appends. We make it a virtual function
-  virtual void append(const T& d) {
+  void append(const T& d) {
     data.append(d);
     numberChanged();
   };
@@ -100,9 +100,8 @@ public:
 
   /// Append list
   void append(const WatchedList& list) {
-    for(typename QList<T>::const_iterator i = list.data.begin(); 
-        i != list.data.end(); i++)
-      append(*i);
+    data.append(list);
+    numberChanged();
   };
 
   int size() const {
@@ -113,8 +112,7 @@ public:
     return data.count();
   };
 
-  /// Clears
-  virtual void clear() {
+  void clear() {
     data.clear();
     numberChanged();
   };
@@ -137,6 +135,17 @@ public:
 
   const T & operator[](int i) const {
     return WatchedList<T>::operator[](i);
+  };
+
+  virtual void append(const T& d) {
+    WatchedList<T>::append(d);
+    watchChild(&unwatchedValue(WatchedList<T>::size()-1), "members");
+  };
+
+  void append(const WatchableList& list) {
+    int size = list.size();
+    for(int i = 0; i < size; i++)
+      append(list[i]);
   };
 
 };

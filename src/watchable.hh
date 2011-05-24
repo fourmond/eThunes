@@ -44,6 +44,9 @@ class Watchdog : public QObject {
   /// Watch a child
   void watchChild(const Watchable* child, const QString & attrName);
 
+  /// Stop Watchin a child
+  void unwatchChild(const Watchable* child);
+
 signals:
   /// Emitted when one of the attributes of the watched target
   /// changed.
@@ -110,6 +113,11 @@ protected:
   /// Setup watching a child
   void watchChild(const Watchable* child, const QString & attrName) {
     watchDog()->watchChild(child, attrName);
+  };
+
+  /// Stop watching a child
+  void unwatchChild(const Watchable* child) {
+    watchDog()->unwatchChild(child);
   };
 };
 

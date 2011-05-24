@@ -86,6 +86,13 @@
    thinking as far as the structure is concerned. It could support
    following loans too.
 
+   \li <b>Document "type safety"</b> 
+   For now, there is no guarantee that a document is "correct". A
+   simple things would be to add a list of required fields to a
+   DocumentDefinition, and check that those are present and of the
+   correct type (optionnally). Optionnallytoo, for some collections,
+   it may make sense to prompt the user for the missing fields.
+
 
    \li Customize the frequency at which new documents should be polled
    from master sites ? (from the identities/password saving ?)

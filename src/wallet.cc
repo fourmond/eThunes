@@ -20,11 +20,11 @@
 #include <wallet.hh>
 
 
-Wallet::Wallet() : dirty(false)
+Wallet::Wallet()
 {
-  connect(this, SIGNAL(accountsChanged()), SLOT(setDirty()));
-  connect(this, SIGNAL(categoriesChanged()), SLOT(setDirty()));
-  connect(this, SIGNAL(filtersChanged()), SLOT(setDirty()));
+  watchChild(&accounts, "accounts");
+  watchChild(&filters, "filters");
+  watchChild(&accountGroups, "groups");
 }
 
 void Wallet::importAccountData(const OFXImport & data, bool runFilters)
@@ -44,7 +44,6 @@ void Wallet::importAccountData(const OFXImport & data, bool runFilters)
     ac->wallet = this;		// Make sure the wallet attribute is
 				// set correctly
   }
-  emit(accountsChanged());
 }
 
 
@@ -74,7 +73,6 @@ void Wallet::saveToFile(QString fileName)
   w.writeStartDocument();
   writeXML("wallet", &w);
   w.writeEndDocument();
-  setDirty(false);
 }
 
 
@@ -86,14 +84,6 @@ void Wallet::loadFromFile(QString fileName)
   while(! w.isStartElement() && ! w.atEnd())
     w.readNext();
   readXML(&w);
-  setDirty(false);
-}
-
-void Wallet::allChanged()
-{
-  emit(accountsChanged());
-  emit(filtersChanged());
-  emit(categoriesChanged());
 }
 
 void Wallet::clearContents()
@@ -101,7 +91,6 @@ void Wallet::clearContents()
   accounts.clear();
   filters.clear();
   categories.clear();
-  allChanged();
 }
 
 
@@ -123,9 +112,6 @@ void Wallet::finishedSerializationRead()
   // Then, make sure all the AccountGroup have correct pointers
   for(int i = 0; i < accountGroups.size(); i++)
     accountGroups[i].finalizePointers(this);
-
-  // Evidently
-  allChanged();
 }
 
 void Wallet::runFilters(TransactionList * list)
@@ -138,7 +124,6 @@ void Wallet::runFilters()
 {
   for(int i = 0; i < accounts.size(); i++)
     runFilters(&accounts[i].transactions);
-  emit(accountsChanged());
 }
 
 TransactionPtrList Wallet::transactionsForFilter(const Filter * filter)
@@ -156,15 +141,6 @@ TransactionPtrList Wallet::categoryTransactions(const Category * category,
   for(int i = 0; i < accounts.size(); i++)
     vals << accounts[i].categoryTransactions(category, parents);
   return vals;
-}
-
-void Wallet::setDirty(bool d)
-{
-  if(d == dirty)
-    return;
-
-  dirty = d;
-  emit(dirtyChanged(dirty));
 }
 
 TransactionPtrList Wallet::transactionsWithinRange(const QDate & before, const QDate & after)

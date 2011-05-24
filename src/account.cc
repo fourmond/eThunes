@@ -20,6 +20,11 @@
 #include <account.hh>
 #include <wallet.hh>		// For filtering
 
+Account::Account() : wallet(NULL) 
+{
+  watchChild(&transactions, "transactions");
+}
+
 QString Account::name()
 {
   if(publicName.isEmpty())

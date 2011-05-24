@@ -41,22 +41,19 @@ const QIcon & AccountModel::statusIcon(const QString & status)
 AccountModel::AccountModel(TransactionList * t) :
   transactions(t), transactionsPtr(NULL)
 {
-  if(transactions->size() > 0) {
-    if((*transactions)[0].account && (*transactions)[0].account->wallet)
-      connect((*transactions)[0].account->wallet,
-	      SIGNAL(accountsChanged()),
-	      SLOT(accountChanged())); /// \todo This is suboptimal, but better than nothing
-  }
+  connect(*t, SIGNAL(changed(const Watchable *)),
+          SLOT(accountChanged())); 
 }
 
 AccountModel::AccountModel(TransactionPtrList * t) :
   transactions(NULL), transactionsPtr(t)
 {
+  /// @todo This will have to change when TransactionPtrList becomes a
+  /// Watchable
   if(transactionsPtr->size() > 0) {
-    if((*transactionsPtr)[0]->account && (*transactionsPtr)[0]->account->wallet)
-      connect((*transactionsPtr)[0]->account->wallet,
-	      SIGNAL(accountsChanged()),
-	      SLOT(accountChanged())); /// \todo This is suboptimal, but better than nothing
+    Account * ac = (*transactionsPtr)[0]->account;
+    connect(*ac, SIGNAL(changed(const Watchable *)),
+            SLOT(accountChanged())); 
   }
 }
 
@@ -283,9 +280,6 @@ bool AccountModel::setData(const QModelIndex & index, const QVariant & value,
     case CategoryColumn:
       t->setCategoryFromName(value.toString());
       emit(dataChanged(index, index));
-      // This is really cumbersome !
-      if(t->account && t->account->wallet)
-	t->account->wallet->didChangeCategories();
       return true;
     case TagsColumn:
       t->setTagList(value.toString());

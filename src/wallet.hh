@@ -33,18 +33,7 @@
 /// This class represents a collection of accounts. Presumably, there
 /// should be only one Wallet instance in a running program, although
 /// I probably shouldn't rely on this assumption.
-///
-/// \todo This should stop to be a Q_OBJECT, we already have another
-/// framework.
-class Wallet : public QObject, public Serializable {
-  Q_OBJECT;
-
-protected:
-
-  /// Dirty is set when the Wallet has been modified since the last
-  /// time dirty was cleared.
-  bool dirty;
-
+class Wallet : public Serializable {
 public:
 
   Wallet();
@@ -53,6 +42,8 @@ public:
   WatchableList<Account> accounts;
 
   /// The top-level categories of the wallet
+  /// 
+  /// @todo This and tags have to be made watchable
   CategoryHash categories;
 
   /// The tags
@@ -126,34 +117,6 @@ public:
   /// Returns all the Transaction that match the given filter.
   TransactionPtrList transactionsForFilter(const Filter * filter);
 
-signals:
-
-  /// This signal is emitted whenever the account data has changed for
-  /// some reason.
-  void accountsChanged();
-
-  /// This signal is emitted whenever filters have changed for some
-  /// reason.
-  void filtersChanged();
-
-  /// This signal is emitted whenever category data has changed for
-  /// some reason.
-  void categoriesChanged();
-
-  /// Emitted when the dirty flag has changed.
-  void dirtyChanged(bool dirty);
-
-public slots:
-
-  /// To be used when everything has changed
-  void allChanged();
-
-  /// To use when one has modified categories
-  void didChangeCategories() {emit(categoriesChanged()); };
-
-  /// Sets the dirty flag
-  void setDirty(bool dirty = true);
-
   /// Attemps to find internal moves, using
   /// TransactionPtrList::findInternalMoves()
   ///
@@ -162,9 +125,6 @@ public slots:
 
 
 public:
-  /// Whether the Wallet has pending modifications
-  bool isDirty() const { return dirty; };
-
 
   /// Returns all the transactions within the given date range.
   TransactionPtrList transactionsWithinRange(const QDate & before,
