@@ -29,17 +29,14 @@ class Watchable;
 class Watchdog : public QObject {
   Q_OBJECT;
 
-  /// The target
-  const Watchable * target;
-
   friend class Watchable;
 
 
   /// Private constructor so only Watchable can build one.
-  Watchdog(const Watchable * w);
+  Watchdog();
 
-  /// A correspondance watched object -> attribute name
-  QHash<const Watchable*, QString> watchedChildren;
+  /// A correspondance watched objects watchdogs -> attribute name
+  QHash<const Watchdog*, QString> watchedChildren;
 
   /// Watch a child
   void watchChild(const Watchable* child, const QString & attrName);
@@ -50,30 +47,29 @@ class Watchdog : public QObject {
 signals:
   /// Emitted when one of the attributes of the watched target
   /// changed.
-  void attributeChanged(const Watchable * source, const QString & name);
+  void attributeChanged(const Watchdog * source, const QString & name);
 
   /// Emitted when the number of items (if the object is a list) changed
-  void numberChanged(const Watchable * source);
+  void numberChanged(const Watchdog * source);
 
   /// Emitted whenever the object changed.
-  void changed(const Watchable * source);
+  void changed(const Watchdog * source);
 
 private slots:
   
   /// Catch any change in objects underneath
-  void catchChange(const Watchable * source);
+  void catchChange(const Watchdog * source);
 };
 
 /// This is the base class for all classes that 
 class Watchable {
   /// The watchdog responsible for sending signals. Only created
   /// on-demand.
-  mutable Watchdog * watchdog;
+  mutable QSharedPointer<Watchdog> watchdog;
 
 public:
 
-  Watchable() : watchdog(NULL) {;};
-  Watchable(const Watchable & ) : watchdog(NULL) { ;  };
+  Watchable() : watchdog(new Watchdog()) {;};
 
   /// Used to obtain the watchdog for that, or create one if
   /// necessary.
@@ -90,15 +86,16 @@ protected:
   /// Sends message through the watchdog that an attribute has
   /// changed.
   void attributeChanged(const char * name) {
-    if(watchdog)
-      watchdog->attributeChanged(this, name);
+    if(watchdog) {
+      watchdog->attributeChanged(watchDog(), name);
+    }
   }
 
   /// Sends message through the watchdog that the number of elements
   /// has changed.
   void numberChanged() {
     if(watchdog)
-      watchdog->numberChanged(this);
+      watchdog->numberChanged(watchDog());
   }
 
   /// A helper function to 

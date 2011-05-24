@@ -41,7 +41,7 @@ const QIcon & AccountModel::statusIcon(const QString & status)
 AccountModel::AccountModel(TransactionList * t) :
   transactions(t), transactionsPtr(NULL)
 {
-  connect(*t, SIGNAL(changed(const Watchable *)),
+  connect(*t, SIGNAL(changed(const Watchdog *)),
           SLOT(accountChanged())); 
 }
 

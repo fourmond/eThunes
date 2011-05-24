@@ -19,44 +19,42 @@
 #include <watchable.hh>
 
 
-Watchdog::Watchdog(const Watchable * w) : target(w) {
-  connect(this, SIGNAL(attributeChanged(const Watchable *, const QString &)),
-          SIGNAL(changed(const Watchable *)));
-  connect(this, SIGNAL(numberChanged(const Watchable *)),
-          SIGNAL(changed(const Watchable *)));
+Watchdog::Watchdog() {
+  connect(this, SIGNAL(attributeChanged(const Watchdog *, const QString &)),
+          SIGNAL(changed(const Watchdog *)));
+  connect(this, SIGNAL(numberChanged(const Watchdog *)),
+          SIGNAL(changed(const Watchdog *)));
 }
 
-void Watchdog::catchChange(const Watchable * source)
+void Watchdog::catchChange(const Watchdog * source)
 {
-  QHash<const Watchable*, QString>::const_iterator i = 
+  QHash<const Watchdog*, QString>::const_iterator i = 
     watchedChildren.find(source);
   if(i != watchedChildren.end())
-    emit(attributeChanged(target, i.value()));
+    emit(attributeChanged(this, i.value()));
 }
 
 void Watchdog::watchChild(const Watchable* child, 
                           const QString & attrName)
 {
-  watchedChildren[child] = attrName;
-  connect(child->watchDog(), SIGNAL(changed(const Watchable *)),
-          SLOT(catchChange(const Watchable *)));
+  watchedChildren[child->watchDog()] = attrName;
+  connect(child->watchDog(), SIGNAL(changed(const Watchdog *)),
+          SLOT(catchChange(const Watchdog *)));
 }
 
 void Watchdog::unwatchChild(const Watchable* child)
 {
-  if(watchedChildren.remove(child))
+  if(watchedChildren.remove(child->watchDog()))
     child->watchDog()->disconnect(this);
 }
 
 
 Watchdog * Watchable::watchDog() const
 {
-  if(! watchdog)
-    watchdog = new Watchdog(this);
-  return watchdog;
+  return watchdog.data();
 }
 
 Watchable::~Watchable()
 {
-  delete watchdog;
+  // delete watchdog;
 }

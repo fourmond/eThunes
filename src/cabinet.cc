@@ -24,7 +24,7 @@ Cabinet::Cabinet() : dirty(false)
 {
   /// @todo Use watchChild rather, and 
   watchChild(&wallet, "wallet");
-  connect(*this, SIGNAL(changed(const Watchable *)), SLOT(setDirty()));
+  connect(*this, SIGNAL(changed(const Watchdog *)), SLOT(setDirty()));
   connect(this, SIGNAL(collectionsPossiblyChanged()), SLOT(setDirty()));
   connect(this, SIGNAL(documentsChanged(Collection *)), SLOT(setDirty()));
 }

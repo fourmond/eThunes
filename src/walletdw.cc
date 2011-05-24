@@ -33,7 +33,7 @@ WalletDW::WalletDW(Wallet * w) : wallet(w)
   layout->addWidget(summary);
   LinksHandler::handleObject(summary);
 
-  connect(*wallet, SIGNAL(changed(const Watchable *)),
+  connect(*wallet, SIGNAL(changed(const Watchdog *)),
 	  SLOT(updateSummary()));
 
   // We introduce contents into the summary.

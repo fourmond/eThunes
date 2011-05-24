@@ -83,7 +83,7 @@ public:
   };
 
   /// Appends. We make it a virtual function
-  void append(const T& d) {
+  virtual void append(const T& d) {
     data.append(d);
     numberChanged();
   };
@@ -126,7 +126,9 @@ public:
 template <class T> class WatchableList : public WatchedList<T> {
 public:
   WatchableList() {;};
-  WatchableList(const QList<T> & d) : WatchedList<T>(d) {;};
+  WatchableList(const QList<T> & d) : WatchedList<T>(d) {
+    watchAll();
+  };
 
   T & operator[](int i) {
     /// The target is Watchable, it'll handle itself the changes.
@@ -146,6 +148,13 @@ public:
     int size = list.size();
     for(int i = 0; i < size; i++)
       append(list[i]);
+  };
+
+  /// Ensures all children are watched for.
+  void watchAll() {
+    int size = WatchedList<T>::size();
+    for(int i = 0; i < size; i++)
+      watchChild(&WatchedList<T>::unwatchedValue(i), "members");
   };
 
 };
