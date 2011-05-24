@@ -63,6 +63,14 @@ public:
     return unwatchedValue(i);
   };
 
+  const T & value(int i) const {
+    return (*this)[i];
+  };
+
+  const T & first() const {
+    return data.first();
+  };
+
 
   const T & last() const {
     return data.last();
@@ -155,6 +163,46 @@ public:
     int size = WatchedList<T>::size();
     for(int i = 0; i < size; i++)
       watchChild(&WatchedList<T>::unwatchedValue(i), "members");
+  };
+
+};
+
+
+/// This is the same as WatchedList, excepted that the target type is
+/// a Watchable child, and we watch for it.
+template <class T> class WatchablePtrList : public WatchedList<T*> {
+  typedef T* pointer;
+public:
+  WatchablePtrList() {;};
+  WatchablePtrList(const QList<T*> & d) : WatchedList<T*>(d) {
+    watchAll();
+  };
+
+  pointer & operator[](int i) {
+    /// The target is Watchable, it'll handle itself the changes.
+    return WatchedList<T*>::unwatchedValue(i);
+  };
+
+  const pointer &  operator[](int i) const {
+    return WatchedList<T*>::operator[](i);
+  };
+
+  virtual void append(T * d) {
+    WatchedList<T*>::append(d);
+    watchChild(unwatchedValue(WatchedList<T*>::size()-1), "members");
+  };
+
+  void append(const WatchablePtrList& list) {
+    int size = list.size();
+    for(int i = 0; i < size; i++)
+      append(list[i]);
+  };
+
+  /// Ensures all children are watched for.
+  void watchAll() {
+    int size = WatchedList<T*>::size();
+    for(int i = 0; i < size; i++)
+      watchChild(WatchedList<T*>::unwatchedValue(i), "members");
   };
 
 };

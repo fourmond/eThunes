@@ -130,7 +130,7 @@ TransactionPtrList Wallet::transactionsForFilter(const Filter * filter)
 {
   TransactionPtrList ret;
   for(int i = 0; i < accounts.size(); i++)
-    ret += filter->matchingTransactions(&accounts[i].transactions);
+    ret.append(filter->matchingTransactions(&accounts[i].transactions));
   return ret;
 }
 
@@ -139,7 +139,7 @@ TransactionPtrList Wallet::categoryTransactions(const Category * category,
 {
   TransactionPtrList vals;
   for(int i = 0; i < accounts.size(); i++)
-    vals << accounts[i].categoryTransactions(category, parents);
+    vals.append(accounts[i].categoryTransactions(category, parents));
   return vals;
 }
 
@@ -148,7 +148,7 @@ TransactionPtrList Wallet::transactionsWithinRange(const QDate & before, const Q
 {
   TransactionPtrList list;
   for(int i = 0; i < accounts.size(); i++)
-    list += accounts[i].transactions.transactionsWithinRange(before,after);
+    list.append(accounts[i].transactions.transactionsWithinRange(before,after));
   return list;
 }
 

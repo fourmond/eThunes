@@ -295,7 +295,7 @@ QList<Link *> TransactionPtrList::findInternalMoves(QList<TransactionPtrList> li
   // Initialize the iterators.
   for(QList<TransactionPtrList>::iterator i = lists.begin();
       i != lists.end(); i++)
-    iterators.append(QListIterator<Transaction *>(*i));
+    iterators.append(QListIterator<Transaction *>(i->rawData()));
 
   while(iterators.size() > 1) {
     dates.clear();

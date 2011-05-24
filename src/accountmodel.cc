@@ -1,6 +1,6 @@
 /*
-    account-model.cc: model for transaction lists
-    Copyright 2010 by Vincent Fourmond
+    accountmodel.cc: model for transaction lists
+    Copyright 2010, 2011 by Vincent Fourmond
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -27,6 +27,11 @@
 
 QHash<QString, QIcon> AccountModel::statusIcons;
 
+/// @todo This class should be rewritten with object-oriented things
+/// in mind. Items should be objects with appropriate virtual methods.
+/// This would allow painlessly to have objects for months only. That
+/// would also allow easily to follow.
+
 const QIcon & AccountModel::statusIcon(const QString & status)
 {
   if(! statusIcons.contains(status)) {
@@ -48,13 +53,8 @@ AccountModel::AccountModel(TransactionList * t) :
 AccountModel::AccountModel(TransactionPtrList * t) :
   transactions(NULL), transactionsPtr(t)
 {
-  /// @todo This will have to change when TransactionPtrList becomes a
-  /// Watchable
-  if(transactionsPtr->size() > 0) {
-    Account * ac = (*transactionsPtr)[0]->account;
-    connect(*ac, SIGNAL(changed(const Watchable *)),
-            SLOT(accountChanged())); 
-  }
+  connect(*t, SIGNAL(changed(const Watchdog *)),
+          SLOT(accountChanged())); 
 }
 
 Transaction * AccountModel::indexedTransaction(int idx) const
@@ -68,7 +68,7 @@ Transaction * AccountModel::indexedTransaction(int idx) const
   }
   else {
     if(idx < transactionsPtr->size())
-      return transactionsPtr->value(idx);
+      return transactionsPtr->operator[](idx);
     else
       return NULL;
   }
@@ -297,8 +297,10 @@ bool AccountModel::setData(const QModelIndex & index, const QVariant & value,
 
 void AccountModel::accountChanged()
 {
+  int size = transactions ? transactions->size() : 
+    transactionsPtr->size();
   emit(dataChanged(index(0,0, index(0,0,QModelIndex())),
-		   index(transactions->size()-1,LastColumn-1,
+		   index(size-1,LastColumn-1,
 			 index(0,0,QModelIndex()))));
 }
 

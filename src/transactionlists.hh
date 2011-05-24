@@ -93,7 +93,7 @@ public:
 ///
 /// It (will) provides quite a lot of functionality for obtaining
 /// statistics.
-class TransactionPtrList : public QList<Transaction*> {
+class TransactionPtrList : public WatchablePtrList<Transaction> {
 public:
 
   /// Returns various interesting statistics about the list.

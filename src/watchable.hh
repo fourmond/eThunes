@@ -49,6 +49,10 @@ signals:
   /// changed.
   void attributeChanged(const Watchdog * source, const QString & name);
 
+  /// Emitted when one of the direct children has changed attribute
+  void childChanged(const Watchdog * child, const QString & name, 
+                    const QString & orig);
+
   /// Emitted when the number of items (if the object is a list) changed
   void numberChanged(const Watchdog * source);
 

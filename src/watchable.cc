@@ -19,6 +19,14 @@
 #include <watchable.hh>
 
 
+/// @todo I should add a QSet<Watchable *> attribute to the Watchdog:
+/// each time a new Watchable is created, either by copy constructor
+/// or directly, it adds itself there. Upon deletion, it removes
+/// itself. It would be an error to have more than two at the same
+/// time (?), and an error too to have more than one when a slot is
+/// processed.
+///
+/// @todo make something intersting with childChanged
 Watchdog::Watchdog() {
   connect(this, SIGNAL(attributeChanged(const Watchdog *, const QString &)),
           SIGNAL(changed(const Watchdog *)));
