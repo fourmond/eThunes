@@ -43,8 +43,8 @@ protected:
   /// The displayed Collection
   Collection * collection;
 
-  /// A temporary widget to display a list of documents
-  DocumentListWidget * documentListView;
+  /// The widgets displaying the documents.
+  QHash<DocumentDefinition *,  DocumentListWidget *> documentWidgets;
 
   /// The actual contents of the display.
   ///

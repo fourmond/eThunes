@@ -24,9 +24,16 @@
 
 QHash<Collection *, CollectionPage *> CollectionPage::collectionPages;
 
+static bool compareDefinitions(DocumentDefinition * a, DocumentDefinition * b)
+{
+  return a->name < b->name;
+}
+
+
 CollectionPage::CollectionPage(Collection * c) : collection(c)
 {
   QVBoxLayout * layout = new QVBoxLayout(this);
+
   summary = new QLabel();
 
   LinksHandler::handleObject(summary);
@@ -34,10 +41,27 @@ CollectionPage::CollectionPage(Collection * c) : collection(c)
 	  SIGNAL(unhandledLink(const QString &)),
 	  SLOT(openURL(const QString &)));
   layout->addWidget(summary);
-  documentListView = new DocumentListWidget();
-  layout->addWidget(documentListView);
   connect(c->cabinet, SIGNAL(documentsChanged(Collection *)),
 	  SLOT(updateContents()));
+
+  QList<DocumentDefinition *> definitions;
+  for(QHash<QString, DocumentDefinition>::iterator i = 
+        c->definition->documentTypes.begin(); 
+      i != c->definition->documentTypes.end();
+      i++)
+    definitions << &i.value();
+
+  qSort(definitions.begin(), definitions.end(), compareDefinitions);
+  for(int i = 0; i < definitions.size(); i++) {
+    DocumentDefinition * def = definitions[i];
+    QLabel * label = new QLabel();
+    label->setText(QString("<h2>%1</h2>").arg(def->definitionName()));
+    layout->addWidget(label);
+    documentWidgets[def] = new DocumentListWidget();
+    layout->addWidget(documentWidgets[def]);
+  }
+    
+
 
   updateContents();
 }
@@ -54,49 +78,15 @@ QString CollectionPage::pageTitle()
 
 void CollectionPage::updateContents()
 {
-  /// \todo Try out displaying in several columns, though that will be
-  /// fun to tune
-  ///
-  /// \todo Alternatively, I could setup document models of some kind,
-  /// though I like the Label approach.
   QString str = tr("<b>Collection : </b>%1<p>").
     arg(collection->name);
   QHash<DocumentDefinition *, QList<Document *> > dd =
     collection->typeDocuments();
-  QHash<DocumentDefinition * , QList<Document *> >::const_iterator i =
-    dd.constBegin();
-  
-  documentListView->showDocuments(i.value());
-
-  while(i != dd.constEnd()) {
-    str += QString("<h2>%1</h2><p>").arg(i.key()->definitionName());
-    str += " <a href='look-matching'>Look for matching transactions</a><p>";
-    for(int j = 0; j < i.value().size(); j++) {
-      Document * doc = i.value()[j];
-      /// \todo Use PDF logo ! (the right way...)
-      str += QString("<a href='file://%1'>").arg(doc->filePath()) +
-	"<img src='/usr/share/icons/hicolor/16x16/apps/adobe.pdf.png'/></a> " +
-	doc->displayText();
-      for(int k = 1; k < doc->attachmentsNumber(); k++)
-	str += QString(" <a href='file://%1'>").arg(doc->filePath(k)) +
-	  "<img src='/usr/share/icons/hicolor/16x16/apps/adobe.pdf.png'/></a>";
-      str += "<a href='attach:" + doc->canonicalFileName() +
-	"'> (attach file)</a>"; /// \todo tr around.
-      for(int l = 0; l < doc->links.size(); l++)
-	if(doc->links[l].linkTarget())
-	  str += " " +
-	    LinksHandler::linkTo(doc->links[l].linkTarget(),
-				 doc->links[l].linkTarget()->publicTypeName());
-      str += "\n<br>\n";
-    }
-    i++;
-  }
-
-  // temporary code for testing Ruby fetching code.
-  if(collection->definition->code.canFetch())
-    str += "<p><a href='download'>Download new elements</a>";
-
   summary->setText(str);
+
+  for(QHash<DocumentDefinition * , QList<Document *> >::const_iterator i =
+        dd.constBegin(); i != dd.constEnd(); i++)
+    documentWidgets[i.key()]->showDocuments(i.value());
 }
 
 CollectionPage * CollectionPage::getCollectionPage(Collection * collection)
