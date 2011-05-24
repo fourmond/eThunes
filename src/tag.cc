@@ -23,7 +23,8 @@
 QString TagList::toString() const
 {
   QStringList l;
-  for(const_iterator i = begin(); i != end(); i++) 
+  for(QList<Tag*>::const_iterator i = constData().begin(); 
+      i != constData().end(); i++) 
     l << (*i)->name;
   return l.join(", ");
 }
@@ -41,16 +42,16 @@ void TagList::fromString(const QString & str, Wallet * wallet)
 
 void TagList::setTag(Tag * t)
 {
-  if(contains(t))
+  if(constData().contains(t))
     return;
   append(t);
 }
 
 void TagList::clearTag(Tag * t)
 {
-  int i = indexOf(t);
+  int i = constData().indexOf(t);
   if(i >= 0)
-    takeAt(i);
+    removeAt(i);
 }
 
 

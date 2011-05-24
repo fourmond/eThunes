@@ -76,12 +76,13 @@ void Transaction::dump(QTextStream & stream)
 Transaction::Transaction() :
   amount(0),
   checkNumber(""),
-  account(NULL),
   locked(true),
   recent(false),
-  balanceMeaningful(false)
+  balanceMeaningful(false),
+  account(NULL)
 {
   category = NULL;
+  watchChild(&tags, "tags");
 }
 
 bool Transaction::operator<(const Transaction & t) const

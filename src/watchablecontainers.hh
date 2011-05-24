@@ -37,6 +37,12 @@ protected:
   T & unwatchedValue(int i) {
     return data[i];
   };
+
+  /// An access to raw data
+  const QList<T> & constData() const {
+    return data;
+  };
+
   
 public:
 

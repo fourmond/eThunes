@@ -30,7 +30,10 @@ QHash<QString, QIcon> AccountModel::statusIcons;
 /// @todo This class should be rewritten with object-oriented things
 /// in mind. Items should be objects with appropriate virtual methods.
 /// This would allow painlessly to have objects for months only. That
-/// would also allow easily to follow.
+/// would also allow easily to follow objects:
+/// \li this way, each object watches the target object
+/// \li we don't invalidate the whole view each time a category
+/// changes, which is very expensive.
 
 const QIcon & AccountModel::statusIcon(const QString & status)
 {

@@ -22,12 +22,13 @@
 #define __TAG_HH
 
 #include <serializable.hh>
+#include <watchablecontainers.hh>
 
 class Tag;
 class Wallet;
 
 /// A list of pointer to Tag objects.
-class TagList : public QList<Tag*> {
+class TagList : public WatchablePtrList<Tag> {
 public:
   /// Converts the tag list into a comma-separated list.
   QString toString() const;
