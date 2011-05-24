@@ -23,6 +23,22 @@
 class Document;
 class FlowLayout;
 
+/// A widget representing a single Document.
+class DocumentWidget : public QFrame {
+  Q_OBJECT;
+  /// The target !
+  Document * document;
+
+  /// The label representing the document.
+  QLabel * contents;
+
+public:
+  DocumentWidget(Document * doc);
+
+protected slots:
+  void updateContents();
+};
+
 /// Hmmm, this is not too bad, but probably should handle straight
 /// away the scroll bars ? (no, I think the main page should)
 ///
@@ -37,7 +53,9 @@ class DocumentListWidget : public QWidget {
   FlowLayout * layout;
 
   /// Holds the correspondance document -> label.
-  QHash<Document *, QLabel *> labels;
+  ///
+  /// @todo is that really necessary ?
+  QHash<Document *, DocumentWidget *> widgets;
 
   /// Essentially sets up the layout.
   void setupFrame();

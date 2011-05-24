@@ -22,6 +22,41 @@
 #include <linkshandler.hh>
 #include <flowlayout.hh>
 
+DocumentWidget::DocumentWidget(Document * doc) : 
+  document(doc)
+{
+  QHBoxLayout * layout = new QHBoxLayout(this);
+  contents = new QLabel();
+  layout->addWidget(contents);
+  setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
+  setFocusPolicy(Qt::ClickFocus);
+  updateContents();
+  /// @todo automatically updated contents when applicable.
+}
+
+void DocumentWidget::updateContents()
+{
+  QString str = "<table><tr><td>";
+  str += QString("<a href='file://%1'>").arg(document->filePath()) +
+    "<img src='/usr/share/icons/hicolor/32x32/apps/adobe.pdf.png'/></a></td>\n<td> " +
+    document->displayText();
+  str += "<br/>" + document->canonicalFileName();
+  for(int k = 1; k < document->attachmentsNumber(); k++)
+    str += QString(" <a href='file://%1'>").arg(document->filePath(k)) +
+      "<img src='/usr/share/icons/hicolor/16x16/apps/adobe.pdf.png'/></a>";
+  str += " <a href='attach:" + document->canonicalFileName() +
+    "'>(attach file)</a>"; /// \todo tr around.
+  for(int l = 0; l < document->links.size(); l++)
+    if(document->links[l].linkTarget())
+      str += " " +
+        LinksHandler::linkTo(document->links[l].linkTarget(),
+                             document->links[l].linkTarget()->publicTypeName());
+  str += "</td></tr></table>";
+  contents->setText(str);
+}
+
+
+
 DocumentListWidget::DocumentListWidget(const QList<Document*> & documents,
                                        QWidget * parent) :
   QWidget(parent) {
@@ -39,33 +74,16 @@ void DocumentListWidget::showDocuments(const QList<Document*> & documents)
   // First, delete all remaining items:
   clearItems();
   for(int i = 0; i < documents.size(); i++) {
-    QString str = "<table><tr><td>";
-    Document * doc = documents[i];
-    str += QString("<a href='file://%1'>").arg(doc->filePath()) +
-      "<img src='/usr/share/icons/hicolor/32x32/apps/adobe.pdf.png'/></a></td>\n<td> " +
-      doc->displayText();
-    str += "<br/>" + doc->canonicalFileName();
-    for(int k = 1; k < doc->attachmentsNumber(); k++)
-      str += QString(" <a href='file://%1'>").arg(doc->filePath(k)) +
-        "<img src='/usr/share/icons/hicolor/16x16/apps/adobe.pdf.png'/></a>";
-    str += " <a href='attach:" + doc->canonicalFileName() +
-      "'>(attach file)</a>"; /// \todo tr around.
-    for(int l = 0; l < doc->links.size(); l++)
-      if(doc->links[l].linkTarget())
-        str += " " +
-          LinksHandler::linkTo(doc->links[l].linkTarget(),
-                               doc->links[l].linkTarget()->publicTypeName());
-    str += "</td></tr></table>";
-    QLabel * label = new QLabel(str);
-    labels[doc] = label;
-    layout->addWidget(label);
+    DocumentWidget * dw = new DocumentWidget(documents[i]);
+    widgets[documents[i]] = dw;
+    layout->addWidget(dw);
   }
 }
 
 void DocumentListWidget::clearItems()
 {
-  QHash<Document *, QLabel *>::iterator i;
-  for(i = labels.begin(); i != labels.end(); i++) {
+  QHash<Document *, DocumentWidget *>::iterator i;
+  for(i = widgets.begin(); i != widgets.end(); i++) {
     delete i.value();
   }
 }
