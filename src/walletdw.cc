@@ -74,15 +74,20 @@ void WalletDW::updateSummary()
   text += "</table>\n";
 
 
-  text += "<h2>Groups</h2>\n<table>\n";
-  for(int i = 0; i < wallet->accountGroups.size(); i++) {
-    AccountGroup * g = &wallet->accountGroups[i];
-    text += QString("<tr><td" + cellStyle +">") +
-      g->name + 
-      QString("</td><td align='right'>%1</td></tr>\n").
-      arg(Transaction::formatAmount(g->balance()));
+  if(wallet->accountGroups.size() > 0) {
+    text += "<h2>Groups</h2>\n<table>\n";
+    for(int i = 0; i < wallet->accountGroups.size(); i++) {
+      const AccountGroup & g = wallet->accountGroups[i];
+      text += QString("<tr><td" + cellStyle +">") +
+        g.name + 
+        QString("</td><td align='right'>%1</td></tr>\n").
+        arg(Transaction::formatAmount(g.balance()));
+    }
+    text += "</table>\n";
+  } 
+  else {
+    text += "<br>(no groups)<br>";
   }
-  text += "</table>\n";
 
   summary->setText(text);
 }

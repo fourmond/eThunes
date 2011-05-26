@@ -52,7 +52,7 @@ public:
   void finalizePointers(Wallet * wallet);
 
   /// The total balance of the group
-  int balance();
+  int balance() const;
 };
 
 #endif

@@ -44,9 +44,10 @@ void AccountGroup::finalizePointers(Wallet * wallet)
   accounts.clear();
   for(int i = 0; i < accountStringList.size(); i++)
     accounts.append(wallet->namedAccount(accountStringList[i]));
+  attributeChanged("accounts");
 }
 
-int AccountGroup::balance()
+int AccountGroup::balance() const
 {
   int balance = 0;
   for(int i = 0; i < accounts.size(); i++)
