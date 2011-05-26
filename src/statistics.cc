@@ -86,14 +86,21 @@ QString Statistics::htmlStatistics(int months) const
     c2 << "";
     QList<CategorizedStatistics::Item> items = 
       stats[i].categorize();
-    c1 << 
-      LinksHandler::linkToMonthlyCategoryTransactions(wallet->namedCategory(items.last().category),
-                                                      account, i,
-                                                      "Revenues<br/>");
+
+
+    c1 << LinksHandler::linkToMonthlyCategoryTransactions(wallet->namedCategory(items.last().category), account, i, "Revenues");
     c2 << Transaction::formatAmount(items.last().amount);
+
     int rest = 0;
     for(int j = 0; j < items.size()-1; j++)
       rest += items[j].amount;
+    int balance = items.last().amount + rest;
+
+    c1 << ( balance < 0 ? "Deficit<hr/>" : "Excedent<hr/>");
+    c2 << QString( balance < 0 ? 
+                   "<b><font color='red'>%1</font></b><hr/>" : 
+                   "<b><font color='green'>%1</font></b><hr/>").
+      arg(Transaction::formatAmount(items.last().amount + rest));
 
     c1 << "Expenses";
     c2 << Transaction::formatAmount(rest);
