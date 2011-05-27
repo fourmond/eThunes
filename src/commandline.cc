@@ -159,6 +159,34 @@ static void testDocumentParsing(const QStringList & a)
   }
 }
 
+static void testDownload(const QStringList & a)
+{
+  QTextStream o(stdout);
+  QStringList args = a;
+  QString name = args.takeFirst();
+  Ruby::ensureInitRuby();
+  CollectionDefinition * def =
+    CollectionDefinition::namedDefinition(name);
+  if(! def) {
+    o << "Unable to find the collection" << name << endl;
+    return;
+  }
+  // Then, we build the collection:
+  Collection * col = new Collection();
+  col->definition = def;
+  AttributeHash credentials;
+  for(int i = 0; i < args.size(); i++) {
+    QStringList b = args[i].split("=");
+    if(b.size() > 1)
+      credentials[b[0]] = b[1];
+  }
+
+  o << "Using credentials: " << endl;
+  credentials.dumpContents();
+  col->fetchNewDocumentsForUser(credentials);
+
+}
+
 
 
 static CommandLineParser * parser = NULL;
@@ -182,6 +210,8 @@ static CommandLineParser * myParser()
 			     -2, "Tries to load the given document")
     << new CommandLineOption("--test-document-parse", testDocumentParsing,
 			     -1, "Parses the PDF, do not load as document")
+    << new CommandLineOption("--test-download", testDownload,
+			     -1, "Attempts to download new documents")
     << new CommandLineOption("--show-collection", showCollection,
 			     1, "Shows the given collection in more details");
   return parser;
