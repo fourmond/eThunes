@@ -184,7 +184,7 @@ static void testDownload(const QStringList & a)
   o << "Using credentials: " << endl;
   credentials.dumpContents();
   col->fetchNewDocumentsForUser(credentials);
-
+  QCoreApplication::instance()->exec();
 }
 
 
