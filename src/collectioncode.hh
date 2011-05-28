@@ -28,6 +28,7 @@
 class CollectionDefinition;
 class Transaction;
 class Collection;
+class Fetcher;
 
 /// This class provides means to embed code to do at least some of the
 /// following things:
@@ -141,11 +142,22 @@ public:
   /// Whether the underlying code supports fetching
   virtual bool canFetch() { return false;};
 
-  /// Write a small class to marshal both a Collection and a Wallet,
-  /// or make a base class to both ?
-  virtual void fetchNewDocuments(const AttributeHash & credentials,
-  				 const QList<AttributeHash> &existingDocuments,
-  				 Collection * target) = 0;
+  /// This function requests the download of new documents for the
+  /// gtarget collection, and returns the Fetcher in charge of
+  /// performing all downloads. The program can track the current
+  /// downloads via appropriate signals from the fetcher.
+  ///
+  /// @todo Things need to be clarified here: for now the caller
+  /// assumes the ownership of the fetcher. Maybe it could be stored
+  /// in the collection using an array corresponding to all active
+  /// fetchers. This would require writing another Watchdog for
+  /// Collection, but that is manageable, or that the application
+  /// manually follows the list.
+  ///
+  /// To be seen !
+  virtual Fetcher* fetchNewDocuments(const AttributeHash & credentials,
+                                     const QList<AttributeHash> &existingDocuments,
+                                     Collection * target) = 0;
 
 protected:
 };

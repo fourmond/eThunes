@@ -82,24 +82,27 @@ bool RubyModuleCode::canFetch()
 }
 
 void RubyModuleCode::fetchNewDocumentsInternal(const AttributeHash & credentials,
-					       const QList<AttributeHash> &existingDocuments, Collection * c)
+					       const QList<AttributeHash> &existingDocuments, 
+                                               Fetcher * f)
 {
   ensureLoadModule();
-  Fetcher * n = new Fetcher();
-  n->setTarget(c);
   ID func = rb_intern("fetch");
   VALUE ary = rb_ary_new();
   for(int i = 0; i < existingDocuments.size(); i++)
     rb_ary_push(ary, existingDocuments[i].toRuby());
-  rb_funcall(module, func, 3, n->wrapToRuby(),
+  rb_funcall(module, func, 3, f->wrapToRuby(),
 	     credentials.toRuby(), ary);
 }
 
-void RubyModuleCode::fetchNewDocuments(const AttributeHash & credentials,
-				       const QList<AttributeHash> &existingDocuments, Collection * c)
+Fetcher * RubyModuleCode::fetchNewDocuments(const AttributeHash & credentials,
+                                            const QList<AttributeHash> &existingDocuments, 
+                                            Collection * c)
 {
+  Fetcher * n = new Fetcher();
+  n->setTarget(c);
   RescueMemberWrapper3Args<RubyModuleCode, const AttributeHash &,
-			   const QList<AttributeHash> &, Collection *>
+			   const QList<AttributeHash> &, Fetcher *>
     ::wrapCall(this, &RubyModuleCode::fetchNewDocumentsInternal,
-	       credentials, existingDocuments, c);
+	       credentials, existingDocuments, n);
+  return n;
 }
