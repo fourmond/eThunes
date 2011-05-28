@@ -199,5 +199,10 @@ public slots:
 protected slots:
 
   void replyFinished(QNetworkReply*);
+
+signals:
+
+  /// Emitted when all requests for this object are over.
+  void requestsFinished(Fetcher * fetcher);
 };
 #endif

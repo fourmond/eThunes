@@ -208,6 +208,16 @@ void Fetcher::replyFinished(QNetworkReply* r)
   ongoingRequests[r].done = true;
   /// \todo Here, we should find a way to ask for the fetcher's
   /// destruction when all requests have been finished.
+
+  int nbOn = 0;
+  QHash<QNetworkReply *, OngoingRequest>::iterator i;
+  for(i = ongoingRequests.begin(); i != ongoingRequests.end();
+      i++)
+    if(! i.value().done)
+      nbOn++;
+  if(nbOn == 0)
+    emit(requestsFinished(this));
+  
 }
 
 bool Fetcher::addDocument(Result * result, const QString & doctype)
