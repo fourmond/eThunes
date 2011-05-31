@@ -31,21 +31,26 @@ DocumentWidget::DocumentWidget(Document * doc) :
   setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
   setFocusPolicy(Qt::ClickFocus);
   updateContents();
-  /// @todo automatically updated contents when applicable.
+  /// @todo automatically update contents when applicable.
+
+  connect(contents, SIGNAL(linkActivated(const QString &)),
+	  SLOT(followLink(const QString &)));
+  setContentsMargins(QMargins(3,3,3,3));
 }
 
 void DocumentWidget::updateContents()
 {
   QString str = "<table><tr><td>";
+  /// @todo Find a way to customize icons (and icon size) or to get
+  /// them from the desktop theme.
   str += QString("<a href='file://%1'>").arg(document->filePath()) +
-    "<img src='/usr/share/icons/hicolor/32x32/apps/adobe.pdf.png'/></a></td>\n<td> " +
+    "<img src='/usr/share/icons/hicolor/24x24/apps/adobe.pdf.png'/></a></td>\n<td> " +
     document->displayText();
   str += "<br/>" + document->canonicalFileName();
   for(int k = 1; k < document->attachmentsNumber(); k++)
     str += QString(" <a href='file://%1'>").arg(document->filePath(k)) +
       "<img src='/usr/share/icons/hicolor/16x16/apps/adobe.pdf.png'/></a>";
-  str += " <a href='attach:" + document->canonicalFileName() +
-    "'>(attach file)</a>"; /// \todo tr around.
+  str += " <a href='attach'>(attach file)</a>"; /// \todo tr around.
   for(int l = 0; l < document->links.size(); l++)
     if(document->links[l].linkTarget())
       str += " " +
@@ -55,6 +60,37 @@ void DocumentWidget::updateContents()
   contents->setText(str);
 }
 
+void DocumentWidget::followLink(const QString & url)
+{
+  if(url.startsWith("file://")) {
+    /// \todo There should be a global function providing a proxy for
+    /// openUrl, to allow for local redifinition of dedicated
+    /// applications, including internal viewers if and when
+    /// applicable.
+    QDesktopServices::openUrl(url);
+  }
+  else if(url == "attach") {
+    promptForFileAttachment();
+  }
+  else {
+    LinksHandler::getHandler()->followLink(url);
+  }
+}
+
+
+void DocumentWidget::promptForFileAttachment()
+{
+  QString file =
+    QFileDialog::getOpenFileName(this,
+				 tr("Attach a file to %1").
+                                 arg(document->canonicalFileName()));
+  if(file.isEmpty())
+    return;
+  document->attachAuxiliaryFile(file);
+  document->bringFileIntoOwnership(-1);
+  updateContents();             /// @todo update shouldn't be done
+                                /// manually.
+}
 
 
 DocumentListWidget::DocumentListWidget(const QList<Document*> & documents,

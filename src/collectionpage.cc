@@ -106,12 +106,6 @@ void CollectionPage::openURL(const QString &str)
     /// applicable.
     QDesktopServices::openUrl(str);
   }
-  else if(str.startsWith("attach:")) {
-    Document * doc = collection->cabinet->
-      namedDocument(str.mid(str.indexOf(":") + 1));
-    if(doc)
-      promptForFileAttachment(doc);
-  }
   else if(str.startsWith("look-matching")) {
     for(int i = 0; i < collection->documents.size(); i++) {
       Document * doc = &(collection->documents[i]);
@@ -135,14 +129,3 @@ void CollectionPage::openURL(const QString &str)
   }
 }
 
-void CollectionPage::promptForFileAttachment(Document * doc)
-{
-  QString file =
-    QFileDialog::getOpenFileName(this,
-				 tr("Attach a file to %1").arg(doc->canonicalFileName()));
-  if(file.isEmpty())
-    return;
-  doc->attachAuxiliaryFile(file);
-  doc->bringFileIntoOwnership(-1);
-  collection->cabinet->signalDocumentsChanged(collection);
-}

@@ -37,6 +37,11 @@ public:
 
 protected slots:
   void updateContents();
+
+  void followLink(const QString & url);
+
+  void promptForFileAttachment();
+
 };
 
 /// Hmmm, this is not too bad, but probably should handle straight

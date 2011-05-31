@@ -82,10 +82,6 @@ public slots:
 
   /// Follows an URL
   void openURL(const QString & url);
-
-  /// Prompt for a file attachment for the given Document
-  void promptForFileAttachment(Document * doc);
-
 };
 
 #endif
