@@ -77,6 +77,8 @@ QString Statistics::htmlStatistics(int months) const
   int target = (months > 0 ? Transaction::thisMonthID() - months : 
                 account->firstMonthID() - 1);
   for(int i = Transaction::thisMonthID(); i > target; i--) {
+    if(stats[i].size() == 0)
+      continue;
     QStringList c1, c2;
     c1 << QString("<b>%1</b>").
       arg(LinksHandler::
