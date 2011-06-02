@@ -120,9 +120,13 @@ QString Statistics::htmlStatistics(int months) const
   // Won't work when there are very little
   for(int i = 0; i < 8; i++) {
     ret += "<tr>";
-    for(int j = 0; j < columns.size(); j++)
-      ret += QString("<td %2 style='padding: 1px 3px;'>%1</td>").
-        arg(columns[j][i]).arg( ((j % 2) == 0 ? "" : "align='right'"));
+    for(int j = 0; j < columns.size(); j++) {
+      if(columns[j].size() > i)
+        ret += QString("<td %2 style='padding: 1px 3px;'>%1</td>").
+          arg(columns[j][i]).arg( ((j % 2) == 0 ? "" : "align='right'"));
+      else 
+        ret += "<td %2 style='padding: 1px 3px;'></td>";
+    }
     ret += "</tr>\n";
   }
   ret += "</table>";
