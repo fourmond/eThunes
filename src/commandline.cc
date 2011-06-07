@@ -188,6 +188,25 @@ static void testDownload(const QStringList & a)
 }
 
 
+static void testXML(const QStringList & )
+{
+  /// @todo I will have to write a convenience function that can slurp
+  /// the whole raw data (or almost) of an element.
+  QTextStream o(stdout);
+  QString str = "<element>truc<biniou><bidule name='machin'>bidule</biniou>machin</element><machin bidule='truc'/>";
+  QXmlStreamReader xmlIn(str);
+  xmlIn.readNext();             // Start document 
+  QXmlStreamReader::TokenType t = xmlIn.readNext();
+  o << "Token type just read: " << t << " : " 
+    << xmlIn.name().toString() << endl; 
+  QString s = xmlIn.readElementText(QXmlStreamReader::IncludeChildElements);
+  o << "readElementText() gives: " << s << endl;
+  t = xmlIn.readNext();
+  o << "Token type just read: " << t << " : " 
+    << xmlIn.name().toString() << endl; 
+  
+}
+
 
 static CommandLineParser * parser = NULL;
 
@@ -212,6 +231,8 @@ static CommandLineParser * myParser()
 			     -1, "Parses the PDF, do not load as document")
     << new CommandLineOption("--test-download", testDownload,
 			     -1, "Attempts to download new documents")
+    << new CommandLineOption("--test-xml", testXML,
+			     0, "Various internal tests for XML")
     << new CommandLineOption("--show-collection", showCollection,
 			     1, "Shows the given collection in more details");
   return parser;
