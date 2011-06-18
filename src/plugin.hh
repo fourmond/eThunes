@@ -26,6 +26,26 @@
 
 class NavigationPage;
 
+class Plugin;
+
+/// A plugin factory, managing a translation between name and Plugin *
+/// creator.
+class PluginFactory {
+public:
+  /// A creation function
+  typedef Plugin * (*Creator) (const QString &);
+
+private:
+  QHash<QString, Creator> registeredPlugins;
+
+public:
+  /// Creates a plugin from the name.
+  Plugin * createNamedPlugin(const QString & name);
+
+  /// Register the given plugin creation function.
+  void registerPlugin(const QString & name, Creator creator);
+};
+
 /// A Plugin is basically anything that would make sense in eThunes
 /// from close or far, but that isn't specifically part of the core.
 ///
@@ -47,14 +67,15 @@ class NavigationPage;
 /// way to serialize a pointer and its data. In real, there are two
 /// challenges here:
 /// 
-/// \li First, I need to serialize a pointer in a type-safe way,
-/// ensuring that serializing a child will recreate the child at load
-/// time.
-///
 /// \li Second, I need a fallback in case the target type isn't
 /// available, which greatly complexifies the first problem.
 class Plugin : public Serializable {
 private:
+  /// @name Backup attributes
+  ///
+  /// These attributes are NOT FUNCTIONAL AS OF NOW !
+  /// 
+  /// @{
   /// The data for the plugin, saved as raw XML. This attribute is
   /// useless in derived classes and should be empty.
   QString savedData;
@@ -62,6 +83,10 @@ private:
   /// The type name for the plugin, saved in case no derived class
   /// took it.
   QString savedType;
+  //@}
+
+  /// The plugin creation factory.
+  static PluginFactory * factory;
 
 protected:
 
@@ -81,15 +106,29 @@ public:
   /// @todo Maybe we could add a QWidget/QDialog too ?
   virtual NavigationPage * pageForPlugin();
 
-  /// For serialization
-  virtual SerializationAccessor * serializationAccessor();
+  // /// For serialization
+  // virtual SerializationAccessor * serializationAccessor();
 
-  // These functions need to be reimplemented to handle the case when...
-  virtual void writeXML(const QString & name, QXmlStreamWriter * writer);
-  virtual void readXML(QXmlStreamReader * reader) = 0;
+  // // These functions need to be reimplemented to handle the case when...
+  // virtual void writeXML(const QString & name, QXmlStreamWriter * writer);
+  // virtual void readXML(QXmlStreamReader * reader) = 0;
 
   virtual ~Plugin();
 
+  /// Creates a plugin from the name.
+  static Plugin * createNamedPlugin(const QString & name);
+
+  /// Register the given plugin creation function.
+  static void registerPlugin(const QString & name, 
+                             PluginFactory::Creator creator);
+};
+
+/// A helper class to ensure a plugin is registered from the start.
+class PluginDef {
+public:
+  PluginDef(const QString & name, PluginFactory::Creator c) {
+    Plugin::registerPlugin(name, c);
+  };
 };
 
 
