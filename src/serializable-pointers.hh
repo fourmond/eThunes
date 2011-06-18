@@ -48,13 +48,32 @@ public:
   virtual void readXML(QXmlStreamReader *reader) {
     // We are at the startElement, so we read the type = attribute,
     // then we proceed !
+
+    if(! reader->isStartElement()) {
+      fprintf(stderr, "Pointer serialization problem at line %ld: we should be at a start element, instead of %s (name = %s)\n",
+              (long) reader->lineNumber(),
+              (const char*) reader->tokenString().toLocal8Bit(),
+              (const char*) reader->name().toString().toLocal8Bit()
+              );
+      return;
+    }
     const QXmlStreamAttributes & attributes =  reader->attributes();
     if(attributes.hasAttribute("typename")) {
       *target = T::createObject(attributes.value("typename").toString());
       if(*target) {
         Serialization::readNextToken(reader);
-        // reader->readNext();    // Should be a "data" attribute ?
+        fprintf(stderr, "Starting read at line %ld: %s (name = %s)\n",
+                (long) reader->lineNumber(),
+                (const char*) reader->tokenString().toLocal8Bit(),
+                (const char*) reader->name().toString().toLocal8Bit());
         (*target)->readXML(reader);
+        fprintf(stderr, "Finished read at line %ld: %s (name = %s)\n",
+                (long) reader->lineNumber(),
+                (const char*) reader->tokenString().toLocal8Bit(),
+                (const char*) reader->name().toString().toLocal8Bit());
+      }
+      else {
+        fprintf(stderr, "For some reason, couldn't create target type\n");
       }
     }
     else {
@@ -62,6 +81,13 @@ public:
               (long) reader->lineNumber());
 
     }
+    Serialization::readNextToken(reader);
+    fprintf(stderr, "Final token at line %ld: %s (name = %s)\n",
+            (long) reader->lineNumber(),
+            (const char*) reader->tokenString().toLocal8Bit(),
+            (const char*) reader->name().toString().toLocal8Bit());
+    if(! reader->isEndElement())
+      fprintf(stderr, "Hmm, we should be at end element now...\n");
   };
 
   virtual void writeXML(const QString & name, QXmlStreamWriter * writer) {

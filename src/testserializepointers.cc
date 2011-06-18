@@ -82,11 +82,14 @@ void testSerializePointers(const QStringList &)
   xOut.setAutoFormatting(true);
   xOut.setAutoFormattingIndent(2);
   QTextStream o(stdout);
+  xOut.writeStartElement("contents");
 
   for(int i = 0; i < sizeof(b)/sizeof(BaseClass *); i++) {
     SerializationItemPointer<BaseClass> t(&b[i]);
     t.writeXML("test", &xOut);
   }
+  xOut.writeEndElement();
+
   o << "Serialized: " << endl
     << str << endl;
 
@@ -94,11 +97,19 @@ void testSerializePointers(const QStringList &)
   // Now is fun !
   BaseClass * c[4];
   QXmlStreamReader xIn(str);
-  while(! xIn.isStartElement() && ! xIn.atEnd())
-    xIn.readNext();
-  for(int i = 0; i < sizeof(b)/sizeof(BaseClass *); i++) {
+  Serialization::readNextToken(&xIn);
+  while(! ((xIn.isStartElement() && xIn.name() == "contents") || 
+           xIn.atEnd()))
+    Serialization::readNextToken(&xIn);
+  for(int i = 0; i < sizeof(c)/sizeof(BaseClass *); i++) {
+    Serialization::readNextToken(&xIn);
     SerializationItemPointer<BaseClass> t(&c[i]);
-    o << "Element: ? " << xIn.name().toString() << endl;
+    o << "Element: " << xIn.name().toString() 
+      << " -- " << xIn.tokenString() << endl ;
     t.readXML(&xIn);
+  }
+  for(int i = 0; i < sizeof(c)/sizeof(BaseClass *); i++) {
+    o << "Got: " << c[i]->typeName() << " -- " 
+      << c[i]->stuff << endl;
   }
 }
