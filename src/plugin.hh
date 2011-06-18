@@ -124,10 +124,22 @@ public:
 };
 
 /// A helper class to ensure a plugin is registered from the start.
+///
+/// \warning This class creates a Plugin instance to get its name, so
+/// avoid using it if the plugin creation has weird side-effects.
+///
+/// NO!!!
+///
+/// \todo This class should be the main object registered by the
+/// plugin factory. In addition to what exists now, it should provide
+/// a public name, a short description, and possibly over time author
+/// information or things in this spirit.
 class PluginDef {
 public:
-  PluginDef(const QString & name, PluginFactory::Creator c) {
-    Plugin::registerPlugin(name, c);
+  PluginDef(PluginFactory::Creator c) {
+    Plugin * p = c("");
+    Plugin::registerPlugin(p->typeName(), c);
+    delete p;
   };
 };
 
