@@ -24,13 +24,16 @@
 
 #include <ruby-utils.hh>
 
+// Only for testing purposes...
+#include <testserializepointers.hh>
+
 void CommandLineOption::handle(QStringList & args)
 {
   args.takeFirst();		// Remove the first argument, which
 				// should be --longKey
   int nbreq = abs(numberNeeded);
   if(nbreq > args.size()) {
-    throw "up";			// Hilarious, isn't it 
+    throw "up";			// Hilarious, isn't it ?
   }
 
   if(numberNeeded < 0) {
@@ -233,6 +236,9 @@ static CommandLineParser * myParser()
 			     -1, "Attempts to download new documents")
     << new CommandLineOption("--test-xml", testXML,
 			     0, "Various internal tests for XML")
+    << new CommandLineOption("--test-pointers", 
+                             testSerializePointers, // External
+			     0, "Test serialization of pointers...")
     << new CommandLineOption("--show-collection", showCollection,
 			     1, "Shows the given collection in more details");
   return parser;
