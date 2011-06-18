@@ -1,7 +1,7 @@
 /**
     \file serializable-pointers.hh
-    Template classes for serialization
-    Copyright 2010 by Vincent Fourmond
+    Template classes for serializing objects pointed to in a type-safe way
+    Copyright 2011 by Vincent Fourmond
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -15,9 +15,6 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-    \todo This file is seriously getting crowded; possibly splitting
-    is in order?
 */
 
 #ifndef __SERIALIZABLE_POINTERS_HH
@@ -62,15 +59,7 @@ public:
       *target = T::createObject(attributes.value("typename").toString());
       if(*target) {
         Serialization::readNextToken(reader);
-        fprintf(stderr, "Starting read at line %ld: %s (name = %s)\n",
-                (long) reader->lineNumber(),
-                (const char*) reader->tokenString().toLocal8Bit(),
-                (const char*) reader->name().toString().toLocal8Bit());
         (*target)->readXML(reader);
-        fprintf(stderr, "Finished read at line %ld: %s (name = %s)\n",
-                (long) reader->lineNumber(),
-                (const char*) reader->tokenString().toLocal8Bit(),
-                (const char*) reader->name().toString().toLocal8Bit());
       }
       else {
         fprintf(stderr, "For some reason, couldn't create target type\n");
@@ -82,10 +71,6 @@ public:
 
     }
     Serialization::readNextToken(reader);
-    fprintf(stderr, "Final token at line %ld: %s (name = %s)\n",
-            (long) reader->lineNumber(),
-            (const char*) reader->tokenString().toLocal8Bit(),
-            (const char*) reader->name().toString().toLocal8Bit());
     if(! reader->isEndElement())
       fprintf(stderr, "Hmm, we should be at end element now...\n");
   };
@@ -97,6 +82,32 @@ public:
     writer->writeEndElement();
   };
   
+
+};
+
+/// This class provides serialization for QList of objects that do not
+/// inherit Serializable, but that can be serialized using
+/// SerializationItemScalar
+template <typename T>
+class SerializationPointerQList : public SerializationList {
+  QList<T*> * target;
+  QString attribute;
+public:
+  SerializationPointerQList(QList<T*> * t, const QString &a) :
+    target(t), attribute(a) {;};
+
+  virtual int listSize() { return target->size();};
+
+  virtual void augment() {
+    target->append(NULL);       // Append NULL by default
+  };
+
+  virtual SerializationAccessor * accessorAt(int n) {
+    SerializationAccessor *a = new SerializationAccessor(NULL);
+    a->addAttribute(attribute,
+		    new SerializationItemPointer<T>(&target->operator[](n)));
+    return a;
+  };
 
 };
 

@@ -1,5 +1,6 @@
 /*
-    .cc: The Plugin class
+    testseralizepointers.cc: test for the (derived) type-safe pointer
+    serialization framework
     Copyright 2011 by Vincent Fourmond
 
     This program is free software; you can redistribute it and/or modify
@@ -68,8 +69,23 @@ BaseClass * BaseClass::createObject(const QString & name) {
   return NULL;
 }
 
+class TestSerializableObject : public Serializable {
+public:
+  QList<BaseClass * > pointerList;
+
+  virtual SerializationAccessor* serializationAccessor() {
+    SerializationAccessor * acc = new SerializationAccessor(this);
+    acc->addAttribute("objects", 
+                      new SerializationPointerQList<BaseClass>(&pointerList, 
+                                                               "biniou"));
+    return acc;
+  };
+  
+};
+
 void testSerializePointers(const QStringList &)
 {
+  TestSerializableObject a,d;
   BaseClass * b[4];
   b[0] = new Child1;
   b[0]->stuff = "one thing";
@@ -77,39 +93,37 @@ void testSerializePointers(const QStringList &)
   b[1]->stuff = "another one";
   b[2] = new Child2;
   b[3] = new Child1;
+
+  for(unsigned i = 0; i < sizeof(b)/sizeof(BaseClass *); i++)
+    a.pointerList.append(b[i]);
+
   QString str;
   QXmlStreamWriter xOut(&str);
   xOut.setAutoFormatting(true);
   xOut.setAutoFormattingIndent(2);
   QTextStream o(stdout);
-  xOut.writeStartElement("contents");
+  a.writeXML("thing", &xOut);
 
-  for(int i = 0; i < sizeof(b)/sizeof(BaseClass *); i++) {
-    SerializationItemPointer<BaseClass> t(&b[i]);
-    t.writeXML("test", &xOut);
-  }
+
   xOut.writeEndElement();
 
   o << "Serialized: " << endl
     << str << endl;
 
+  
+
   o << "Now trying to read..." << endl;
-  // Now is fun !
-  BaseClass * c[4];
   QXmlStreamReader xIn(str);
   Serialization::readNextToken(&xIn);
-  while(! ((xIn.isStartElement() && xIn.name() == "contents") || 
+  while(! ((xIn.isStartElement() && xIn.name() == "thing") || 
            xIn.atEnd()))
     Serialization::readNextToken(&xIn);
-  for(int i = 0; i < sizeof(c)/sizeof(BaseClass *); i++) {
-    Serialization::readNextToken(&xIn);
-    SerializationItemPointer<BaseClass> t(&c[i]);
-    o << "Element: " << xIn.name().toString() 
-      << " -- " << xIn.tokenString() << endl ;
-    t.readXML(&xIn);
-  }
-  for(int i = 0; i < sizeof(c)/sizeof(BaseClass *); i++) {
-    o << "Got: " << c[i]->typeName() << " -- " 
-      << c[i]->stuff << endl;
+  d.readXML(&xIn);
+  for(int i = 0; i < d.pointerList.size(); i++) {
+    o << "Got: " << d.pointerList[i]->typeName() << " -- " 
+      << d.pointerList[i]->stuff << endl
+      << "Original: " << a.pointerList[i]->typeName() << " -- " 
+      << a.pointerList[i]->stuff << endl;
+      
   }
 }

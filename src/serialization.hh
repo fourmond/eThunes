@@ -122,16 +122,9 @@ class SerializationAccessor;
 
 /// This abstract class describes a list of Serializable objects.
 ///
-/// \todo To easily serialize lists of non Serializable objects, it
-/// would be easy to write a template class that wraps a "normal"
-/// object that can be converted to/from QVariant (and QString). In
-/// real, that isn't that trivial because either memory allocation
-/// does not follow if the wrapper deals with a pointer to the target
-/// or it isn't convenient at all if one has to use the wrapper as
-/// primary storage.
-///
-/// \todo Maybe this could switch from a Serializable-based list to a
-/// SerializationAccessor-based one ?
+/// \todo To avoid excessive nesting on pointers, it could be useful
+/// to plug directly at the write/readXML level rather than at the
+/// attribute level, but using those as a default implementation.
 class SerializationList : public SerializationAttribute {
 public:
 

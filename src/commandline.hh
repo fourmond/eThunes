@@ -69,6 +69,12 @@ public:
 /// The actual parser for the command line
 ///
 /// @todo add a fall-through handler
+///
+/// @todo it would be nice to separate between options and commands,
+/// ie, things that will only modify the behaviour of the program
+/// versus those that trigger another completely unrelated thing (for
+/// testing, for instance). A simple flag in CommandLineOption would
+/// be neat.
 class CommandLineParser {
 
   /// The --k -indexed options.
