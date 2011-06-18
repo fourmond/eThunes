@@ -122,9 +122,10 @@ class SerializationAccessor;
 
 /// This abstract class describes a list of Serializable objects.
 ///
-/// \todo To avoid excessive nesting on pointers, it could be useful
-/// to plug directly at the write/readXML level rather than at the
-/// attribute level, but using those as a default implementation.
+/// \todo Ideally, the use of accessors should be restricted to a
+/// derived class.
+///
+/// 
 class SerializationList : public SerializationAttribute {
 public:
 
@@ -162,6 +163,13 @@ public:
   /// *one* element of the list, but that doesn't matter, as it can be
   /// called hundreds of times ;-)...
   virtual void readXML(QXmlStreamReader * reader);
+
+  /// Write the numbered element to the stream
+  virtual void writeXMLElement(int n, const QString & name, 
+                               QXmlStreamWriter * writer);
+
+  /// Reads the numbered element from stream
+  virtual void readXMLElement(int n, QXmlStreamReader * reader);
 };
 
 /// This abstract class describes a QString-based hash of objects:

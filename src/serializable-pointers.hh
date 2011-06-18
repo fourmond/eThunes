@@ -28,7 +28,7 @@
 /// \li a QString typeName() const function
 /// \li of course, the target class should be a child of Serializable
 ///
-/// \todo Maybe this function could integrate a fallback in case of a
+/// \todo Maybe this class could integrate a fallback in case of a
 /// missing plugin ?
 template <class T>
 class SerializationItemPointer : public SerializationAttribute {
@@ -102,12 +102,21 @@ public:
     target->append(NULL);       // Append NULL by default
   };
 
-  virtual SerializationAccessor * accessorAt(int n) {
-    SerializationAccessor *a = new SerializationAccessor(NULL);
-    a->addAttribute(attribute,
-		    new SerializationItemPointer<T>(&target->operator[](n)));
-    return a;
+  virtual SerializationAccessor * accessorAt(int) {
+    return NULL;
   };
+
+  virtual void writeXMLElement(int n, const QString & name, 
+                               QXmlStreamWriter * writer) {
+    SerializationItemPointer<T> it(&target->operator[](n));
+    it.writeXML(name, writer);
+  };
+
+  virtual void readXMLElement(int n, QXmlStreamReader * reader) {
+    SerializationItemPointer<T> it(&target->operator[](n));
+    it.readXML(reader);
+  }
+
 
 };
 
