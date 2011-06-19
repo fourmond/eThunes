@@ -18,3 +18,62 @@
 
 #include <headers.hh>
 #include <plugin.hh>
+
+
+PluginDefinition::PluginDefinition(Creator c,
+                                   const QString & pub, const QString & desc,
+                                   const QString & n, 
+                                   bool autoRegister) :
+  publicName(pub), description(desc), creator(c)
+{
+  if(n.isEmpty()) {
+    Plugin * p = c("");
+    name = p->typeName();
+    delete p;
+  }
+  else
+    name = n;
+  if(autoRegister)
+    Plugin::registerPlugin(name, this);
+}
+
+Plugin * PluginDefinition::createPlugin() const
+{
+  return creator(name);
+}
+
+
+void PluginFactory::registerPlugin(const QString & name, 
+                                   PluginDefinition * def)
+{
+  if(registeredPlugins.contains(name))
+    /// @todo That isn't too beautiful too...
+    throw "Attempting to register twice the same plugin";
+  registeredPlugins[name] = def;
+}
+
+Plugin * PluginFactory::createNamedPlugin(const QString & name)
+{
+  if(registeredPlugins.contains(name))
+    return registeredPlugins[name]->createPlugin();
+  return NULL;
+}
+
+
+PluginFactory * Plugin::factory = NULL;
+
+
+Plugin * Plugin::createNamedPlugin(const QString & name)
+{
+  if(factory)
+    return factory->createNamedPlugin(name);
+  return NULL;                  /// @todo Or raise an exception ?
+}
+
+void Plugin::registerPlugin(const QString & name, 
+                            PluginDefinition * def)
+{
+  if(! factory)
+    factory = new PluginFactory;
+  factory->registerPlugin(name, def);
+}

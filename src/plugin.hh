@@ -28,22 +28,50 @@ class NavigationPage;
 
 class Plugin;
 
+
+/// A class containing a plugin definition, ie a way to create a
+/// Plugin, associated with a name, a public name and a description.
+///
+/// @todo Author information problably should come in later on.
+class PluginDefinition {
+public:
+
+  /// A plugin creation function. Takes the
+  typedef Plugin * (*Creator) (const QString &);
+
+  /// Internal Plugin name
+  QString name;
+
+  /// Public name
+  QString publicName;
+
+  /// Description
+  QString description;
+
+  /// The function to create the plugin
+  Creator creator;
+
+  /// Creates a new plugin.
+  Plugin * createPlugin() const;
+
+  PluginDefinition(Creator c,
+                   const QString & pub, const QString & desc,
+                   const QString & name = "", 
+                   bool autoRegister = true);
+};
+
+
 /// A plugin factory, managing a translation between name and Plugin *
 /// creator.
 class PluginFactory {
-public:
-  /// A creation function
-  typedef Plugin * (*Creator) (const QString &);
-
-private:
-  QHash<QString, Creator> registeredPlugins;
+  QHash<QString, PluginDefinition *> registeredPlugins;
 
 public:
   /// Creates a plugin from the name.
   Plugin * createNamedPlugin(const QString & name);
 
   /// Register the given plugin creation function.
-  void registerPlugin(const QString & name, Creator creator);
+  void registerPlugin(const QString & name, PluginDefinition * def);
 };
 
 /// A Plugin is basically anything that would make sense in eThunes
@@ -104,7 +132,7 @@ public:
   /// Returns a NavigationPage suitable to interact with the Plugin.
   ///
   /// @todo Maybe we could add a QWidget/QDialog too ?
-  virtual NavigationPage * pageForPlugin();
+  virtual NavigationPage * pageForPlugin() = 0;
 
   // /// For serialization
   // virtual SerializationAccessor * serializationAccessor();
@@ -120,27 +148,7 @@ public:
 
   /// Register the given plugin creation function.
   static void registerPlugin(const QString & name, 
-                             PluginFactory::Creator creator);
-};
-
-/// A helper class to ensure a plugin is registered from the start.
-///
-/// \warning This class creates a Plugin instance to get its name, so
-/// avoid using it if the plugin creation has weird side-effects.
-///
-/// NO!!!
-///
-/// \todo This class should be the main object registered by the
-/// plugin factory. In addition to what exists now, it should provide
-/// a public name, a short description, and possibly over time author
-/// information or things in this spirit.
-class PluginDef {
-public:
-  PluginDef(PluginFactory::Creator c) {
-    Plugin * p = c("");
-    Plugin::registerPlugin(p->typeName(), c);
-    delete p;
-  };
+                             PluginDefinition * def);
 };
 
 
