@@ -88,3 +88,7 @@ HEADERS += src/account.hh src/mainwin.hh src/actions.hh \
         src/serializable-pointers.hh \
         src/testserializepointers.hh
 
+
+# Plugins:
+
+

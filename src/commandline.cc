@@ -23,9 +23,13 @@
 #include <collection.hh>
 
 #include <ruby-utils.hh>
+// Forst listing plugins
+#include <plugin.hh>
 
 // Only for testing purposes...
 #include <testserializepointers.hh>
+
+
 
 void CommandLineOption::handle(QStringList & args)
 {
@@ -220,12 +224,25 @@ static void showHelp(const QStringList & )
   parser->showHelpText(o);
 }
 
+static void showPlugins(const QStringList & )
+{
+  QList<const PluginDefinition *> defs = 
+    Plugin::availablePlugins();
+  QTextStream o(stdout);
+  o << "Available plugins : " << endl;
+  for(int i = 0; i < defs.size(); i++)
+        o << " * " << defs[i]->name << ": " 
+        << defs[i]->publicName << endl;
+}
+
 static CommandLineParser * myParser()
 {
   CommandLineParser * parser = new CommandLineParser();
   *parser 
     << new CommandLineOption("--list-collections", listCollections,
 			     0, "List collections")
+    << new CommandLineOption("--list-plugins", showPlugins,
+			     0, "List available plugins")
     << new CommandLineOption("--help", showHelp,
 			     0, "Shows this help")
     << new CommandLineOption("--test-document-load", testDocumentLoading,

@@ -72,6 +72,9 @@ public:
 
   /// Register the given plugin creation function.
   void registerPlugin(const QString & name, PluginDefinition * def);
+
+  /// Returns the list of available plugins.
+  QList<const PluginDefinition *> availablePlugins() const;
 };
 
 /// A Plugin is basically anything that would make sense in eThunes
@@ -124,7 +127,7 @@ protected:
 public:
 
   /// The type name
-  virtual const QString & typeName() const {
+  virtual QString typeName() const {
     return savedType;
   };
 
@@ -134,8 +137,8 @@ public:
   /// @todo Maybe we could add a QWidget/QDialog too ?
   virtual NavigationPage * pageForPlugin() = 0;
 
-  // /// For serialization
-  // virtual SerializationAccessor * serializationAccessor();
+  /// For serialization
+  virtual SerializationAccessor * serializationAccessor();
 
   // // These functions need to be reimplemented to handle the case when...
   // virtual void writeXML(const QString & name, QXmlStreamWriter * writer);
@@ -149,6 +152,8 @@ public:
   /// Register the given plugin creation function.
   static void registerPlugin(const QString & name, 
                              PluginDefinition * def);
+
+  static QList<const PluginDefinition *> availablePlugins();
 };
 
 

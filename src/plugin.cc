@@ -60,6 +60,19 @@ Plugin * PluginFactory::createNamedPlugin(const QString & name)
 }
 
 
+QList<const PluginDefinition *> PluginFactory::availablePlugins() const
+{
+    QList<const PluginDefinition *> retval;
+    QHash<QString, PluginDefinition*>::const_iterator i = 
+      registeredPlugins.constBegin();
+    while(i != registeredPlugins.constEnd()) {
+      retval.append(i.value());
+      i++;
+    }
+    return retval;
+}
+
+
 PluginFactory * Plugin::factory = NULL;
 
 
@@ -76,4 +89,23 @@ void Plugin::registerPlugin(const QString & name,
   if(! factory)
     factory = new PluginFactory;
   factory->registerPlugin(name, def);
+}
+
+SerializationAccessor * Plugin::serializationAccessor()
+{
+  SerializationAccessor * ac = new SerializationAccessor(this);
+  ac->addAttribute("name",
+		   new SerializationItemScalar<QString>(&name));
+  return ac;
+}
+
+Plugin::~Plugin()
+{
+}
+
+QList<const PluginDefinition *> Plugin::availablePlugins()
+{
+  if(factory)
+    return factory->availablePlugins();
+  return QList<const PluginDefinition *>();
 }

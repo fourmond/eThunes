@@ -94,6 +94,7 @@
    it may make sense to prompt the user for the missing fields.
 
 
+
    \li Customize the frequency at which new documents should be polled
    from master sites ? (from the identities/password saving ?)
 
@@ -125,6 +126,12 @@
 
    \li Eventually, I will have to start to write up some
    documentation...
+
+   \li <b>Plugin development files</b> With the development of
+   plugins, it will become necessary to have a clearly-defined
+   development interface for the plugins, though for now, everything
+   is about fine.
+
 
 */
 
