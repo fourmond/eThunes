@@ -1,7 +1,7 @@
 /**
     \file linkable.hh
     Base class for objects that can be the destination of links
-    Copyright 2008,2010 by Vincent Fourmond
+    Copyright 2008, 2010, 2011 by Vincent Fourmond
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -37,6 +37,18 @@
 /// simple textual representation of the Linkable object, such as what
 /// could be used to display a tooltip, or even as the name of the
 /// link ?
+///
+/// @todo I should go further in real, and provide pure virtual
+/// functions that:
+/// \li say how the link should look like (text display)
+/// \li provide the functions to open a target page ? \b OR, more
+/// interesting probably, simply provide any (void) callback (this
+/// would allow for actions, such as "create new plugin") ? Both ?
+/// \li Maybe these functionalities should join a LinkTarget base
+/// class
+/// 
+/// This would remove most of the need for special cases in the Link
+/// class.
 class Linkable : public Serializable {
 protected:
   /// Preparation of the serializationAccessor for links
