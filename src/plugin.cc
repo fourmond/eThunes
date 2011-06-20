@@ -95,7 +95,7 @@ SerializationAccessor * Plugin::serializationAccessor()
 {
   SerializationAccessor * ac = new SerializationAccessor(this);
   ac->addAttribute("name",
-		   new SerializationItemScalar<QString>(&name));
+		   new SerializationItemScalar<QString>(&name, true));
   return ac;
 }
 

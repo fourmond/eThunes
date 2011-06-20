@@ -45,6 +45,9 @@ protected:
 
   QLabel * summary;
 
+  /// Very basic plugin list display
+  QLabel * plugins;
+
   /// Very basic statistics
   QLabel * stats;
 
@@ -93,6 +96,15 @@ public slots:
 
   /// Loads a file
   void load(const QString & file);
+
+protected slots:
+
+  /// Triggered when the plugin links are activated.
+  ///
+  /// @todo This needs to be replaced when a proper Linkable
+  /// superclass has been created.
+  void handlePluginLink(const QString & link);
+  
 
 };
 

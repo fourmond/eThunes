@@ -18,9 +18,11 @@
 
 #include <headers.hh>
 #include <cabinetpage.hh>
+#include <plugin.hh>
 
 #include <statistics.hh>
 #include <linkshandler.hh>
+#include <navigationwidget.hh>
 
 CabinetPage::CabinetPage(Cabinet * c) : cabinet(c)
 {
@@ -34,6 +36,12 @@ CabinetPage::CabinetPage(Cabinet * c) : cabinet(c)
 
   collectionsDW = new CollectionsDW(cabinet);
   hb->addWidget(collectionsDW);
+
+  plugins = new QLabel;
+  hb->addWidget(plugins);
+
+  connect(plugins, SIGNAL(linkActivated(const QString &)),
+          SLOT(handlePluginLink(const QString &)));
 
   layout->addLayout(hb);
 
@@ -70,6 +78,17 @@ void CabinetPage::updateContents()
 {
   summary->setText(tr("<b>Cabinet : </b>%1<p>").
 		   arg(cabinet->fileName()));
+  // We list the plugins
+  {
+    QString str;
+    str = "<h2>Plugins</h2><br><a href='add-plugin'>(add new plugin)</a><p>";
+    for(int i = 0; i < cabinet->plugins.size(); i++)
+      str += QString("<a href='plugin:%1'>%2</a><br>\n").
+        arg(i).arg(cabinet->plugins[i]->getName());
+
+    plugins->setText(str);
+  }
+
   if(cabinet->wallet.accounts.size() > 0) {
     // We pick the one with the most transactions:
     Account * account = NULL;
@@ -122,4 +141,41 @@ void CabinetPage::load()
 void CabinetPage::load(const QString & file)
 {
   cabinet->loadFromFile(file);
+}
+
+void CabinetPage::handlePluginLink(const QString & link)
+{
+  if(link == "add-plugin") {
+    QList<const PluginDefinition *> defs = Plugin::availablePlugins();
+    QStringList lst;
+    for(int i = 0; i < defs.size(); i++)
+      lst << defs[i]->publicName;
+    QString str = 
+      QInputDialog::getItem(this, tr("Choose the new plugin's type"), 
+                            tr("Plugin type"), 
+                            lst, 0, false);
+    if(str.isEmpty())
+      return;
+    int idx = lst.indexOf(str);
+    if(idx < 0)
+      return;
+    str = QInputDialog::getText(this, tr("Your name for the plugin"),
+                                tr("Give a name"));
+    if(str.isEmpty())
+      return;
+    Plugin * plugin = defs[idx]->createPlugin();
+    plugin->setName(str);
+    cabinet->plugins.append(plugin);
+  }
+  else if(link.startsWith("plugin:")) {
+    int i = link.split(":")[1].toInt();
+    NavigationPage * page = cabinet->plugins[i]->pageForPlugin();
+    if(page)
+      NavigationWidget::gotoPage(page);
+    else {
+      QTextStream o(stdout);
+      o << "No page for plugin " << cabinet->plugins[i] << endl;
+        
+    }
+  }
 }
