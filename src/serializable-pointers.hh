@@ -91,10 +91,9 @@ public:
 template <typename T>
 class SerializationPointerQList : public SerializationList {
   QList<T*> * target;
-  QString attribute;
 public:
-  SerializationPointerQList(QList<T*> * t, const QString &a) :
-    target(t), attribute(a) {;};
+  SerializationPointerQList(QList<T*> * t) :
+    target(t) {;};
 
   virtual int listSize() { return target->size();};
 

@@ -1,6 +1,6 @@
 /*
     cabinet.cc: The Cabinet class
-    Copyright 2010 by Vincent Fourmond
+    Copyright 2010, 2011 by Vincent Fourmond
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,6 +18,8 @@
 
 #include <headers.hh>
 #include <cabinet.hh>
+#include <plugin.hh>
+#include <serializable-pointers.hh>
 
 
 Cabinet::Cabinet() : dirty(false)
@@ -36,6 +38,8 @@ SerializationAccessor * Cabinet::serializationAccessor()
   ac->addAttribute("wallet", &wallet);
   ac->addAttribute("collection",
 		   new SerializationQList<Collection>(&collections));
+  ac->addAttribute("plugin",
+		   new SerializationPointerQList<Plugin>(&plugins));
   return ac;
 }
 

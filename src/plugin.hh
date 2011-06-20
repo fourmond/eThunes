@@ -131,6 +131,16 @@ public:
     return savedType;
   };
 
+  /// Returns the user-given name for the plugin.
+  QString getName() const {
+    return name;
+  };
+
+  /// Sets the user-given name for the plugin.
+  void setName(const QString & n) {
+    setAttribute(name, n, "name");
+  };
+
 
   /// Returns a NavigationPage suitable to interact with the Plugin.
   ///
@@ -148,6 +158,10 @@ public:
 
   /// Creates a plugin from the name.
   static Plugin * createNamedPlugin(const QString & name);
+
+  static Plugin * createObject(const QString & name) {
+    return createNamedPlugin(name);
+  };
 
   /// Register the given plugin creation function.
   static void registerPlugin(const QString & name, 

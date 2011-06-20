@@ -25,6 +25,8 @@
 #include <wallet.hh>
 #include <collection.hh>
 
+class Plugin;
+
 /// The main container. This class is the main container for all data
 /// eThunes (which should change name some time soon)
 ///
@@ -72,7 +74,15 @@ public:
   Wallet wallet;
 
   /// A list of Collection objects
+  ///
+  /// @todo Turn that into a watchable list
   QList<Collection> collections;
+
+  /// All plugins. Please note these are stored as pointers, not
+  /// objects...
+  ///
+  /// @todo Turn that into a watchable list some day...
+  QList<Plugin*> plugins;
 
   /// Saves the Cabinet into the named file.
   ///

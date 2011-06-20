@@ -76,8 +76,7 @@ public:
   virtual SerializationAccessor* serializationAccessor() {
     SerializationAccessor * acc = new SerializationAccessor(this);
     acc->addAttribute("objects", 
-                      new SerializationPointerQList<BaseClass>(&pointerList, 
-                                                               "biniou"));
+                      new SerializationPointerQList<BaseClass>(&pointerList));
     return acc;
   };
   
