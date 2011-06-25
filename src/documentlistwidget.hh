@@ -42,6 +42,13 @@ protected slots:
 
   void promptForFileAttachment();
 
+protected:
+  /// Redefined to emit a signal upon focusing
+  void focusInEvent(QFocusEvent * event);
+
+signals:
+  void documentSelected(Document * doc);
+
 };
 
 /// Hmmm, this is not too bad, but probably should handle straight

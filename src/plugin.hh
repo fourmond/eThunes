@@ -100,6 +100,12 @@ public:
 /// 
 /// \li Second, I need a fallback in case the target type isn't
 /// available, which greatly complexifies the first problem.
+///
+/// @todo I should rather save the information as separate XML
+/// file. This would simply remove all difficulties, at the cost of a
+/// slightly more complex layout. Maybe save as
+/// plugin-data/{plugin}/name.xml ? (not that easy too, unless we
+/// integrate directly as a subclass of SerializableAttribute)
 class Plugin : public Serializable {
 private:
   /// @name Backup attributes

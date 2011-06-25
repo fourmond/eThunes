@@ -92,6 +92,16 @@ void DocumentWidget::promptForFileAttachment()
                                 /// manually.
 }
 
+void DocumentWidget::focusInEvent(QFocusEvent * event)
+{
+  // QTextStream o(stdout);
+  // o << "Got focusIn for document: " << document 
+  //   << document->canonicalFileName() << endl;
+  emit(documentSelected(document));
+  QWidget::focusInEvent(event);
+}
+
+
 
 DocumentListWidget::DocumentListWidget(const QList<Document*> & documents,
                                        QWidget * parent) :
@@ -131,6 +141,8 @@ void DocumentListWidget::setupFrame()
 {
   layout = new FlowLayout(this);
 }
+
+
 
 
 DocumentListWidget::~DocumentListWidget()

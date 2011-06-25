@@ -41,6 +41,11 @@
 #include <QListWidget>
 #include <QComboBox>
 
+#include <QCheckBox>
+#include <QDateTimeEdit>
+#include <QDateEdit>
+#include <QTimeEdit>
+
 // Deeply digging into Qt4...
 #include <QStyledItemDelegate>
 
