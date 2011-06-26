@@ -93,6 +93,13 @@
    correct type (optionnally). Optionnallytoo, for some collections,
    it may make sense to prompt the user for the missing fields.
 
+   \li <b>Links</b> Link implementation is currently a rather nice
+   mess. There are few things that could be done: first, use a single
+   base class for all links; have links implement goto actions, but
+   also other actions too (any action, basically), including popping
+   up "free" lineedits to edit some value "in place". Further, I think
+   I should use a derived class of QLabel to take ownership of ad-hoc
+   Links (ie links with no persistent target, such as actions, ... ?)
 
 
    \li Customize the frequency at which new documents should be polled
