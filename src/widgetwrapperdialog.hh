@@ -28,6 +28,15 @@ class WidgetWrapperDialog : public QDialog {
 protected:
   Q_OBJECT;
 
+  /// @todo This customization should be saved into using QSettings
+  static QHash<QString, QByteArray> savedGeometries;
+
+  QString internalName;
+
+  void restoreGeometry();
+
+  virtual void resizeEvent(QResizeEvent * event);
+
 public:
 
   /// The label at the top of the dialog box
@@ -39,7 +48,12 @@ public:
   /// Constructs
   WidgetWrapperDialog(QWidget * widget,
                       const QString & top = "",
-                      const QString & close = "");
+                      const QString & close = "",
+                      const QString & name = "");
+
+protected slots:
+  void saveGeometry();
+
 };
 
 #endif

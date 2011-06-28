@@ -88,7 +88,8 @@ HEADERS += src/account.hh src/mainwin.hh src/actions.hh \
         src/documentlistwidget.hh src/plugin.hh \
         src/serializable-pointers.hh \
         src/testserializepointers.hh \
-        src/widgetwrapperdialog.hh
+        src/widgetwrapperdialog.hh \
+        src/utils.hh
 
 
 # Plugins:

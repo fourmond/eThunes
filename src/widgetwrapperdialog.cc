@@ -19,9 +19,14 @@
 #include <headers.hh>
 #include <widgetwrapperdialog.hh>
 
+QHash<QString, QByteArray> WidgetWrapperDialog::savedGeometries;
+
+
 WidgetWrapperDialog::WidgetWrapperDialog(QWidget * widget,
                                          const QString & top,
-                                         const QString & close)
+                                         const QString & close,
+                                         const QString & name)
+  : internalName(name)
 {
   // First, a VBox:
   QVBoxLayout * l1 = new QVBoxLayout(this);
@@ -40,4 +45,24 @@ WidgetWrapperDialog::WidgetWrapperDialog(QWidget * widget,
 
   // Force the deletion on close
   setAttribute(Qt::WA_DeleteOnClose);
+  restoreGeometry();
+}
+
+
+void WidgetWrapperDialog::saveGeometry()
+{
+  if(! internalName.isEmpty())
+    savedGeometries[internalName] = QWidget::saveGeometry();
+}
+
+void WidgetWrapperDialog::restoreGeometry()
+{
+  if(savedGeometries.contains(internalName))
+    QWidget::restoreGeometry(savedGeometries[internalName]);
+}
+
+void WidgetWrapperDialog::resizeEvent(QResizeEvent * event)
+{
+  QDialog::resizeEvent(event);
+  saveGeometry();
 }
