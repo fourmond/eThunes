@@ -56,7 +56,8 @@ SOURCES += src/qmain.cc src/account.cc src/mainwin.cc src/actions.cc \
         src/flowlayout.cc src/documentlistwidget.cc \
         src/plugin.cc \
         src/testserializepointers.cc \
-        src/widgetwrapperdialog.cc
+        src/widgetwrapperdialog.cc \
+        src/latexoutput.cc
 
 HEADERS += src/account.hh src/mainwin.hh src/actions.hh \
 	src/ofximport.hh src/accountmodel.hh \
@@ -89,7 +90,8 @@ HEADERS += src/account.hh src/mainwin.hh src/actions.hh \
         src/serializable-pointers.hh \
         src/testserializepointers.hh \
         src/widgetwrapperdialog.hh \
-        src/utils.hh
+        src/utils.hh \
+        src/latexoutput.hh
 
 
 # Plugins:
