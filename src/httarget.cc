@@ -18,3 +18,28 @@
 
 #include <headers.hh>
 #include <httarget.hh>
+
+
+void HTTarget::hoverLink()
+{
+  /// @todo Implement tool tips !
+}
+
+QString HTTarget::toolTip()
+{
+  return QString();
+}
+
+QString HTTarget::encodePointer(HTTarget * pointer)
+{
+  char buffer[50];
+  ::snprintf(buffer, sizeof(buffer), "%p", pointer);
+  return QString::fromAscii(buffer);
+}
+
+HTTarget * HTTarget::decodePointer(const QString & str)
+{
+  HTTarget * ptr;
+  ::sscanf((const char *)str.toAscii(), "%p", &ptr);
+  return ptr;
+}

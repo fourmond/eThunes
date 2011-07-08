@@ -49,6 +49,13 @@ public:
   /// Returns a toolTip to be used with the default hoverLink()
   /// action.
   virtual QString toolTip();
+
+
+  /// Encodes the given pointer as a string
+  static QString encodePointer(HTTarget * t);
+
+  /// Decodes the given pointer from a string.
+  static HTTarget * decodePointer(const QString & str);
   
 };
 
