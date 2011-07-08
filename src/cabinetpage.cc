@@ -24,6 +24,9 @@
 #include <linkshandler.hh>
 #include <navigationwidget.hh>
 
+#include <httarget-templates.hh>
+#include <htlabel.hh>
+
 CabinetPage::CabinetPage(Cabinet * c) : cabinet(c)
 {
   QVBoxLayout * layout = new QVBoxLayout(this);
@@ -42,6 +45,14 @@ CabinetPage::CabinetPage(Cabinet * c) : cabinet(c)
 
   connect(plugins, SIGNAL(linkActivated(const QString &)),
           SLOT(handlePluginLink(const QString &)));
+
+  HTLabel * l = new HTLabel();
+  hb->addWidget(l);
+  QString str = "Bidule: ";
+  str += HTTarget::linkToMember("load ?", 
+                                this, &CabinetPage::load);
+  l->setText(str);
+  
 
   layout->addLayout(hb);
 
@@ -62,6 +73,8 @@ CabinetPage::CabinetPage(Cabinet * c) : cabinet(c)
   connect(cabinet, SIGNAL(filenameChanged(const QString&)),
 	  SIGNAL(filenameChanged(const QString&)));
   stats->show();
+
+  
 }
 
 

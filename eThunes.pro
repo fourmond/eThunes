@@ -92,7 +92,7 @@ HEADERS += src/account.hh src/mainwin.hh src/actions.hh \
         src/testserializepointers.hh \
         src/widgetwrapperdialog.hh \
         src/utils.hh \
-        src/httarget.hh src/htlabel.hh \
+        src/httarget.hh src/htlabel.hh src/httarget-templates.hh \
         src/latexoutput.hh
 
 

@@ -56,7 +56,16 @@ public:
 
   /// Decodes the given pointer from a string.
   static HTTarget * decodePointer(const QString & str);
-  
+
+  /// Returns a link to the given HTTarget
+  static QString linkTo(const QString & id, HTTarget * t);
+
+
+  /// This helper function is defined in httarget-templates.hh
+  template<class T> 
+  static QString linkToMember(const QString & id, 
+                              T * target,
+                              void (T::*f)() );
 };
 
 #endif

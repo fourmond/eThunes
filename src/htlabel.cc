@@ -19,6 +19,18 @@
 #include <headers.hh>
 #include <htlabel.hh>
 
+HTLabel::HTLabel() : QLabel() {
+  connect(this, SIGNAL(linkActivated(const QString &)),
+          SLOT(onLinkClicked(const QString &)));
+}
+
+HTLabel::HTLabel(const QString & txt) : QLabel() {
+  connect(this, SIGNAL(linkActivated(const QString &)),
+          SLOT(onLinkClicked(const QString &)));
+  setText(txt);
+}
+
+
 
 
 HTLabel::~HTLabel()
@@ -34,6 +46,7 @@ void HTLabel::freeTargets()
 }
 
 
+/// @todo This should probably move to HTTarget
 HTTarget * HTLabel::targetFromUrl(const QString & url)
 {
   if(url.startsWith("ht:")) {

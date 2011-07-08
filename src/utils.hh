@@ -21,6 +21,13 @@
 #ifndef __UTILS_HH
 #define __UTILS_HH
 
+
+#ifndef CALL_MEMBER_FN
+/// A neat define that comes in quite useful !
+#define CALL_MEMBER_FN(object,ptrToMember) ((object).*(ptrToMember))
+#endif
+
+
 /// Ensures the given list has the correct size
 template <class T> void ensureSize(QList<T> & lst, int size)
 {

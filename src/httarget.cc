@@ -43,3 +43,11 @@ HTTarget * HTTarget::decodePointer(const QString & str)
   ::sscanf((const char *)str.toAscii(), "%p", &ptr);
   return ptr;
 }
+
+
+QString HTTarget::linkTo(const QString & str, HTTarget * pointer)
+{
+  return QString("<a href=\"ht:%1\">%2</a>").
+    arg(encodePointer(pointer)).
+    arg(str);
+}
