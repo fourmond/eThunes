@@ -57,7 +57,7 @@ QString HTTarget::linkToMember(const QString & id,
 }
 
 /// Helper class to use as link target for callback members with one
-/// parameters.
+/// parameter.
 ///
 /// In principle, you have no reasons to use this class, as
 /// HTTarget::linkToMember() provides a much nicer interface.
@@ -89,6 +89,43 @@ QString HTTarget::linkToMember(const QString & id,
                                void (T::*f)(A1), A1 a1)
 {
   return HTTarget::linkTo(id, new HTMemberCallback1<T, A1>(target, f, a1));
+}
+
+/// Helper class to use as link target for callback members with two
+/// parameters.
+///
+/// In principle, you have no reasons to use this class, as
+/// HTTarget::linkToMember() provides a much nicer interface.
+template <class T, class A1, class A2> class HTMemberCallback2 : 
+  public HTTarget {
+  T * target;
+  
+  typedef void (T::*MemberFunction)(A1 a1, A2 a2);
+  MemberFunction targetMember;
+
+  A1 arg1;
+  A2 arg2;
+
+  bool disposable;
+
+public:
+  virtual bool isDisposable() const { return disposable; };
+  virtual void followLink() {
+    CALL_MEMBER_FN(*target, targetMember)(arg1, arg2);
+  };
+
+  HTMemberCallback2(T * t, MemberFunction f, A1 a1, A2 a2, bool d = true) : 
+    target(t), targetMember(f), arg1(a1), arg2(a2), disposable(d) {;};
+
+};
+
+template<class T, class A1, class A2> 
+QString HTTarget::linkToMember(const QString & id, 
+                               T * target,
+                               void (T::*f)(A1, A2), A1 a1, A2 a2)
+{
+  return HTTarget::
+    linkTo(id, new HTMemberCallback2<T, A1, A2>(target, f, a1, a2));
 }
 
 

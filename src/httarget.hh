@@ -72,6 +72,11 @@ public:
                               T * target,
                               void (T::*f)(A1), A1 a1);
 
+  template<class T, class A1, class A2> 
+  static QString linkToMember(const QString & id, 
+                              T * target,
+                              void (T::*f)(A1, A2), A1 a1, A2 a2);
+
   template<class A1> 
   static QString linkToFunction(const QString & id,
                                 void (*f)(A1), A1 a1);
