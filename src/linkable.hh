@@ -31,7 +31,9 @@
 ///
 /// \warning For some rather obscure reasons, it seems that Linkable
 /// should be the only (or first ?) base class; else the pointers
-/// marshalled by LinksHandler are slightly offset...
+/// marshalled by LinksHandler are slightly offset... \b Hmmmm This is
+/// just because I don't know how to use pointers in C++ with multiple
+/// inheritance.
 ///
 /// \todo Maybe I should write a small virtual function to provide a
 /// simple textual representation of the Linkable object, such as what

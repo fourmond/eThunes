@@ -23,6 +23,7 @@
 #define __PLUGIN_HH
 
 #include <serializable.hh>
+#include <httarget.hh>
 
 class NavigationPage;
 
@@ -106,7 +107,7 @@ public:
 /// slightly more complex layout. Maybe save as
 /// plugin-data/{plugin}/name.xml ? (not that easy too, unless we
 /// integrate directly as a subclass of SerializableAttribute)
-class Plugin : public Serializable {
+class Plugin : public Serializable, public HTTarget {
 private:
   /// @name Backup attributes
   ///
@@ -174,6 +175,8 @@ public:
                              PluginDefinition * def);
 
   static QList<const PluginDefinition *> availablePlugins();
+
+  virtual void followLink();
 };
 
 

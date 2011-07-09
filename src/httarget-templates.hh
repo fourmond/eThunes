@@ -38,7 +38,7 @@ template <class T> class HTMemberCallback0 : public HTTarget {
   bool disposable;
 
 public:
-  virtual bool isDisposable() { return disposable; };
+  virtual bool isDisposable() const { return disposable; };
   virtual void followLink() {
     CALL_MEMBER_FN(*target, targetMember)();
   };

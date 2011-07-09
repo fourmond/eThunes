@@ -40,7 +40,7 @@ public:
 
   /// Whether the Label displaying the link should take ownership of
   /// the object or not
-  virtual bool isDisposable() = 0;
+  virtual bool isDisposable() const { return false; };
 
   /// Performs what happens when the link is hovered. Default action
   /// is to show a tooltip containing toolTip();

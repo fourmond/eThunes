@@ -40,20 +40,8 @@ CabinetPage::CabinetPage(Cabinet * c) : cabinet(c)
   collectionsDW = new CollectionsDW(cabinet);
   hb->addWidget(collectionsDW);
 
-  plugins = new QLabel;
+  plugins = new HTLabel;
   hb->addWidget(plugins);
-
-  connect(plugins, SIGNAL(linkActivated(const QString &)),
-          SLOT(handlePluginLink(const QString &)));
-
-  HTLabel * l = new HTLabel();
-  hb->addWidget(l);
-  QString str = "Bidule: ";
-  str += HTTarget::linkToMember("load ?", 
-                                this, &CabinetPage::load);
-  l->setText(str);
-  
-
   layout->addLayout(hb);
 
 
@@ -94,11 +82,15 @@ void CabinetPage::updateContents()
   // We list the plugins
   {
     QString str;
-    str = "<h2>Plugins</h2><br><a href='add-plugin'>(add new plugin)</a><p>";
+    str = "<h2>Plugins</h2>";
+    str += HTTarget::linkToMember("(add plugin)", 
+                                  this, &CabinetPage::promptAddPlugin);
+    str += "<p>";
     for(int i = 0; i < cabinet->plugins.size(); i++)
-      str += QString("<a href='plugin:%1'>%2</a><br>\n").
-        arg(i).arg(cabinet->plugins[i]->getName());
-
+      str += QString("<b>%1:</b> %2<br>\n").
+        arg(cabinet->plugins[i]->typeName()).
+        arg(HTTarget::linkTo(cabinet->plugins[i]->getName(),
+                             cabinet->plugins[i]));
     plugins->setText(str);
   }
 
@@ -156,39 +148,27 @@ void CabinetPage::load(const QString & file)
   cabinet->loadFromFile(file);
 }
 
-void CabinetPage::handlePluginLink(const QString & link)
+void CabinetPage::promptAddPlugin()
 {
-  if(link == "add-plugin") {
-    QList<const PluginDefinition *> defs = Plugin::availablePlugins();
-    QStringList lst;
-    for(int i = 0; i < defs.size(); i++)
-      lst << defs[i]->publicName;
-    QString str = 
-      QInputDialog::getItem(this, tr("Choose the new plugin's type"), 
-                            tr("Plugin type"), 
-                            lst, 0, false);
-    if(str.isEmpty())
-      return;
-    int idx = lst.indexOf(str);
-    if(idx < 0)
-      return;
-    str = QInputDialog::getText(this, tr("Your name for the plugin"),
-                                tr("Give a name"));
-    if(str.isEmpty())
-      return;
-    Plugin * plugin = defs[idx]->createPlugin();
-    plugin->setName(str);
-    cabinet->plugins.append(plugin);
-  }
-  else if(link.startsWith("plugin:")) {
-    int i = link.split(":")[1].toInt();
-    NavigationPage * page = cabinet->plugins[i]->pageForPlugin();
-    if(page)
-      NavigationWidget::gotoPage(page);
-    else {
-      QTextStream o(stdout);
-      o << "No page for plugin " << cabinet->plugins[i] << endl;
-        
-    }
-  }
+  QList<const PluginDefinition *> defs = Plugin::availablePlugins();
+  QStringList lst;
+  for(int i = 0; i < defs.size(); i++)
+    lst << defs[i]->publicName;
+  QString str = 
+    QInputDialog::getItem(this, tr("Choose the new plugin's type"), 
+                          tr("Plugin type"), 
+                          lst, 0, false);
+  if(str.isEmpty())
+    return;
+  int idx = lst.indexOf(str);
+  if(idx < 0)
+    return;
+  str = QInputDialog::getText(this, tr("Your name for the plugin"),
+                              tr("Give a name"));
+  if(str.isEmpty())
+    return;
+  Plugin * plugin = defs[idx]->createPlugin();
+  plugin->setName(str);
+  cabinet->plugins.append(plugin);
+  updateContents();
 }

@@ -26,6 +26,8 @@
 #include <walletdw.hh>
 #include <collectionsdw.hh>
 
+class HTLabel;
+
 /// This NavigationPage displays a Cabinet.
 class CabinetPage : public NavigationPage {
 
@@ -46,7 +48,7 @@ protected:
   QLabel * summary;
 
   /// Very basic plugin list display
-  QLabel * plugins;
+  HTLabel * plugins;
 
   /// Very basic statistics
   QLabel * stats;
@@ -97,14 +99,10 @@ public slots:
   /// Loads a file
   void load(const QString & file);
 
-protected slots:
+protected:
 
-  /// Triggered when the plugin links are activated.
-  ///
-  /// @todo This needs to be replaced when a proper Linkable
-  /// superclass has been created.
-  void handlePluginLink(const QString & link);
-  
+  /// Prompts for the addition of a new plugin
+  void promptAddPlugin();
 
 };
 

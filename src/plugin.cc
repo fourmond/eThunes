@@ -18,6 +18,7 @@
 
 #include <headers.hh>
 #include <plugin.hh>
+#include <navigationwidget.hh>
 
 
 PluginDefinition::PluginDefinition(Creator c,
@@ -108,4 +109,11 @@ QList<const PluginDefinition *> Plugin::availablePlugins()
   if(factory)
     return factory->availablePlugins();
   return QList<const PluginDefinition *>();
+}
+
+void Plugin::followLink() 
+{
+  NavigationPage * page = pageForPlugin();
+  if(page)
+    NavigationWidget::gotoPage(page);
 }
