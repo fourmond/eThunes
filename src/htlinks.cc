@@ -23,7 +23,15 @@
 #include <collection.hh>
 #include <collectionpage.hh>
 
+#include <account.hh>
+#include <accountpage.hh>
+
 void Collection::followLink()
 {
   NavigationWidget::gotoPage(CollectionPage::getCollectionPage(this));
+}
+
+void Account::followLink()
+{
+  NavigationWidget::gotoPage(AccountPage::getAccountPage(this));
 }

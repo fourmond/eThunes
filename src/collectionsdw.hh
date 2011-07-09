@@ -47,13 +47,6 @@ public slots:
   /// wallet has changed somehow.
   void updateSummary();
 
-  // /// Fires up a dialog box to import a given file (or more !) into
-  // /// the wallet.
-  // void fileImportDialog();
-
-  /// Called internally when a link is clicked
-  void showURL(const QString & link);
-
   /// Fires up a dialog box to add a new Collection
   void addCollectionDialog();
 
@@ -62,6 +55,9 @@ public slots:
 
   /// Pops up a dialog box to add documents to the given Collection
   void addDocumentsDialog(Collection * coll);
+
+  /// Shows the page with all the documents (DocumentsPage)
+  void showAllDocuments();
 
 };
 

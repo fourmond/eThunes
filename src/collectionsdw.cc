@@ -41,7 +41,7 @@ CollectionsDW::CollectionsDW(Cabinet * c) : cabinet(c)
 
 void CollectionsDW::updateSummary()
 {
-  QString text = QString("<strong>") + tr("Collections") + "</strong>\n<p>";
+  QString text = tr("<h2>Collections</h2>");
   QString cellStyle = " style='padding-right: 20px'";
 
   text += HTTarget::linkToMember("(add new collection)",
@@ -56,8 +56,8 @@ void CollectionsDW::updateSummary()
   for(int i = 0; i < cabinet->collections.size(); i++) {
     Collection * c = &cabinet->collections[i];
     text += QString("<tr><td" + cellStyle +">%1 </td>").
-      arg(HTTarget::linkTo(c->name, c)) + QString("<td align='right'>%1</td>"
-		       "<td>%2</td></tr>\n").
+      arg(HTTarget::linkTo(c->name, c)) + 
+      QString("<td align='right'>%1</td><td>%2</td></tr>\n").
       arg(c->documents.size()).
       arg(HTTarget::linkToMember("(add document)", this, 
                                  &CollectionsDW::addDocumentsDialog,
@@ -66,7 +66,8 @@ void CollectionsDW::updateSummary()
   text += "<tr></tr>";
   text += "</table><p>\n";
 
-  text += "<a href='all-documents'>See all documents</a><p>\n";
+  text += HTTarget::linkToMember("See all documents", this, 
+                                 &CollectionsDW::showAllDocuments);
 
   summary->setText(text);
 }
@@ -75,40 +76,6 @@ CollectionsDW::~CollectionsDW()
 {
 
 }
-
-void CollectionsDW::showURL(const QString & link)
-{
-  /// \todo There should be a dialog box proposing to override the
-  /// file name format for all the Collection objects. This could be
-  /// called "customize file names": it would provide a choice of
-  /// either a default value or a use-edited one.
-  QStringList l = link.split(':');
-  QString & id = l[0];
-  if(id == "new-collection") {
-    addCollectionDialog();
-  }
-  if(id == "add-collection") {
-    Collection * coll = &cabinet->collections[l[1].toInt()];
-    addDocumentsDialog(coll);
-  }
-  NavigationPage * page = NULL;
-  if(id == "collection") {
-    page = CollectionPage::getCollectionPage(&cabinet->
-					     collections[l[1].toInt()]);
-  }
-  if(id == "all-documents") {
-    page = DocumentsPage::getDocumentsPage(cabinet);
-  }
-  // else if(id == "categories") {
-  //   page = CategoryPage::getCategoryPage(wallet);
-  // }
-  // else if(id == "filters") {
-  //   manageFilters(); /// \todo shouldn't this be a page too ?
-  // }
-  if(page)
-    NavigationWidget::gotoPage(page);
-}
-
 
 void CollectionsDW::addCollectionDialog()
 {
@@ -161,3 +128,8 @@ void CollectionsDW::addDocumentsDialog(Collection * collection)
     updateSummary();
 }
 
+
+void CollectionsDW::showAllDocuments()
+{
+  NavigationWidget::gotoPage(DocumentsPage::getDocumentsPage(cabinet));
+}

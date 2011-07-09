@@ -25,13 +25,14 @@
 #include <transaction.hh>
 #include <transactionlists.hh>
 #include <filter.hh>
+#include <httarget.hh>
 
 /// Represents informations about an account.
 ///
 /// \todo Maybe this class and all the other ones should join a Money
 /// namespace of some kind when the program sees the birth of the new
 /// functionalities ?
-class Account : public Serializable {
+class Account : public Serializable, public HTTarget {
 public:
 
   /// \name Bank-given attributes
@@ -149,6 +150,9 @@ public:
   ///
   /// @deprecated
   Transaction * namedTransaction(const QString & name);
+
+
+  virtual void followLink();
 };
 
 #endif

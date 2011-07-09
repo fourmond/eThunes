@@ -23,6 +23,8 @@
 #include <dashboardwidget.hh>
 #include <wallet.hh>
 
+class HTLabel;
+
 class WalletDW : public DashboardWidget {
 
   Q_OBJECT;
@@ -31,7 +33,7 @@ class WalletDW : public DashboardWidget {
   Wallet * wallet;
 
   /// The QLabel object displaying the rich text.
-  QLabel * summary;
+  HTLabel * summary;
 
 public:
   WalletDW(Wallet * w);
@@ -57,6 +59,11 @@ public slots:
   ///
   /// @todo To be improved later on.
   void findInternalMoves();
+
+protected:
+  void showFiltersPage();
+
+  void showCategoriesPage();
 
 };
 

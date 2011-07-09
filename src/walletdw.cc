@@ -21,17 +21,19 @@
 
 #include <filterdialog.hh>
 #include <navigationwidget.hh>
-#include <accountpage.hh>
+#include <filterpage.hh>
 #include <categorypage.hh>
 
-#include <linkshandler.hh>
+#include <htlabel.hh>
+#include <httarget-templates.hh>
+
 
 WalletDW::WalletDW(Wallet * w) : wallet(w)
 {
   QVBoxLayout * layout = new QVBoxLayout(this);
-  summary = new QLabel();
+  summary = new HTLabel();
   layout->addWidget(summary);
-  LinksHandler::handleObject(summary);
+  // LinksHandler::handleObject(summary);
 
   connect(*wallet, SIGNAL(changed(const Watchdog *)),
 	  SLOT(updateSummary()));
@@ -40,29 +42,41 @@ WalletDW::WalletDW(Wallet * w) : wallet(w)
   updateSummary();
 }
 
+void WalletDW::showFiltersPage()
+{
+  NavigationWidget::gotoPage(FilterPage::getFilterPage(wallet));
+}
+
+void WalletDW::showCategoriesPage()
+{
+  NavigationWidget::gotoPage(CategoryPage::getCategoryPage(wallet));
+}
+
 void WalletDW::updateSummary()
 {
-  QString text = QString("<strong>") + tr("Wallet") + "</strong>\n<p>";
+  QString text = tr("<h2>Wallet</h2>");
   QString cellStyle = " style='padding-right: 20px'";
   int totalBalance = 0; /// \todo Maybe this should go in Wallet ?
 
-  text += LinksHandler::
-    linkToCategories(wallet, tr("%1 categories").
-		     arg(wallet->categories.categoryCount())) + "\n";
+  text += HTTarget::linkToMember(tr("%1 categories").
+                                 arg(wallet->categories.categoryCount()),
+                                 this, &WalletDW::showCategoriesPage)
+    + "\n";
 
-  text += LinksHandler::linkToFilters(wallet, tr("%1 filters").
-				      arg(wallet->filters.count()))
+  text += HTTarget::linkToMember(tr("%1 filters").
+                                 arg(wallet->filters.count()),
+                                 this, &WalletDW::showFiltersPage)
     + "<p>\n";
 
   /// \todo Maybe the facility for building up tables should end up
   /// somewhere as global utilities ?
-  text += "<h2>Accounts</h2><table>\n";
+  text += "<h3>Accounts</h3><table>\n";
   text += QString("<tr><th" + cellStyle +">%1</th><th>%2</th></tr>\n").
     arg(tr("Account")).arg(tr("Balance"));
   for(int i = 0; i < wallet->accounts.size(); i++) {
     Account * ac = &wallet->accounts[i];
     text += QString("<tr><td" + cellStyle +">") +
-      LinksHandler::linkTo(ac, ac->name()) +
+      HTTarget::linkTo(ac->name(), ac) +
       QString("</td><td align='right'>%1</td></tr>\n").
       arg(Transaction::formatAmount(ac->balance()));
     totalBalance += ac->balance();
@@ -75,7 +89,7 @@ void WalletDW::updateSummary()
 
 
   if(wallet->accountGroups.size() > 0) {
-    text += "<h2>Groups</h2>\n<table>\n";
+    text += "<h3>Groups</h3>\n<table>\n";
     for(int i = 0; i < wallet->accountGroups.size(); i++) {
       const AccountGroup & g = wallet->accountGroups[i];
       text += QString("<tr><td" + cellStyle +">") +
