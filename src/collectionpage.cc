@@ -21,6 +21,9 @@
 #include <transactionlistdialog.hh>
 #include <documentlistwidget.hh>
 
+#include <htlabel.hh>
+#include <httarget-templates.hh>
+
 QHash<Collection *, CollectionPage *> CollectionPage::collectionPages;
 
 static bool compareDefinitions(DocumentDefinition * a, DocumentDefinition * b)
@@ -33,7 +36,7 @@ CollectionPage::CollectionPage(Collection * c) : collection(c)
 {
   QVBoxLayout * layout = new QVBoxLayout(this);
 
-  summary = new QLabel();
+  summary = new HTLabel;
 
   layout->addWidget(summary);
   connect(c->cabinet, SIGNAL(documentsChanged(Collection *)),
@@ -75,10 +78,16 @@ void CollectionPage::updateContents()
 {
   QString str = tr("<b>Collection : </b>%1<p>").
     arg(collection->name);
-  QHash<DocumentDefinition *, QList<Document *> > dd =
-    collection->typeDocuments();
+  str += HTTarget::
+    linkToMember("(find matching transactions)",
+                 this,
+                 &CollectionPage::lookupMatchingTransactions);
+                 
   summary->setText(str);
 
+
+  QHash<DocumentDefinition *, QList<Document *> > dd =
+    collection->typeDocuments();
   for(QHash<DocumentDefinition * , QList<Document *> >::const_iterator i =
         dd.constBegin(); i != dd.constEnd(); i++)
     documentWidgets[i.key()]->showDocuments(i.value());
@@ -92,35 +101,28 @@ CollectionPage * CollectionPage::getCollectionPage(Collection * collection)
 }
 
 
-void CollectionPage::openURL(const QString &str)
+// void CollectionPage::openURL(const QString &str)
+// {
+//   if(str == "download") {
+//     AttributeHash user;
+//     /// \todo This should be turned into a proper handling of the
+//     /// passwords and of multiple identities...
+
+
+//     user["login"] = QInputDialog::getText(this, tr("login"), tr("login"));
+//     user["passwd"] = QInputDialog::getText(this, tr("passwd"), tr("passwd"),
+// 					   QLineEdit::Password);
+//     collection->fetchNewDocumentsForUser(user);
+//   }
+// }
+
+void CollectionPage::lookupMatchingTransactions()
 {
-  if(str.startsWith("file://")) {
-    /// \todo There should be a global function providing a proxy for
-    /// openUrl, to allow for local redifinition of dedicated
-    /// applications, including internal viewers if and when
-    /// applicable.
-    QDesktopServices::openUrl(str);
+  for(int i = 0; i < collection->documents.size(); i++) {
+    Document * doc = &(collection->documents[i]);
+    if(!doc->links.size())
+      doc->addLink(collection->cabinet->
+                   matchingTransaction(doc));
   }
-  else if(str.startsWith("look-matching")) {
-    for(int i = 0; i < collection->documents.size(); i++) {
-      Document * doc = &(collection->documents[i]);
-      if(!doc->links.size())
-	doc->addLink(collection->cabinet->
-		     matchingTransaction(doc));
-    }
-    updateContents();
-    /// \todo Display of what was found / log ?
-  }
-  else if(str == "download") {
-    AttributeHash user;
-    /// \todo This should be turned into a proper handling of the
-    /// passwords and of multiple identities...
-
-
-    user["login"] = QInputDialog::getText(this, tr("login"), tr("login"));
-    user["passwd"] = QInputDialog::getText(this, tr("passwd"), tr("passwd"),
-					   QLineEdit::Password);
-    collection->fetchNewDocumentsForUser(user);
-  }
+  updateContents();
 }
-

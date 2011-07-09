@@ -27,6 +27,7 @@
 #include <collectionsdw.hh>
 
 class DocumentListWidget;
+class HTLabel;
 
 /// This NavigationPage displays a Collection.
 ///
@@ -55,7 +56,7 @@ protected:
   /// \li write yet another custom widget for displaying text
   ///
   /// In any case, this won't do on the long term.
-  QLabel * summary;
+  HTLabel * summary;
 
   /// A correspondance Collection* -> CollectionPage
   static QHash<Collection *, CollectionPage *> collectionPages;
@@ -80,8 +81,8 @@ public slots:
   /// Updates the page
   void updateContents();
 
-  /// Follows an URL
-  void openURL(const QString & url);
+  /// Looks for transactions matching the documents
+  void lookupMatchingTransactions();
 };
 
 #endif
