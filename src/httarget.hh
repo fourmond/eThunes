@@ -61,7 +61,7 @@ public:
   static QString linkTo(const QString & id, HTTarget * t);
 
 
-  /// This helper function is defined in httarget-templates.hh
+  /// These helper function are defined in httarget-templates.hh
   template<class T> 
   static QString linkToMember(const QString & id, 
                               T * target,
@@ -71,6 +71,20 @@ public:
   static QString linkToMember(const QString & id, 
                               T * target,
                               void (T::*f)(A1), A1 a1);
+
+  template<class A1> 
+  static QString linkToFunction(const QString & id,
+                                void (*f)(A1), A1 a1);
+
+  template<class A1, class A2> 
+  static QString linkToFunction(const QString & id,
+                                void (*f)(A1, A2), A1 a1, A2 a2);
+
+  template<class A1, class A2, class A3> 
+  static QString linkToFunction(const QString & id,
+                                void (*f)(A1, A2, A3), 
+                                A1 a1, A2 a2, A3 a3);
+
 };
 
 #endif

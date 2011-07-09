@@ -92,9 +92,33 @@ displayMonthlyCategoryTransactions(Category * category,
               arg(d.toString("MMMM yyyy")));
 }
 
-// void TransactionListDialog::resizeToContents()
-// {
-//   QSize sz = view->size();
-//   sz.setWidth(view->naturalWidth());
-//   view->resize(sz);
-// }
+void TransactionListDialog::showChecks(Account * account)
+{
+  TransactionListDialog * dlg = new TransactionListDialog();
+  dlg->displayChecks(account);
+  dlg->show();
+}
+
+void TransactionListDialog::showCategory(Category * category, Wallet * wallet)
+{
+  TransactionListDialog * dlg = new TransactionListDialog();
+  dlg->displayCategory(category, wallet);
+  dlg->show();
+}
+
+void TransactionListDialog::showMonthlyTransactions(Account * account, 
+                                                    int monthID)
+{
+  TransactionListDialog * dlg = new TransactionListDialog();
+  dlg->displayMonthlyTransactions(account, monthID);
+  dlg->show();
+}
+
+void TransactionListDialog::showMonthlyCategoryTransactions(Category * category,
+                                                            Account * account, 
+                                                            int monthID)
+{
+  TransactionListDialog * dlg = new TransactionListDialog();
+  dlg->displayMonthlyCategoryTransactions(category, account, monthID);
+  dlg->show();
+}

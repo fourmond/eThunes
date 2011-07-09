@@ -92,4 +92,109 @@ QString HTTarget::linkToMember(const QString & id,
 }
 
 
+/// Helper class to use as link target for callback to functions with one
+/// parameter.
+///
+/// In principle, you have no reasons to use this class, as
+/// HTTarget::linkToFunction() provides a much nicer interface.
+template <class A1> class HTFunctionCallback1 : 
+  public HTTarget {
+  
+  typedef void (*Function)(A1 a1);
+  Function target;
+
+  A1 arg1;
+
+  bool disposable;
+
+public:
+  virtual bool isDisposable() const { return disposable; };
+  virtual void followLink() {
+    target(arg1);
+  };
+
+  HTFunctionCallback1(Function f, A1 a1, bool d = true) : 
+    target(f), arg1(a1), disposable(d) {;};
+
+};
+
+template<class A1> 
+QString HTTarget::linkToFunction(const QString & id, 
+                                 void (*f)(A1), A1 a1)
+{
+  return HTTarget::linkTo(id, new HTFunctionCallback1<A1>(f, a1));
+}
+
+/// Helper class to use as link target for callback to functions with two
+/// parameters.
+///
+/// In principle, you have no reasons to use this class, as
+/// HTTarget::linkToFunction() provides a much nicer interface.
+template <class A1, class A2> class HTFunctionCallback2 : 
+  public HTTarget {
+  
+  typedef void (*Function)(A1 a1, A2 a2);
+  Function target;
+
+  A1 arg1;
+  A2 arg2;
+
+  bool disposable;
+
+public:
+  virtual bool isDisposable() const { return disposable; };
+  virtual void followLink() {
+    target(arg1, arg2);
+  };
+
+  HTFunctionCallback2(Function f, A1 a1, A2 a2, bool d = true) : 
+    target(f), arg1(a1), arg2(a2), disposable(d) {;};
+
+};
+
+template<class A1, class A2> 
+QString HTTarget::linkToFunction(const QString & id, 
+                                 void (*f)(A1, A2), A1 a1, A2 a2)
+{
+  return HTTarget::linkTo(id, new HTFunctionCallback2<A1, A2>(f, a1, a2));
+}
+
+/// Helper class to use as link target for callback to functions with two
+/// parameters.
+///
+/// In principle, you have no reasons to use this class, as
+/// HTTarget::linkToFunction() provides a much nicer interface.
+template <class A1, class A2, class A3> class HTFunctionCallback3 : 
+  public HTTarget {
+  
+  typedef void (*Function)(A1 a1, A2 a2, A3 a3);
+  Function target;
+
+  A1 arg1;
+  A2 arg2;
+  A3 arg3;
+
+  bool disposable;
+
+public:
+  virtual bool isDisposable() const { return disposable; };
+  virtual void followLink() {
+    target(arg1, arg2, arg3);
+  };
+
+  HTFunctionCallback3(Function f, A1 a1, A2 a2, A3 a3, bool d = true) : 
+    target(f), arg1(a1), arg2(a2), arg3(a3), disposable(d) {;};
+
+};
+
+template<class A1, class A2, class A3> 
+QString HTTarget::linkToFunction(const QString & id, 
+                                 void (*f)(A1, A2, A3), 
+                                 A1 a1, A2 a2, A3 a3)
+{
+  return HTTarget::
+    linkTo(id, new HTFunctionCallback3<A1, A2, A3>(f, a1, a2, a3));
+}
+
+
 #endif

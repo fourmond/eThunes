@@ -21,7 +21,7 @@
 #include <plugin.hh>
 
 #include <statistics.hh>
-#include <linkshandler.hh>
+// #include <linkshandler.hh>
 #include <navigationwidget.hh>
 
 #include <httarget-templates.hh>
@@ -45,12 +45,11 @@ CabinetPage::CabinetPage(Cabinet * c) : cabinet(c)
   layout->addLayout(hb);
 
 
-  stats = new QLabel();
+  stats = new HTLabel;
   statsArea = new QScrollArea;
   statsArea->setWidget(stats);
 
   layout->addWidget(statsArea);
-  LinksHandler::handleObject(stats);
   stats->show();
   
 

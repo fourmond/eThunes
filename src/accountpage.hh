@@ -25,6 +25,8 @@
 #include <navigationpage.hh>
 #include <transactionlistwidget.hh>
 
+class HTLabel;
+
 /// This NavigationPage displays the contents of an account.
 ///
 /// \todo It feels like I need some text searchbox here. Incremental
@@ -42,7 +44,7 @@ class AccountPage : public NavigationPage {
   TransactionListWidget * view;
 
   /// A label displaying summary information
-  QLabel * accountSummary;
+  HTLabel * accountSummary;
 
   /// A correspondance Account* -> AccountPage
   static QHash<Account *, AccountPage *> accountPages;
@@ -62,12 +64,6 @@ public slots:
 
   /// Prompts for renaming the account
   void renameAccount();
-
-  /// Handles the links
-  void handleLinks(const QString & url);
-
-  /// Displays checks using an AccountChecks dialog box.
-  void displayChecks();
 
   /// Selects and shows the given Transaction, if it is visible
   void showTransaction(Transaction * transaction);

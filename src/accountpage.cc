@@ -19,6 +19,8 @@
 #include <headers.hh>
 #include <accountpage.hh>
 #include <transactionlistdialog.hh>
+#include <htlabel.hh>
+#include <httarget-templates.hh>
 
 
 QHash<Account *, AccountPage *> AccountPage::accountPages;
@@ -27,15 +29,12 @@ AccountPage::AccountPage(Account * ac) : account(ac)
 {
   QVBoxLayout * layout = new QVBoxLayout(this);
 
-  accountSummary = new QLabel();
+  accountSummary = new HTLabel();
   layout->addWidget(accountSummary);
   updateAccountSummary();
 
   view = new TransactionListWidget(&(account->transactions),this);
   layout->addWidget(view);
-
-  connect(accountSummary, SIGNAL(linkActivated(const QString &)),
-	  SLOT(handleLinks(const QString &)));
 }
 
 AccountPage::~AccountPage()
@@ -52,11 +51,17 @@ QString AccountPage::pageTitle()
 void AccountPage::updateAccountSummary()
 {
   /// \todo there is a great deal to change here.
-  accountSummary->setText(tr("<strong>Account: </strong> %1 <a href='#name'>(change name)</a><br>"
-			     "<strong>Balance: </strong> %2\t"
-			     "<a href='#checks'>(see checks)</a><br>").
-			  arg(account->name()).
-			  arg(account->balance() * 0.01 ));
+  QString str = tr("<strong>Account: </strong> %1 %2<br>"
+                   "<strong>Balance: </strong> %3 ").
+    arg(account->name()).
+    arg(HTTarget::linkToMember("(rename)", this, 
+                               &AccountPage::renameAccount)).
+    arg(account->balance() * 0.01 );
+  
+  str += HTTarget::linkToFunction("(see checks)",
+                                  &TransactionListDialog::showChecks,
+                                  account);
+  accountSummary->setText(str);
 }
 
 AccountPage * AccountPage::getAccountPage(Account * account)
@@ -74,20 +79,6 @@ void AccountPage::renameAccount()
     return;
   account->publicName = newName;
   updateAccountSummary();
-}
-
-void AccountPage::handleLinks(const QString & url)
-{
-  if(url == "#name")
-    renameAccount();
-  else if(url == "#checks")
-    displayChecks();
-}
-void AccountPage::displayChecks()
-{
-  TransactionListDialog * checks = new TransactionListDialog();
-  checks->displayChecks(account);
-  checks->show();
 }
 
 void AccountPage::showTransaction(Transaction * transaction)

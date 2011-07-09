@@ -19,9 +19,12 @@
 #include <headers.hh>
 #include <statistics.hh>
 
-#include <linkshandler.hh>
 #include <wallet.hh>
 #include <account.hh>
+
+#include <transactionlistdialog.hh>
+
+#include <httarget-templates.hh>
 
 /// @todo ignore transactions that have an "internal move" link.
 void CategorizedStatistics::addTransaction(const Transaction * t)
@@ -81,16 +84,21 @@ QString Statistics::htmlStatistics(int months) const
       continue;
     QStringList c1, c2;
     c1 << QString("<b>%1</b>").
-      arg(LinksHandler::
-          linkToMonthlyTransactions(account, i,
-                                    Transaction::dateFromID(i).
-                                    toString("MMM yyyy")));
+      arg(HTTarget::
+          linkToFunction(Transaction::dateFromID(i).
+                         toString("MMM yyyy"),
+                         &TransactionListDialog::showMonthlyTransactions,
+                         account, i));
     c2 << "";
     QList<CategorizedStatistics::Item> items = 
       stats[i].categorize();
 
 
-    c1 << LinksHandler::linkToMonthlyCategoryTransactions(wallet->namedCategory(items.last().category), account, i, "Revenues");
+    c1 << HTTarget::
+      linkToFunction("Revenues",
+                     &TransactionListDialog::showMonthlyCategoryTransactions,
+                     wallet->namedCategory(items.last().category),
+                     account, i);
     c2 << Transaction::formatAmount(items.last().amount);
 
     int rest = 0;
@@ -109,9 +117,11 @@ QString Statistics::htmlStatistics(int months) const
 
     for(int j = 0; j < std::min(items.size(), 5); j++) {
       QString name = items[j].category;
-      c1 << LinksHandler::
-        linkToMonthlyCategoryTransactions(wallet->namedCategory(name),
-                                          account, i, name);
+      c1 << HTTarget::
+        linkToFunction(name,
+                       &TransactionListDialog::showMonthlyCategoryTransactions,
+                       wallet->namedCategory(name),
+                       account, i);
       c2 << Transaction::formatAmount(items[j].amount);
     }
     columns << c1 << c2;

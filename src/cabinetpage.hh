@@ -51,7 +51,7 @@ protected:
   HTLabel * plugins;
 
   /// Very basic statistics
-  QLabel * stats;
+  HTLabel * stats;
 
   /// And a scrollable area to browse through them
   QScrollArea * statsArea;

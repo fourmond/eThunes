@@ -80,8 +80,24 @@ public slots:
                                           Account * account, 
                                           int monthID);
 
-  // /// Resize the dialog to contents
-  // void resizeToContents();
+public:
+
+  /// Displays the checks of the given account.
+  static void showChecks(Account * account);
+
+  /// Displays the transactions of the given Category
+  static void showCategory(Category * category, Wallet * wallet);
+
+  /// Displays the transactions for the given Month and the given
+  /// account.
+  static void showMonthlyTransactions(Account * account, int monthID);
+
+  /// Displays the transactions for the given Month and the given
+  /// account.
+  static void showMonthlyCategoryTransactions(Category * category,
+                                              Account * account, 
+                                              int monthID);
+
 };
 
 #endif
