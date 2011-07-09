@@ -22,7 +22,6 @@
 #include <wallet.hh>
 
 #include <htlabel.hh>
-#include <linkshandler.hh>
 // For the delegate
 #include <categorycombo.hh>
 

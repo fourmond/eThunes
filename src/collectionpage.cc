@@ -19,7 +19,6 @@
 #include <headers.hh>
 #include <collectionpage.hh>
 #include <transactionlistdialog.hh>
-#include <linkshandler.hh>
 #include <documentlistwidget.hh>
 
 QHash<Collection *, CollectionPage *> CollectionPage::collectionPages;
@@ -36,10 +35,6 @@ CollectionPage::CollectionPage(Collection * c) : collection(c)
 
   summary = new QLabel();
 
-  LinksHandler::handleObject(summary);
-  connect(LinksHandler::getHandler(),
-	  SIGNAL(unhandledLink(const QString &)),
-	  SLOT(openURL(const QString &)));
   layout->addWidget(summary);
   connect(c->cabinet, SIGNAL(documentsChanged(Collection *)),
 	  SLOT(updateContents()));
