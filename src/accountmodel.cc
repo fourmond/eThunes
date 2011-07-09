@@ -21,6 +21,7 @@
 #include <accountmodel.hh>
 #include <wallet.hh>
 
+#include <htlabel.hh>
 #include <linkshandler.hh>
 // For the delegate
 #include <categorycombo.hh>
@@ -346,15 +347,13 @@ QWidget * LinksItemDelegate::createEditor(QWidget * parent,
 					  const QStyleOptionViewItem & /*option*/,
 					  const QModelIndex & /*index*/ ) const
 {
-  QLabel * label = new QLabel(parent);
-  LinksHandler::handleObject(label);
-  return label;
+  return new HTLabel(parent);
 }
 
 void LinksItemDelegate::setEditorData(QWidget * editor,
 				      const QModelIndex & index) const
 {
-  QLabel * label = static_cast<QLabel*>(editor);
+  HTLabel * label = static_cast<HTLabel*>(editor);
   label->setText(index.data(Qt::EditRole).toString());
 }
 

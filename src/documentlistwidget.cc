@@ -1,6 +1,6 @@
 /*
-    accountpage.cc: Implementation of AccountPage
-    Copyright 2010 by Vincent Fourmond
+    documentlistwidget.cc: Implementation of DocumentWidget and DocumentListWidget
+    Copyright 2011 by Vincent Fourmond
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -19,22 +19,22 @@
 #include <headers.hh>
 #include <documentlistwidget.hh>
 #include <document.hh>
-#include <linkshandler.hh>
 #include <flowlayout.hh>
+#include <htlabel.hh>
+
+#include <httarget-templates.hh>
 
 DocumentWidget::DocumentWidget(Document * doc) : 
   document(doc)
 {
   QHBoxLayout * layout = new QHBoxLayout(this);
-  contents = new QLabel();
+  contents = new HTLabel();
   layout->addWidget(contents);
   setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
   setFocusPolicy(Qt::ClickFocus);
   updateContents();
   /// @todo automatically update contents when applicable.
 
-  connect(contents, SIGNAL(linkActivated(const QString &)),
-	  SLOT(followLink(const QString &)));
   setContentsMargins(QMargins(3,3,3,3));
 }
 
@@ -47,34 +47,17 @@ void DocumentWidget::updateContents()
     "<img src='/usr/share/icons/hicolor/24x24/apps/adobe.pdf.png'/></a></td>\n<td> " +
     document->displayText();
   str += "<br/>" + document->canonicalFileName();
+
   for(int k = 1; k < document->attachmentsNumber(); k++)
     str += QString(" <a href='file://%1'>").arg(document->filePath(k)) +
       "<img src='/usr/share/icons/hicolor/16x16/apps/adobe.pdf.png'/></a>";
-  str += " <a href='attach'>(attach file)</a>"; /// \todo tr around.
-  for(int l = 0; l < document->links.size(); l++)
-    if(document->links[l].linkTarget())
-      str += " " +
-        LinksHandler::linkTo(document->links[l].linkTarget(),
-                             document->links[l].linkTarget()->publicTypeName());
+  str += " " + HTTarget::linkToMember(tr("(attach file)"), this,
+                                      &DocumentWidget::promptForFileAttachment);
+
+  if(document->links.size() > 0)
+    str += " " + document->links.htmlLinkList().join(", ");
   str += "</td></tr></table>";
   contents->setText(str);
-}
-
-void DocumentWidget::followLink(const QString & url)
-{
-  if(url.startsWith("file://")) {
-    /// \todo There should be a global function providing a proxy for
-    /// openUrl, to allow for local redifinition of dedicated
-    /// applications, including internal viewers if and when
-    /// applicable.
-    QDesktopServices::openUrl(url);
-  }
-  else if(url == "attach") {
-    promptForFileAttachment();
-  }
-  else {
-    LinksHandler::getHandler()->followLink(url);
-  }
 }
 
 

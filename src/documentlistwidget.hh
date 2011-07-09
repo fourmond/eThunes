@@ -22,6 +22,7 @@
 
 class Document;
 class FlowLayout;
+class HTLabel;
 
 /// A widget representing a single Document.
 class DocumentWidget : public QFrame {
@@ -30,15 +31,13 @@ class DocumentWidget : public QFrame {
   Document * document;
 
   /// The label representing the document.
-  QLabel * contents;
+  HTLabel * contents;
 
 public:
   DocumentWidget(Document * doc);
 
 protected slots:
   void updateContents();
-
-  void followLink(const QString & url);
 
   void promptForFileAttachment();
 
@@ -54,9 +53,8 @@ signals:
 /// Hmmm, this is not too bad, but probably should handle straight
 /// away the scroll bars ? (no, I think the main page should)
 ///
-/// @todo Maybe wrap the labels in a frame to have selectable
-/// documents ? That would be neat and allow to signal which document
-/// is selected.
+/// @todo WeekPeriodWidget should be made a more generic class, and be
+/// used as a base for documentWidget ?
 class DocumentListWidget : public QWidget {
 
   Q_OBJECT;

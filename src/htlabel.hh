@@ -39,8 +39,8 @@ class HTLabel : public QLabel {
 
 public:
 
-  HTLabel(const QString & txt);
-  HTLabel();
+  HTLabel(const QString & txt, QWidget * parent = NULL);
+  HTLabel(QWidget * parent = NULL);
 
 
   virtual ~HTLabel();

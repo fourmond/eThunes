@@ -61,11 +61,9 @@ void WalletDW::updateSummary()
   text += HTTarget::linkToMember(tr("%1 categories").
                                  arg(wallet->categories.categoryCount()),
                                  this, &WalletDW::showCategoriesPage)
-    + "\n";
-
-  text += HTTarget::linkToMember(tr("%1 filters").
-                                 arg(wallet->filters.count()),
-                                 this, &WalletDW::showFiltersPage)
+    + "\n" + HTTarget::linkToMember(tr("%1 filters").
+                                    arg(wallet->filters.count()),
+                                    this, &WalletDW::showFiltersPage)
     + "<p>\n";
 
   /// \todo Maybe the facility for building up tables should end up

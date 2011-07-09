@@ -19,12 +19,12 @@
 #include <headers.hh>
 #include <htlabel.hh>
 
-HTLabel::HTLabel() : QLabel() {
+HTLabel::HTLabel(QWidget * parent) : QLabel(parent) {
   connect(this, SIGNAL(linkActivated(const QString &)),
           SLOT(onLinkClicked(const QString &)));
 }
 
-HTLabel::HTLabel(const QString & txt) : QLabel() {
+HTLabel::HTLabel(const QString & txt, QWidget * parent) : QLabel(parent) {
   connect(this, SIGNAL(linkActivated(const QString &)),
           SLOT(onLinkClicked(const QString &)));
   setText(txt);
@@ -62,6 +62,15 @@ void HTLabel::onLinkClicked(const QString & url)
   if(t)
     t->followLink();
   else {
+    if(url.startsWith("file://"))
+      /// \todo There should be a global function providing a proxy for
+      /// openUrl, to allow for local redifinition of dedicated
+      /// applications, including internal viewers if and when
+      /// applicable.
+      ///
+      /// @todo Give the possibly to choose which protocols to forward
+      /// to the services on a per label basis
+      QDesktopServices::openUrl(url);
     /// @todo Signal missing links ?
   }
 }

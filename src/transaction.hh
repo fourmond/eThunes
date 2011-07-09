@@ -331,6 +331,9 @@ public:
     return QObject::tr("Transaction");
   };
 
+  virtual void followLink();
+
+
 private:
 
   /// Same as before, but using the currently serialized wallet.

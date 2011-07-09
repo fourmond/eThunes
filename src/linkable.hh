@@ -22,6 +22,7 @@
 #define __LINKABLE_HH
 
 #include <link.hh>
+#include <httarget.hh>
 
 /// Base class for objects that can be the destination of links (ie
 /// the ones we store); typical examples would be Transaction,
@@ -51,7 +52,7 @@
 /// 
 /// This would remove most of the need for special cases in the Link
 /// class.
-class Linkable : public Serializable {
+class Linkable : public Serializable, public HTTarget {
 protected:
   /// Preparation of the serializationAccessor for links
   void addLinkAttributes(SerializationAccessor * accessor);

@@ -20,7 +20,6 @@
 #include <link.hh>
 #include <linkable.hh>
 #include <cabinet.hh>
-#include <linkshandler.hh>
 #include <logstream.hh>
 
 SerializationAccessor * Link::serializationAccessor()
@@ -115,9 +114,11 @@ void LinkList::addLink(Linkable * target, const QString & name)
 QStringList LinkList::htmlLinkList() const
 {
   QStringList ret;
-  for(int i=0; i < size(); i++)
-    ret << LinksHandler::linkTo(value(i).linkTarget(),
-				value(i).linkTarget()->publicTypeName());
+  for(int i=0; i < size(); i++) {
+    Linkable * target = value(i).linkTarget();
+    ret << HTTarget::linkTo(target->publicTypeName(),
+                            target);
+  }
   return ret;
 }
 
