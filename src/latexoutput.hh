@@ -30,6 +30,9 @@ class LatexOutput {
 
   QString outputName;
 
+  /// A temporary directory in which all the files will be created
+  QDir tempDir;
+
 public:
 
   /// (almost) the preamble of the document.

@@ -23,4 +23,21 @@
 LatexOutput::LatexOutput(const QString & on) : 
   outputName(on)
 {
+  /// First, we create the temporary directory
+  QDir tmp = QDir::temp();
+  QString dir;
+
+  int i = 100;
+  while(i > 0) {
+    dir = QString("eThunes-PDF-%1").arg(rand());
+    if(tmp.mkdir(dir))
+      break;
+    i--;
+  }
+  if(! i)
+    throw "Couldn't create temporary directory";
+  tempDir = tmp;
+  if(! tempDir.cd(dir))
+    throw "Error: we should have been able to cd into that...";
+  
 }
