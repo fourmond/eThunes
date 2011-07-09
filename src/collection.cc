@@ -246,3 +246,5 @@ void Collection::fetchNewDocumentsForUser(const AttributeHash &user)
     docs << documents[i].documentAttributes();
   definition->code.fetchNewDocuments(user, docs, this);
 }
+
+

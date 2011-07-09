@@ -57,7 +57,7 @@ SOURCES += src/qmain.cc src/account.cc src/mainwin.cc src/actions.cc \
         src/plugin.cc \
         src/testserializepointers.cc \
         src/widgetwrapperdialog.cc \
-        src/httarget.cc src/htlabel.cc \
+        src/httarget.cc src/htlabel.cc src/htlinks.cc \
         src/latexoutput.cc
 
 HEADERS += src/account.hh src/mainwin.hh src/actions.hh \

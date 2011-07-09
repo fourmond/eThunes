@@ -23,12 +23,9 @@
 #include <dashboardwidget.hh>
 #include <cabinet.hh>
 
+class HTLabel;
+
 /// A dashboard widget to display all Collection objects.
-///
-/// \todo it would be very good to have a filesystem-like model to
-/// display all the documents handled by a Cabinet, ordered by
-/// canonicalFileName, with links to the collection, the PDF file, and
-/// with the relevant data (in particular the display name).
 class CollectionsDW : public DashboardWidget {
 
   Q_OBJECT;
@@ -37,7 +34,7 @@ class CollectionsDW : public DashboardWidget {
   Cabinet * cabinet;
 
   /// The QLabel object displaying the rich text.
-  QLabel * summary;
+  HTLabel * summary;
 
 public:
   CollectionsDW(Cabinet * c);

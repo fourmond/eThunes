@@ -22,14 +22,17 @@
 #include <navigationwidget.hh>
 #include <collectionpage.hh>
 #include <documentspage.hh>
+#include <htlabel.hh>
+#include <httarget-templates.hh>
+
 
 CollectionsDW::CollectionsDW(Cabinet * c) : cabinet(c)
 {
   QVBoxLayout * layout = new QVBoxLayout(this);
-  summary = new QLabel();
+  summary = new HTLabel();
   layout->addWidget(summary);
-  connect(summary, SIGNAL(linkActivated(const QString &)),
-	  SLOT(showURL(const QString &)));
+  // connect(summary, SIGNAL(linkActivated(const QString &)),
+  //         SLOT(showURL(const QString &)));
 
   connect(cabinet, SIGNAL(collectionsPossiblyChanged()),
   	  SLOT(updateSummary()));
@@ -43,7 +46,10 @@ void CollectionsDW::updateSummary()
   QString text = QString("<strong>") + tr("Collections") + "</strong>\n<p>";
   QString cellStyle = " style='padding-right: 20px'";
 
-  text += "<a href='new-collection'>Add new collection</a><p>\n";
+  text += HTTarget::linkToMember("(add new collection)",
+                                 this, &CollectionsDW::addCollectionDialog);
+  text += "<p>\n";
+
   /// \todo Maybe the facility for building up tables should end up
   /// somewhere as global utilities ?
   text += "<table>\n";
@@ -51,10 +57,10 @@ void CollectionsDW::updateSummary()
   //   arg(tr("Account")).arg(tr("Balance"));
   for(int i = 0; i < cabinet->collections.size(); i++) {
     Collection * c = &cabinet->collections[i];
-    text += QString("<tr><td" + cellStyle +"><a href='collection:%1'>").
-      arg(i) + QString("%1</a></td><td align='right'>%2</td>"
+    text += QString("<tr><td" + cellStyle +">%1</td>").
+      arg(HTTarget::linkTo(c->name, c)) + QString("<td align='right'>%2</td>"
 		       "<td><a href='add-collection:%3'>(add)</a></td></tr>\n").
-      arg(c->name).arg(c->documents.size()).arg(i);
+      arg(c->documents.size()).arg(i);
   }
   text += "<tr></tr>";
   text += "</table><p>\n";

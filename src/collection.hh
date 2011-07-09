@@ -26,7 +26,7 @@
 #include <rubymodulecode.hh>
 
 #include <watchablecontainers.hh>
-
+#include <httarget.hh>
 
 class Cabinet;
 
@@ -134,7 +134,8 @@ protected:
 /// \todo Write a small class to serialize a CollectionDefinition *,
 /// saving as definition->name and loading using namedDefinition,
 /// (eventually) raising an exception when NULL is returned.
-class Collection : public Serializable {
+class Collection : 
+  public Serializable, public HTTarget {
 public:
 
   /// The Cabinet this collection belongs to.
@@ -207,13 +208,9 @@ public:
   /// been performed up to this point ;-)...
   void fetchNewDocumentsForUser(const AttributeHash &user);
 
-  // We can't use signals as the QObject copy constructor is private,
-  // which prevents it from being used inside a QList, probably for
-  // very good reasons too...
-  //
-  // signals:
-  //   /// Emitted whenever the documents have changed somehow.
-  //   void documentsChanged();
+
+  virtual void followLink();
+
 protected:
 
   /// Checks whether a document with the same file name exists or not.
