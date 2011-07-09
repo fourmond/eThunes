@@ -68,7 +68,7 @@ LatexOutput::~LatexOutput()
   delete outFile;
 }
 
-void LatexOutput::compile()
+void LatexOutput::compile(bool showOutput)
 {
   QFile tmpOut(tempDir.absoluteFilePath("main.tex"));
   if(!tmpOut.open(QIODevice::WriteOnly | QIODevice::Text))
@@ -106,6 +106,11 @@ void LatexOutput::compile()
   // Now, copy back to the path requested...
   QFile::remove(outputPath);    // Hmmmm...
   QFile::copy(tempDir.absoluteFilePath("main.pdf"), outputPath);
+  
+  QFileInfo info(outputPath);
+  if(showOutput && info.exists())
+    QDesktopServices::openUrl(QString("file://%1").
+                              arg(info.canonicalFilePath()));
 
 }
 

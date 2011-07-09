@@ -61,8 +61,9 @@ public:
   };
 
   /// Compiles the file, which produces a PDF file in the current
-  /// directory (outputName).
-  void compile();
+  /// directory (outputName). The produced PDF file is shown using
+  /// desktop services if showOutput is true.
+  void compile(bool showOutput = true);
 
   /// Returns a default preamble.
   ///
