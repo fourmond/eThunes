@@ -31,8 +31,6 @@ CollectionsDW::CollectionsDW(Cabinet * c) : cabinet(c)
   QVBoxLayout * layout = new QVBoxLayout(this);
   summary = new HTLabel();
   layout->addWidget(summary);
-  // connect(summary, SIGNAL(linkActivated(const QString &)),
-  //         SLOT(showURL(const QString &)));
 
   connect(cabinet, SIGNAL(collectionsPossiblyChanged()),
   	  SLOT(updateSummary()));
@@ -57,10 +55,13 @@ void CollectionsDW::updateSummary()
   //   arg(tr("Account")).arg(tr("Balance"));
   for(int i = 0; i < cabinet->collections.size(); i++) {
     Collection * c = &cabinet->collections[i];
-    text += QString("<tr><td" + cellStyle +">%1</td>").
-      arg(HTTarget::linkTo(c->name, c)) + QString("<td align='right'>%2</td>"
-		       "<td><a href='add-collection:%3'>(add)</a></td></tr>\n").
-      arg(c->documents.size()).arg(i);
+    text += QString("<tr><td" + cellStyle +">%1 </td>").
+      arg(HTTarget::linkTo(c->name, c)) + QString("<td align='right'>%1</td>"
+		       "<td>%2</td></tr>\n").
+      arg(c->documents.size()).
+      arg(HTTarget::linkToMember("(add document)", this, 
+                                 &CollectionsDW::addDocumentsDialog,
+                                 c));
   }
   text += "<tr></tr>";
   text += "</table><p>\n";

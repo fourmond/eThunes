@@ -66,6 +66,11 @@ public:
   static QString linkToMember(const QString & id, 
                               T * target,
                               void (T::*f)() );
+
+  template<class T, class A1> 
+  static QString linkToMember(const QString & id, 
+                              T * target,
+                              void (T::*f)(A1), A1 a1);
 };
 
 #endif
