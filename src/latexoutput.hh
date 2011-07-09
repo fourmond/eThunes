@@ -28,7 +28,11 @@ class LatexOutput {
   /// document)
   QTextStream * documentStream;
 
-  QString outputName;
+  /// Where the documentStream spits.
+  QFile * outFile;
+
+  /// The location of the target
+  QString outputPath;
 
   /// A temporary directory in which all the files will be created
   QDir tempDir;
@@ -42,8 +46,11 @@ public:
   /// the document.
   QStringList packages;
 
+  /// A package name-indexed list of options for the packages.
+  QHash<QString, QString> packageOptions;
 
-  LatexOutput(const QString & outputName);
+
+  LatexOutput(const QString & op);
 
   ~LatexOutput();
 
@@ -56,6 +63,14 @@ public:
   /// Compiles the file, which produces a PDF file in the current
   /// directory (outputName).
   void compile();
+
+  /// Returns a default preamble.
+  ///
+  /// @todo This function should probably take arguments.
+  static QString makeupPreamble();
+
+  /// Adds a package along with its options.
+  void addPackage(const QString & package, const QString & options = "");
 
 };
 

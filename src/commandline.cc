@@ -28,6 +28,7 @@
 
 // Only for testing purposes...
 #include <testserializepointers.hh>
+#include <latexoutput.hh>
 
 
 
@@ -235,6 +236,15 @@ static void showPlugins(const QStringList & )
         << defs[i]->publicName << endl;
 }
 
+static void testLaTeX(const QStringList & )
+{
+  LatexOutput o("Bidule");
+  o << "\\textbf{machin}";
+  o << "Bidule !!";
+  o.addPackage("geometry", "a4paper, margin=1cm, landscape");
+  o.compile();
+}
+
 static CommandLineParser * myParser()
 {
   CommandLineParser * parser = new CommandLineParser();
@@ -256,6 +266,9 @@ static CommandLineParser * myParser()
     << new CommandLineOption("--test-pointers", 
                              testSerializePointers, // External
 			     0, "Test serialization of pointers...")
+    << new CommandLineOption("--test-latex", 
+                             testLaTeX,
+			     0, "Test latex output")
     << new CommandLineOption("--show-collection", showCollection,
 			     1, "Shows the given collection in more details");
   return parser;

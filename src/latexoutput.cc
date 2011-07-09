@@ -20,9 +20,13 @@
 #include <latexoutput.hh>
 
 
-LatexOutput::LatexOutput(const QString & on) : 
-  outputName(on)
+LatexOutput::LatexOutput(const QString & op) : 
+  outputPath(op)
 {
+
+  if(! outputPath.endsWith(".pdf"))
+    outputPath += ".pdf";
+
   /// First, we create the temporary directory
   QDir tmp = QDir::temp();
   QString dir;
@@ -39,5 +43,77 @@ LatexOutput::LatexOutput(const QString & on) :
   tempDir = tmp;
   if(! tempDir.cd(dir))
     throw "Error: we should have been able to cd into that...";
+
+  preamble = makeupPreamble();
+
+  outFile = new QFile(tempDir.absoluteFilePath("contents.tex"));
+  if(!outFile->open(QIODevice::WriteOnly | QIODevice::Text))
+    throw "Problem opening file";
   
+  documentStream = new QTextStream(outFile);
+  documentStream->setCodec("UTF-8");
+}
+
+QString LatexOutput::makeupPreamble()
+{
+  return QObject::tr("\\documentclass{article}\n\n"
+                     "\\usepackage[english]{babel}\n"
+                     "\\usepackage[utf8]{inputenc}\n"
+                     "\\usepackage[T1]{fontenc}\n");
+}
+
+LatexOutput::~LatexOutput()
+{
+  delete documentStream;
+  delete outFile;
+}
+
+void LatexOutput::compile()
+{
+  QFile tmpOut(tempDir.absoluteFilePath("main.tex"));
+  if(!tmpOut.open(QIODevice::WriteOnly | QIODevice::Text))
+    throw "Problem opening file";
+
+  documentStream->flush();
+  
+  QTextStream o(&tmpOut);
+  o.setCodec("UTF-8");
+  o << preamble;
+  packages.removeDuplicates();
+  for(int i = 0; i < packages.size(); i++) {
+    if(packageOptions.contains(packages[i]))
+      o << "\\usepackage[" << packageOptions[packages[i]] 
+        << "]{" << packages[i] << "}\n";
+    else
+      o << "\\usepackage{" << packages[i] << "}\n";
+  }
+  o << "\\begin{document}\\input{contents.tex}\\end{document}" << endl;
+  tmpOut.close();
+  
+  QProcess latex;
+  latex.setWorkingDirectory(tempDir.absolutePath());
+  latex.closeWriteChannel();
+  latex.setProcessChannelMode(QProcess::ForwardedChannels);	
+  latex.start("pdflatex", QStringList() << "main.tex");
+  latex.waitForFinished(-1);
+
+  latex.setWorkingDirectory(tempDir.absolutePath());
+  latex.closeWriteChannel();
+  latex.setProcessChannelMode(QProcess::ForwardedChannels);	
+  latex.start("pdflatex", QStringList() << "main.tex");
+  latex.waitForFinished(-1);
+
+  // Now, copy back to the path requested...
+  QFile::remove(outputPath);    // Hmmmm...
+  QFile::copy(tempDir.absoluteFilePath("main.pdf"), outputPath);
+
+}
+
+
+void LatexOutput::addPackage(const QString & package, 
+                             const QString & options)
+{
+  packages << package;
+  if(! options.isEmpty())
+    packageOptions[package] = options;
 }
