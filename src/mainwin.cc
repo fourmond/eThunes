@@ -78,6 +78,10 @@
    I should use a persistent editor for all objects, like for the links in
    the transaction view.
 
+   \li <b>Yet again grand ideas</b> it would be nice to replace
+   QInputDialog-based user interaction with more discreet frameless
+   dialog boxes, almost modal: a click out would mean cancel.
+
    \li \b Plugins It would be great to add fully customizable plugins
    in the form of Ruby code. An exemple would be for instance for an
    assistante maternelle (as we say in french) to track how much time
