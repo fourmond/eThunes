@@ -73,6 +73,11 @@ public:
   /// Adds a package along with its options.
   void addPackage(const QString & package, const QString & options = "");
 
+  /// Make a title
+  void makeTitle(const QString & title, 
+                 const QString & date = "\\today",
+                 const QString & author = "");
+
   /// @name Helper functions
   ///
   /// Now, a couple of static helper functions.
@@ -82,6 +87,8 @@ public:
     return QString("\\textcolor{%2}{%1}").
       arg(text).arg(color);
   };
+
+  /// @}
 
 };
 

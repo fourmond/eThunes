@@ -125,3 +125,14 @@ void LatexOutput::addPackage(const QString & package,
   if(! options.isEmpty())
     packageOptions[package] = options;
 }
+
+void LatexOutput::makeTitle(const QString & title, 
+                            const QString & date,
+                            const QString & author)
+{
+  preamble += QString("\\title{%1}\n\\author{%2}\n\\date{%3}\n").
+    arg(title).
+    arg(author).
+    arg(date);
+  preamble += "\\AtBeginDocument{\\maketitle}\n";
+}
