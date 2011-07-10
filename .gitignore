@@ -11,6 +11,7 @@ eThunes
 Makefile
 moc_*.cpp
 dox/
+ts/*.qm
 
 # Private files
 Download

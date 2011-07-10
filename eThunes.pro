@@ -102,3 +102,7 @@ HEADERS += src/account.hh src/mainwin.hh src/actions.hh \
 
 
         
+
+# Translations
+
+TRANSLATIONS = ts/eThunes_fr.ts

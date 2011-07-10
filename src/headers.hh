@@ -95,6 +95,10 @@
 #include <QXmlStreamWriter>
 #include <QXmlStreamReader>
 
+// Translations 
+#include <QTranslator>
+#include <QLibraryInfo>
+
 // Ruby main include, to have the definition of VALUE to be able to
 // use it in classes
 #include <ruby.h>

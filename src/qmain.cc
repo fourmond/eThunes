@@ -23,6 +23,33 @@
 #include <log.hh>
 #include <commandline.hh>
 
+void loadTranslations(const QString & locale, QCoreApplication * app)
+{
+  QTranslator * translator = new QTranslator;
+  QTextStream o(stderr);
+  translator->load("qt_" + locale,
+                   QLibraryInfo::location(QLibraryInfo::TranslationsPath));
+  app->installTranslator(translator);
+
+  translator = new QTranslator;
+
+  QStringList pathes = QStringList()
+    << QDesktopServices::storageLocation(QDesktopServices::HomeLocation) +  
+    "/Prog/eThunes/ts"
+    << "/home/vincent/Prog/eThunes/ts";
+  for(int i = 0; i < pathes.size(); i++) {
+    QString path = pathes[i];
+    if(translator->load("eThunes_" + locale,
+                        path)) {
+      o << "Found translations for locale " << locale  
+        << " at " << path << endl;
+      app->installTranslator(translator);
+      return;
+    }
+  }
+  o << "Failed to load translations for locale " << locale << endl;
+}
+
 
 int main(int argc, char ** argv)
 {
@@ -30,6 +57,8 @@ int main(int argc, char ** argv)
   QFile log;
   log.open(stdout, QIODevice::WriteOnly);
   Log::logger()->spy = &log;
+
+  loadTranslations(QLocale::system().name(), &main);
 
   // The search path for Ruby code (general-purpose modules)
   QDir::addSearchPath("ruby", "/home/vincent/Prog/eThunes/ruby");
