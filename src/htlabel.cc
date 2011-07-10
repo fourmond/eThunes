@@ -89,3 +89,20 @@ void HTLabel::setText(const QString & str)
   QLabel::setText(str);
 }
 
+
+QString HTLabel::prepareTable(const QList<QStringList> & rows,
+                              const QStringList &header)
+{
+  QString str = "<table>\n";
+  
+  /// @todo headers
+  for(int i = 0; i < rows.size(); i++) {
+    str += "<tr>";
+    const QStringList & row = rows[i];
+    for(int j = 0; j < row.size(); j++)
+      str += "<td>" + row[j] + "</td>";
+    str += "</tr>\n";
+  }
+  str += "</table>";
+  return str;
+}

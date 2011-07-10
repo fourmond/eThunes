@@ -55,6 +55,17 @@ protected slots:
   /// Handle the links
   void onLinkClicked(const QString & url);
 
+public:
+  
+  /// Prepare an HTML table. This can always come in useful ;-)...
+  ///
+  /// @todo There are many more information that could be included in
+  /// here, as additional parameters.
+  ///
+  /// @todo headers are unimplemented as of now ;-)...
+  static QString prepareTable(const QList<QStringList> & rows,
+                              const QStringList &header = QStringList());
+
 };
 
 #endif
