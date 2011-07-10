@@ -73,6 +73,16 @@ public:
   /// Adds a package along with its options.
   void addPackage(const QString & package, const QString & options = "");
 
+  /// @name Helper functions
+  ///
+  /// Now, a couple of static helper functions.
+  /// 
+  /// @{
+  static QString color(const QString & text, const QString & color) {
+    return QString("\\textcolor{%2}{%1}").
+      arg(text).arg(color);
+  };
+
 };
 
 #endif

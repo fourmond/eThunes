@@ -91,16 +91,19 @@ void LatexOutput::compile(bool showOutput)
   tmpOut.close();
   
   QProcess latex;
+  QStringList args;
+  args << "-interaction=nonstopmode" 
+       << "main.tex" ;
   latex.setWorkingDirectory(tempDir.absolutePath());
   latex.closeWriteChannel();
   latex.setProcessChannelMode(QProcess::ForwardedChannels);	
-  latex.start("pdflatex", QStringList() << "main.tex");
+  latex.start("pdflatex", args);
   latex.waitForFinished(-1);
 
   latex.setWorkingDirectory(tempDir.absolutePath());
   latex.closeWriteChannel();
   latex.setProcessChannelMode(QProcess::ForwardedChannels);	
-  latex.start("pdflatex", QStringList() << "main.tex");
+  latex.start("pdflatex", args);
   latex.waitForFinished(-1);
 
   // Now, copy back to the path requested...
