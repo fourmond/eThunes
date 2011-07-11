@@ -90,6 +90,7 @@ void HTLabel::setText(const QString & str)
 }
 
 
+/// @todo this should be turned into a class in its own right.
 QString HTLabel::prepareTable(const QList<QStringList> & rows,
                               const QStringList &header)
 {
