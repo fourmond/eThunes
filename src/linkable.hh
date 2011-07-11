@@ -69,9 +69,9 @@ public:
   /// The number of named links:
   int hasNamedLinks(const QString & name) const;
 
-  /// Returns the unique String ID for this object, suitable for
-  /// serialization.
-  virtual QString uniqueID() const = 0;
+  // /// Returns the unique String ID for this object, suitable for
+  // /// serialization.
+  // virtual QString uniqueID() const = 0;
 
   /// Returns the (internal) type of the object. It should match the
   /// one that LinksHandler recognizes.
