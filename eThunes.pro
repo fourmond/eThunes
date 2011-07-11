@@ -44,6 +44,7 @@ SOURCES += src/qmain.cc src/account.cc src/mainwin.cc src/actions.cc \
 	src/collectionpage.cc src/documentsmodel.cc \
 	src/documentspage.cc src/managedfile.cc \
 	src/linkable.cc \
+        src/serializable-templates.cc \
 	src/link.cc src/transactionlistwidget.cc \
 	src/fetcher.cc src/result.cc \
 	src/cookiejar.cc src/log.cc \
@@ -77,6 +78,7 @@ HEADERS += src/account.hh src/mainwin.hh src/actions.hh \
 	src/collectionpage.hh src/documentsmodel.hh \
 	src/documentspage.hh src/managedfile.hh \
 	src/linkable.hh \
+        src/serializable-templates.hh \
 	src/link.hh src/transactionlistwidget.hh \
 	src/fetcher.hh src/result.hh \
 	src/cookiejar.hh src/log.hh \

@@ -24,11 +24,8 @@
 #define __SERIALIZABLE_TEMPLATES_HH
 
 #include <watchablecontainers.hh>
+#include <utils.hh>
 
-#ifndef CALL_MEMBER_FN
-/// \todo this should be moved somewhere appropriate
-#define CALL_MEMBER_FN(object,ptrToMember) ((object).*(ptrToMember))
-#endif
 
 /// This template class class should be used for any reasonably
 /// scalar.

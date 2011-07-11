@@ -133,8 +133,6 @@
    plugins, it will become necessary to have a clearly-defined
    development interface for the plugins, though for now, everything
    is about fine.
-
-
 */
 
 #include <headers.hh>
@@ -149,6 +147,18 @@
 
 // temporary ?
 #include <collection.hh>
+
+static const char * translationCopyrightString = 
+  QT_TRANSLATE_NOOP("Copyright Notice",
+                    "The original English localization of eThunes is\n"
+             "Copyright 2008-2011 by Vincent Fourmond\n\n"
+             "Localization strings are excerpts from the source code\n"
+             "and are therefore licensed under the GNU General Public License\n"
+             "version 2 or any later version at your options (see source code).\n\n"
+             "Translators are reminded that translation are considered a\n"
+             "derived work, and are therefore also subject to the GNU\n"
+             "General Public License, as the source code.\n"
+             );
 
 MainWin::MainWin()
 {
