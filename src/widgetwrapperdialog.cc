@@ -25,14 +25,21 @@ QHash<QString, QByteArray> WidgetWrapperDialog::savedGeometries;
 WidgetWrapperDialog::WidgetWrapperDialog(QWidget * widget,
                                          const QString & top,
                                          const QString & close,
-                                         const QString & name)
+                                         const QString & name, 
+                                         bool wrap)
   : internalName(name)
 {
   // First, a VBox:
   QVBoxLayout * l1 = new QVBoxLayout(this);
   topLabel = new QLabel(top);
   l1->addWidget(topLabel);
-  l1->addWidget(widget);
+  if(wrap) {
+    QScrollArea * sa = new QScrollArea;
+    sa->setWidget(widget);
+    l1->addWidget(sa, 1);
+  }
+  else 
+    l1->addWidget(widget);
 
   QString str;
   if(close.isEmpty())

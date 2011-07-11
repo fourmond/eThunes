@@ -49,7 +49,8 @@ public:
   WidgetWrapperDialog(QWidget * widget,
                       const QString & top = "",
                       const QString & close = "",
-                      const QString & name = "");
+                      const QString & name = "",
+                      bool wrap = false);
 
 protected slots:
   void saveGeometry();
