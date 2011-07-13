@@ -121,6 +121,22 @@ public:
 
 };
 
+template <class T> void 
+SerializationAccessor::addListAttribute(const QString & name,
+                                        QList<T> * target)
+{
+  addAttribute(name, 
+               new SerializationTemplateList<T, QList<T> >(target));
+}
+
+template <class T> void 
+SerializationAccessor::addListAttribute(const QString & name,
+                                        WatchableList<T> * target)
+{
+  addAttribute(name, 
+               new SerializationTemplateList<T, WatchableList<T> >(target));
+}
+
 
 template <class T> 
 class SerializationQList : public SerializationTemplateList<T, QList<T> > {

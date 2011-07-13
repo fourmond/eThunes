@@ -61,20 +61,12 @@ int Account::importTransactions(TransactionList t, Wallet * filters)
 SerializationAccessor * Account::serializationAccessor()
 {
   SerializationAccessor * ac = new SerializationAccessor(this);
-  ac->addAttribute("number",
-		   new SerializationItemScalar<QString>(&accountNumber));
-  ac->addAttribute("public-name",
-		   new SerializationItemScalar<QString>(&publicName, true));
-  ac->addAttribute("bank-id",
-		   new SerializationItemScalar<QString>(&bankID));
-  ac->addAttribute("branch-id",
-		   new SerializationItemScalar<QString>(&branchID));
-  ac->addAttribute("type",
-		   new SerializationItemScalar<int>((int*)(&type)));
-
-  // Now, we try the list stuff...
-  ac->addAttribute("transaction",
-		   new SerializationWatchableList<Transaction>(&transactions));
+  ac->addScalarAttribute("number",&accountNumber);
+  ac->addScalarAttribute("public-name", &publicName);
+  ac->addScalarAttribute("bank-id", &bankID);
+  ac->addScalarAttribute("branch-id", &branchID);
+  ac->addScalarAttribute("type",(int*)(&type));
+  ac->addListAttribute("transaction", &transactions);
   return ac;
 }
 

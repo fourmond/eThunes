@@ -22,6 +22,7 @@
 #define __SERIALIZATION_HH
 
 class Serializable;
+template <class T> class WatchableList;
 
 namespace Serialization {
   /// Reads tokens in the stream reader until a non-whitespace one is
@@ -265,6 +266,16 @@ public:
                              void (C::*setter)(const QString &),
                              QString (C::*getter)() const,  
                              bool isXMLAttribute = true);
+
+  /// Adds a list attribute using SerializationTemplateList<T>. The
+  /// definition is in serialization-templates.hh
+  template <class T> 
+  void addListAttribute(const QString & name,
+                        QList<T> * target);
+
+  template <class T> 
+  void addListAttribute(const QString & name,
+                        WatchableList<T> * target);
 
   /// Creates a SerizalizationAccessor object for the given target.
   ///

@@ -22,14 +22,10 @@
 SerializationAccessor * FilterElement::serializationAccessor()
 {
   SerializationAccessor * ac = new SerializationAccessor(this);
-  ac->addAttribute("attribute",
-		   new SerializationItemScalar<int>((int*)&transactionAttribute, true));
-  ac->addAttribute("regexp",
-		   new SerializationItemScalar<bool>(&regexp, true));
-  ac->addAttribute("match",
-		   new SerializationItemScalar<QString>(&match));
+  ac->addScalarAttribute("attribute", (int*)&transactionAttribute);
+  ac->addScalarAttribute("regexp", &regexp);
+  ac->addScalarAttribute("match", &match);
   return ac;
-
 }
 
 void FilterElement::prepareSerializationRead()
@@ -60,16 +56,11 @@ Filter::Filter() : active(true), matchAny(true)
 SerializationAccessor * Filter::serializationAccessor()
 {
   SerializationAccessor * ac = new SerializationAccessor(this);
-  ac->addAttribute("name",
-		   new SerializationItemScalar<QString>(&name, true));
-  ac->addAttribute("category",
-		   new SerializationItemScalar<QString>(&category, true));
-  ac->addAttribute("matchany",
-		   new SerializationItemScalar<bool>(&matchAny, true));
-  ac->addAttribute("active",
-		   new SerializationItemScalar<bool>(&active, true));
-  ac->addAttribute("elements",
-		   new SerializationQList<FilterElement>(&elements));
+  ac->addScalarAttribute("name", &name);
+  ac->addScalarAttribute("category", &category);
+  ac->addScalarAttribute("matchany", &matchAny);
+  ac->addScalarAttribute("active", &active);
+  ac->addListAttribute("elements", &elements);
   return ac;
 
 }

@@ -23,8 +23,7 @@
 
 void Linkable::addLinkAttributes(SerializationAccessor * accessor)
 {
-  accessor->addAttribute("link",
-			 new SerializationQList<Link>(&links));
+  accessor->addListAttribute("link", &links);
 }
 
 void Linkable::addLink(Linkable * target, const QString & name)

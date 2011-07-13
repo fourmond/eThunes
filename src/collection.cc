@@ -28,14 +28,11 @@ SerializationAccessor * CollectionDefinition::serializationAccessor()
   /// is necessarily called for every single time.
   code.definition = this;
 
-  ac->addAttribute("public-name",
-		   new SerializationItemScalar<QString>(&publicName, true));
-  ac->addAttribute("description",
-		   new SerializationItemScalar<QString>(&description));
+  ac->addScalarAttribute("public-name", &publicName);
+  ac->addScalarAttribute("description", &description, false);
   ac->addAttribute("document-type",
 		   new SerializationQHash<DocumentDefinition>(&documentTypes));
-  ac->addAttribute("ruby-class-code",
-		   &code);
+  ac->addAttribute("ruby-class-code", &code);
   return ac;
 }
 
@@ -162,11 +159,9 @@ SerializationAccessor * Collection::serializationAccessor()
   SerializationAccessor * ac = new SerializationAccessor(this);
   ac->addAttribute("definition",
 		   new SerializeCollectionDefinitionPointer(&definition));
-  ac->addAttribute("name",
-		   new SerializationItemScalar<QString>(&name, true));
+  ac->addScalarAttribute("name", &name);
   // Now, we try the list stuff...
-  ac->addAttribute("document",
-		   new SerializationWatchableList<Document>(&documents));
+  ac->addListAttribute("document", &documents);
   return ac;
 }
 

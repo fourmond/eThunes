@@ -24,30 +24,23 @@
 SerializationAccessor * DocumentDefinition::serializationAccessor()
 {
   SerializationAccessor * ac = new SerializationAccessor(this);
-  ac->addAttribute("name",
-		   new SerializationItemScalar<QString>(&name, true));
-  ac->addAttribute("display-format",
-		   new SerializationItemScalar<QString>(&displayFormat));
-  ac->addAttribute("filename-format",
-		   new SerializationItemScalar<QString>(&fileNameFormat));
-
-  ac->addAttribute("public-name",
-		   new SerializationItemScalar<QString>(&publicName));
-  ac->addAttribute("description",
-		   new SerializationItemScalar<QString>(&description));
+  ac->addScalarAttribute("name", &name);
+  ac->addScalarAttribute("display-format", &displayFormat);
+  ac->addScalarAttribute("filename-format", &fileNameFormat);
+  ac->addScalarAttribute("public-name", &publicName);
+  ac->addScalarAttribute("description", &description);
 
   // Transaction-matching attributes
-  ac->addAttribute("relevant-date",
-		   new SerializationItemScalar<QString>(&relevantDate));
-  ac->addAttribute("relevant-amount",
-		   new SerializationItemScalar<QString>(&relevantAmount));
-  ac->addAttribute("date-tolerance",
-		   new SerializationItemScalar<int>(&transactionDateTolerance));
+  ac->addScalarAttribute("relevant-date", &relevantDate);
+  ac->addScalarAttribute("relevant-amount", &relevantAmount);
+  ac->addScalarAttribute("date-tolerance", &transactionDateTolerance);
   return ac;
 }
 
 /// A small helper class to handle the serialization of a
 /// DocumentDefinition pointer.
+///
+/// \todo We probably could get rid of that using accessors.
 class SerializeDocumentDefinitionPointer : public SerializationItem {
   DocumentDefinition **target;
 public:
@@ -87,8 +80,7 @@ SerializationAccessor * Document::serializationAccessor()
   ac->addAttribute("definition",
 		   new SerializeDocumentDefinitionPointer(&definition));
 
-  ac->addAttribute("attachement",
-		   new SerializationQList<ManagedFile>(&attachedFiles));
+  ac->addListAttribute("attachement", &attachedFiles);
   addLinkAttributes(ac);
   return ac;
 }
