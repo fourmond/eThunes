@@ -20,11 +20,15 @@
 #include <serializable.hh>
 #include <serializable-templates.hh>
 
-// /// Particular implementation that prevents false from being written
-// /// Hmmm... Won't it break actually everything ? -> YES IT WILL !
-// template<> QVariant SerializationItemScalar<bool>::valueToVariant()
-// {
-//   if(*target)
-//     return QVariant(*target);
-//   return QVariant();
-// }
+/// Particular implementation that prevents false from being written
+///
+/// \warning It means that all Serializable using
+/// SerializationItemScalar<bool> \b must implement a
+/// Serializable::prepareSerializationRead () hook setting the value
+/// to false.
+template<> QVariant SerializationItemScalar<bool>::valueToVariant()
+{
+  if(*target)
+    return QVariant(*target);
+  return QVariant();
+}

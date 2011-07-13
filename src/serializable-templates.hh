@@ -46,6 +46,15 @@ public:
   };
 };
 
+template <class T> void 
+SerializationAccessor::addScalarAttribute(const QString & name,
+                                          T * target,
+                                          bool isXMLAttribute)
+{
+  addAttribute(name, 
+               new SerializationItemScalar<T>(target, isXMLAttribute));
+}
+
 
 
 /// This template class handles the serialization of a QString based
@@ -78,6 +87,20 @@ public:
     return CALL_MEMBER_FN(*targetClass, getter)();
   };
 };
+
+
+template <class C> void 
+SerializationAccessor::addAccessorsAttribute(const QString & name,
+                                             C * target,
+                                             void (C::*setter)(const QString &),
+                                             QString (C::*getter)() const,  
+                                             bool isXMLAttribute)
+{
+  addAttribute(name, 
+               new SerializationItemAccessors<C>(target,
+                                                 setter, getter, 
+                                                 isXMLAttribute));
+}
 
 /// This template class deals with the specific case of QList of
 /// children of Serializable (but not pointers).

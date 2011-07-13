@@ -46,6 +46,9 @@ public:
   /// Whether the element matches a target transaction or not.
   bool matches(const Transaction * t) const;
 
+  /// Needed to clear regexp
+  virtual void prepareSerializationRead();
+
   FilterElement() : transactionAttribute(Name), regexp(false) {;};
 };
 

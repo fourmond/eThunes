@@ -336,8 +336,12 @@ public:
 
 private:
 
-  /// Same as before, but using the currently serialized wallet.
+  /// Same as setTagList, but using the currently serialized wallet.
   void setTagListPrivate(const QString & str);
+
+  /// Same as setCategoryFromName, but using the currently serialized
+  /// wallet.
+  void setCategoryFromNamePrivate(const QString & str);
   
 
 };

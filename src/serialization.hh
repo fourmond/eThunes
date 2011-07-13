@@ -81,10 +81,6 @@ public:
 /// serialized. Its implementation subclasses should probably use a
 /// pointer to set/get data from QString/QVariant (but of course that
 /// shouldn't happen in the base class, shouldn't it ?)
-///
-/// \todo it would be interesting to a have template accessor-based
-/// serializers, using pointers to member functions, see
-/// http://www.parashift.com/c++-faq-lite/pointers-to-members.html
 class SerializationItem : public SerializationAttribute {
 protected:
   ///  Can be used as XML attribute
@@ -252,6 +248,23 @@ public:
 
   /// Adds an attribute for this object.
   void addAttribute(QString name, SerializationAttribute * ser);
+
+  /// Adds a scalar attribute using SerializationItemScalar<T>. The
+  /// definition is in serialization-templates.hh
+  template <class T> 
+  void addScalarAttribute(const QString & name,
+                          T * target,
+                          bool isXMLAttribute = true);
+
+  /// Adds an accessor-based attribute using
+  /// SerializationItemAccessors<C>. The definition is in
+  /// serialization-templates.hh
+  template <class C> 
+  void addAccessorsAttribute(const QString & name,
+                             C * target,
+                             void (C::*setter)(const QString &),
+                             QString (C::*getter)() const,  
+                             bool isXMLAttribute = true);
 
   /// Creates a SerizalizationAccessor object for the given target.
   ///

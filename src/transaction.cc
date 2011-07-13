@@ -24,6 +24,8 @@
 
 /// This class is used to read/write pointers to Category. It assumes
 /// that the Wallet::walletCurrentlyRead variable is set correctly.
+///
+/// @todo Drop that and use pointer to membrs.
 class SerializeCategoryPointer : public SerializationItem {
   Category **target;
 public:
@@ -113,23 +115,17 @@ SerializationAccessor * Transaction::serializationAccessor()
   /// but that won't work really well as addAttribute needs
   /// two parameters ;-)...
   SerializationAccessor * ac = new SerializationAccessor(this);
-  ac->addAttribute("amount",
-		   new SerializationItemScalar<int>(&amount, true));
-  ac->addAttribute("date",
-		   new SerializationItemScalar<QDate>(&date, true));
-  ac->addAttribute("name",
-		   new SerializationItemScalar<QString>(&name, true));
-  ac->addAttribute("memo",
-		   new SerializationItemScalar<QString>(&memo, true));
-  ac->addAttribute("check-number",
-		   new SerializationItemScalar<QString>(&checkNumber, true));
-  ac->addAttribute("category",
-  		   new SerializeCategoryPointer(&category));
-  ac->addAttribute("tags",
-  		   new SerializationItemAccessors<Transaction>
-		   (this, &Transaction::setTagListPrivate, 
-		    &Transaction::tagString, 
-		    true));
+  ac->addScalarAttribute("amount", &amount);
+  ac->addScalarAttribute("date", &date);
+  ac->addScalarAttribute("name", &name);
+  ac->addScalarAttribute("memo", &memo);
+  ac->addScalarAttribute("check-number", &checkNumber);
+  ac->addAccessorsAttribute("category",this, 
+                            &Transaction::setCategoryFromNamePrivate, 
+                            &Transaction::categoryName);
+  ac->addAccessorsAttribute("tags",this, 
+                            &Transaction::setTagListPrivate, 
+                            &Transaction::tagString);
 
   addLinkAttributes(ac);
   return ac;
@@ -189,6 +185,11 @@ QString Transaction::uniqueID() const
 void Transaction::setTagListPrivate(const QString & str) 
 {
   setTagList(str, Wallet::walletCurrentlyRead);
+}
+
+void Transaction::setCategoryFromNamePrivate(const QString & str) 
+{
+  setCategoryFromName(str, Wallet::walletCurrentlyRead);
 }
 
 void Transaction::setTagList(const QString & str, Wallet * w)

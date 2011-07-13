@@ -32,6 +32,13 @@ SerializationAccessor * FilterElement::serializationAccessor()
 
 }
 
+void FilterElement::prepareSerializationRead()
+{
+  /// @todo this is just a waste of time. Why SerializationAttributes
+  /// don't have their own hooks too ?
+  regexp = false;
+}
+
 bool FilterElement::matches(const Transaction * t) const
 {
   QString targetString;
