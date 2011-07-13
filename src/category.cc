@@ -51,6 +51,8 @@ Category::~Category()
 
 
 /// This class is used to read/write QColor objects.
+///
+/// \todo This class probably could be used as specialized template ?
 class SerializeQColor : public SerializationItem {
   QColor *target;
 public:
@@ -83,12 +85,10 @@ public:
 SerializationAccessor * Category::serializationAccessor()
 {
   SerializationAccessor * ac = new SerializationAccessor(this);
-  ac->addAttribute("name",
-		   new SerializationItemScalar<QString>(&name, true));
+  ac->addScalarAttribute("name", &name);
   ac->addAttribute("color",
 		   new SerializeQColor(&color, true));
-  ac->addAttribute("category",
-		   new SerializationQHash<Category>(&subCategories));
+  ac->addHashAttribute("category", &subCategories);
   return ac;
 }
 

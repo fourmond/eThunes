@@ -30,8 +30,7 @@ SerializationAccessor * CollectionDefinition::serializationAccessor()
 
   ac->addScalarAttribute("public-name", &publicName);
   ac->addScalarAttribute("description", &description, false);
-  ac->addAttribute("document-type",
-		   new SerializationQHash<DocumentDefinition>(&documentTypes));
+  ac->addHashAttribute("document-type", &documentTypes);
   ac->addAttribute("ruby-class-code", &code);
   return ac;
 }

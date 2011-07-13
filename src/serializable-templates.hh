@@ -202,6 +202,14 @@ public:
   };
 };
 
+template <class T> void 
+SerializationAccessor::addHashAttribute(const QString & name,
+                        QHash<QString, T> * target, 
+                        const QString & keyName)
+{
+  addAttribute(name, 
+               new SerializationQHash<T>(target, keyName));
+}
 
 
 #endif

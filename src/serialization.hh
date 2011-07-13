@@ -284,6 +284,14 @@ public:
                               QList<T> * target, 
                               const QString & attrName);
 
+  /// Adds a hash attribute using SerializationTemplateQHash<T>. The
+  /// definition is in serialization-templates.hh
+  template <class T> 
+  void addHashAttribute(const QString & name,
+                        QHash<QString, T> * target, 
+                        const QString & keyName = "name");
+
+
   /// Creates a SerizalizationAccessor object for the given target.
   ///
   /// It is legal to specify NULL here. It just means that the
