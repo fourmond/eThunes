@@ -95,8 +95,7 @@ void Plugin::registerPlugin(const QString & name,
 SerializationAccessor * Plugin::serializationAccessor()
 {
   SerializationAccessor * ac = new SerializationAccessor(this);
-  ac->addAttribute("name",
-		   new SerializationItemScalar<QString>(&name, true));
+  ac->addScalarAttribute("name", &name);
   return ac;
 }
 

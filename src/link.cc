@@ -25,14 +25,10 @@
 SerializationAccessor * Link::serializationAccessor()
 {
   SerializationAccessor * ac = new SerializationAccessor(this);
-  ac->addAttribute("id",
-		   new SerializationItemScalar<QString>(&linkID, true));
-  ac->addAttribute("target-id",
-		   new SerializationItemScalar<int>(&targetID, true));
-  ac->addAttribute("type",
-		   new SerializationItemScalar<QString>(&typeName, true));
-  ac->addAttribute("name",
-		   new SerializationItemScalar<QString>(&linkName, true));
+  ac->addScalarAttribute("id", &linkID);
+  ac->addScalarAttribute("target-id", &targetID);
+  ac->addScalarAttribute("type", &typeName);
+  ac->addScalarAttribute("name", &linkName);
   return ac;
 }
 

@@ -73,8 +73,7 @@ Tag * TagHash::namedTag(const QString &name, bool create)
 SerializationAccessor * Tag::serializationAccessor()
 {
   SerializationAccessor * ac = new SerializationAccessor(this);
-  ac->addAttribute("name",
-		   new SerializationItemScalar<QString>(&name, true));
+  ac->addScalarAttribute("name", &name);
   return ac;
 }
 

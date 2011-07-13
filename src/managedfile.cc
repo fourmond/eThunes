@@ -25,8 +25,7 @@
 SerializationAccessor * ManagedFile::serializationAccessor()
 {
   SerializationAccessor * ac = new SerializationAccessor(this);
-  ac->addAttribute("path",
-		   new SerializationItemScalar<QString>(&currentPath, true));
+  ac->addScalarAttribute("path", &currentPath);
   return ac;
 }
 

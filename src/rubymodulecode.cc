@@ -28,11 +28,8 @@ using namespace Ruby;
 SerializationAccessor * RubyModuleCode::serializationAccessor()
 {
   SerializationAccessor * ac = new SerializationAccessor(this);
-  ac->addAttribute("module-name",
-		   new SerializationItemScalar<QString>(&name, true));
-  ac->addAttribute("code",
-		   new SerializationItemScalar<QString>(&code));
-;
+  ac->addScalarAttribute("module-name", &name);
+  ac->addScalarAttribute("code", &code, false);
   return ac;
 }
 
