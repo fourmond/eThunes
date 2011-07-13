@@ -138,20 +138,6 @@ SerializationAccessor::addListAttribute(const QString & name,
 }
 
 
-template <class T> 
-class SerializationQList : public SerializationTemplateList<T, QList<T> > {
-public:
-  SerializationQList(QList<T> * t) : 
-    SerializationTemplateList<T, QList<T> >(t) {;};
-};
-
-template <class T> 
-class SerializationWatchableList : 
-  public SerializationTemplateList<T, WatchableList<T> > {
-public:
-  SerializationWatchableList(WatchableList<T> * t) : 
-    SerializationTemplateList<T, WatchableList<T> >(t) {;};
-};
 
 /// This class provides serialization for QList of objects that do not
 /// inherit Serializable, but that can be serialized using
@@ -180,13 +166,23 @@ public:
 
 };
 
+template <class T> void 
+SerializationAccessor::addScalarListAttribute(const QString & name,
+                                              QList<T> * target,
+                                              const QString & attrName)
+{
+  addAttribute(name, 
+               new SerializationScalarQList<T>(target, attrName));
+}
+
+
 /// This template class deals with the specific case of QList of
 /// children of Serializable (but not pointers).
 template <class T>
 class SerializationQHash : public SerializationHash {
   QHash<QString, T> * target;
 public:
-  SerializationQHash(QHash<QString, T> * t, QString kn = "name") {
+  SerializationQHash(QHash<QString, T> * t, const QString & kn = "name") {
     target = t;
     keyName = kn;
   };

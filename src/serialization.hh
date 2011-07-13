@@ -277,6 +277,13 @@ public:
   void addListAttribute(const QString & name,
                         WatchableList<T> * target);
 
+  /// Adds a list attribute using SerializationScalarQList<T>. The
+  /// definition is in serialization-templates.hh
+  template <class T> 
+  void addScalarListAttribute(const QString & name,
+                              QList<T> * target, 
+                              const QString & attrName);
+
   /// Creates a SerizalizationAccessor object for the given target.
   ///
   /// It is legal to specify NULL here. It just means that the

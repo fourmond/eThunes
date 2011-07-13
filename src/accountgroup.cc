@@ -23,11 +23,8 @@
 SerializationAccessor * AccountGroup::serializationAccessor()
 {
   SerializationAccessor * ac = new SerializationAccessor(this);
-  ac->addAttribute("name",
-		   new SerializationItemScalar<QString>(&name, true));
-  ac->addAttribute("account",
-		   new SerializationScalarQList<QString>(&accountStringList, 
-							 "id"));
+  ac->addScalarAttribute("name", &name);
+  ac->addScalarListAttribute("account", &accountStringList, "id");
   return ac;
 }
 
