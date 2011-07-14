@@ -98,6 +98,10 @@ void Cabinet::finishedSerializationRead()
   rebuildDocumentsHash();
   /// \todo Idem for transactions one day ?
   Link::finalizePendingLinks(this);
+
+  // Set the cabinet linkback to the plugins
+  for(int i = 0; i < plugins.size(); i++)
+    plugins[i]->cabinet = this;
 }
 
 

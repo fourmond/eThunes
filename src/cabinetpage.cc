@@ -169,5 +169,6 @@ void CabinetPage::promptAddPlugin()
   Plugin * plugin = defs[idx]->createPlugin();
   plugin->setName(str);
   cabinet->plugins.append(plugin);
+  plugin->cabinet = cabinet;
   updateContents();
 }

@@ -28,6 +28,7 @@
 class NavigationPage;
 
 class Plugin;
+class Cabinet;
 
 
 /// A class containing a plugin definition, ie a way to create a
@@ -132,6 +133,12 @@ protected:
   QString name;
 
 public:
+
+  /// The Cabinet the plugin is in.
+  Cabinet * cabinet;
+
+  Plugin() : cabinet(NULL) {;};
+
 
   /// The type name
   virtual QString typeName() const {
