@@ -43,6 +43,8 @@ void Transaction::dump(QTextStream & stream)
     stream << " -> check number: " << checkNumber << endl;
 }
 
+int Transaction::formatAmountModulo = 0;
+
 Transaction::Transaction() :
   amount(0),
   checkNumber(""),

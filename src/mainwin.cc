@@ -119,11 +119,6 @@
    salaries, as this wouldn't make too much sense). This mean adding a
    tag for the category that will hold salaries.
 
-   \li Find a way to obfuscate amounts (probably from within
-   formatAmount()) using a command-line switch, so I can show to
-   others without actually saying too much about how much we have
-   ;-)...
-
    \li Finish up the logger
 
    \li Eventually, I will have to start to write up some

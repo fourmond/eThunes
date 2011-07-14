@@ -62,10 +62,17 @@ public:
   ///
   /// @{
 
+  /// If this global parameter is on, the amounts displayed will be
+  /// displayed modulo that number.
+  static int formatAmountModulo;
+
   /// A global function to format amount
   static inline QString formatAmount(int amount) {
+    if(formatAmountModulo)
+      amount %= formatAmountModulo;
     return QString("%1").arg(amount * 0.01, 0, 'f',2);
   };
+
 
   /// Returns a unique monthID for the given month
   static inline int monthID(const QDate &date) {

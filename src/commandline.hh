@@ -44,14 +44,20 @@ public:
   /// Help text
   QString helpText;
 
-  /// The function to run to process the 
+
+  /// The function to run to process the option
   CommandHandler handler;
 
-  /// ...
+  /// Whether the option is a command or just an option. In the former
+  /// case, the default, the GUI is not displayed after command-line
+  /// processing.
+  bool isCommand;
+
   CommandLineOption(const QString & k, CommandHandler h,
-		    int nb, const QString & help = "") : 
+		    int nb, const QString & help = "",
+                    bool cmd = true) : 
     longKey(k), numberNeeded(nb), helpText(help),
-    handler(h)
+    handler(h), isCommand(cmd)
   {
   };
 
@@ -80,6 +86,13 @@ class CommandLineParser {
   /// The --k -indexed options.
   QHash<QString, CommandLineOption *> options;
 public:
+
+  /// Whether the CommandLineParser has processed commands.
+  bool processedCommands;
+
+  CommandLineParser() : processedCommands(false) { 
+    ;
+  };
 
   /// Adds an option to the parser.
   void addOption(CommandLineOption * option);

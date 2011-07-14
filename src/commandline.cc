@@ -30,6 +30,8 @@
 #include <testserializepointers.hh>
 #include <latexoutput.hh>
 
+#include <transaction.hh>
+
 
 
 void CommandLineOption::handle(QStringList & args)
@@ -72,6 +74,8 @@ void CommandLineParser::parseCommandLine(const QStringList & args)
       throw QString("Unkown command-line option: ") + a.first();
     }
     opt->handle(a);
+    if(opt->isCommand)
+      processedCommands = true;
   }
 }
 
@@ -245,6 +249,11 @@ static void testLaTeX(const QStringList & )
   o.compile();
 }
 
+static void obfuscateAmounts(const QStringList &)
+{
+  Transaction::formatAmountModulo=100000;
+}
+
 static CommandLineParser * myParser()
 {
   CommandLineParser * parser = new CommandLineParser();
@@ -269,6 +278,9 @@ static CommandLineParser * myParser()
     << new CommandLineOption("--test-latex", 
                              testLaTeX,
 			     0, "Test latex output")
+    << new CommandLineOption("--obfuscate-amounts", 
+                             obfuscateAmounts,
+			     0, "Obfuscate amounts", false)
     << new CommandLineOption("--show-collection", showCollection,
 			     1, "Shows the given collection in more details");
   return parser;
@@ -284,11 +296,10 @@ bool parseCommandLine()
     /// @todo use real object-oriented interface one day ?
     parser = myParser();
     parser->parseCommandLine(a);
-
+    bool cmds = parser->processedCommands;
     delete parser;
     parser = NULL;
-    return true;
+    return cmds;
   }
-
   return false;
 }
