@@ -22,38 +22,6 @@
 #include <wallet.hh>
 
 
-/// This class is used to read/write pointers to Category. It assumes
-/// that the Wallet::walletCurrentlyRead variable is set correctly.
-///
-/// @todo Drop that and use pointer to membrs.
-class SerializeCategoryPointer : public SerializationItem {
-  Category **target;
-public:
-  SerializeCategoryPointer(Category **t) { target = t;};
-
-  virtual void setFromVariant(const QVariant &v) {
-    setFromString(v.toString());
-  };
-
-  virtual void setFromString(const QString &str) {
-    *target = Wallet::walletCurrentlyRead->categories.
-      namedSubCategory(str, true);
-  };
-
-
-  virtual QString valueToString() {
-    if(*target) {
-      return (*target)->fullName();
-    }
-    return QString();
-  };
-
-  virtual QVariant valueToVariant() {
-    return QVariant(valueToString());
-  };
-
-};
-
 void Transaction::dump(QIODevice * dev)
 {
   QTextStream stream(dev);
