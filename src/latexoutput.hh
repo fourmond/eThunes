@@ -23,6 +23,14 @@
 
 /// Use this class just as you would use a QTextStream, with a little
 /// syntactic sugar...
+///
+/// @todo Obviously, one of the things that may come in really useful
+/// would be a class to make tables, providing:
+/// \li ways to handle headers (including multicolumns)
+/// \li automatic lines
+/// \li possibility to splice/wrap (as I did for the monthly summary
+/// in AMEmployer)
+/// \li warnings when applicable
 class LatexOutput {
   /// Points to the actual document stream (within \begin--\end
   /// document)
