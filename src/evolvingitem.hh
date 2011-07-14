@@ -53,27 +53,50 @@ public:
     StoragePair() {;};
   };
 
-
+  /// The first value.
+  T firstValue;
+  
   /// A list of date, item pairs recording the changes in the value of
-  /// the item. Whatever its value, the first date \b will be ignored.
+  /// the item.
   QList<StoragePair> itemChanges; 
 
 
-  EvolvingItem(const T & t) { 
-    itemChanges.append(StoragePair(QDate(), t));
+  EvolvingItem(const T & t) : firstValue(t) { 
   };
 
   /// Returns the value at the given time
   T operator[](const QDate & when) const {
-    T ret = itemChanges[0].value;
-    for(int i = 1; i < itemChanges.size(); i++)
+    T ret = firstValue;
+    for(int i = 0; i < itemChanges.size(); i++)
       if(when >= itemChanges[i].date)
-        ret = itemChanges[i].value();
+        ret = itemChanges[i].value;
     return ret;
+  };
+
+  /// Returns a pointer to the numbered value. 0 is firstValue
+  T & valueAt(int i) {
+    if(i > 0)
+      return itemChanges[i-1].value;
+    else
+      return firstValue;
+  };
+
+  QDate & dateAt(int i) {
+    if(i > 0)
+      return itemChanges[i-1].date;
+    else
+      return *static_cast<QDate*>(NULL);
+  };
+
+  StoragePair pairValue(int i) {
+    if(i > 0)
+      return StoragePair(dateAt(i), valueAt(i));
+    return StoragePair(QDate(), firstValue);
   };
 
   SerializationAccessor * serializationAccessor() {
     SerializationAccessor * ac = new SerializationAccessor(this);
+    ac->addScalarAttribute("first-value", &firstValue);
     ac->addListAttribute("item-change", &itemChanges);
     return ac;
   };
@@ -93,6 +116,34 @@ public:
     if(i)
       itemChanges.removeAt(i);
   };
+
+  /// Returns a String representation of the value.
+  QString toString() const {
+    QString retval;
+    retval = QString("%1").arg(firstValue);
+    for(int i = 0; i < itemChanges.size(); i++)
+      retval += QObject::tr(" until %1, then %2").
+        arg(itemChanges[i].date.toString()).
+        arg(itemChanges[i].value);
+    return retval;
+  };
+
+  QString toString(QString (*formatter)(T)) const {
+    QString retval;
+    retval = QString("%1").arg(firstValue);
+    for(int i = 0; i < itemChanges.size(); i++)
+      retval += QObject::tr(" until %1, then %2").
+        arg(itemChanges[i].date.toString()).
+        arg(formatter(itemChanges[i].value));
+    return retval;
+  };
+
+  /// I wonder if this isn't a stupid thing to do in the first place ?
+  operator T () const {
+    QTextStream log(stderr);
+    log << "Using a deprecated conversion operator" << endl;
+    return firstValue;
+  }
 };
 
 #endif

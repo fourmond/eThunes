@@ -56,7 +56,7 @@ void EvolvingItemWidget<T,Widget>::createLine(int i)
   }
 
 
-  Widget * w = createEditor(target->itemChanges[i].value);
+  Widget * w = createEditor(target->valueAt(i));
   valueEditors.append(w);
   gridLayout->addWidget(w, i, 3);
 
@@ -73,7 +73,7 @@ void EvolvingItemWidget<T,Widget>::createLine(int i)
 template <class T, class Widget> 
 void EvolvingItemWidget<T,Widget>::realAddLine()
 {
-  target->itemChanges.append(target->itemChanges.last());
+  target->itemChanges.append(target->pairValue(target->itemChanges.size()));
   updateWidget();
 }
 
@@ -90,17 +90,17 @@ void EvolvingItemWidget<T,Widget>::updateWidget()
   isUpdatingWidget = true;
 
   for(int i = dateEditors.size(); 
-      i < target->itemChanges.size(); i++)
+      i <= target->itemChanges.size(); i++)
     createLine(i);
 
   for(int i = 0; i < dateEditors.size(); i++) {
-    if(i < target->itemChanges.size()) {
+    if(i <= target->itemChanges.size()) {
       if(i) {
         dateEditors[i]->setEnabled(true);
-        dateEditors[i]->setDate(target->itemChanges[i].date);
+        dateEditors[i]->setDate(target->dateAt(i));
       }
       valueEditors[i]->setEnabled(true);
-      setEditorValue(valueEditors[i], target->itemChanges[i].value);
+      setEditorValue(valueEditors[i], target->valueAt(i));
     }
     else {
       if(i)
@@ -119,11 +119,11 @@ void EvolvingItemWidget<T,Widget>::updateTarget()
   if(isUpdatingWidget)
     return;
 
-  for(int i = 0; i < target->itemChanges.size(); i++) {
+  for(int i = 0; i <= target->itemChanges.size(); i++) {
     if(i) {
-      target->itemChanges[i].date = dateEditors[i]->date();
+      target->dateAt(i) = dateEditors[i]->date();
     }
-    target->itemChanges[i].value = getEditorValue(valueEditors[i]);
+    target->valueAt(i) = getEditorValue(valueEditors[i]);
   }
 
   target->sort();
@@ -147,6 +147,7 @@ QSpinBox * EvolvingIntWidget::createEditor(const int & value)
 {
   QSpinBox * editor = new QSpinBox();
   editor->setValue(value);
+  editor->setRange(INT_MIN, INT_MAX);
   connect(editor, SIGNAL(valueChanged(int)),
           SLOT(somethingChanged()));
   return editor;
