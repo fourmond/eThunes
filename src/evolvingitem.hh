@@ -130,7 +130,7 @@ public:
 
   QString toString(QString (*formatter)(T)) const {
     QString retval;
-    retval = QString("%1").arg(firstValue);
+    retval = QString("%1").arg(formatter(firstValue));
     for(int i = 0; i < itemChanges.size(); i++)
       retval += QObject::tr(" until %1, then %2").
         arg(itemChanges[i].date.toString()).
@@ -138,10 +138,11 @@ public:
     return retval;
   };
 
-  /// I wonder if this isn't a stupid thing to do in the first place ?
+  /// Convenience conversion operator, to be dropped whenever
+  /// possible.
+  ///
+  /// @deprecated.
   operator T () const __attribute__((deprecated)) {
-    QTextStream log(stderr);
-    log << "Using a deprecated conversion operator" << endl;
     return firstValue;
   }
 };
