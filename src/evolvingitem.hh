@@ -139,7 +139,7 @@ public:
   };
 
   /// I wonder if this isn't a stupid thing to do in the first place ?
-  operator T () const {
+  operator T () const __attribute__((deprecated)) {
     QTextStream log(stderr);
     log << "Using a deprecated conversion operator" << endl;
     return firstValue;
