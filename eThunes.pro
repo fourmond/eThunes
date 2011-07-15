@@ -55,7 +55,7 @@ SOURCES += src/qmain.cc src/account.cc src/mainwin.cc src/actions.cc \
 	src/commandline.cc src/tag.cc \
         src/serialization.cc src/statistics.cc src/watchable.cc \
         src/flowlayout.cc src/documentlistwidget.cc \
-        src/plugin.cc \
+        src/plugin.cc src/utils.cc \
         src/testserializepointers.cc \
         src/widgetwrapperdialog.cc \
         src/httarget.cc src/htlabel.cc src/htlinks.cc \

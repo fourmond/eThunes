@@ -1,6 +1,6 @@
 /**
     \file utils.hh
-    Generally useful (template?) code
+    Generally useful code
     Copyright 2011 by Vincent Fourmond
 
     This program is free software; you can redistribute it and/or modify
@@ -27,41 +27,82 @@
 #define CALL_MEMBER_FN(object,ptrToMember) ((object).*(ptrToMember))
 #endif
 
+/// Namespace hosting various utility functions
+namespace Utils {
 
-/// Ensures the given list has the correct size
-template <class T> void ensureSize(QList<T> & lst, int size)
-{
-  if(lst.size() < size) {
-    while(size > lst.size())
-      lst.append(T());
-  }
-  else {
-    while(size < lst.size())
-      lst.removeLast();
-  }
-}
-
-/// Appends/prepends the given number of elements to the list
-template <class T> void tweakSize(QList<T> & lst, int beg, int end)
-{
-  if(beg > 0) {
-    while(beg-- > 0)
-      lst.prepend(T());
-  }
-  else {
-    while(beg++ < 0)
-      lst.removeFirst();
+  /// Ensures the given list has the correct size
+  template <class T> void ensureSize(QList<T> & lst, int size)
+  {
+    if(lst.size() < size) {
+      while(size > lst.size())
+        lst.append(T());
+    }
+    else {
+      while(size < lst.size())
+        lst.removeLast();
+    }
   }
 
-  if(end > 0) {
-    while(end-- > 0)
-      lst.append(T());
+  /// Appends/prepends the given number of elements to the list
+  template <class T> void tweakSize(QList<T> & lst, int beg, int end)
+  {
+    if(beg > 0) {
+      while(beg-- > 0)
+        lst.prepend(T());
+    }
+    else {
+      while(beg++ < 0)
+        lst.removeFirst();
+    }
+
+    if(end > 0) {
+      while(end-- > 0)
+        lst.append(T());
+    }
+    else {
+      while(end++ < 0)
+        lst.removeLast();
+    }
   }
-  else {
-    while(end++ < 0)
-      lst.removeLast();
-  }
-}
+
+
+  /// @name Date-related utility functions
+  ///
+  /// Various date-related utility functions.
+  ///
+  /// @{
+
+  /// Returns the monday of the given week
+  inline QDate monday(const QDate &d) {
+    return d.addDays(1 - d.dayOfWeek());
+  };
+
+  /// Returns the monday of the given week
+  inline QDate sunday(const QDate &d) {
+    return d.addDays(7 - d.dayOfWeek());
+  };
+
+  /// Returns the first day of the month
+  inline QDate firstDay(const QDate &d) {
+    return d.addDays(1 - d.day());
+  };
+
+  /// Returns the last day of the month
+  inline QDate lastDay(const QDate &d) {
+    return d.addDays(d.daysInMonth() - d.day());
+  };
+
+  /// returns a list of dates corresponding to the first days of each
+  /// month between begin and end (inclusive)
+  QList<QDate> monthList(const QDate & begin, const QDate & end);
+
+  /// @}
+
+
+
+};
+
+
 
 
 #endif
