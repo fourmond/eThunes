@@ -35,3 +35,27 @@ QList<QDate> Utils::monthList(const QDate & begin, const QDate & end)
   return ret;
 }
 
+QDate Utils::promptForMonth(QWidget * parent, const QString & title,
+                            const QString & label, const QDate & begin, 
+                            const QDate & end, 
+                            const QString & format)
+{
+  QList<QDate> months = monthList(begin, end);
+  QStringList s;
+  for(int i = 0; i < months.size(); i++)
+    s.append(months[i].toString(format));
+
+  bool ok = false;
+  QString which = 
+    QInputDialog::getItem(parent, title, label,
+                          s, 0, false, 
+                          &ok);
+  if(! ok)
+    return QDate();
+
+  int idx = s.indexOf(which);
+  if(idx < 0)
+    return QDate();
+  
+  return months[idx];
+}
