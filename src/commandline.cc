@@ -29,6 +29,7 @@
 // Only for testing purposes...
 #include <testserializepointers.hh>
 #include <latexoutput.hh>
+#include <latextable.hh>
 
 #include <transaction.hh>
 
@@ -244,7 +245,23 @@ static void testLaTeX(const QStringList & )
 {
   LatexOutput o("Bidule");
   o << "\\textbf{machin}";
-  o << "Bidule !!";
+  o << "Bidule !!\n\n";
+  LatexTable t("r", "\\bfseries\\sffamily");
+  for(int i = 0; i < 7; i++) {
+    t.addHeader(QString("Head %1").arg(i+1),
+                "c", (i == 4 ? 2 : 1), (i ? "" : "l"));
+  }
+
+  for(int i = 0; i < 4; i++) {
+    for(int j = 0; j < 8; j++)
+      t << i*j;
+    if(i == 2)
+      t.newCell();
+    else
+      t.newLine();
+  }
+  o << t.packTable();
+  o.packages << "booktabs";
   o.addPackage("geometry", "a4paper, margin=1cm, landscape");
   o.compile();
 }
