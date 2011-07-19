@@ -126,6 +126,15 @@ void LatexOutput::addPackage(const QString & package,
     packageOptions[package] = options;
 }
 
+void LatexOutput::selectFont(const QString & fontPackage, 
+                             const QString & mdfont)
+{
+  addPackage(fontPackage);
+  if(! mdfont.isEmpty())
+    addPackage("mathdesign", mdfont);
+}
+
+
 void LatexOutput::makeTitle(const QString & title, 
                             const QString & date,
                             const QString & author)
