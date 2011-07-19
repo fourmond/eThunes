@@ -50,6 +50,9 @@ public:
   /// (almost) the preamble of the document.
   QString preamble;
 
+  /// The last string inserted before \\begin{document}
+  QString preambleAdd;
+
   /// A list of packages that will be \use'd right before the start of
   /// the document.
   QStringList packages;

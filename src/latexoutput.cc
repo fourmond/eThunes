@@ -87,6 +87,7 @@ void LatexOutput::compile(bool showOutput)
     else
       o << "\\usepackage{" << packages[i] << "}\n";
   }
+  o << preambleAdd;
   o << "\\begin{document}\\input{contents.tex}\\end{document}" << endl;
   tmpOut.close();
   
