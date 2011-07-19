@@ -46,6 +46,18 @@ class LatexTable {
 
     /// Turns the cell into a suitabe string representation.
     QString toString() const;
+
+    /// Extend the Cell so that it has at least that many rows and
+    /// columns.
+    void extendCell(int nbCols, int nbRows, const QString & def);
+
+    /// Join different cells in a horizontal fashion.
+    ///
+    /// padding are the elements that get inserted between each cell,
+    /// and def in all the elements that are empty.
+    static Cell joinCells(const QList<Cell> &cells, int nb, 
+                          const QStringList &padding, 
+                          const QString & def = "");
   };
 
   /// The inner list of cells.
@@ -84,10 +96,19 @@ public:
   template<typename T> LatexTable & operator<<(T t) {
     return (*this) << QString("%1").arg(t);
   };
+
   /// Adds the given header.
   void addHeader(const QString & header, const QString & headSpec = "c",
                  int nbCols = 1, const QString &colSpec = "",
                  const QString & format = QString());
+
+  /// Adds the given headers.
+  void addHeader(const QStringList & headers, const QString & headSpec = "c",
+                 int nbCols = 1, const QString &colSpec = "",
+                 const QString & format = QString()) {
+    for(int i = 0; i < headers.size(); i++)
+      addHeader(headers[i], headSpec, nbCols, colSpec, format);
+  };
   
   /// Starts a new line within the current cell
   void newLine();
@@ -96,7 +117,18 @@ public:
   void newCell();
 
   /// Packs the table and returns the corresponding string
-  QString packTable(int horitontalCells = 1);
+  QString packTable(int horizontalCells = 1, 
+                    const QStringList & padding = QStringList(),
+                    const QString & padColSpec = "c");
+
+  QString packTable(int horizontalCells, 
+                    const QString & padding,
+                    const QString & padColSpec = "c") {
+    QStringList pad;
+    pad << padding;
+    return packTable(horizontalCells, pad, padColSpec);
+  };
+
 };
 
 #endif

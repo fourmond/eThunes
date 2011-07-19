@@ -32,6 +32,37 @@ LatexTable::Cell& LatexTable::Cell::operator<<(const QString & str)
   return *this;
 }
 
+void LatexTable::Cell::extendCell(int nbCols, int nbRows, const QString & def)
+{
+  while(rows.size() < nbRows)
+    newLine();
+
+  for(int i = 0; i < rows.size(); i++)
+    while(rows[i].size() < nbCols)
+      rows[i] << def;
+}
+
+LatexTable::Cell LatexTable::Cell::joinCells(const QList<Cell> &cells, int nb,
+                                             const QStringList &padding, 
+                                             const QString & def)
+{
+  int nbRows = 0;
+  for(int i = 0; i < cells.size(); i++)
+    if(nbRows < cells[i].rows.size())
+      nbRows = cells[i].rows.size();
+
+  Cell c = cells.first();
+  c.extendCell(nb, nbRows, def);
+  for(int i = 1; i < cells.size(); i++) {
+    Cell c2 = cells[i];
+    c2.extendCell(nb, nbRows, def);
+    for(int j = 0; j < nbRows; j++)
+      c.rows[j] += padding + c2.rows[j];
+  }
+
+  return c;
+}
+
 QString LatexTable::Cell::toString() const
 {
   QString ret;
@@ -85,20 +116,60 @@ LatexTable & LatexTable::operator<<(const QString &str)
 }
 
 
-QString LatexTable::packTable(int horizontalCells)
+QString LatexTable::packTable(int horizontalCells,
+                              const QStringList & padding,
+                              const QString & padColSpec)
 {
   /// @todo implement horizontalCells =! 1
 
+  QStringList cs = colSpecs;
+  int nbCols = cs.size();
+  for(int i = 1; i < horizontalCells; i++) {
+    for(int j = 0; j < padding.size(); j++)
+      cs << padColSpec;
+    cs += colSpecs;
+  }
+
   QString ret = QString("\\begin{tabular}{%1}\n").
-    arg(colSpecs.join(""));
+    arg(cs.join(""));
 
   ret += "\\toprule\n";
 
-  QStringList lst;
-  lst << header.toString();
-  for(int i = 0; i < cells.size(); i++)
-    lst << cells[i].toString();
-  ret += lst.join("\\midrule\n");
+  if(horizontalCells == 1) {
+    QStringList lst;
+    lst << header.toString();
+    for(int i = 0; i < cells.size(); i++)
+      lst << cells[i].toString();
+    ret += lst.join("\\midrule\n");
+  }
+  else {
+    QList<Cell> cl;
+  
+    /// @todo Nothing will work correctly when there are multicolumn
+    /// cells, unless LatexTable::Cell::extendCell is modified to take
+    /// that into account.
+  
+    QList<Cell> tmp;
+    for(int i = 0; i < horizontalCells; i++) {
+      tmp << header;
+    }
+    cl.append(Cell::joinCells(tmp, nbCols, padding));
+
+    int nbCells = (cells.size() + horizontalCells - 1)/horizontalCells;
+    for(int i = 0; i < nbCells; i++) {
+      tmp.clear();
+      for(int j = 0; j < horizontalCells; j++)
+        tmp.append(cells.value(j * nbCells + i, Cell()));
+      cl.append(Cell::joinCells(tmp, nbCols, padding));
+    }
+
+    QStringList lst;
+    for(int i = 0; i < cl.size(); i++)
+      lst << cl[i].toString();
+    ret += lst.join("\\midrule\n");
+  }
+
+
 
   ret += "\\bottomrule\n\\end{tabular}";
   return ret;

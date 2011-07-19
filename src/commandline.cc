@@ -247,20 +247,26 @@ static void testLaTeX(const QStringList & )
   o << "\\textbf{machin}";
   o << "Bidule !!\n\n";
   LatexTable t("r", "\\bfseries\\sffamily");
-  for(int i = 0; i < 7; i++) {
+  for(int i = 0; i < 8; i++) {
     t.addHeader(QString("Head %1").arg(i+1),
-                "c", (i == 4 ? 2 : 1), (i ? "" : "l"));
+                "c", (i == 4 ? 1 : 1), (i ? "" : "l"));
   }
 
-  for(int i = 0; i < 4; i++) {
+  for(int i = 0; i < 9; i++) {
     for(int j = 0; j < 8; j++)
       t << i*j;
-    if(i == 2)
-      t.newCell();
-    else
+    if(i % 2)
       t.newLine();
+    else
+      t.newCell();
   }
   o << t.packTable();
+  o << "\n\n";
+  o << t.packTable(2);
+  o << "\n\n";
+  o << t.packTable(2, "bidule");
+
+
   o.packages << "booktabs";
   o.addPackage("geometry", "a4paper, margin=1cm, landscape");
   o.compile();
