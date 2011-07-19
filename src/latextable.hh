@@ -31,6 +31,31 @@
 /// in AMEmployer)
 /// \li warnings when applicable
 class LatexTable {
+
+  /// A single row
+  class Row {
+    int nbCols;
+  public:
+
+    QStringList elements;
+
+    Row& operator<<(const QString &str);
+
+    /// The current size of the row
+    int size() const { return nbCols;} ;
+
+    Row() : nbCols(0) {;};
+
+    QString join(const QString & sep = "") const {
+      return elements.join(sep);
+    };
+
+    /// Appends the given elements
+    void append(const QStringList &lst);
+
+    /// Appends the given row
+    void append(const Row & r);
+  };
   
   /// A cell, ie a set of lines/columns that can't be divided. Most of
   /// the times, it will be the whole insides of the table. Cells are
@@ -38,7 +63,7 @@ class LatexTable {
   /// joined together horizontally.
   class Cell {
   public:
-    QList<QStringList> rows;
+    QList<Row> rows;
 
     Cell & operator<<(const QString &);
 

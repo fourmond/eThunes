@@ -247,9 +247,9 @@ static void testLaTeX(const QStringList & )
   o << "\\textbf{machin}";
   o << "Bidule !!\n\n";
   LatexTable t("r", "\\bfseries\\sffamily");
-  for(int i = 0; i < 8; i++) {
+  for(int i = 0; i < 7; i++) {
     t.addHeader(QString("Head %1").arg(i+1),
-                "c", (i == 4 ? 1 : 1), (i ? "" : "l"));
+                "c", (i == 4 ? 2 : 1), (i ? "" : "l"));
   }
 
   for(int i = 0; i < 9; i++) {

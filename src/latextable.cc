@@ -19,9 +19,34 @@
 #include <headers.hh>
 #include <latextable.hh>
 
+LatexTable::Row& LatexTable::Row::operator<<(const QString & str)
+{
+  elements << str;
+  if(str.startsWith("\\multicolumn{")) {
+    QRegExp re("multicolumn\\{(\\d+)");
+    re.indexIn(str);
+    nbCols += re.cap(1).toInt();
+  }
+  else
+    nbCols++;
+  return *this;
+}
+
+void LatexTable::Row::append(const QStringList &lst)
+{
+  for(int i = 0; i < lst.size(); i++)
+    (*this) << lst[i];
+}
+
+void LatexTable::Row::append(const LatexTable::Row &row)
+{
+  elements += row.elements;
+  nbCols += row.nbCols;
+}
+
 void LatexTable::Cell::newLine()
 {
-  rows.append(QStringList());
+  rows.append(Row());
 }
 
 LatexTable::Cell& LatexTable::Cell::operator<<(const QString & str)
@@ -56,8 +81,10 @@ LatexTable::Cell LatexTable::Cell::joinCells(const QList<Cell> &cells, int nb,
   for(int i = 1; i < cells.size(); i++) {
     Cell c2 = cells[i];
     c2.extendCell(nb, nbRows, def);
-    for(int j = 0; j < nbRows; j++)
-      c.rows[j] += padding + c2.rows[j];
+    for(int j = 0; j < nbRows; j++) {
+      c.rows[j].append(padding);
+      c.rows[j].append(c2.rows[j]);
+    }
   }
 
   return c;
@@ -135,12 +162,16 @@ QString LatexTable::packTable(int horizontalCells,
 
   ret += "\\toprule\n";
 
+  QStringList lst;
+
+  if(! superHeader.isEmpty())
+    lst << QString("\\multicolumn{%1}{c}{%2}\n").
+      arg(cs.size()).arg(superHeader);
+
   if(horizontalCells == 1) {
-    QStringList lst;
     lst << header.toString();
     for(int i = 0; i < cells.size(); i++)
       lst << cells[i].toString();
-    ret += lst.join("\\midrule\n");
   }
   else {
     QList<Cell> cl;
@@ -163,12 +194,11 @@ QString LatexTable::packTable(int horizontalCells,
       cl.append(Cell::joinCells(tmp, nbCols, padding));
     }
 
-    QStringList lst;
     for(int i = 0; i < cl.size(); i++)
       lst << cl[i].toString();
-    ret += lst.join("\\midrule\n");
   }
 
+  ret += lst.join("\\midrule\n");
 
 
   ret += "\\bottomrule\n\\end{tabular}";
