@@ -49,6 +49,22 @@ void LatexTable::Cell::newLine()
   rows.append(Row());
 }
 
+int LatexTable::Cell::realSize() const
+{
+  int size = rows.size();
+  if(size && rows.last().size() == 0)
+    size--;
+  return size;
+}
+
+void LatexTable::Cell::cleanup()
+{
+  if(rows.size() && rows.last().size() == 0)
+    rows.removeAt(rows.size() - 1);
+}
+
+
+
 LatexTable::Cell& LatexTable::Cell::operator<<(const QString & str)
 {
   if(! rows.size())
@@ -73,10 +89,11 @@ LatexTable::Cell LatexTable::Cell::joinCells(const QList<Cell> &cells, int nb,
 {
   int nbRows = 0;
   for(int i = 0; i < cells.size(); i++)
-    if(nbRows < cells[i].rows.size())
-      nbRows = cells[i].rows.size();
+    if(nbRows < cells[i].realSize())
+      nbRows = cells[i].realSize();
 
   Cell c = cells.first();
+  c.cleanup();
   c.extendCell(nb, nbRows, def);
   for(int i = 1; i < cells.size(); i++) {
     Cell c2 = cells[i];
@@ -120,6 +137,8 @@ void LatexTable::addHeader(const QString & h, const QString & headSpec,
 
 void LatexTable::newCell()
 {
+  if(cells.size())
+    cells.last().cleanup();
   cells.append(Cell());
 }
 

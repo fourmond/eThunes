@@ -83,6 +83,12 @@ class LatexTable {
     static Cell joinCells(const QList<Cell> &cells, int nb, 
                           const QStringList &padding, 
                           const QString & def = "");
+
+    /// Returns the number of rows, minus the last one if it is empty.
+    int realSize() const;
+
+    /// remove the last Row if empty
+    void cleanup();
   };
 
   /// The inner list of cells.
