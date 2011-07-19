@@ -109,10 +109,16 @@ class LatexTable {
 
 public:
 
+  void setSuperHeader(const QString &str) {
+    superHeader = str;
+  };
+
+  bool noHead; 
+
   LatexTable(const QString &def = "r", 
              const QString & format = "") : 
     defaultSpec(def), 
-    headerFormat(format) {;};
+    headerFormat(format), noHead(false) {;};
 
   /// Add a string to the given cell. A warning will be issued if
   /// there are more strings in a line than headers.

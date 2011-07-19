@@ -165,11 +165,12 @@ QString LatexTable::packTable(int horizontalCells,
   QStringList lst;
 
   if(! superHeader.isEmpty())
-    lst << QString("\\multicolumn{%1}{c}{%2}\n").
+    lst << QString("\\multicolumn{%1}{c}{%2}\n\\\\\n").
       arg(cs.size()).arg(superHeader);
 
   if(horizontalCells == 1) {
-    lst << header.toString();
+    if(! noHead)
+      lst << header.toString();
     for(int i = 0; i < cells.size(); i++)
       lst << cells[i].toString();
   }
@@ -181,10 +182,11 @@ QString LatexTable::packTable(int horizontalCells,
     /// that into account.
   
     QList<Cell> tmp;
-    for(int i = 0; i < horizontalCells; i++) {
-      tmp << header;
+    if(! noHead) {
+      for(int i = 0; i < horizontalCells; i++)
+        tmp << header;
+      cl.append(Cell::joinCells(tmp, nbCols, padding));
     }
-    cl.append(Cell::joinCells(tmp, nbCols, padding));
 
     int nbCells = (cells.size() + horizontalCells - 1)/horizontalCells;
     for(int i = 0; i < nbCells; i++) {
