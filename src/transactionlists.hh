@@ -108,14 +108,17 @@ public:
   /// \li opposed amounts
   /// \li same memo
   ///
-  /// This will possibly give false positives, but it's the best we
-  /// can do.
+  /// This may give false positives, but it's the best we can do.  You
+  /// can optionnaly turn on the permissive flag which disables the
+  /// check of the memo.
   ///
-  /// @warning This function assumes that the transactions are sorted !
+  /// @warning This function assumes that the transactions are sorted
+  /// !
   ///
   /// It creates links between transactions found and returns the list
   /// of newly-created links.
-  static QList<Link *> findInternalMoves(QList<TransactionPtrList> lists);
+  static QList<Link *> findInternalMoves(QList<TransactionPtrList> lists, 
+                                         bool permissive = false);
 
 };
 

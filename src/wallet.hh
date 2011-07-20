@@ -119,9 +119,7 @@ public:
 
   /// Attemps to find internal moves, using
   /// TransactionPtrList::findInternalMoves()
-  ///
-  /// @todo To be improved later on.
-  void findInternalMoves();
+  void findInternalMoves(bool permissive = false);
 
 
 public:

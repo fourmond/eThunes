@@ -136,3 +136,9 @@ void WalletDW::findInternalMoves()
   if(wallet)
     wallet->findInternalMoves();
 }
+
+void WalletDW::findInternalMovesPermissive()
+{
+  if(wallet)
+    wallet->findInternalMoves(true);
+}

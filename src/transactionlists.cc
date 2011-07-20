@@ -265,8 +265,8 @@ public:
   QString memo;
   int amount;
   HashKey() {;};
-  HashKey(const Transaction * t) {
-    memo = t->getMemo();
+  HashKey(const Transaction * t, bool permissive) {
+    memo = (permissive ? "": t->getMemo());
     amount = abs(t->getAmount());
   };
   bool operator==(const HashKey & other) const {
@@ -279,7 +279,7 @@ uint qHash(const HashKey & k) {
   return qHash(k.memo) ^ k.amount;
 }
 
-QList<Link *> TransactionPtrList::findInternalMoves(QList<TransactionPtrList> lists)
+QList<Link *> TransactionPtrList::findInternalMoves(QList<TransactionPtrList> lists, bool permissive)
 {
   QList<Link *> retval;
   // We'll proceed by browsing through all the transactions date by
@@ -348,7 +348,7 @@ QList<Link *> TransactionPtrList::findInternalMoves(QList<TransactionPtrList> li
       while(iterators[i].hasNext() && 
 	    iterators[i].peekNext()->getDate() == theDate) {
 	Transaction * t = iterators[i].next();
-	transactions.insert(HashKey(t), t);
+	transactions.insert(HashKey(t, permissive), t);
       }
     }
 

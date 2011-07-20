@@ -222,10 +222,17 @@ void MainWin::setupActions()
 		    QKeySequence(tr("Ctrl+I")),
 		    tr("Imports transactions into the wallet"));
 
-  actions.addAction(this, "test matching", tr("Test matching transations"),
+  actions.addAction(this, "find internal", tr("Find Internal Moves"),
 		    dashboard->walletDW, SLOT(findInternalMoves()),
-		    QKeySequence(tr("Ctrl+Y")),
-		    tr("Test stuff..."));
+		    QKeySequence(),
+		    tr("Find internal moves between accounts"));
+
+  actions.addAction(this, "find internal permissive", tr("Find Internal Moves (permissive)"),
+		    dashboard->walletDW, SLOT(findInternalMovesPermissive()),
+		    QKeySequence(),
+		    tr("Find internal moves between accounts "
+                       "(more permissive than the other one)"));
+
 
   actions.addAction(this, "manage filters", tr("&Manage filters"),
 		    dashboard->walletDW, SLOT(manageFilters()),
@@ -271,7 +278,8 @@ void MainWin::setupMenus()
   fileMenu->addAction(actions["save as"]);
   fileMenu->addSeparator();
   fileMenu->addAction(actions["import"]);
-  fileMenu->addAction(actions["test matching"]);
+  fileMenu->addAction(actions["find internal"]);
+  fileMenu->addAction(actions["find internal permissive"]);
   fileMenu->addAction(actions["manage filters"]);
   fileMenu->addAction(actions["view log"]);
   fileMenu->addSeparator();

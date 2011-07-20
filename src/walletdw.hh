@@ -56,9 +56,9 @@ public slots:
 
   /// Attemps to find internal moves, using
   /// TransactionPtrList::findInternalMoves()
-  ///
-  /// @todo To be improved later on.
   void findInternalMoves();
+
+  void findInternalMovesPermissive();
 
 protected:
   void showFiltersPage();

@@ -179,12 +179,12 @@ Tag * Wallet::namedTag(const QString & name)
   return NULL;
 }
 
-void Wallet::findInternalMoves()
+void Wallet::findInternalMoves(bool permissive)
 {
   QList<TransactionPtrList> lists;
   for(int i = 0; i < accounts.size(); i++) {
     lists.append(accounts[i].transactions.toPtrList());
   }
-  TransactionPtrList::findInternalMoves(lists);
+  TransactionPtrList::findInternalMoves(lists, permissive);
 }
 
