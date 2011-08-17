@@ -205,7 +205,7 @@ public:
 
   virtual QString typeName() const { return "document"; };
 
-  virtual QString publicTypeName() const { return tr("Document"); };
+  virtual QString publicTypeName() const { return QObject::tr("Document"); };
 
   virtual void followLink();
 };

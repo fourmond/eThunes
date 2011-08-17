@@ -56,10 +56,10 @@ LatexOutput::LatexOutput(const QString & op) :
 
 QString LatexOutput::makeupPreamble()
 {
-  return tr("\\documentclass{article}\n\n"
-            "\\usepackage[english]{babel}\n"
-            "\\usepackage[utf8]{inputenc}\n"
-            "\\usepackage[T1]{fontenc}\n");
+  return QObject::tr("\\documentclass{article}\n\n"
+                     "\\usepackage[english]{babel}\n"
+                     "\\usepackage[utf8]{inputenc}\n"
+                     "\\usepackage[T1]{fontenc}\n");
 }
 
 LatexOutput::~LatexOutput()
