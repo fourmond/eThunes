@@ -39,7 +39,8 @@ module Impots
     if doc['text'] =~ /revenus\s*de\s*l.*ann.*(\d{4})/
       # Cas 2009
       res['annee-concernee'] = $1
-      if doc['text'] =~ /Num[^:]+scal\s*(?:\(vous\))?\s*:\s*(\d+)/
+      if doc['text'] =~ /Num[^:]+cal\s*(?:\(vous\))?\s*:\s*(\d+)/ ||
+         doc['text-layout'] =~ /Num[^:]+cal\s*(?:\(vous\))?\s*:\s*(\d+)/
         res['numero-fiscal'] = $1
       end
     elsif doc['text'] =~ /^DE\s*(\d{4})/
