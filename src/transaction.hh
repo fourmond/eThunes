@@ -272,7 +272,7 @@ public:
     if(! memo.isEmpty()) 
       return memo;
     if(! checkNumber.isEmpty())
-      return QObject::tr("Check: %1").arg(checkNumber);
+      return tr("Check: %1").arg(checkNumber);
     return QString();
   };
 
@@ -335,7 +335,7 @@ public:
   };
 
   virtual QString publicTypeName() const {
-    return QObject::tr("Transaction");
+    return tr("Transaction");
   };
 
   virtual void followLink();

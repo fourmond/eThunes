@@ -21,6 +21,8 @@
 #ifndef __LATEXOUTPUT_HH
 #define __LATEXOUTPUT_HH
 
+#include <translatable.hh>
+
 /// Use this class just as you would use a QTextStream, with a little
 /// syntactic sugar...
 ///
@@ -31,7 +33,7 @@
 /// \li possibility to splice/wrap (as I did for the monthly summary
 /// in AMEmployer)
 /// \li warnings when applicable
-class LatexOutput {
+class LatexOutput : public Translatable {
   /// Points to the actual document stream (within \begin--\end
   /// document)
   QTextStream * documentStream;

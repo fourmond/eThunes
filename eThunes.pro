@@ -97,7 +97,8 @@ HEADERS += src/account.hh src/mainwin.hh src/actions.hh \
         src/utils.hh src/evolvingitem.hh \
         src/httarget.hh src/htlabel.hh src/httarget-templates.hh \
         src/latexoutput.hh src/evolvingitemwidget.hh \
-        src/latextable.hh
+        src/latextable.hh \
+        src/translatable.hh
 
 
 # Plugins:

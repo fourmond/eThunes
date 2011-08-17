@@ -122,7 +122,7 @@ public:
     QString retval;
     retval = QString("%1").arg(firstValue);
     for(int i = 0; i < itemChanges.size(); i++)
-      retval += QObject::tr(" until %1, then %2").
+      retval += tr(" until %1, then %2").
         arg(itemChanges[i].date.toString()).
         arg(itemChanges[i].value);
     return retval;
@@ -132,7 +132,7 @@ public:
     QString retval;
     retval = QString("%1").arg(formatter(firstValue));
     for(int i = 0; i < itemChanges.size(); i++)
-      retval += QObject::tr(" until %1, then %2").
+      retval += tr(" until %1, then %2").
         arg(itemChanges[i].date.toString()).
         arg(formatter(itemChanges[i].value));
     return retval;
