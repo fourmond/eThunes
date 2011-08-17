@@ -102,8 +102,19 @@ namespace Utils {
                        const QString & label, const QDate & begin, 
                        const QDate & end, 
                        const QString & format = "MMM yy");
+
+  /// A month name (such as January 2010), suitably capitalized for
+  /// inclusion in a calendar
+  QString monthName(const QDate & date, bool longFormat = true);
   
   /// @}
+
+  /// Returns a capitalized version of the string
+  inline QString capitalize(const QString & str) {
+    QString s = str;
+    s[0] = s[0].toUpper();
+    return s;
+  };
 
 
 

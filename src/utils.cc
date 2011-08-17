@@ -59,3 +59,12 @@ QDate Utils::promptForMonth(QWidget * parent, const QString & title,
   
   return months[idx];
 }
+
+/// @todo Provide additional arguments for the formatting (short or
+/// long name ?)
+QString Utils::monthName(const QDate & month, bool longFormat)
+{
+  QString str = month.toString(longFormat ? "MMMM yyyy" : 
+                               "MMM yy");
+  return Utils::capitalize(str);
+}

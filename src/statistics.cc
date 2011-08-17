@@ -85,8 +85,7 @@ QString Statistics::htmlStatistics(int months) const
     QStringList c1, c2;
     c1 << QString("<b>%1</b>").
       arg(HTTarget::
-          linkToFunction(Transaction::dateFromID(i).
-                         toString("MMM yyyy"),
+          linkToFunction(Utils::monthName(Transaction::dateFromID(i), false),
                          &TransactionListDialog::showMonthlyTransactions,
                          account, i));
     c2 << "";
