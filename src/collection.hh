@@ -161,12 +161,16 @@ public:
     return documentDisplayFormat(doc->definition);
   };
 
-  /// Returns the display format for the given Document.
+  /// Returns the display format for the given DocumentDefinition.
   ///
   /// \todo Here, implement user overrides.
   QString documentDisplayFormat(const DocumentDefinition * def) const {
     return def->displayFormat;
   };
+
+  /// Returns a list of attributes requested for the given
+  /// DocumentDefinition
+  QHash<QString, AttributeHash::HandledType> attributesRequiredForDocument(const DocumentDefinition * def) const;
 
   /// All the documents, regardless of their type.
   WatchableList<Document> documents;

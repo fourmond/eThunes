@@ -119,6 +119,10 @@ public:
   /// \li "date:...": return QDateTime.toString(...)
   static QString formatVariant(QVariant v, const QString &spec);
 
+  /// Takes a format string as accepted by formatString() and returns
+  /// a hash of names/types that are requested by this format string.
+  static QHash<QString, HandledType> requiredAttributes(const QString & format);
+
   /// The names of numbered types
   static const char * typeNames[];
 

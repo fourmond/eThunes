@@ -175,14 +175,37 @@ Document * Collection::importFile(const QString & doctype,
   if(fileClashes(&definition->documentTypes[doctype], attrs))
     return NULL;
 
-  /// \todo Here, we should check for missing attributes, based on the
-  /// format strings (display and filename), and provide a way to
-  /// prompt the user for them (maybe only in certain cases, when
-  /// there is no code attached to the Collection, for instance, which
-  /// would be the case for the misc collection)
+  DocumentDefinition * def = &definition->documentTypes[doctype];
+
+  /// @todo Somehow, prompting here isn't that great (GUI stuff inside
+  /// non-GUI class...). But, well...
+  {
+
+    /// @todo Now, I must add an attribute to either the
+    /// DocumentDefinition or the CollectionDefinition asking whether
+    /// it is OK or not to have missing attributes (if OK, then
+    /// prompt). Probably at the level of the CollectionDefinition ?
+    typedef QHash<QString, AttributeHash::HandledType> Hash;
+    QStringList missingAttributes;
+    Hash req = attributesRequiredForDocument(def);
+    for(Hash::iterator i = req.begin(); i != req.end(); i++)
+      if(! attrs.contains(i.key()))
+        missingAttributes << i.key();
+    if(missingAttributes.size() > 0) {
+      QString msg = QObject::tr("The document %1 could not be imported "
+                                "because the following attributes are "
+                                "missing: %2.").
+        arg(file).arg(missingAttributes.join(", "));
+      QMessageBox::warning(NULL, QObject::tr("Missing attributes for %1").
+                           arg(file),
+                           msg);
+      return NULL;
+    }
+  }
+  
 
   doc.attributes = attrs;
-  doc.definition = &definition->documentTypes[doctype];
+  doc.definition = def;
   doc.collection = this;
   doc.setFilePath(file);
   doc.bringFileIntoOwnership();
@@ -241,4 +264,16 @@ void Collection::fetchNewDocumentsForUser(const AttributeHash &user)
   definition->code.fetchNewDocuments(user, docs, this);
 }
 
+QHash<QString, AttributeHash::HandledType> Collection::attributesRequiredFordocument(const DocumentDefinition * def) const
+{
+  typedef QHash<QString, AttributeHash::HandledType> Hash;
+  Hash ret = AttributeHash::requiredAttributes(documentFileNameFormat(def));
+  Hash t2 = AttributeHash::requiredAttributes(documentDisplayFormat(def));
 
+  // Here, we reimplement QHash::unite, but without the troubles with
+  // a key used multiple times...
+  for(Hash::iterator i = t2.begin(); i != t2.end(); i++)
+    if(! ret.contains(i.key()))
+      ret[i.key()] = i.value();
+  return ret;
+}

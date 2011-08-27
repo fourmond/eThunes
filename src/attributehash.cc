@@ -171,12 +171,14 @@ void AttributeHash::readXML(QXmlStreamReader* reader)
   }
 }
 
+static const char * fsRE = "%\\{([^%}]+)(%[^}]+)?\\}";
+
 QString AttributeHash::formatString(const QString & format) const
 {
   QString str;
   int idx = 0;
   int lastidx;
-  QRegExp formatSpecifierRE("%\\{([^%}]+)(%[^}]+)?\\}");
+  QRegExp formatSpecifierRE(fsRE);
   // formatSpecifierRE.setMinimal(true); // Non-greedy regular expressions !
   while(idx >= 0) {
     lastidx = idx;
@@ -204,6 +206,7 @@ QString AttributeHash::formatString(const QString & format) const
   return str;
 }
 
+
 QString AttributeHash::formatVariant(QVariant v, const QString &spec)
 {
   if(spec.size() == 1) {
@@ -223,6 +226,42 @@ QString AttributeHash::formatVariant(QVariant v, const QString &spec)
   else
     return v.toString();
 }
+
+/// @todo This function takes code from both the one below and the one
+/// above. There should be a way to refactor all this, but, well...
+QHash<QString, AttributeHash::HandledType> AttributeHash::requiredAttributes(const QString & format)
+{
+  QHash<QString, AttributeHash::HandledType> ret;
+  int idx = 0;
+  QRegExp formatSpecifierRE(fsRE);
+  while(true) {
+    idx = formatSpecifierRE.indexIn(format, idx);
+    if(idx < 0)
+      break;
+    HandledType t = String;
+    QString spec = formatSpecifierRE.cap(2);
+    if(! spec.isEmpty()) {
+      if(spec.size() == 1) {
+        switch(spec[0].toAscii()) {
+        case 'A':
+          t = Number;
+          break;
+        case 'M':
+        case 'y':
+          t = Time;
+        default:
+          ;
+        }
+      }
+      else if(spec.startsWith("date:"))
+        t = Time;
+    }
+    ret[formatSpecifierRE.cap(1)] = t;
+    idx += formatSpecifierRE.matchedLength();
+  }
+  return ret;
+}
+
 
 AttributeHash::HandledType AttributeHash::namedType(const QString & name)
 {
