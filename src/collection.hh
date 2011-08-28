@@ -86,6 +86,9 @@ public:
   /// Of course, so long as the Ruby code can setup sockets on its
   /// own, no guarantee can be made with respect to what can be
   /// accessed. But, still !
+  ///
+  /// @todo This will have to be turned into lists, as for instance
+  /// SFR needs two domains.
   QString domain;
 
   virtual SerializationAccessor * serializationAccessor();

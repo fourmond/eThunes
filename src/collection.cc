@@ -264,7 +264,7 @@ void Collection::fetchNewDocumentsForUser(const AttributeHash &user)
   definition->code.fetchNewDocuments(user, docs, this);
 }
 
-QHash<QString, AttributeHash::HandledType> Collection::attributesRequiredFordocument(const DocumentDefinition * def) const
+QHash<QString, AttributeHash::HandledType> Collection::attributesRequiredForDocument(const DocumentDefinition * def) const
 {
   typedef QHash<QString, AttributeHash::HandledType> Hash;
   Hash ret = AttributeHash::requiredAttributes(documentFileNameFormat(def));
