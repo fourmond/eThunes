@@ -19,7 +19,7 @@
 #include <headers.hh>
 #include <documentlistwidget.hh>
 #include <document.hh>
-#include <flowlayout.hh>
+#include <flowinggridlayout.hh>
 #include <htlabel.hh>
 
 #include <httarget-templates.hh>
@@ -85,6 +85,7 @@ void DocumentWidget::focusInEvent(QFocusEvent * event)
 }
 
 
+//////////////////////////////////////////////////////////////////////
 
 DocumentListWidget::DocumentListWidget(const QList<Document*> & documents,
                                        QWidget * parent) :
@@ -122,7 +123,7 @@ void DocumentListWidget::clearItems()
 
 void DocumentListWidget::setupFrame()
 {
-  layout = new FlowLayout(this);
+  layout = new FlowingGridLayout(this);
 }
 
 

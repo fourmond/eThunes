@@ -21,7 +21,7 @@
 #define __DOCUMENTLISTWIDGET_HH
 
 class Document;
-class FlowLayout;
+class FlowingGridLayout;
 class HTLabel;
 
 /// A widget representing a single Document.
@@ -60,7 +60,7 @@ class DocumentListWidget : public QWidget {
   Q_OBJECT;
 
   /// Handling the internal layout.
-  FlowLayout * layout;
+  FlowingGridLayout * layout;
 
   /// Holds the correspondance document -> label.
   ///
