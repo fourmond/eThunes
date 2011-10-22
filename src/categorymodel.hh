@@ -37,6 +37,16 @@ protected:
   /// index (ie subcategories)
   CategoryHash * indexedCategoryHash(QModelIndex index) const;
 
+  /// Formats the amounts using Transaction::formatAmount, although
+  /// returns an empty string on 0 value.
+  ///
+  /// @todo make that configurable
+  QString formatAmount(int amount) const {
+    if(amount)
+      return Transaction::formatAmount(amount);
+    return QString("");
+  };
+
 public:
 
   /// Returns the category corresponding to the index, or NULL for
@@ -51,7 +61,11 @@ public:
     NameColumn,
     CurrentMonthColumn,
     LastMonthColumn,
+    MonthBeforeColumn,
     AverageMonthColumn,
+    CurrentYearColumn,
+    LastYearColumn,
+    YearBeforeColumn,
     AmountColumn,
     DebitColumn,
     CreditColumn,

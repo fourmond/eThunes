@@ -55,6 +55,7 @@ void TransactionListStatistics::addTransaction(const Transaction * t)
 {
   BasicStatistics::addTransaction(t);
   monthlyStats[t->monthID()].addTransaction(t);
+  yearlyStats[t->getDate().year()].addTransaction(t);
 }
 
 int TransactionListStatistics::monthlyAverageAmount()

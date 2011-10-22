@@ -89,16 +89,29 @@ QVariant CategoryModel::headerData(int section,
 				  Qt::Orientation /*orientation*/,
 				  int role) const
 {
+  QDate now = QDate::currentDate();
   if(role == Qt::DisplayRole) {
     switch(section) {
-    case AmountColumn: return QVariant(tr("Amount"));
-    case NumberColumn: return QVariant(tr("Number"));
-    case NameColumn: return QVariant(tr("Name"));
-    case CreditColumn: return QVariant(tr("Credit"));
-    case DebitColumn: return QVariant(tr("Debit"));
-    case CurrentMonthColumn: return QVariant(tr("This month"));
-    case LastMonthColumn: return QVariant(tr("Last month"));
+    case AmountColumn: return tr("Total");
+    case NumberColumn: return tr("Number");
+    case NameColumn: return tr("Name");
+    case CreditColumn: return tr("Total credit");
+    case DebitColumn: return tr("Total debit");
+
+    case CurrentMonthColumn: 
+      return QVariant(now.toString(tr("MMM yy")));
+    case LastMonthColumn: 
+      return QVariant(now.addMonths(-1).toString(tr("MMM yy")));
+    case MonthBeforeColumn: 
+      return QVariant(now.addMonths(-2).toString(tr("MMM yy")));
     case AverageMonthColumn: return QVariant(tr("Monthly average"));
+
+    case CurrentYearColumn: 
+      return QString("%1").arg(now.year());
+    case LastYearColumn: 
+      return QString("%1").arg(now.year()-1);
+    case YearBeforeColumn: 
+      return QString("%1").arg(now.year()-2);
     default:
       return QVariant();
     }
@@ -110,6 +123,7 @@ QVariant CategoryModel::headerData(int section,
 
 QVariant CategoryModel::data(const QModelIndex& index, int role) const
 {
+  QDate now = QDate::currentDate();
   const Category *c = indexedCategory(index);
   /// \todo Add a cache for results
   if(! c)
@@ -119,32 +133,42 @@ QVariant CategoryModel::data(const QModelIndex& index, int role) const
     TransactionListStatistics stats;
     switch(index.column()) {
     case NameColumn:
-      return QVariant(c->name);
+      return c->name;
     case AmountColumn:
       stats = list.statistics();
-      return QVariant(Transaction::formatAmount(stats.totalAmount));
-    case CurrentMonthColumn:
-      stats = list.statistics();
-      return QVariant(Transaction::
-		      formatAmount(stats.monthlyStats[Transaction::thisMonthID()].totalAmount));
-    case LastMonthColumn:
-      stats = list.statistics();
-      return QVariant(Transaction::
-		      formatAmount(stats.lastMonthStats().totalAmount));
+      return formatAmount(stats.totalAmount);
     case CreditColumn:
       stats = list.statistics();
-      return QVariant(Transaction::
-		      formatAmount(stats.totalCredit));
+      return formatAmount(stats.totalCredit);
     case DebitColumn:
       stats = list.statistics();
-      return QVariant(Transaction::
-		      formatAmount(stats.totalDebit));
+      return formatAmount(stats.totalDebit);
+
+    case CurrentMonthColumn:
+      stats = list.statistics();
+      return formatAmount(stats.thisMonthStats().totalAmount);
+    case LastMonthColumn:
+      stats = list.statistics();
+      return formatAmount(stats.lastMonthStats().totalAmount);
+    case MonthBeforeColumn:
+      stats = list.statistics();
+      return formatAmount(stats.monthlyStats[Transaction::thisMonthID() - 2].totalAmount);
     case AverageMonthColumn:
       stats = list.statistics();
-      return QVariant(Transaction::
-		      formatAmount(stats.monthlyAverageAmount()));
+      return formatAmount(stats.monthlyAverageAmount());
+
+    case CurrentYearColumn:
+      stats = list.statistics();
+      return formatAmount(stats.yearlyStats[now.year()].totalAmount);
+    case LastYearColumn:
+      stats = list.statistics();
+      return formatAmount(stats.yearlyStats[now.year()-1].totalAmount);
+    case YearBeforeColumn:
+      stats = list.statistics();
+      return formatAmount(stats.yearlyStats[now.year()-2].totalAmount);
+
     case NumberColumn:
-      return QVariant(list.count());
+      return list.count();
     default:
       return QVariant();
     }
@@ -155,8 +179,12 @@ QVariant CategoryModel::data(const QModelIndex& index, int role) const
     case CurrentMonthColumn:
     case LastMonthColumn:
     case AverageMonthColumn:
+    case CurrentYearColumn:
+    case LastYearColumn:
     case DebitColumn:
     case CreditColumn:
+    case MonthBeforeColumn:
+    case YearBeforeColumn:
       return QVariant(Qt::AlignRight);
     default:
       return QVariant();

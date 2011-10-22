@@ -68,6 +68,9 @@ public:
   /// A hash of Transaction::monthID -> BasicStatistics
   QHash<int, BasicStatistics> monthlyStats;
 
+  /// A hash of year -> BasicStatistics
+  QHash<int, BasicStatistics> yearlyStats;
+
   /// Adds the given Transaction to the statistics
   virtual void addTransaction(const Transaction * t);
 
