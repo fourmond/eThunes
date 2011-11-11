@@ -112,8 +112,9 @@ void Transaction::setCategoryFromName(const QString & str, Wallet * w)
 {
   if(! w) {
     if(! account || ! account->wallet) {
-      fprintf(stderr, "We have serious problems setting a "
-	      "Category from a Name\n");
+      QTextStream e(stderr);
+      e <<  "We have serious problems setting a Category from a Name: "
+        << str << endl;
       return;
     }
     w = account->wallet;

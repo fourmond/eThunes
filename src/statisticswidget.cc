@@ -18,3 +18,55 @@
 
 #include <headers.hh>
 #include <statisticswidget.hh>
+
+#include <cabinet.hh>
+
+StatisticsWidget::StatisticsWidget(Cabinet * c) : 
+  cabinet(c), maxDisplayed(6)
+{
+  QVBoxLayout * layout = new QVBoxLayout(this);
+
+  layout->addWidget(new QLabel(tr("<h2>Statistics:</h2>")));
+  
+  QHBoxLayout * horiz = new QHBoxLayout();
+  horiz->addWidget(new QLabel(tr("<b>Number of displayed categories:</b>")));
+
+  QSpinBox * sp = new QSpinBox();
+  sp->setValue(maxDisplayed);
+  sp->setSingleStep(1);
+  connect(sp, SIGNAL(valueChanged(int)), SLOT(setDisplayed(int)));
+  horiz->addWidget(sp);
+  layout->addLayout(horiz);
+
+  stats = new HTLabel;
+  statsArea = new QScrollArea;
+  statsArea->setWidget(stats);
+  layout->addWidget(statsArea);
+
+}
+
+
+void StatisticsWidget::update()
+{
+  if(cabinet->wallet.accounts.size() > 0) {
+    // We pick the one with the most transactions:
+    Account * account = NULL;
+    for(int i = 0; i < cabinet->wallet.accounts.size(); i++) {
+      if( ( ! account) ||
+          account->transactions.size() < 
+          cabinet->wallet.accounts[i].transactions.size())
+        account = &cabinet->wallet.accounts[i];
+      Statistics s(account->transactions.toPtrList());
+      stats->setText(s.htmlStatistics(-1, maxDisplayed));
+      stats->resize(stats->sizeHint());
+    }
+  } 
+  else
+    stats->setText("Stuff !");
+}
+
+void StatisticsWidget::setDisplayed(int nb)
+{
+  maxDisplayed = nb;
+  update();
+}

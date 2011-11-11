@@ -24,6 +24,8 @@
 // #include <linkshandler.hh>
 #include <navigationwidget.hh>
 
+#include <statisticswidget.hh>
+
 #include <httarget-templates.hh>
 #include <htlabel.hh>
 
@@ -45,12 +47,8 @@ CabinetPage::CabinetPage(Cabinet * c) : cabinet(c)
   layout->addLayout(hb);
 
 
-  stats = new HTLabel;
-  statsArea = new QScrollArea;
-  statsArea->setWidget(stats);
-
-  layout->addWidget(statsArea);
-  stats->show();
+  stats = new StatisticsWidget(cabinet);
+  layout->addWidget(stats);
   
 
   updateContents();
@@ -59,9 +57,6 @@ CabinetPage::CabinetPage(Cabinet * c) : cabinet(c)
 
   connect(cabinet, SIGNAL(filenameChanged(const QString&)),
 	  SIGNAL(filenameChanged(const QString&)));
-  stats->show();
-
-  
 }
 
 
@@ -92,22 +87,7 @@ void CabinetPage::updateContents()
                              cabinet->plugins[i]));
     plugins->setText(str);
   }
-
-  if(cabinet->wallet.accounts.size() > 0) {
-    // We pick the one with the most transactions:
-    Account * account = NULL;
-    for(int i = 0; i < cabinet->wallet.accounts.size(); i++) {
-      if( ( ! account) ||
-          account->transactions.size() < 
-          cabinet->wallet.accounts[i].transactions.size())
-        account = &cabinet->wallet.accounts[i];
-      Statistics s(account->transactions.toPtrList());
-      stats->setText(s.htmlStatistics(-1));
-      stats->resize(stats->sizeHint());
-    }
-  } 
-  else
-    stats->setText("Stuff !");
+  stats->update();
 }
 
 void CabinetPage::save()

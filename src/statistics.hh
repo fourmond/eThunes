@@ -70,7 +70,10 @@ public:
   /// the given number of months. Returns the stats in form of a HTML
   /// table. If months is negative, returns the stats for all the
   /// months.
-  QString htmlStatistics(int months = 5) const;
+  ///
+  /// Ideas: @li have aggregated stats configurable on a given number
+  /// of months
+  QString htmlStatistics(int months = 5, int maxDisplay = 6) const;
 };
 
 

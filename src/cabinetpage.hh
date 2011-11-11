@@ -27,6 +27,7 @@
 #include <collectionsdw.hh>
 
 class HTLabel;
+class StatisticsWidget;
 
 /// This NavigationPage displays a Cabinet.
 class CabinetPage : public NavigationPage {
@@ -51,10 +52,7 @@ protected:
   HTLabel * plugins;
 
   /// Very basic statistics
-  HTLabel * stats;
-
-  /// And a scrollable area to browse through them
-  QScrollArea * statsArea;
+  StatisticsWidget * stats;
 
 public:
 

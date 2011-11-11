@@ -73,7 +73,10 @@ Statistics::Statistics(const TransactionPtrList & lst)
 /// where each data point would be very visible, with a neat tooltip
 /// and a context menu for showing transactions ?
 /// @li it should also provide horizontal sliding
-QString Statistics::htmlStatistics(int months) const
+///
+/// This function is VERY slow. I need to find a way to speed that up
+/// significantly, because it won't do.
+QString Statistics::htmlStatistics(int months, int maxDisplay) const
 {
   QList<QStringList> columns;
   Wallet * wallet = account->wallet;
@@ -114,7 +117,7 @@ QString Statistics::htmlStatistics(int months) const
     c1 << "Expenses";
     c2 << Transaction::formatAmount(rest);
 
-    for(int j = 0; j < std::min(items.size(), 5); j++) {
+    for(int j = 0; j < std::min(items.size(), maxDisplay); j++) {
       QString name = items[j].category;
       c1 << HTTarget::
         linkToFunction(name,
@@ -127,7 +130,7 @@ QString Statistics::htmlStatistics(int months) const
   }
   QString ret = "<table>\n";
   // Won't work when there are very little
-  for(int i = 0; i < 8; i++) {
+  for(int i = 0; i < maxDisplay+3; i++) {
     ret += "<tr>";
     for(int j = 0; j < columns.size(); j++) {
       if(columns[j].size() > i)

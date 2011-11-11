@@ -22,6 +22,7 @@
 #define __STATISTICSWIDGET_HH
 
 #include <statistics.hh>
+#include <htlabel.hh>
 
 class Cabinet;
 
@@ -42,10 +43,19 @@ class StatisticsWidget : public QWidget {
   /// And a way to make it scroll.
   QScrollArea * statsArea;
 
+  void setupFrame();
+
+  /// The number of elements currently displayed in the stats.
+  int maxDisplayed;
+
 
 public:
 
   StatisticsWidget(Cabinet * c);
+
+public slots:
+  void update();
+  void setDisplayed(int nb);
 };
 
 
