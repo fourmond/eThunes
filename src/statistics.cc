@@ -27,16 +27,15 @@
 #include <httarget-templates.hh>
 
 /// @todo ignore transactions that have an "internal move" link.
-void CategorizedStatistics::addTransaction(const Transaction * t)
+void CategorizedStatistics::addTransaction(const Transaction * t, 
+                                           bool topLevel)
 {
-  QString cat;
   // We ignored transactions flagged as internal move
   if(t->hasNamedLinks("internal move"))
     return;
-  if(t->getCategory())
-    cat = t->getCategory()->topLevelCategory()->name;
-  else
-    cat = "(uncategorized)";
+  const Category * cat = t->getCategory();
+  if(cat && topLevel)
+    cat = cat->topLevelCategory();
   (*this)[cat].addTransaction(t);
 }
 
@@ -49,9 +48,10 @@ QList<CategorizedStatistics::Item> CategorizedStatistics::categorize() const
   return retval;
 }
 
-void CategorizedMonthlyStatistics::addTransaction(const Transaction * t)
+void CategorizedMonthlyStatistics::addTransaction(const Transaction * t, 
+                                                  bool tl)
 {
-  (*this)[t->monthID()].addTransaction(t);
+  (*this)[t->monthID()].addTransaction(t, tl);
 }
 
 Statistics::Statistics(const TransactionPtrList & lst)
@@ -65,6 +65,8 @@ Statistics::Statistics(const TransactionPtrList & lst)
 }
 
 
+
+
 /// @todo This just doesn't substitute for a proper widget. Here are
 /// few ideas for it:
 /// @li all category names should be links displaying the category
@@ -73,9 +75,6 @@ Statistics::Statistics(const TransactionPtrList & lst)
 /// where each data point would be very visible, with a neat tooltip
 /// and a context menu for showing transactions ?
 /// @li it should also provide horizontal sliding
-///
-/// This function is VERY slow. I need to find a way to speed that up
-/// significantly, because it won't do.
 QString Statistics::htmlStatistics(int months, int maxDisplay) const
 {
   QList<QStringList> columns;

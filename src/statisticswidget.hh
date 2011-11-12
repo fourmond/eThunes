@@ -37,17 +37,16 @@ class StatisticsWidget : public QWidget {
   /// The cabinet we're interested in
   Cabinet * cabinet;
 
-  /// The display
-  HTLabel * stats;
-
-  /// And a way to make it scroll.
-  QScrollArea * statsArea;
+  // /// And a way to make it scroll.
+  // QScrollArea * statsArea;
 
   void setupFrame();
 
   /// The number of elements currently displayed in the stats.
   int maxDisplayed;
 
+  /// The display of text
+  HTDisplay * display;
 
 public:
 

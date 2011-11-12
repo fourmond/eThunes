@@ -54,7 +54,10 @@ public:
   int firstMonthID;
 
   /// Adds the given Transaction to the statistics
-  virtual void addTransaction(const Transaction * t);
+  void addTransaction(const Transaction * t);
+
+  /// Adds other stats to this one.
+  BasicStatistics & operator+=(const BasicStatistics & stats);
 
 };
 
@@ -72,7 +75,7 @@ public:
   QHash<int, BasicStatistics> yearlyStats;
 
   /// Adds the given Transaction to the statistics
-  virtual void addTransaction(const Transaction * t);
+  void addTransaction(const Transaction * t);
 
   /// Returns the BasicStatistics for this month
   inline const BasicStatistics & thisMonthStats() {

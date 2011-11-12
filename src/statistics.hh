@@ -23,11 +23,13 @@
 
 #include <transactionlists.hh>
 
-/// Statistics by indexed by top-level Category.
-class CategorizedStatistics : public QHash<QString, BasicStatistics> {
+class Category;
+
+/// Statistics by indexed by a Category (either top-level or not)
+class CategorizedStatistics : public QHash<const Category *, BasicStatistics> {
 public:
   /// Adds a Transaction to the statistics.
-  void addTransaction(const Transaction * t);
+  void addTransaction(const Transaction * t, bool topLevel = true);
 
   class Item {
   public:
@@ -38,6 +40,12 @@ public:
     Item() {;};
 
     Item(const QString & c, int a) : category(c), amount(a) {;};
+    Item(const Category * cat, int a) : amount(a) {
+      if(cat)
+        category = cat->name;
+      else
+        category = "(uncategorized)";
+    };
 
     bool operator<(const Item & b) const {
       return amount < b.amount;
@@ -51,7 +59,7 @@ public:
 class CategorizedMonthlyStatistics : public QHash<int, CategorizedStatistics> {
 public:
   /// Adds a Transaction to the statistics.
-  void addTransaction(const Transaction * t);
+  void addTransaction(const Transaction * t, bool topLevel = true);
 };
 
 /// This class computes up various statistics about a series of

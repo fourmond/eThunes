@@ -38,16 +38,26 @@ StatisticsWidget::StatisticsWidget(Cabinet * c) :
   horiz->addWidget(sp);
   layout->addLayout(horiz);
 
-  stats = new HTLabel;
-  statsArea = new QScrollArea;
-  statsArea->setWidget(stats);
-  layout->addWidget(statsArea);
+  
+  // statsArea = new QScrollArea;
+  // horiz = new QHBoxLayout(statsArea->viewport());
+  display = new HTDisplay();
+  // horiz->addWidget(disp);
+  // // statsArea->setWidget(stats);
+  // layout->addWidget(statsArea);
+  layout->addWidget(display);
 
+  /// @todo Since it seems that QLabel is confused by displaying sooo
+  /// much text horizontall at the same time, it may make sense to
+  /// display each table individually ? (or to use a table widget ?)
 }
 
 
 void StatisticsWidget::update()
 {
+  // QSize sz = stats->size();
+  // QTextStream o(stdout);
+  // o << "Size: " << sz.width() << "x" << sz.height() << endl;
   if(cabinet->wallet.accounts.size() > 0) {
     // We pick the one with the most transactions:
     Account * account = NULL;
@@ -57,12 +67,13 @@ void StatisticsWidget::update()
           cabinet->wallet.accounts[i].transactions.size())
         account = &cabinet->wallet.accounts[i];
       Statistics s(account->transactions.toPtrList());
-      stats->setText(s.htmlStatistics(-1, maxDisplayed));
-      stats->resize(stats->sizeHint());
+      // stats->setText(s.htmlStatistics(-1, maxDisplayed));
+      display->setText(s.htmlStatistics(-1, maxDisplayed));
+      // stats->resize(stats->sizeHint());
     }
   } 
   else
-    stats->setText("Stuff !");
+    display->setText("Stuff !");
 }
 
 void StatisticsWidget::setDisplayed(int nb)

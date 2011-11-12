@@ -22,9 +22,11 @@
 
 #include <httarget.hh>
 
-class HTLabel : public QLabel {
-
-  Q_OBJECT;
+/// The class HTHost is the base class for objects that potentially
+/// host links to HTTarget in HTML form. The aim of the game is to be
+/// able to free link targets when necessary.
+class HTHost {
+protected:
 
   /// The list of HTTarget objects owned by this class, that must be
   /// freed upon destruction/text change.
@@ -36,15 +38,29 @@ class HTLabel : public QLabel {
   /// Returns the HTTarget corresponding to the url, or NULL if this
   /// isn't a ht: url.
   static HTTarget * targetFromUrl(const QString & url);
+  static HTTarget * targetFromUrl(const QUrl & url);
+
+  /// Register targets from this html bit. It doesn't free the current
+  /// targets, you may use freeTargets() first if that's what you
+  /// want.
+  void registerTargets(const QString & html);
+
+  virtual ~HTHost();
+  
+};
+
+/// This subclass of QLabel provides a HTTarget link-aware display of
+/// (small) text.
+class HTLabel : public QLabel, protected HTHost {
+
+  Q_OBJECT;
+
 
 public:
 
   HTLabel(const QString & txt, QWidget * parent = NULL);
   HTLabel(QWidget * parent = NULL);
 
-
-  virtual ~HTLabel();
-  
 public slots:
 
   /// Sets the text of the label, and take ownership of HTTarget
@@ -65,6 +81,25 @@ public:
   /// @todo headers are unimplemented as of now ;-)...
   static QString prepareTable(const QList<QStringList> & rows,
                               const QStringList &header = QStringList());
+
+};
+
+/// An extended version of HTLabel, for larger texts.
+class HTDisplay : public QTextBrowser, protected HTHost {
+  Q_OBJECT;
+
+public:
+
+  HTDisplay(QWidget * parent = NULL);
+
+
+  /// Sets the text of the label, and take ownership of HTTarget
+  /// referenced when appropriate.
+  void setText(const QString & str);
+
+protected slots:
+  /// Handle the links
+  void onLinkClicked(const QUrl & url);
 
 };
 

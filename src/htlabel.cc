@@ -33,21 +33,34 @@ HTLabel::HTLabel(const QString & txt, QWidget * parent) : QLabel(parent) {
 
 
 
-HTLabel::~HTLabel()
+HTHost::~HTHost()
 {
   freeTargets();
 }
 
-void HTLabel::freeTargets()
+void HTHost::freeTargets()
 {
   for(int i = 0; i < ownedTargets.size(); i++)
     delete ownedTargets[i];
   ownedTargets.clear();
 }
 
+void HTHost::registerTargets(const QString & str)
+{
+  QRegExp re("href\\s*=\\s*['\"]([^'\"]+)['\"]"); 
+  int pos = 0;
+  while ((pos = re.indexIn(str, pos)) != -1) {
+    HTTarget * t = targetFromUrl(re.cap(1));
+    if(t && t->isDisposable())
+      ownedTargets << t;
+    pos += re.matchedLength();
+  }
+}
+
+
 
 /// @todo This should probably move to HTTarget
-HTTarget * HTLabel::targetFromUrl(const QString & url)
+HTTarget * HTHost::targetFromUrl(const QString & url)
 {
   if(url.startsWith("ht:")) {
     QString ptr = url.split(":")[1];
@@ -55,6 +68,13 @@ HTTarget * HTLabel::targetFromUrl(const QString & url)
   }
   return NULL;
 }
+
+HTTarget * HTHost::targetFromUrl(const QUrl & url)
+{
+  return targetFromUrl(url.toString());
+}
+
+//////////////////////////////////////////////////////////////////////
 
 void HTLabel::onLinkClicked(const QString & url)
 {
@@ -78,14 +98,7 @@ void HTLabel::onLinkClicked(const QString & url)
 void HTLabel::setText(const QString & str)
 {
   freeTargets();
-  QRegExp re("href\\s*=\\s*['\"]([^'\"]+)['\"]"); 
-  int pos = 0;
-  while ((pos = re.indexIn(str, pos)) != -1) {
-    HTTarget * t = targetFromUrl(re.cap(1));
-    if(t && t->isDisposable())
-      ownedTargets << t;
-    pos += re.matchedLength();
-  }
+  registerTargets(str);
   QLabel::setText(str);
 }
 
@@ -106,4 +119,44 @@ QString HTLabel::prepareTable(const QList<QStringList> & rows,
   }
   str += "</table>";
   return str;
+}
+
+
+//////////////////////////////////////////////////////////////////////
+
+HTDisplay::HTDisplay(QWidget * parent) : QTextBrowser(parent)
+{
+  setOpenLinks(false);
+  connect(this, SIGNAL(anchorClicked(const QUrl &)),
+          SLOT(onLinkClicked(const QUrl &)));
+  setLineWrapMode(QTextEdit::NoWrap);
+
+  // We do look for that QLabel look !
+  viewport()->setBackgroundRole(QPalette::Window);
+}
+
+void HTDisplay::setText(const QString & str)
+{
+  freeTargets();
+  registerTargets(str);
+  setHtml(str);
+}
+
+void HTDisplay::onLinkClicked(const QUrl & url)
+{
+  HTTarget * t = targetFromUrl(url);
+  if(t)
+    t->followLink();
+  else {
+    if(url.scheme() == "file")
+      /// \todo There should be a global function providing a proxy for
+      /// openUrl, to allow for local redifinition of dedicated
+      /// applications, including internal viewers if and when
+      /// applicable.
+      ///
+      /// @todo Give the possibly to choose which protocols to forward
+      /// to the services on a per label basis
+      QDesktopServices::openUrl(url);
+    /// @todo Signal missing links ?
+  }
 }

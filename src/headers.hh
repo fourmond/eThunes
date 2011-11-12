@@ -65,6 +65,7 @@
 // A rich text viewer (and editor?).
 // (not used)
 #include <QTextEdit>
+#include <QTextBrowser>
 
 // Desktop stuff
 #include <QUrl>

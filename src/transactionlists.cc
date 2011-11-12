@@ -47,6 +47,21 @@ void BasicStatistics::addTransaction(const Transaction * t)
   }
 }
 
+
+BasicStatistics & BasicStatistics::operator+=(const BasicStatistics & a)
+{
+  number += a.number;
+  numberCredit += a.numberCredit;
+  numberDebit += a.numberDebit;
+  totalAmount += a.totalAmount;
+  totalCredit += a.totalCredit;
+  totalDebit += a.totalDebit;
+  firstMonthID = std::min(firstMonthID, a.firstMonthID);
+  return *this;
+}
+
+//////////////////////////////////////////////////////////////////////
+
 TransactionListStatistics::TransactionListStatistics()
 {
 }
