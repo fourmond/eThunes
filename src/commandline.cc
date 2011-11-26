@@ -147,6 +147,8 @@ static void testDocumentLoading(const QStringList & a)
     o << "Unable to find the collection" << name << endl;
     return;
   }
+  Collection * c = new Collection();
+  c->definition = def;
   name = args.takeFirst();
   for(int i = 0; i < args.size(); i++) {
     QString file = args[i];
@@ -155,8 +157,15 @@ static void testDocumentLoading(const QStringList & a)
       parseDocumentMetaData(name, contents);
     o << endl << "Parsed attributes for file " 
       << file << ": " << endl;
+    QStringList missing = 
+      c->missingAttributesForDocument(outAttrs, def->documentDefinition(name));
     outAttrs.dumpContents();
+    if(missing.size() > 0)
+      o << "Missing attributes: " << missing.join(", ") << endl; 
+    else
+      o << "All required attributes found" << endl;
   }
+  delete c;
 }
 
 static void testDocumentParsing(const QStringList & a)

@@ -175,6 +175,12 @@ public:
   /// DocumentDefinition
   QHash<QString, AttributeHash::HandledType> attributesRequiredForDocument(const DocumentDefinition * def) const;
 
+  /// Checks whether the given AttributeHash contains all attributes
+  /// required for the given document type. Returns the list of
+  /// missing attributes
+  QStringList missingAttributesForDocument(const AttributeHash & attr, 
+                                           const DocumentDefinition * def) const;
+
   /// All the documents, regardless of their type.
   WatchableList<Document> documents;
 

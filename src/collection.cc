@@ -177,20 +177,20 @@ Document * Collection::importFile(const QString & doctype,
 
   DocumentDefinition * def = &definition->documentTypes[doctype];
 
-  /// @todo Somehow, prompting here isn't that great (GUI stuff inside
-  /// non-GUI class...). But, well...
+  /// @todo Somehow, prompting here isn't that great. A way around
+  /// this could be to define a collection of prompting facilities
+  /// (query for string, query for yes/no, warning, etc ?) as an
+  /// abstract class and pass appropriate children of that around ?
+  /// (but that's clearly a pain ;-)...)
   {
 
     /// @todo Now, I must add an attribute to either the
     /// DocumentDefinition or the CollectionDefinition asking whether
     /// it is OK or not to have missing attributes (if OK, then
     /// prompt). Probably at the level of the CollectionDefinition ?
-    typedef QHash<QString, AttributeHash::HandledType> Hash;
-    QStringList missingAttributes;
-    Hash req = attributesRequiredForDocument(def);
-    for(Hash::iterator i = req.begin(); i != req.end(); i++)
-      if(! attrs.contains(i.key()))
-        missingAttributes << i.key();
+    QStringList missingAttributes = 
+      missingAttributesForDocument(attrs, def);
+
     if(missingAttributes.size() > 0) {
       QString msg = QObject::tr("The document %1 could not be imported "
                                 "because the following attributes are "
@@ -276,4 +276,16 @@ QHash<QString, AttributeHash::HandledType> Collection::attributesRequiredForDocu
     if(! ret.contains(i.key()))
       ret[i.key()] = i.value();
   return ret;
+}
+
+QStringList Collection::missingAttributesForDocument(const AttributeHash & attrs, 
+                                                     const DocumentDefinition * def) const
+{
+  QStringList missingAttributes;
+  typedef QHash<QString, AttributeHash::HandledType> Hash;
+  Hash req = attributesRequiredForDocument(def);
+  for(Hash::iterator i = req.begin(); i != req.end(); i++)
+    if(! attrs.contains(i.key()))
+      missingAttributes << i.key();
+  return missingAttributes;
 }
