@@ -137,6 +137,11 @@ protected:
 /// \todo Write a small class to serialize a CollectionDefinition *,
 /// saving as definition->name and loading using namedDefinition,
 /// (eventually) raising an exception when NULL is returned.
+///
+/// @todo Rather than hardcoding the name of the directory in each
+/// CollectionDefinition, which is rather stupid, I should implement a
+/// base directory here and use that. That would allow for an easy
+/// separation of the things...
 class Collection : 
   public Serializable, public HTTarget {
 public:
