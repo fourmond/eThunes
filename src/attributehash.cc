@@ -273,6 +273,71 @@ AttributeHash::HandledType AttributeHash::namedType(const QString & name)
     i++;
     ptr++;
   }
-  ///tcexception Issue a warning / throw an exception when name unknown ?
+  /// @tcexception Issue a warning / throw an exception when name unknown ?
   return String; 		// By default
+}
+
+QWidget * AttributeHash::createEditor(AttributeHash::HandledType type, 
+                                      QWidget * parent)
+{
+  switch(type) {
+  case String: 
+    return new QLineEdit(parent);
+  case Number:
+    return new QLineEdit(parent);
+  case Time: {
+    QDateTimeEdit * de = new QDateTimeEdit(parent);
+    de->setCalendarPopup(true);
+    return de;
+  }
+  }
+  return NULL;
+}
+
+void AttributeHash::setEditorValue(AttributeHash::HandledType type, 
+                                   QWidget * editor, 
+                                   const QVariant &value)
+{
+  switch(type) {
+  case String:
+  case Number:  {
+    QLineEdit * le = dynamic_cast<QLineEdit *>(editor);
+    if(! le)
+      throw "Invalid editor...";
+    le->setText(value.toString());
+    return;
+  }
+  case Time: {
+    QDateTimeEdit * de = dynamic_cast<QDateTimeEdit *>(editor);
+    if(! de)
+      throw "Invalid editor...";
+    de->setDateTime(value.toDateTime());
+    return;
+  }
+    
+  };
+}
+
+QVariant AttributeHash::getEditorValue(AttributeHash::HandledType type, 
+                                       QWidget * editor)
+{
+  switch(type) {
+  case String:
+  case Number:  {
+    QLineEdit * le = dynamic_cast<QLineEdit *>(editor);
+    if(! le)
+      throw "Invalid editor...";
+    if(type == String)
+      return QVariant(le->text());
+    else
+      return QVariant(le->text().toInt());
+  }
+  case Time: {
+    QDateTimeEdit * de = dynamic_cast<QDateTimeEdit *>(editor);
+    if(! de)
+      throw "Invalid editor...";
+    return de->dateTime();
+  }
+  }
+  return QVariant();
 }

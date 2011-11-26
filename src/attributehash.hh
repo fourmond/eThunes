@@ -137,5 +137,23 @@ public:
     return a;
   };
 
+  /// @name Edition-related static functions
+  ///
+  /// Here we provide a few functions to create and interact with
+  /// widgets able to edit attributes of a given type.
+  ///
+  /// @{
+  
+  /// Creates a widget suitable for editing the given type:
+  static QWidget * createEditor(HandledType type, QWidget * parent = NULL);
+
+  /// Sets the value of the target editor
+  static void setEditorValue(HandledType type, QWidget * editor, 
+                             const QVariant &value);
+
+  /// Get the value back from the editor
+  static QVariant getEditorValue(HandledType type, QWidget * editor);
+  
+
 };
 #endif
