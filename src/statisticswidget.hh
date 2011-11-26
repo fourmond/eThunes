@@ -48,6 +48,9 @@ class StatisticsWidget : public QWidget {
   /// The display of text
   HTDisplay * display;
 
+  /// Whether we display only topLevel stuff or all
+  QCheckBox * topLevel;
+
 public:
 
   StatisticsWidget(Cabinet * c);

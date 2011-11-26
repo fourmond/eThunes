@@ -42,7 +42,7 @@ public:
     Item(const QString & c, int a) : category(c), amount(a) {;};
     Item(const Category * cat, int a) : amount(a) {
       if(cat)
-        category = cat->name;
+        category = cat->fullName();
       else
         category = "(uncategorized)";
     };
@@ -72,7 +72,7 @@ public:
   CategorizedMonthlyStatistics stats;
 
   /// Creates statistics from a transaction list.
-  Statistics(const TransactionPtrList & lst);
+  Statistics(const TransactionPtrList & lst, bool topLevel = true);
 
   /// Returns a HTML string suitable for representing statistics of
   /// the given number of months. Returns the stats in form of a HTML

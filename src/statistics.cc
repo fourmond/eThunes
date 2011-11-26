@@ -54,10 +54,12 @@ void CategorizedMonthlyStatistics::addTransaction(const Transaction * t,
   (*this)[t->monthID()].addTransaction(t, tl);
 }
 
-Statistics::Statistics(const TransactionPtrList & lst)
+//////////////////////////////////////////////////////////////////////
+
+Statistics::Statistics(const TransactionPtrList & lst, bool topLevel)
 {
   for(int i = 0; i < lst.size(); i++)
-    stats.addTransaction(lst[i]);
+    stats.addTransaction(lst[i], topLevel);
   if(lst.size() > 0) 
     account = lst.first()->account;
   else
