@@ -14,10 +14,10 @@
 module BleuCiel
   def self.parse_facture(doc)
     res = {}
-    if doc['text'] =~ /Facture.*?\s+du\s+(\d+)\s*(#{Dates::FrenchMonthRE})\s*(\d+)/i
-      res['date'] = Time.local($3.to_i, Dates::parse_french_month($2), $1.to_i)
-    elsif doc['text-layout'] =~ /Facture.*?\s+du\s+(\d+)\/(\d+)\/(\d+)/i
-      res['date'] = Time.local($3.to_i, $2.to_i, $1.to_i)
+    if doc['text'] =~ /Facture.*?\s+du\s+(#{Dates::FrenchFullDateRE})/i
+      res['date'] = Dates::parse_french_date($1)
+    elsif doc['text-layout'] =~ /Facture.*?\s+du\s+(#{Dates::DateRE})/i
+      res['date'] = Dates::parse_french_date($1)
     end
     if doc['text'] =~ /N(.|..)\s*facture\s*:\s*(\S+)/i
       res['facture'] = $2.chomp

@@ -44,5 +44,20 @@ module Dates
     end
     return nil
   end
-  
+
+  FrenchFullDateRE = /(\d+)\s+(#{FrenchMonthRE})\s+(\d+)/ # for emacs
+
+  DateRE = /(\d+)\/(\d+)\/(\d+)/ # for emacs
+    
+  # Parses a French date
+  def self.parse_french_date(date)
+    if date =~ FrenchFullDateRE
+      return Time.local($3.to_i, Dates::parse_french_month($2), $1.to_i)
+    elsif date =~ DateRE
+      return Time.local($3.to_i, $2.to_i, $1.to_i)
+    else
+      return nil
+    end
+  end
+
 end
