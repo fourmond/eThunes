@@ -137,11 +137,6 @@ protected:
 /// \todo Write a small class to serialize a CollectionDefinition *,
 /// saving as definition->name and loading using namedDefinition,
 /// (eventually) raising an exception when NULL is returned.
-///
-/// @todo Rather than hardcoding the name of the directory in each
-/// CollectionDefinition, which is rather stupid, I should implement a
-/// base directory here and use that. That would allow for an easy
-/// separation of the things...
 class Collection : 
   public Serializable, public HTTarget {
 public:
@@ -158,11 +153,8 @@ public:
   };
 
   /// Returns the file name format for the given DocumentDefinition.
-  ///
-  /// \todo Here, implement user overrides.
-  QString documentFileNameFormat(const DocumentDefinition * def) const {
-    return def->fileNameFormat;
-  };
+  QString documentFileNameFormat(const DocumentDefinition * def) const;
+
 
   /// Returns the display format for the given Document.
   QString documentDisplayFormat(const Document * doc) const{
@@ -195,6 +187,9 @@ public:
 
   /// A user-set name, for display purposes only
   QString name;
+
+  /// The base directory for all files stored in this collection.
+  QString baseDirectory;
 
   /// Imports a file as a document of the given type, and returns a
   /// pointer to the newly-created document (whose ownership stays

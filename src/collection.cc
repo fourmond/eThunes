@@ -118,6 +118,8 @@ CollectionDefinition * CollectionDefinition::namedDefinition(const QString & nam
   return loadedDefinitions.value(name, NULL);
 }
 
+//////////////////////////////////////////////////////////////////////
+
 
 /// A small helper class to handle the serialization of a
 /// CollectionDefinition pointer.
@@ -150,6 +152,18 @@ public:
 
 };
 
+
+//////////////////////////////////////////////////////////////////////
+
+
+QString Collection::documentFileNameFormat(const DocumentDefinition * def) 
+  const {
+  /// @todo Here, we should implement user overrides.
+  QString base;
+  if(! baseDirectory.isEmpty())
+    base = baseDirectory + "/";
+  return base + def->fileNameFormat;
+};
 
 
 

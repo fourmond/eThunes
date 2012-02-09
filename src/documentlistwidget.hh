@@ -25,6 +25,9 @@ class FlowingGridLayout;
 class HTLabel;
 
 /// A widget representing a single Document.
+///
+/// @todo There is code shared between this and WeekPeriodWidget. We
+/// would probably benefit from inheriting...
 class DocumentWidget : public QFrame {
   Q_OBJECT;
   /// The target !
@@ -41,9 +44,13 @@ protected slots:
 
   void promptForFileAttachment();
 
+  void setSelected(bool sel);
+
 protected:
   /// Redefined to emit a signal upon focusing
   void focusInEvent(QFocusEvent * event);
+
+  void focusOutEvent(QFocusEvent * event);
 
 signals:
   void documentSelected(Document * doc);

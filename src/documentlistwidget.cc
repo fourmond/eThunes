@@ -77,11 +77,23 @@ void DocumentWidget::promptForFileAttachment()
 
 void DocumentWidget::focusInEvent(QFocusEvent * event)
 {
-  // QTextStream o(stdout);
-  // o << "Got focusIn for document: " << document 
-  //   << document->canonicalFileName() << endl;
   emit(documentSelected(document));
+  setSelected(true);
   QWidget::focusInEvent(event);
+}
+
+void DocumentWidget::focusOutEvent(QFocusEvent * event)
+{
+  setSelected(false);
+  QWidget::focusOutEvent(event);
+}
+
+void DocumentWidget::setSelected(bool sel)
+{
+  if(sel)
+    setFrameStyle(QFrame::Box | QFrame::Raised);
+  else
+    setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
 }
 
 
