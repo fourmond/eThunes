@@ -42,6 +42,19 @@ StatisticsWidget::StatisticsWidget(Cabinet * c) :
   connect(topLevel, SIGNAL(stateChanged(int)), SLOT(update()));
   horiz->addWidget(topLevel);
 
+
+  horiz->addWidget(new QLabel(tr("Period")));
+  timeFrame = new QComboBox();
+  timeFrame->addItem(tr("Month"), Statistics::Monthly);
+  timeFrame->addItem(tr("Trimester"), Statistics::Trimester);
+  timeFrame->addItem(tr("Year"), Statistics::Yearly);
+  timeFrame->setEditable(false);
+
+  connect(timeFrame, SIGNAL(currentIndexChanged(int)),
+          SLOT(setPeriod(int)));
+
+  horiz->addWidget(timeFrame);
+
   layout->addLayout(horiz);
 
   
@@ -62,7 +75,9 @@ void StatisticsWidget::update()
         account = &cabinet->wallet.accounts[i];
       Statistics s(account->transactions.toPtrList(),
                    topLevel->isChecked());
-      display->setText(s.htmlStatistics(-1, maxDisplayed));
+      int l = timeFrame->itemData(timeFrame->currentIndex()).toInt();
+      display->setText(s.htmlStatistics(static_cast<Statistics::Period>(l), -1, 
+                                        maxDisplayed));
     }
   } 
   else
@@ -72,5 +87,10 @@ void StatisticsWidget::update()
 void StatisticsWidget::setDisplayed(int nb)
 {
   maxDisplayed = nb;
+  update();
+}
+
+void StatisticsWidget::setPeriod(int nb)
+{
   update();
 }

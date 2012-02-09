@@ -51,6 +51,9 @@ class StatisticsWidget : public QWidget {
   /// Whether we display only topLevel stuff or all
   QCheckBox * topLevel;
 
+  /// The time frame of the statistics
+  QComboBox * timeFrame;
+
 public:
 
   StatisticsWidget(Cabinet * c);
@@ -58,6 +61,9 @@ public:
 public slots:
   void update();
   void setDisplayed(int nb);
+
+
+  void setPeriod(int nb);
 };
 
 
