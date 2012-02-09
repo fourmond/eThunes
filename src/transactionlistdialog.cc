@@ -64,13 +64,25 @@ void TransactionListDialog::displayCategory(Category * category,
 }
 
 void TransactionListDialog::displayMonthlyTransactions(Account * account, 
-                                                       int monthID)
+                                                       int monthID, 
+                                                       int number)
 {
   QDate d = Transaction::dateFromID(monthID);
-  displayList(account->monthlyTransactions(monthID),
-	      tr("Account: %1 -- %2").
-              arg(account->name()).
-              arg(d.toString("MMMM yyyy")));
+  
+  TransactionPtrList list;
+  // for(int i = number - 1; i >= 0; i--)
+  for(int i = 0; i < number; i++)
+    list.append(account->monthlyTransactions(monthID + i));
+
+  QString label;
+  if(number == 1)
+    label = d.toString("MMMM yyyy");
+  else {
+    label = tr("%1 to %2").arg(d.toString("MMMM yyyy")).
+      arg(d.addMonths(number-1).toString("MMMM yyyy"));
+  }
+  displayList(list, tr("Account: %1 -- %2").arg(account->name()).
+              arg(label));
   view->showBalance();
               
 }
@@ -78,18 +90,25 @@ void TransactionListDialog::displayMonthlyTransactions(Account * account,
 void TransactionListDialog::
 displayMonthlyCategoryTransactions(Category * category,
                                    Account * account, 
-                                   int monthID)
+                                   int monthID, int number)
 {
   QDate d = Transaction::dateFromID(monthID);
   QList<Transaction *> l = account->categoryTransactions(category);
   TransactionPtrList l2;
   for(int i = 0; i < l.size(); i++)
-    if(l[i]->monthID() == monthID)
+    if(l[i]->monthID() >= monthID && l[i]->monthID() < monthID + number)
       l2.append(l[i]);
+  QString label;
+  if(number == 1)
+    label = d.toString("MMMM yyyy");
+  else {
+    label = tr("%1 to %2").arg(d.toString("MMMM yyyy")).
+      arg(d.addMonths(number-1).toString("MMMM yyyy"));
+  }
   displayList(l2,
 	      tr("Category: %1 -- %2").
               arg(category ? category->name : "(uncategorized)").
-              arg(d.toString("MMMM yyyy")));
+              arg(label));
 }
 
 void TransactionListDialog::showChecks(Account * account)
@@ -109,8 +128,14 @@ void TransactionListDialog::showCategory(Category * category, Wallet * wallet)
 void TransactionListDialog::showMonthlyTransactions(Account * account, 
                                                     int monthID)
 {
+  showMonthlyTransactions(account, monthID, 1);
+}
+
+void TransactionListDialog::showMonthlyTransactions(Account * account, 
+                                                    int monthID, int number)
+{
   TransactionListDialog * dlg = new TransactionListDialog();
-  dlg->displayMonthlyTransactions(account, monthID);
+  dlg->displayMonthlyTransactions(account, monthID, number);
   dlg->show();
 }
 
@@ -118,7 +143,15 @@ void TransactionListDialog::showMonthlyCategoryTransactions(Category * category,
                                                             Account * account, 
                                                             int monthID)
 {
+  showMonthlyCategoryTransactions(category, account, monthID, 1);
+}
+
+void TransactionListDialog::showMonthlyCategoryTransactions(Category * category,
+                                                            Account * account, 
+                                                            int monthID, 
+                                                            int number)
+{
   TransactionListDialog * dlg = new TransactionListDialog();
-  dlg->displayMonthlyCategoryTransactions(category, account, monthID);
+  dlg->displayMonthlyCategoryTransactions(category, account, monthID, number);
   dlg->show();
 }

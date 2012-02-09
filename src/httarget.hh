@@ -90,6 +90,11 @@ public:
                                 void (*f)(A1, A2, A3), 
                                 A1 a1, A2 a2, A3 a3);
 
+  template<class A1, class A2, class A3, class A4> 
+  static QString linkToFunction(const QString & id,
+                                void (*f)(A1, A2, A3, A4), 
+                                A1 a1, A2 a2, A3 a3, A4 a4);
+
 };
 
 #endif

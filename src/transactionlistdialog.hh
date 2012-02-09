@@ -72,13 +72,15 @@ public slots:
 
   /// Displays the transactions for the given Month and the given
   /// account.
-  void displayMonthlyTransactions(Account * account, int monthID);
+  void displayMonthlyTransactions(Account * account, int monthID, 
+                                  int number = 1);
 
   /// Displays the transactions for the given Month and the given
   /// account.
   void displayMonthlyCategoryTransactions(Category * category,
                                           Account * account, 
-                                          int monthID);
+                                          int monthID, 
+                                          int number = 1);
 
 public:
 
@@ -92,11 +94,20 @@ public:
   /// account.
   static void showMonthlyTransactions(Account * account, int monthID);
 
+  /// same as above, but displays the given number of months
+  static void showMonthlyTransactions(Account * account, int monthID, 
+                                      int number = 1);
+
   /// Displays the transactions for the given Month and the given
   /// account.
   static void showMonthlyCategoryTransactions(Category * category,
                                               Account * account, 
                                               int monthID);
+
+  static void showMonthlyCategoryTransactions(Category * category,
+                                              Account * account, 
+                                              int monthID, int number);
+
 
 };
 

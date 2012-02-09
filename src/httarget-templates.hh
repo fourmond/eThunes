@@ -233,5 +233,43 @@ QString HTTarget::linkToFunction(const QString & id,
     linkTo(id, new HTFunctionCallback3<A1, A2, A3>(f, a1, a2, a3));
 }
 
+/// Helper class to use as link target for callback to functions with two
+/// parameters.
+///
+/// In principle, you have no reasons to use this class, as
+/// HTTarget::linkToFunction() provides a much nicer interface.
+template <class A1, class A2, class A3, class A4> class HTFunctionCallback4 : 
+  public HTTarget {
+  
+  typedef void (*Function)(A1 a1, A2 a2, A3 a3, A4 a4);
+  Function target;
+
+  A1 arg1;
+  A2 arg2;
+  A3 arg3;
+  A4 arg4;
+
+  bool disposable;
+
+public:
+  virtual bool isDisposable() const { return disposable; };
+  virtual void followLink() {
+    target(arg1, arg2, arg3, arg4);
+  };
+
+  HTFunctionCallback4(Function f, A1 a1, A2 a2, A3 a3, A4 a4, bool d = true) : 
+    target(f), arg1(a1), arg2(a2), arg3(a3), arg4(a4), disposable(d) {;};
+
+};
+
+template<class A1, class A2, class A3, class A4> 
+QString HTTarget::linkToFunction(const QString & id, 
+                                 void (*f)(A1, A2, A3, A4), 
+                                 A1 a1, A2 a2, A3 a3, A4 a4)
+{
+  return HTTarget::
+    linkTo(id, new HTFunctionCallback4<A1, A2, A3, A4>(f, a1, a2, a3, a4));
+}
+
 
 #endif

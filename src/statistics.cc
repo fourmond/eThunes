@@ -96,15 +96,24 @@ void CategorizedTrimesterStatistics::addTransaction(const Transaction * t,
 
 QString CategorizedTrimesterStatistics::elementName(int id) const
 {
-  return Utils::monthName(Transaction::dateFromID(id), false) + " - " +
-    Utils::monthName(Transaction::dateFromID(id + 2), false);
+
+  return HTTarget::
+    linkToFunction(Utils::monthName(Transaction::dateFromID(id), false) + 
+                   " - " +
+                   Utils::monthName(Transaction::dateFromID(id + 2), false),
+                   &TransactionListDialog::showMonthlyTransactions,
+                   account, id, 3);
 }
 
 QString CategorizedTrimesterStatistics::categoryName(int id,
                                                      const QString & name,
                                                      const QString & disp) const
 {
-  return disp.isEmpty() ? name : disp;
+  return HTTarget::
+    linkToFunction(disp.isEmpty() ? name : disp,
+                   &TransactionListDialog::showMonthlyCategoryTransactions,
+                   wallet->namedCategory(name),
+                   account, id, 3);
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -112,21 +121,27 @@ QString CategorizedTrimesterStatistics::categoryName(int id,
 void CategorizedYearlyStatistics::addTransaction(const Transaction * t, 
                                                     bool tl)
 {
-  /// @bug This assumes that the monthID % 3 is 0 for the beginning of
-  /// the year.
   (*this)[t->getDate().year()].addTransaction(t, tl);
 }
 
 QString CategorizedYearlyStatistics::elementName(int id) const
 {
-  return QString::number(id);
+  /// @bug This assumes that the monthID = 12 * year
+  return HTTarget::
+    linkToFunction(QString::number(id),
+                   &TransactionListDialog::showMonthlyTransactions,
+                   account, id*12, 12);
 }
 
 QString CategorizedYearlyStatistics::categoryName(int id,
                                                   const QString & name,
                                                   const QString & disp) const
 {
-  return disp.isEmpty() ? name : disp;
+  return HTTarget::
+    linkToFunction(disp.isEmpty() ? name : disp,
+                   &TransactionListDialog::showMonthlyCategoryTransactions,
+                   wallet->namedCategory(name),
+                   account, id*12, 12);
 }
 
 //////////////////////////////////////////////////////////////////////
