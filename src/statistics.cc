@@ -48,60 +48,132 @@ QList<CategorizedStatistics::Item> CategorizedStatistics::categorize() const
   return retval;
 }
 
+//////////////////////////////////////////////////////////////////////
+
+
+PeriodicCategorizedStatistics::PeriodicCategorizedStatistics(Account * ac) {
+  account = ac;
+  wallet = (account ? account->wallet : NULL);
+}
+
+//////////////////////////////////////////////////////////////////////
+
 void CategorizedMonthlyStatistics::addTransaction(const Transaction * t, 
                                                   bool tl)
 {
   (*this)[t->monthID()].addTransaction(t, tl);
 }
 
+
+QString CategorizedMonthlyStatistics::elementName(int id) const
+{
+  return HTTarget::
+    linkToFunction(Utils::monthName(Transaction::dateFromID(id), false),
+                   &TransactionListDialog::showMonthlyTransactions,
+                   account, id);
+}
+
+QString CategorizedMonthlyStatistics::categoryName(int id,
+                                                   const QString & name,
+                                                   const QString & disp) const
+{
+  return HTTarget::
+    linkToFunction(disp.isEmpty() ? name : disp,
+                   &TransactionListDialog::showMonthlyCategoryTransactions,
+                   wallet->namedCategory(name),
+                   account, id);
+}
+
+//////////////////////////////////////////////////////////////////////
+
+void CategorizedTrimesterStatistics::addTransaction(const Transaction * t, 
+                                                    bool tl)
+{
+  /// @bug This assumes that the monthID % 3 is 0 for the beginning of
+  /// the year.
+  (*this)[t->monthID() - (t->monthID() % 3)].addTransaction(t, tl);
+}
+
+QString CategorizedTrimesterStatistics::elementName(int id) const
+{
+  return Utils::monthName(Transaction::dateFromID(id), false) + " - " +
+    Utils::monthName(Transaction::dateFromID(id + 2), false);
+}
+
+QString CategorizedTrimesterStatistics::categoryName(int id,
+                                                     const QString & name,
+                                                     const QString & disp) const
+{
+  return disp.isEmpty() ? name : disp;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+void CategorizedYearlyStatistics::addTransaction(const Transaction * t, 
+                                                    bool tl)
+{
+  /// @bug This assumes that the monthID % 3 is 0 for the beginning of
+  /// the year.
+  (*this)[t->getDate().year()].addTransaction(t, tl);
+}
+
+QString CategorizedYearlyStatistics::elementName(int id) const
+{
+  return QString::number(id);
+}
+
+QString CategorizedYearlyStatistics::categoryName(int id,
+                                                  const QString & name,
+                                                  const QString & disp) const
+{
+  return disp.isEmpty() ? name : disp;
+}
+
 //////////////////////////////////////////////////////////////////////
 
 Statistics::Statistics(const TransactionPtrList & lst, bool topLevel)
 {
-  for(int i = 0; i < lst.size(); i++)
-    stats.addTransaction(lst[i], topLevel);
   if(lst.size() > 0) 
     account = lst.first()->account;
   else
     account = NULL;
+
+  stats << new CategorizedMonthlyStatistics(account); 
+  stats << new CategorizedTrimesterStatistics(account);
+  stats << new CategorizedYearlyStatistics(account);
+
+  for(int i = 0; i < lst.size(); i++)
+    for(int j = 0; j < stats.size(); j++)
+      stats[j]->addTransaction(lst[i], topLevel);
+}
+
+Statistics::~Statistics()
+{
+  for(int i = 0; i < stats.size(); i++)
+    delete stats[i];
 }
 
 
-
-
-/// @todo This just doesn't substitute for a proper widget. Here are
-/// few ideas for it:
-/// @li all category names should be links displaying the category
-/// transactions for the corresponding month
-/// @li it should provide graphics display (possibly by alternance)
-/// where each data point would be very visible, with a neat tooltip
-/// and a context menu for showing transactions ?
-/// @li it should also provide horizontal sliding
-QString Statistics::htmlStatistics(int months, int maxDisplay) const
+QString Statistics::htmlStatistics(PeriodicCategorizedStatistics * which,
+                                   int number, int maxDisplay) const
 {
   QList<QStringList> columns;
-  Wallet * wallet = account->wallet;
-  int target = (months > 0 ? Transaction::thisMonthID() - months : 
-                account->firstMonthID() - 1);
-  for(int i = Transaction::thisMonthID(); i > target; i--) {
-    if(stats[i].size() == 0)
+  QList<int> values = which->keys();
+  qSort(values);
+  int target = (number > 0 ? values.last() - number : 
+                values.first() - 1);
+  for(int i = values.last(); i > target; i--) {
+    if((*which)[i].size() == 0)
       continue;
+    
     QStringList c1, c2;
-    c1 << QString("<b>%1</b>").
-      arg(HTTarget::
-          linkToFunction(Utils::monthName(Transaction::dateFromID(i), false),
-                         &TransactionListDialog::showMonthlyTransactions,
-                         account, i));
+    c1 << QString("<b>%1</b>").arg(which->elementName(i));
     c2 << "";
     QList<CategorizedStatistics::Item> items = 
-      stats[i].categorize();
+      (*which)[i].categorize();
 
 
-    c1 << HTTarget::
-      linkToFunction("Revenues",
-                     &TransactionListDialog::showMonthlyCategoryTransactions,
-                     wallet->namedCategory(items.last().category),
-                     account, i);
+    c1 << which->categoryName(i, items.last().category, "Revenues");
     c2 << Transaction::formatAmount(items.last().amount);
 
     int rest = 0;
@@ -119,12 +191,7 @@ QString Statistics::htmlStatistics(int months, int maxDisplay) const
     c2 << Transaction::formatAmount(rest);
 
     for(int j = 0; j < std::min(items.size(), maxDisplay); j++) {
-      QString name = items[j].category;
-      c1 << HTTarget::
-        linkToFunction(name,
-                       &TransactionListDialog::showMonthlyCategoryTransactions,
-                       wallet->namedCategory(name),
-                       account, i);
+      c1 << which->categoryName(i, items[j].category);
       c2 << Transaction::formatAmount(items[j].amount);
     }
     columns << c1 << c2;
@@ -144,5 +211,18 @@ QString Statistics::htmlStatistics(int months, int maxDisplay) const
   }
   ret += "</table>";
   return ret;
+}
+
+
+
+
+/// @todo This just doesn't substitute for a proper widget. Here are
+/// few ideas for it:
+/// @li it should provide graphics display (possibly by alternance)
+/// where each data point would be very visible, with a neat tooltip
+/// and a context menu for showing transactions ?
+QString Statistics::htmlStatistics(Period per, int months, int maxDisplay) const
+{
+  return htmlStatistics(stats[per], months, maxDisplay);
 }
 

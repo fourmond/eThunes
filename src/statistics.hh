@@ -56,10 +56,67 @@ public:
   QList<Item> categorize() const;
 };
 
-class CategorizedMonthlyStatistics : public QHash<int, CategorizedStatistics> {
+
+/// This abstract class handles categorized statistics
+class PeriodicCategorizedStatistics : 
+  public QHash<int, CategorizedStatistics> {
+protected:
+  Account * account;
+
+  Wallet * wallet;
 public:
+
+  PeriodicCategorizedStatistics(Account * ac);
+
   /// Adds a Transaction to the statistics.
-  void addTransaction(const Transaction * t, bool topLevel = true);
+  virtual void addTransaction(const Transaction * t, bool topLevel = true) = 0;
+
+  /// The name for one element (hopefully crosslinked)
+  virtual QString elementName(int id) const = 0;
+
+  /// Formats a category name
+  virtual QString categoryName(int id, const QString & name,
+                               const QString & display = "") const = 0;
+};
+
+
+/// Represents statistics based on a month
+class CategorizedMonthlyStatistics : public PeriodicCategorizedStatistics {
+public:
+
+  CategorizedMonthlyStatistics(Account * ac) : 
+    PeriodicCategorizedStatistics(ac) {;};
+  virtual void addTransaction(const Transaction * t, bool topLevel = true);
+  virtual QString elementName(int id) const;
+  virtual QString categoryName(int id,
+                               const QString & category, 
+                               const QString & display = "") const;
+};
+
+/// Trimester-based statistics. The hash is the monthID() of the first
+/// month.
+class CategorizedTrimesterStatistics : public PeriodicCategorizedStatistics {
+public:
+  CategorizedTrimesterStatistics(Account * ac) : 
+    PeriodicCategorizedStatistics(ac) {;};
+
+  virtual void addTransaction(const Transaction * t, bool topLevel = true);
+  virtual QString elementName(int id) const;
+  virtual QString categoryName(int id,
+                               const QString & category, 
+                               const QString & display = "") const;
+};
+
+/// Trimester-based statistics. The hash is the year
+class CategorizedYearlyStatistics : public PeriodicCategorizedStatistics {
+public:
+  CategorizedYearlyStatistics(Account * ac) : 
+    PeriodicCategorizedStatistics(ac) {;};
+  virtual void addTransaction(const Transaction * t, bool topLevel = true);
+  virtual QString elementName(int id) const;
+  virtual QString categoryName(int id,
+                               const QString & category, 
+                               const QString & display = "") const;
 };
 
 /// This class computes up various statistics about a series of
@@ -67,21 +124,41 @@ public:
 class Statistics {
   /// The target account.
   Account * account;
+
+protected:
+
+  QString htmlStatistics(PeriodicCategorizedStatistics * which, int months = 5,
+                         int maxDisplay = 6) const;
+
 public:
-  /// Monthly statistics. Hashed by monthID();
-  CategorizedMonthlyStatistics stats;
+
+  enum Period {
+    Monthly = 0,
+    Trimester = 1,
+    Yearly = 2
+  };
+
+  /// All different statistics
+  QList<PeriodicCategorizedStatistics *> stats;
 
   /// Creates statistics from a transaction list.
   Statistics(const TransactionPtrList & lst, bool topLevel = true);
+
+
+
 
   /// Returns a HTML string suitable for representing statistics of
   /// the given number of months. Returns the stats in form of a HTML
   /// table. If months is negative, returns the stats for all the
   /// months.
   ///
-  /// Ideas: @li have aggregated stats configurable on a given number
-  /// of months
-  QString htmlStatistics(int months = 5, int maxDisplay = 6) const;
+  /// @todo Idea: graphics display (possibly by alternance) where
+  /// each data point would be very visible, with a neat tooltip and a
+  /// context menu for showing transactions ?
+  QString htmlStatistics(Period period = Monthly, int months = 5, 
+                         int maxDisplay = 6) const;
+
+  ~Statistics();
 };
 
 
