@@ -107,6 +107,14 @@ HEADERS += src/account.hh src/mainwin.hh src/actions.hh \
 
         
 
+# Loan tracker
+HEADERS += plugins/loans/loan.hh \
+        plugins/loans/loanpage.hh
+
+
+SOURCES += plugins/loans/loan.cc \
+        plugins/loans/loanpage.cc
+
 # Translations
 
 TRANSLATIONS = ts/eThunes_fr.ts
