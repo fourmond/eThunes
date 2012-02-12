@@ -22,6 +22,9 @@
 QHash<QString, QByteArray> WidgetWrapperDialog::savedGeometries;
 
 
+/// @todo Should be able to configure two things:
+/// - whether there is a OK button
+/// - and whether delete occurs on close
 WidgetWrapperDialog::WidgetWrapperDialog(QWidget * widget,
                                          const QString & top,
                                          const QString & close,
