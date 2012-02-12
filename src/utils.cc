@@ -19,6 +19,8 @@
 #include <headers.hh>
 #include <utils.hh>
 
+#include <widgetwrapperdialog.hh>
+
 QList<QDate> Utils::monthList(const QDate & begin, const QDate & end)
 {
   QList<QDate> ret;
@@ -67,4 +69,23 @@ QString Utils::monthName(const QDate & month, bool longFormat)
   QString str = month.toString(longFormat ? "MMMM yyyy" : 
                                "MMM yy");
   return Utils::capitalize(str);
+}
+
+
+/// Prompts for a date. Returns an invalid date on cancel.
+QDate Utils::promptForDate(QWidget * parent, const QString & title,
+                           const QString & label, const QDate & initial)
+{
+  QDateEdit * edit = new QDateEdit;
+  if(initial.isValid())
+    edit->setDate(initial);
+  edit->setCalendarPopup(true);
+  WidgetWrapperDialog * dlg =  new WidgetWrapperDialog(edit,
+                                                       label);
+  dlg->setWindowTitle(title);
+  dlg->setAttribute(Qt::WA_DeleteOnClose, false);
+  dlg->exec();                 /// @todo handle OK/Cancel
+  QDate d = edit->date();
+  delete dlg;
+  return d;
 }

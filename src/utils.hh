@@ -106,6 +106,11 @@ namespace Utils {
   /// A month name (such as January 2010), suitably capitalized for
   /// inclusion in a calendar
   QString monthName(const QDate & date, bool longFormat = true);
+
+  /// Prompts for a date. Returns an invalid date on cancel.
+  QDate promptForDate(QWidget * parent, const QString & title,
+                      const QString & label, const QDate & initial = QDate());
+  
   
   /// @}
 
