@@ -53,6 +53,8 @@ static PluginDefinition loan(loanCreator,
 Loan::Loan() : targetPlugin(NULL)
 {
   amount = 0;
+  plannedMonthlyPayment = -1;
+  lastMonthlyPayment = 0;
 }
 
 SerializationAccessor * Loan::serializationAccessor()
@@ -82,14 +84,17 @@ void Loan::followLink()
   NavigationWidget::gotoPage(targetPlugin->pageForPlugin());
 }
 
+/// @todo It would be nice to add supplementary fees (such as bank
+/// fees, insurance and the like...)
 QString Loan::html() 
 {
   QString str = QObject::tr("<h2>Loan: %1 %2</h2>").
     arg(name).arg(HTTarget::linkToMember("(change name)", this, 
                                          &Loan::promptForName));
 
+  monthlyRate = qPow(1+yearlyRate, 1/12.);
   str += QObject::tr("Amount: %1 %2, started: %3 %4, yearly interest rate: "
-                     "%5 % %6").
+                     "%5 % (monthly: %7) %6").
     arg(Transaction::formatAmount(amount)).
     arg(HTTarget::linkToMember("(change)", this, 
                                &Loan::promptForAmount)). 
@@ -98,7 +103,8 @@ QString Loan::html()
                                &Loan::promptForDate)).
     arg(100 * yearlyRate).
     arg(HTTarget::linkToMember("(change)", this, 
-                               &Loan::promptForRate));
+                               &Loan::promptForRate)).
+    arg(100 * (monthlyRate - 1));
 
   // Now the more interesting stuff:
 
@@ -121,7 +127,7 @@ QString Loan::html()
                                &Loan::findMatchingTransactions));
 
 
-  str += QObject::tr("Payments: ");
+  str += QObject::tr("<b>Payments</b>: ");
   QStringList trs;
   for(int i = 0; i < matchingTransactions.size(); i++) {
     Transaction * t = matchingTransactions[i];
@@ -131,6 +137,24 @@ QString Loan::html()
       arg(Transaction::formatAmount(-t->getAmount()));
   }
   str += trs.join(", ");
+
+  str += QObject::tr("<p><b>Extrapolation</b>: for a monthly rate of "
+                     "%1 %2<br/>").
+    arg(Transaction::formatAmount(effectiveMonthlyPayment)).
+    arg(HTTarget::linkToMember("(change)", this, 
+                               &Loan::promptForMonthlyPayment));
+
+  if(remainingMonths < 0)
+    str += QObject::tr(" -> indefinite");
+  else
+    str += QObject::tr("%1 months left, remaining %2, remaining cost: %3, "
+                       "total: %4, total cost: %5").
+      arg(remainingMonths).
+      arg(Transaction::formatAmount(leftToPay)).
+      arg(Transaction::formatAmount(leftToPay-amountLeft)).
+      arg(Transaction::formatAmount(leftToPay + totalPaid)).
+      arg(Transaction::formatAmount(leftToPay + totalPaid - amount));
+    
 
   return str;
 }
@@ -165,6 +189,20 @@ void Loan::promptForAmount()
                                             "(in cents)").
                                 arg(name), amount);
   amount = na;
+  updatePage();
+}
+
+void Loan::promptForMonthlyPayment()
+{
+  int na = QInputDialog::getInt(NULL, QObject::tr("Planned monthly payment "
+                                                  "for load: %1").
+                                arg(name),
+                                QObject::tr("Enter the planned monthly "
+                                            "payment for %1 "
+                                            "(in cents)").
+                                arg(name), effectiveMonthlyPayment);
+  if(na != effectiveMonthlyPayment)
+    plannedMonthlyPayment = na;
   updatePage();
 }
 
@@ -222,9 +260,6 @@ void Loan::updatePage()
 
 void Loan::computeDebt()
 {
-  double monthlyRate = qPow(1+yearlyRate, 1/12.); // Doesn't start
-  // well...
-
   // First, we convert all links named "loan-payment" into a real
   // transaction list
   QList<Link *> tr = links.namedLinks("loan-payment");
@@ -249,6 +284,7 @@ void Loan::computeDebt()
   int curMID = Transaction::monthID(QDate::currentDate());
   int trid = 0;
 
+  lastMonthlyPayment = 0;
   
 
   // We use a month-based way to see the things
@@ -260,6 +296,7 @@ void Loan::computeDebt()
       trid++;
     Transaction * cur = matchingTransactions.value(trid, NULL);
     if(cur && cur->monthID() == mid) {
+      lastMonthlyPayment = -cur->getAmount();
       totalPaid -= cur->getAmount(); // Don't forget the amount is NEGATIVE !
       amountLeft += cur->getAmount();
       trid++;
@@ -267,6 +304,34 @@ void Loan::computeDebt()
     monthsRunning += 1;
   }
   paidInterests = totalPaid + amountLeft - amount;
+
+  remainingMonths = 0;
+  leftToPay = 0;
+  
+
+  // Now, we enter the planification phase
+  effectiveMonthlyPayment = (plannedMonthlyPayment < 0 ? lastMonthlyPayment : 
+                             plannedMonthlyPayment);
+
+  if(effectiveMonthlyPayment <= 0) {
+    remainingMonths = -1;
+    return;                     // Nothing to do here
+  }
+
+  int remaining = amountLeft;
+  while(remaining > 0 && remaining <= amountLeft) {
+    remaining *= monthlyRate;
+    int ma;
+    if(remaining >= effectiveMonthlyPayment)
+      ma = effectiveMonthlyPayment;
+    else
+      ma = remaining;
+    remaining -= ma;
+    remainingMonths += 1;
+    leftToPay += ma;
+  }
+  if(remaining > 0)
+    remainingMonths = -1;
 }
 
 

@@ -51,6 +51,22 @@ protected:
   /// The number of months the loan has been running so far
   int monthsRunning;
 
+  /// Monthly rate (real units, ie 1 + percent)
+  double monthlyRate;
+
+  /// Planned monthly payment (negative means keep going on with the
+  /// last)
+  int plannedMonthlyPayment;
+
+  /// Last monthly payment
+  int lastMonthlyPayment;
+
+  int effectiveMonthlyPayment;
+
+  /// Planned stuff:
+  int remainingMonths;
+  int leftToPay;
+
   /// Matching transactions...
   TransactionPtrList matchingTransactions;
 
@@ -98,6 +114,7 @@ protected:
   void promptForDate();
   void promptForRate();
   void promptForMatcher();
+  void promptForMonthlyPayment();
 
   void findMatchingTransactions();
 
