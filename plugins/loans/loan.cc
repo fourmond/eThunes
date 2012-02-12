@@ -35,6 +35,7 @@
 #include <httarget-templates.hh>
 
 #include <QtCore/qmath.h>
+#include <math.h>
 
 
 static Plugin * loanCreator(const QString &)
@@ -92,7 +93,10 @@ QString Loan::html()
     arg(name).arg(HTTarget::linkToMember("(change name)", this, 
                                          &Loan::promptForName));
 
+  /// @todo make that configurable !
   monthlyRate = qPow(1+yearlyRate, 1/12.);
+  monthlyRate = 1 + yearlyRate/12.0;
+
   str += QObject::tr("Amount: %1 %2, started: %3 %4, yearly interest rate: "
                      "%5 % (monthly: %7) %6").
     arg(Transaction::formatAmount(amount)).
@@ -290,7 +294,7 @@ void Loan::computeDebt()
   // We use a month-based way to see the things
   for(int mid = Transaction::monthID(dateContracted) + 1; 
       mid < curMID; mid++) {
-    amountLeft *= monthlyRate;
+    amountLeft = round(amountLeft * monthlyRate);
     while(trid < matchingTransactions.size() && 
           matchingTransactions[trid]->monthID() < mid)
       trid++;
@@ -320,7 +324,7 @@ void Loan::computeDebt()
 
   int remaining = amountLeft;
   while(remaining > 0 && remaining <= amountLeft) {
-    remaining *= monthlyRate;
+    remaining = round(remaining * monthlyRate);
     int ma;
     if(remaining >= effectiveMonthlyPayment)
       ma = effectiveMonthlyPayment;
