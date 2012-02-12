@@ -29,8 +29,6 @@
 #include <wallet.hh>
 #include <cabinet.hh>
 
-#include <transactionlists.hh>
-
 #include "loan.hh"
 #include "loanpage.hh"
 
@@ -107,12 +105,13 @@ QString Loan::html()
   computeDebt();
   str += QObject::tr("<ul><li>total paid: %1</li>\n"
                      "<li>amount left: %2</li>\n" 
-                     "<li>months so far: %3</li>\n" 
+                     "<li>months so far: %3 (%5 payments)</li>\n" 
                      "<li>cumulated interests: %4</li></ul>").
     arg(Transaction::formatAmount(totalPaid)).
     arg(Transaction::formatAmount(amountLeft)).
     arg(monthsRunning).
-    arg(Transaction::formatAmount(paidInterests));
+    arg(Transaction::formatAmount(paidInterests)).
+    arg(matchingTransactions.size());
 
   str += QObject::tr("Payments match: %1 %2 %3 <br/>").
     arg(matcher).
@@ -122,7 +121,16 @@ QString Loan::html()
                                &Loan::findMatchingTransactions));
 
 
-  str += QObject::tr("Payments: ") + links.htmlLinkList().join(", ");
+  str += QObject::tr("Payments: ");
+  QStringList trs;
+  for(int i = 0; i < matchingTransactions.size(); i++) {
+    Transaction * t = matchingTransactions[i];
+    trs << QString("%1: %2").
+      arg(HTTarget::linkTo(t->getDate().toString("dd/MM/yyyy"),
+                           t)).
+      arg(Transaction::formatAmount(-t->getAmount()));
+  }
+  str += trs.join(", ");
 
   return str;
 }
@@ -192,7 +200,7 @@ void Loan::findMatchingTransactions()
   QDate end = QDate::currentDate();
   TransactionPtrList transactions = 
     targetPlugin->cabinet->wallet.
-    transactionsWithinRange(dateContracted, end);
+    transactionsWithinRange(dateContracted.addMonths(1), end);
 
   for(int j = 0; j < transactions.size(); j++) {
     Transaction * t = transactions[j];
@@ -220,14 +228,15 @@ void Loan::computeDebt()
   // First, we convert all links named "loan-payment" into a real
   // transaction list
   QList<Link *> tr = links.namedLinks("loan-payment");
-  TransactionPtrList transactions;
-  
+
+  matchingTransactions.clear();
+
   for(int i = 0; i < tr.size(); i++) {
     Transaction * t = dynamic_cast<Transaction *>(tr[i]->linkTarget());
     if(t)
-      transactions << t;
+      matchingTransactions << t;
   }
-  transactions.sortByDate();
+  matchingTransactions.sortByDate();
 
   amountLeft = amount;
   totalPaid = 0;
@@ -246,9 +255,10 @@ void Loan::computeDebt()
   for(int mid = Transaction::monthID(dateContracted) + 1; 
       mid < curMID; mid++) {
     amountLeft *= monthlyRate;
-    while(trid < transactions.size() && transactions[trid]->monthID() < mid)
+    while(trid < matchingTransactions.size() && 
+          matchingTransactions[trid]->monthID() < mid)
       trid++;
-    Transaction * cur = transactions.value(trid, NULL);
+    Transaction * cur = matchingTransactions.value(trid, NULL);
     if(cur && cur->monthID() == mid) {
       totalPaid -= cur->getAmount(); // Don't forget the amount is NEGATIVE !
       amountLeft += cur->getAmount();

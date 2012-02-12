@@ -23,6 +23,7 @@
 
 #include <plugin.hh>
 #include <linkable.hh>
+#include <transactionlists.hh>
 
 
 class LoanPlugin;
@@ -49,6 +50,9 @@ protected:
 
   /// The number of months the loan has been running so far
   int monthsRunning;
+
+  /// Matching transactions...
+  TransactionPtrList matchingTransactions;
 
 public:
 
@@ -108,6 +112,9 @@ protected:
 
 
 /// This plugin helps to keep track of the loans one have.
+///
+/// @todo Maybe there should be a way for a plugin to add an "item" in
+/// the "balance" panel of the Cabinet ?
 class LoanPlugin : public Plugin {
 public:
   virtual QString typeName() const {
