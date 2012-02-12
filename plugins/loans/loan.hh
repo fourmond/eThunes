@@ -39,6 +39,7 @@ protected:
   /// linked to it
   void computeDebt();
 
+public:
   /// The amount we still owe
   int amountLeft;
 

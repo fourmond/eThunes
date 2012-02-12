@@ -69,10 +69,16 @@ void LoanPage::updatePage()
   str += tr("<h1>Loans: %1</h1>\n").
     arg(plugin->getName());
 
-  for(int i = 0; i < plugin->loans.size(); i++)
-    str += plugin->loans[i].html();
+  int totalDebt = 0;
 
-  str += "<p>";
+  for(int i = 0; i < plugin->loans.size(); i++) {
+    str += plugin->loans[i].html();
+    totalDebt += plugin->loans[i].amountLeft;
+  }
+
+  str += tr("<p><b>Total debt:</b> %1<br>").
+    arg(Transaction::formatAmount(totalDebt));
+  
   str += HTTarget::linkToMember("(add loan)", this, &LoanPage::addLoan);
 
   summary->setText(str);
