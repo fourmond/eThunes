@@ -57,6 +57,9 @@ public slots:
   void updatePage();
 
 protected:
+
+  /// Called to add a loan
+  void addLoan();
 };
 
 #endif

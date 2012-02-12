@@ -25,6 +25,87 @@
 #include <linkable.hh>
 
 
+class LoanPlugin;
+
+/// This represents a single Loan
+///
+/// All transactions that pay back this loan are linked to it using
+/// the Linkable framework
+class Loan : public Linkable {
+protected:
+
+  /// Computes all debt-related things, based on the transactions
+  /// linked to it
+  void computeDebt();
+
+  /// The amount we still owe
+  int amountLeft;
+
+  /// The total that was paid so far
+  int totalPaid;
+
+  /// The total amount of interests that was paid
+  int paidInterests;
+
+  /// The number of months the loan has been running so far
+  int monthsRunning;
+
+public:
+
+  /// A public name
+  QString name;
+
+  /// The date the Loan was contracted.
+  QDate dateContracted;
+
+  /// The amount of the Loan
+  int amount;
+
+  /// The yearly interest rate.
+  double yearlyRate;
+
+  /// A distinctive sign to find matching transactions, such as
+  /// something in the memo
+  ///
+  /// @todo This may be implemented rather on the filter side, ie
+  /// automatically link to a specific target ?
+  QString matcher;
+
+  virtual SerializationAccessor * serializationAccessor();
+
+
+  virtual QString typeName() const;
+
+  virtual QString publicTypeName() const;
+
+  virtual void followLink();
+
+  LoanPlugin * targetPlugin;
+
+  Loan();
+
+  /// Renders as HTML
+  QString html();
+
+protected:
+
+  void promptForName();
+  void promptForAmount();
+  void promptForDate();
+  void promptForRate();
+  void promptForMatcher();
+
+  void findMatchingTransactions();
+
+
+  /// Makes sure the page is updated...
+  ///
+  /// @todo This should diseappear in profit of the use of Watchable
+  /// stuff.
+  void updatePage();
+  
+};
+
 
 /// This plugin helps to keep track of the loans one have.
 class LoanPlugin : public Plugin {
@@ -32,6 +113,9 @@ public:
   virtual QString typeName() const {
     return "loan";
   };
+
+  /// A list of loans...
+  QList<Loan> loans;
 
   virtual NavigationPage * pageForPlugin();
 

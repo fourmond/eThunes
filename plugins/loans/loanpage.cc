@@ -55,6 +55,13 @@ QString LoanPage::pageTitle()
 }
 
 
+void LoanPage::addLoan()
+{
+  plugin->loans.append(Loan());
+  plugin->loans.last().targetPlugin = plugin;
+  updatePage();
+}
+
 void LoanPage::updatePage()
 {
   // Here, we do various things, basically to update the main summary.
@@ -62,6 +69,11 @@ void LoanPage::updatePage()
   str += tr("<h1>Loans: %1</h1>\n").
     arg(plugin->getName());
 
-  
+  for(int i = 0; i < plugin->loans.size(); i++)
+    str += plugin->loans[i].html();
+
+  str += "<p>";
+  str += HTTarget::linkToMember("(add loan)", this, &LoanPage::addLoan);
+
   summary->setText(str);
 }
