@@ -45,6 +45,8 @@ HTTarget * HTTarget::decodePointer(const QString & str)
 }
 
 
+/// @todo Implement a simple editing system with frameless popup
+/// windows displayed just in place...
 QString HTTarget::linkTo(const QString & str, HTTarget * pointer)
 {
   return QString("<a href=\"ht:%1\">%2</a>").
