@@ -258,6 +258,20 @@ TransactionPtrList TransactionList::transactionsWithinRange(const QDate & before
   return list;
 }
 
+////////////////////////////////////////////////////////////////////////////
+
+static bool compareTransactionsByDate(Transaction * a, Transaction * b)
+{
+  return a->getDate() < b->getDate();
+}
+
+void TransactionPtrList::sortByDate()
+{
+  
+  qSort(rawData().begin(), rawData().end(), &compareTransactionsByDate);
+}
+
+
 /// Small private helper class.
 class IndexedDate {
 public:

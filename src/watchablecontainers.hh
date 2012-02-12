@@ -73,6 +73,10 @@ public:
     return (*this)[i];
   };
 
+  T value(int i, const T & v) const {
+    return data.value(i, v);
+  };
+
   const T & first() const {
     return data.first();
   };

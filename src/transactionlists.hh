@@ -126,6 +126,9 @@ public:
   static QList<Link *> findInternalMoves(QList<TransactionPtrList> lists, 
                                          bool permissive = false);
 
+  /// Sorts the list according to the transaction date.
+  void sortByDate();
+
 };
 
 /// This class represents a list of Transaction objects, ready for
