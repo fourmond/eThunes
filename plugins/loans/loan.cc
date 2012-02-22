@@ -293,7 +293,7 @@ void Loan::computeDebt()
 
   // We use a month-based way to see the things
   for(int mid = Transaction::monthID(dateContracted) + 1; 
-      mid < curMID; mid++) {
+      mid <= curMID; mid++) {
     amountLeft = round(amountLeft * monthlyRate);
     while(trid < matchingTransactions.size() && 
           matchingTransactions[trid]->monthID() < mid)
