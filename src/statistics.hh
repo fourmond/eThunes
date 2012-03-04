@@ -113,6 +113,11 @@ public:
   virtual QString categoryName(int id,
                                const QString & category, 
                                const QString & display = "") const;
+
+  virtual int monthNumber() const {
+    return 3;
+  };
+
 };
 
 /// Trimester-based statistics. The hash is the year
@@ -125,6 +130,10 @@ public:
   virtual QString categoryName(int id,
                                const QString & category, 
                                const QString & display = "") const;
+
+  virtual int monthNumber() const {
+    return 12;
+  };
 };
 
 /// This class computes up various statistics about a series of
