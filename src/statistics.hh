@@ -77,6 +77,14 @@ public:
   /// Formats a category name
   virtual QString categoryName(int id, const QString & name,
                                const QString & display = "") const = 0;
+
+  /// The number of months comprized in the display (for averaging
+  /// purposes)
+  ///
+  /// @todo Finish that !
+  virtual int monthNumber() const {
+    return 1;
+  };
 };
 
 
