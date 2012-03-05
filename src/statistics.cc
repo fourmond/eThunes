@@ -172,28 +172,28 @@ Statistics::~Statistics()
 /// @todo This is a good idea, but maybe it should be up to the user
 /// to choose whether we're displaying the average or the sum.
 QString Statistics::htmlStatistics(PeriodicCategorizedStatistics * which,
-                                   int number, int maxDisplay) const
+                                   int number, int maxDisplay, 
+                                   bool monthlyAverage) const
 {
   QList<QStringList> columns;
   QList<int> values = which->keys();
   qSort(values);
   int target = (number > 0 ? values.last() - number : 
                 values.first() - 1);
+  int div = (monthlyAverage ? which->monthNumber() : 1);
   for(int i = values.last(); i > target; i--) {
     if((*which)[i].size() == 0)
       continue;
     
-    QStringList c1, c2, c3;
+    QStringList c1, c2;
     c1 << QString("<b>%1</b>").arg(which->elementName(i));
     c2 << "";
-    c3 << "";
     QList<CategorizedStatistics::Item> items = 
       (*which)[i].categorize();
 
 
     c1 << which->categoryName(i, items.last().category, "Revenues");
-    c2 << Transaction::formatAmount(items.last().amount);
-    c3 << Transaction::formatAmount(items.last().amount/which->monthNumber());
+    c2 << Transaction::formatAmount(items.last().amount/div);
 
     int rest = 0;
     for(int j = 0; j < items.size()-1; j++)
@@ -204,36 +204,22 @@ QString Statistics::htmlStatistics(PeriodicCategorizedStatistics * which,
     c2 << QString( balance < 0 ? 
                    "<b><font color='red'>%1</font></b><hr/>" : 
                    "<b><font color='green'>%1</font></b><hr/>").
-      arg(Transaction::formatAmount(items.last().amount + rest));
-
-    c3 << QString( balance < 0 ? 
-                   "<b><font color='red'>%1</font></b><hr/>" : 
-                   "<b><font color='green'>%1</font></b><hr/>").
-      arg(Transaction::formatAmount((items.last().amount + rest)/
-                                    which->monthNumber()));
+      arg(Transaction::formatAmount((items.last().amount + rest)/div));
 
     c1 << "Expenses";
-    c2 << Transaction::formatAmount(rest);
-    c3 << Transaction::formatAmount(rest/which->monthNumber());
+    c2 << Transaction::formatAmount(rest/div);
 
     for(int j = 0; j < std::min(items.size(), maxDisplay); j++) {
       c1 << which->categoryName(i, items[j].category);
-      c2 << Transaction::formatAmount(items[j].amount);
-      c3 << Transaction::formatAmount(items[j].amount/which->monthNumber());
+      c2 << Transaction::formatAmount(items[j].amount/div);
     }
     columns << c1 << c2;
-    if(which->monthNumber() > 1) {
-      QStringList c4;           // This is quick and dirty
-      for(int i = 0; i < c3.size(); i++)
-        c4 << (i > 0 ? "|" : "");
-      columns << c4 << c3;
-    }
   }
   QString ret = "<table>\n";
   // Won't work when there are very little
   for(int i = 0; i < maxDisplay+3; i++) {
     ret += "<tr>";
-    int skip = (which->monthNumber() > 1 ? 4 : 2);
+    int skip = 2;
     for(int j = 0; j < columns.size(); j++) {
       if(columns[j].size() > i)
         ret += QString("<td %2 style='padding: 1px 3px;'>%1</td>").
@@ -255,8 +241,9 @@ QString Statistics::htmlStatistics(PeriodicCategorizedStatistics * which,
 /// @li it should provide graphics display (possibly by alternance)
 /// where each data point would be very visible, with a neat tooltip
 /// and a context menu for showing transactions ?
-QString Statistics::htmlStatistics(Period per, int months, int maxDisplay) const
+QString Statistics::htmlStatistics(Period per, int months, 
+                                   int maxDisplay, bool monthlyAverage) const
 {
-  return htmlStatistics(stats[per], months, maxDisplay);
+  return htmlStatistics(stats[per], months, maxDisplay, monthlyAverage);
 }
 

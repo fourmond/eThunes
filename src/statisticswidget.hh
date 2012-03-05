@@ -51,6 +51,9 @@ class StatisticsWidget : public QWidget {
   /// Whether we display only topLevel stuff or all
   QCheckBox * topLevel;
 
+  /// Whether we display monthly average or raw information
+  QCheckBox * monthlyAverage;
+
   /// The time frame of the statistics
   QComboBox * timeFrame;
 

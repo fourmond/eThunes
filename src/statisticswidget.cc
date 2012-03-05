@@ -42,6 +42,11 @@ StatisticsWidget::StatisticsWidget(Cabinet * c) :
   connect(topLevel, SIGNAL(stateChanged(int)), SLOT(update()));
   horiz->addWidget(topLevel);
 
+  monthlyAverage = new QCheckBox("Monthly average");
+  monthlyAverage->setChecked(false);
+  connect(monthlyAverage, SIGNAL(stateChanged(int)), SLOT(update()));
+  horiz->addWidget(monthlyAverage);
+
 
   horiz->addWidget(new QLabel(tr("Period")));
   timeFrame = new QComboBox();
@@ -73,12 +78,13 @@ void StatisticsWidget::update()
           account->transactions.size() < 
           cabinet->wallet.accounts[i].transactions.size())
         account = &cabinet->wallet.accounts[i];
-      Statistics s(account->transactions.toPtrList(),
-                   topLevel->isChecked());
-      int l = timeFrame->itemData(timeFrame->currentIndex()).toInt();
-      display->setText(s.htmlStatistics(static_cast<Statistics::Period>(l), -1, 
-                                        maxDisplayed));
     }
+    Statistics s(account->transactions.toPtrList(),
+                 topLevel->isChecked());
+    int l = timeFrame->itemData(timeFrame->currentIndex()).toInt();
+    display->setText(s.htmlStatistics(static_cast<Statistics::Period>(l), -1, 
+                                      maxDisplayed, 
+                                      monthlyAverage->isChecked()));
   } 
   else
     display->setText("Stuff !");
@@ -90,7 +96,7 @@ void StatisticsWidget::setDisplayed(int nb)
   update();
 }
 
-void StatisticsWidget::setPeriod(int nb)
+void StatisticsWidget::setPeriod(int /*nb*/)
 {
   update();
 }

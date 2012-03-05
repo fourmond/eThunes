@@ -145,7 +145,7 @@ class Statistics {
 protected:
 
   QString htmlStatistics(PeriodicCategorizedStatistics * which, int months = 5,
-                         int maxDisplay = 6) const;
+                         int maxDisplay = 6, bool monthlyAverage = false) const;
 
 public:
 
@@ -173,7 +173,8 @@ public:
   /// each data point would be very visible, with a neat tooltip and a
   /// context menu for showing transactions ?
   QString htmlStatistics(Period period = Monthly, int months = 5, 
-                         int maxDisplay = 6) const;
+                         int maxDisplay = 6, 
+                         bool monthlyAverage = false) const;
 
   ~Statistics();
 };
