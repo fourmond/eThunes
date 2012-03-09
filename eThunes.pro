@@ -60,7 +60,8 @@ SOURCES += src/qmain.cc src/account.cc src/mainwin.cc src/actions.cc \
         src/widgetwrapperdialog.cc \
         src/httarget.cc src/htlabel.cc src/htlinks.cc \
         src/latexoutput.cc src/evolvingitemwidget.cc \
-        src/latextable.cc src/statisticswidget.cc
+        src/latextable.cc src/statisticswidget.cc \
+        src/modelitems.cc src/oomodel.cc
 
 HEADERS += src/account.hh src/mainwin.hh src/actions.hh \
 	src/ofximport.hh src/accountmodel.hh \
@@ -97,7 +98,8 @@ HEADERS += src/account.hh src/mainwin.hh src/actions.hh \
         src/utils.hh src/evolvingitem.hh \
         src/httarget.hh src/htlabel.hh src/httarget-templates.hh \
         src/latexoutput.hh src/evolvingitemwidget.hh \
-        src/latextable.hh src/statisticswidget.hh
+        src/latextable.hh src/statisticswidget.hh \
+        src/modelitems.hh src/oomodel.hh
 
 
 # Plugins:
