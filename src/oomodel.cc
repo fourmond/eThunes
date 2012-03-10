@@ -1,6 +1,6 @@
 /*
-    oomodel.cc: model for transaction lists
-    Copyright 2010, 2011 by Vincent Fourmond
+    oomodel.cc: A fully object-oriented item model implementation
+    Copyright 2010, 2011, 2012 by Vincent Fourmond
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -36,9 +36,12 @@ QModelIndex OOModel::index(int row, int column,
                            const QModelIndex & parent) const
 {
   ModelItem * base = item(parent);
-
-  /// @todo bound checking ?
-  return createIndex(row, column, base);
+  if(! base)
+    return QModelIndex();       // Invalid
+  ModelItem * it = base->childAt(row);
+  if(! it)
+    return QModelIndex();
+  return createIndex(row, column, it);
 }
 
 QModelIndex OOModel::parent(const QModelIndex & index) const
@@ -69,10 +72,10 @@ int OOModel::columnCount(const QModelIndex & index) const
 }
 
 QVariant OOModel::headerData(int section,
-				  Qt::Orientation /*orientation*/,
-				  int role) const
+                             Qt::Orientation orientation,
+                             int role) const
 {
-  /// @todo ?
+  /// @todo ! It should be handled by the root object.
   return QVariant();
 }
 
@@ -102,5 +105,19 @@ bool OOModel::setData(const QModelIndex & index, const QVariant & value,
   return it->setData(index.column(), value, role);
 }
 
+QModelIndex OOModel::rootIndex() const
+{
+  return createIndex(0, 0, root);
+}
 
+void OOModel::setRoot(ModelItem * newRoot)
+{
+  delete root;
+  root = newRoot;
+}
+
+OOModel::~OOModel()
+{
+  delete root;
+}
 

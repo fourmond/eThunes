@@ -86,6 +86,8 @@ public slots:
   /// Fires up a LogViewer instance to watch the log.
   void displayLog();
 
+  
+
 };
 
 #endif

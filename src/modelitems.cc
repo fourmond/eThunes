@@ -38,6 +38,10 @@ Qt::ItemFlags ModelItem::flags(int column) const
   return Qt::ItemIsSelectable|Qt::ItemIsEnabled;
 }
 
+void ModelItem::addChild(ModelItem * child)
+{
+  child->_parent = this;
+}
 
 //////////////////////////////////////////////////////////////////////
 
@@ -59,6 +63,17 @@ FixedChildrenModelItem::~FixedChildrenModelItem()
     delete children[i];
 }
 
+void FixedChildrenModelItem::addChild(ModelItem * child)
+{
+  children.append(child);
+  ModelItem::addChild(child);
+}
+
+int FixedChildrenModelItem::rowCount() const 
+{
+  return children.size();
+}
+
 
 //////////////////////////////////////////////////////////////////////
 
@@ -72,7 +87,33 @@ ModelItem * LeafModelItem::childAt(int )
   return NULL;
 }
 
-int LeafModelItem::columnCount() const 
+int LeafModelItem::rowCount() const 
 {
   return 0;
+}
+
+
+//////////////////////////////////////////////////////////////////////
+
+TextModelItem::TextModelItem(const QStringList & c) : 
+  columns(c)
+{
+  
+}
+
+int TextModelItem::columnCount() const
+{
+  return columns.size();
+}
+
+QVariant TextModelItem::data(int column, int role) const
+{
+  if(role == Qt::DisplayRole)
+    return columns.value(column, "");
+  return QVariant();
+}
+
+TextModelItem::TextModelItem(const QString & c)
+{
+  columns = QStringList() << c;
 }

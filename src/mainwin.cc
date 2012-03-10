@@ -136,6 +136,8 @@
 #include <accountmodel.hh>
 #include <mainwin.hh>
 
+#include <ootest.hh>
+
 #include <logviewer.hh>
 
 #include <filterdialog.hh>
@@ -388,6 +390,7 @@ void MainWin::testCollectionDefinitionDocument()
 
 void MainWin::displayLog()
 {
-  LogViewer * viewer = new LogViewer(storage);
-  viewer->show();
+  // LogViewer * viewer = new LogViewer(storage);
+  // viewer->show();
+  OOTest::test();
 }

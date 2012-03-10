@@ -35,6 +35,10 @@ class ModelItem : public QObject {
 protected:
   ModelItem * _parent;
 
+  /// Adds a child (in particular, setup watching it and make sure its
+  /// parent pointer points here)
+  virtual void addChild(ModelItem * item);
+
 public:
 
   ModelItem(ModelItem * p = NULL) : _parent(p) {
@@ -73,15 +77,20 @@ public:
 
 /// Base class of items containing a more-or-less fixed number of
 /// items.
+///
+/// @todo Add dummy wrapper
 class FixedChildrenModelItem : public ModelItem {
   Q_OBJECT;
 
 protected:
   QList<ModelItem *> children;
 
+  virtual void addChild(ModelItem * item);
+
 public:
   virtual int childIndex(const ModelItem * child) const;
   virtual ModelItem * childAt(int line);
+  virtual int rowCount() const;
 
   virtual ~FixedChildrenModelItem();
 };
@@ -90,13 +99,27 @@ public:
 class LeafModelItem : public ModelItem {
   Q_OBJECT;
 
-protected:
-  QList<ModelItem *> items;
-
 public:
   virtual int childIndex(const ModelItem * child) const;
   virtual ModelItem * childAt(int line);
+  virtual int rowCount() const;
+};
+
+
+/// Simple item (more for demonstration purposes than anything else
+class TextModelItem : public LeafModelItem {
+  Q_OBJECT;
+
+protected:
+  QStringList columns;
+
+public:
+
+  TextModelItem(const QStringList & columns);
+  TextModelItem(const QString & col);
+  
   virtual int columnCount() const;
+  virtual QVariant data(int column, int role) const;
 };
 
 

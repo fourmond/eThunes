@@ -42,6 +42,9 @@ protected:
   ModelItem * item(const QModelIndex & idx, bool giveRoot = true) const;
 
 public:
+
+  /// Creates a OOModel based on the given root. Takes ownership of
+  /// the root !
   OOModel(ModelItem * r);
 
   virtual QModelIndex index(int row, int column,
@@ -62,6 +65,17 @@ public:
 
   virtual bool setData(const QModelIndex & index, const QVariant & value,
 		       int role = Qt::EditRole);
+
+  
+  QModelIndex rootIndex() const;
+
+  /// Sets a new root (and deletes the previous one).
+  void setRoot(ModelItem * newRoot);
+
+  virtual ~OOModel();
+
+protected:
+  
 };
 
 
