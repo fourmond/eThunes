@@ -41,10 +41,6 @@ public:
     return QVariant();
   };
 
-  virtual int columnCount() const {
-    return 1;
-  };
-
   void makeNew(const QString &s) {
     insertChild(1, new TextModelItem(s));
   };
@@ -55,6 +51,12 @@ public:
     it->setText(QString("Modification #%1").arg(++nb));
   };
 
+  virtual QVariant headerData(int column, Qt::Orientation /*orientation*/, 
+                              int role) const {
+    if(role != Qt::DisplayRole)
+      return QVariant();
+    return QString("column %1").arg(column);
+  };
 
 };
 

@@ -101,7 +101,7 @@ Qt::ItemFlags OOModel::flags(const QModelIndex & index) const
 }
 
 bool OOModel::setData(const QModelIndex & index, const QVariant & value,
-			   int role)
+                      int role)
 {
   ModelItem * it = item(index, false);
   if(! it)

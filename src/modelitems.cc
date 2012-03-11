@@ -60,6 +60,11 @@ QVariant ModelItem::headerData(int , Qt::Orientation, int) const
 
 //////////////////////////////////////////////////////////////////////
 
+FixedChildrenModelItem::FixedChildrenModelItem() :
+  maxCols(0), maxColsIndex(0)
+{
+}
+
 int FixedChildrenModelItem::childIndex(const ModelItem * child) const
 {
   // The const_cast stuff really doesn't sound so great, but I guess
@@ -87,6 +92,14 @@ void FixedChildrenModelItem::insertChild(int index, ModelItem * child)
 
   emit(rowsWillChange(this, index, 1));
   children.insert(index, child);
+
+  int cc = child->columnCount();
+  if(maxCols < cc) {
+    maxCols = cc;
+    maxColsIndex = index;
+  }
+  else if(index <= maxColsIndex)
+    ++maxColsIndex;
   trackChild(child);
   emit(rowsChanged(this));
 }
@@ -104,6 +117,11 @@ void FixedChildrenModelItem::removeChild(int id, int nb)
 int FixedChildrenModelItem::rowCount() const 
 {
   return children.size();
+}
+
+int FixedChildrenModelItem::columnCount() const
+{
+  return maxCols;
 }
 
 
@@ -128,12 +146,13 @@ int LeafModelItem::rowCount() const
 //////////////////////////////////////////////////////////////////////
 
 TextModelItem::TextModelItem(const QStringList & c) : 
-  columns(c)
+  columns(c), canEdit(false)
 {
   
 }
 
-TextModelItem::TextModelItem(const QString & c, bool )
+TextModelItem::TextModelItem(const QString & c, bool ce) :
+  canEdit(ce)
 {
   columns = QStringList() << c;
 }
@@ -145,7 +164,7 @@ int TextModelItem::columnCount() const
 
 QVariant TextModelItem::data(int column, int role) const
 {
-  if(role == Qt::DisplayRole)
+  if(role == Qt::DisplayRole || role == Qt::EditRole)
     return columns.value(column, "");
   return QVariant();
 }
@@ -157,4 +176,27 @@ void TextModelItem::setText(const QString & str, int col)
     return;
   columns[col] = str;
   emit(itemChanged(this, col, col));
+}
+
+Qt::ItemFlags TextModelItem::flags(int column) const
+{
+  return Qt::ItemIsSelectable|Qt::ItemIsEnabled| 
+    (canEdit ? Qt::ItemIsEditable : Qt::NoItemFlags);
+}
+
+bool TextModelItem::setData(int column, const QVariant & value,
+                            int role)
+{
+  QTextStream o(stdout);
+  o << "Editing item: " << this << " -- col: " << column 
+    << " -- new value " << value.toString() << endl;
+  if(role != Qt::EditRole)
+    return false;
+  if(! canEdit)
+    return false;
+  if(column >= columns.size() || column < 0)
+    return false;
+  setText(value.toString(), column);
+  o << " -> success" << endl;
+  return true;
 }

@@ -103,10 +103,19 @@ class FixedChildrenModelItem : public ModelItem {
 protected:
   QList<ModelItem *> children;
 
+  /// Maximum number of columns
+  int maxCols;
+
+  /// Child with the maximum number of columns
+  int maxColsIndex;
+
 public:
+
+  FixedChildrenModelItem();
   virtual int childIndex(const ModelItem * child) const;
   virtual ModelItem * childAt(int line);
   virtual int rowCount() const;
+  virtual int columnCount() const;
 
   virtual ~FixedChildrenModelItem();
 
@@ -141,13 +150,17 @@ protected:
 public:
 
   TextModelItem(const QStringList & columns);
-  TextModelItem(const QString & col, bool ce = false);
+  TextModelItem(const QString & col, bool ce = true);
   
   virtual int columnCount() const;
   virtual QVariant data(int column, int role) const;
 
   /// Sets the string value
   void setText(const QString & str, int col = 0);
+
+  virtual Qt::ItemFlags flags(int column) const;
+  virtual bool setData(int column, const QVariant & value,
+		       int role);
   
 };
 
