@@ -39,6 +39,11 @@ public:
   static void test();
 
   ~OOTest();
+
+public slots:
+  void changeRoot();
+  void appendChild();
+  void modifyChild();
 };
 
 

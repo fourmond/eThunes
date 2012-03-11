@@ -26,13 +26,13 @@
 class RootItem : public FixedChildrenModelItem {
   
 public:
-  RootItem(bool rec = true) {
-    addChild(new TextModelItem("biniou"));
-    addChild(new TextModelItem("bidule"));
-    addChild(new TextModelItem("truc"));
-    addChild(new TextModelItem(QStringList() << "machin" << "stuff"));
-    if(rec)
-      addChild(new RootItem(false));
+  RootItem(int rem = 1) {
+    appendChild(new TextModelItem("biniou"));
+    appendChild(new TextModelItem("bidule"));
+    appendChild(new TextModelItem(QString("truc %1").arg(rem)));
+    appendChild(new TextModelItem(QStringList() << "machin" << "stuff"));
+    if(rem > 0)
+      appendChild(new RootItem(rem - 1));
   };
 
   virtual QVariant data(int column, int role) const {
@@ -43,6 +43,16 @@ public:
 
   virtual int columnCount() const {
     return 1;
+  };
+
+  void makeNew(const QString &s) {
+    insertChild(1, new TextModelItem(s));
+  };
+
+  void modifyFirst() {
+    static int nb = 0;
+    TextModelItem * it = static_cast<TextModelItem*>(children.first());
+    it->setText(QString("Modification #%1").arg(++nb));
   };
 
 
@@ -58,6 +68,18 @@ OOTest::OOTest()
   view->setModel(model);
   layout->addWidget(view);
   view->setRootIndex(model->rootIndex());
+
+  QPushButton * bt = new QPushButton("Change root !");
+  connect(bt, SIGNAL(clicked()), SLOT(changeRoot()));
+  layout->addWidget(bt);
+
+  bt = new QPushButton("Append !");
+  connect(bt, SIGNAL(clicked()), SLOT(appendChild()));
+  layout->addWidget(bt);
+
+  bt = new QPushButton("Modify !");
+  connect(bt, SIGNAL(clicked()), SLOT(modifyChild()));
+  layout->addWidget(bt);
 }
 
 void OOTest::test()
@@ -66,6 +88,28 @@ void OOTest::test()
     new WidgetWrapperDialog(new OOTest, 
                             tr("test !"));
   dlg->show();
+}
+
+void OOTest::changeRoot()
+{
+  model->setRoot(new RootItem(3));
+  view->setRootIndex(model->rootIndex());
+}
+
+void OOTest::appendChild()
+{
+  static int idx = 0;           // Arg !
+  RootItem * it = static_cast<RootItem *>(model->currentRoot());
+  QString str = QString("new item %1").arg(++idx);
+  it->makeNew(str);
+  QTextStream o(stdout);
+  o << "Trying to add item " << str << endl;
+}
+
+void OOTest::modifyChild()
+{
+  RootItem * it = static_cast<RootItem *>(model->currentRoot());
+  it->modifyFirst();
 }
 
 OOTest::~OOTest()

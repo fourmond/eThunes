@@ -24,7 +24,7 @@ int ModelItem::myRow() const
 {
   ModelItem * p = parent();
   if(! p)
-    return -1;
+    return 0;
   return p->childIndex(this);
 }
 
@@ -38,9 +38,24 @@ Qt::ItemFlags ModelItem::flags(int column) const
   return Qt::ItemIsSelectable|Qt::ItemIsEnabled;
 }
 
-void ModelItem::addChild(ModelItem * child)
+void ModelItem::trackChild(ModelItem * child)
 {
   child->_parent = this;
+  connect(child, SIGNAL(itemChanged(ModelItem *, int, int)),
+          SIGNAL(itemChanged(ModelItem *, int, int)));
+
+  // To avoid awkward problems, we force a direct connection, although
+  // it may not be needed ?
+  connect(child, SIGNAL(rowsChanged(ModelItem *)),
+          SIGNAL(rowsChanged(ModelItem *)), Qt::DirectConnection);
+  connect(child, SIGNAL(rowsWillChange(ModelItem *, int, int)),
+          SIGNAL(rowsWillChange(ModelItem *, int, int)), 
+          Qt::DirectConnection);
+}
+
+QVariant ModelItem::headerData(int , Qt::Orientation, int) const
+{
+  return QVariant();            // No header data by default.
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -63,10 +78,27 @@ FixedChildrenModelItem::~FixedChildrenModelItem()
     delete children[i];
 }
 
-void FixedChildrenModelItem::addChild(ModelItem * child)
+void FixedChildrenModelItem::insertChild(int index, ModelItem * child)
 {
-  children.append(child);
-  ModelItem::addChild(child);
+  if(index < 0)
+    index = 0;
+  if(index > children.size())
+    index = children.size();
+
+  emit(rowsWillChange(this, index, 1));
+  children.insert(index, child);
+  trackChild(child);
+  emit(rowsChanged(this));
+}
+
+void FixedChildrenModelItem::appendChild(ModelItem * child)
+{
+  insertChild(children.size(), child);
+}
+
+void FixedChildrenModelItem::removeChild(int id, int nb)
+{
+  /// @todo !!
 }
 
 int FixedChildrenModelItem::rowCount() const 
@@ -101,6 +133,11 @@ TextModelItem::TextModelItem(const QStringList & c) :
   
 }
 
+TextModelItem::TextModelItem(const QString & c, bool )
+{
+  columns = QStringList() << c;
+}
+
 int TextModelItem::columnCount() const
 {
   return columns.size();
@@ -113,7 +150,11 @@ QVariant TextModelItem::data(int column, int role) const
   return QVariant();
 }
 
-TextModelItem::TextModelItem(const QString & c)
+
+void TextModelItem::setText(const QString & str, int col)
 {
-  columns = QStringList() << c;
+  if(columns.size() <= col || col < 0)
+    return;
+  columns[col] = str;
+  emit(itemChanged(this, col, col));
 }

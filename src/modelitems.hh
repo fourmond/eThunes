@@ -35,9 +35,9 @@ class ModelItem : public QObject {
 protected:
   ModelItem * _parent;
 
-  /// Adds a child (in particular, setup watching it and make sure its
+  /// Setup child tracking (in particular, setup watching it and make sure its
   /// parent pointer points here)
-  virtual void addChild(ModelItem * item);
+  virtual void trackChild(ModelItem * item);
 
 public:
 
@@ -73,6 +73,24 @@ public:
   /// Returns the row relative to the parent, or -1 if no parent
   virtual int myRow() const;
 
+  /// Header data (returns nothing by default);
+  virtual QVariant headerData(int column, Qt::Orientation orientation, 
+                              int role) const;
+
+signals:
+  /// Emitted whenever this or a child item change state.
+  void itemChanged(ModelItem * item, int left, int right);
+
+  /// Emitted whenever an item is about to insert (\a nb > 0) or
+  /// remove (\a nb < 0) rows (starting at \a start inclusive).
+  void rowsWillChange(ModelItem * parent, int start, int nb);
+
+  /// Emitted just after the operation hinted at by rowsWillChange has
+  /// been performed.
+  ///
+  /// @b Note: in principle, the \a item shouldn't be needed.
+  void rowsChanged(ModelItem * item);
+
 };
 
 /// Base class of items containing a more-or-less fixed number of
@@ -85,14 +103,20 @@ class FixedChildrenModelItem : public ModelItem {
 protected:
   QList<ModelItem *> children;
 
-  virtual void addChild(ModelItem * item);
-
 public:
   virtual int childIndex(const ModelItem * child) const;
   virtual ModelItem * childAt(int line);
   virtual int rowCount() const;
 
   virtual ~FixedChildrenModelItem();
+
+  /// @name Children manipulation functions
+  ///
+  /// @{
+  virtual void insertChild(int index, ModelItem * child);
+  virtual void appendChild(ModelItem * child);
+  virtual void removeChild(int index, int nb = 1);
+  /// @}
 };
 
 /// Base class for items that don't have children
@@ -112,14 +136,19 @@ class TextModelItem : public LeafModelItem {
 
 protected:
   QStringList columns;
+  bool canEdit;
 
 public:
 
   TextModelItem(const QStringList & columns);
-  TextModelItem(const QString & col);
+  TextModelItem(const QString & col, bool ce = false);
   
   virtual int columnCount() const;
   virtual QVariant data(int column, int role) const;
+
+  /// Sets the string value
+  void setText(const QString & str, int col = 0);
+  
 };
 
 

@@ -33,13 +33,15 @@ class OOModel : public QAbstractItemModel {
 protected:
   
   /// The root item of the model.
-  mutable ModelItem * root;
+  ModelItem * root;
 
   /// Returns the ModelItem corresponding to this index, or the root
   /// item if the index is invalid.
   ///
   /// @todo Have a version that returns NULL for an invalid index ?
   ModelItem * item(const QModelIndex & idx, bool giveRoot = true) const;
+
+  QModelIndex indexForItem(ModelItem * item, int col = 0) const;
 
 public:
 
@@ -74,7 +76,22 @@ public:
 
   virtual ~OOModel();
 
+  ModelItem * currentRoot() const {
+    return root;
+  };
+
 protected:
+
+  /// Setups the root.
+  void setupRoot(ModelItem * r);
+
+protected slots:
+  void onItemChanged(ModelItem * item, int left, int right);
+  void onRowsAboutToChange(ModelItem * item, int start, int nb);
+  void onRowsChanged(ModelItem * item);
+
+protected:
+  bool lastChangeIsInsertion;
   
 };
 

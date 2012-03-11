@@ -20,8 +20,10 @@
 #include <oomodel.hh>
 #include <modelitems.hh>
 
-OOModel::OOModel(ModelItem * r) : root(r) 
+OOModel::OOModel(ModelItem * r) : 
+  lastChangeIsInsertion(false) // not that it matters
 {
+  setupRoot(r);
 }
 
 ModelItem * OOModel::item(const QModelIndex & idx, bool giveRoot) const
@@ -31,6 +33,12 @@ ModelItem * OOModel::item(const QModelIndex & idx, bool giveRoot) const
   return (giveRoot ? root : NULL);
 }
 
+QModelIndex OOModel::indexForItem(ModelItem * it, int col) const
+{
+  if(! it)
+    return QModelIndex();
+  return createIndex(it->myRow(), col, it);
+}
 
 QModelIndex OOModel::index(int row, int column,
                            const QModelIndex & parent) const
@@ -49,10 +57,7 @@ QModelIndex OOModel::parent(const QModelIndex & index) const
   ModelItem * it = item(index, false);
   if(! it)
     return QModelIndex();
-  ModelItem * parent = it->parent();
-  if(! parent)
-    return QModelIndex();
-  return createIndex(parent->myRow(), 0, parent);
+  return indexForItem(it->parent());
 }
 
 int OOModel::rowCount(const QModelIndex & index) const
@@ -75,8 +80,7 @@ QVariant OOModel::headerData(int section,
                              Qt::Orientation orientation,
                              int role) const
 {
-  /// @todo ! It should be handled by the root object.
-  return QVariant();
+  return root->headerData(section, orientation, role);
 }
 
 
@@ -112,8 +116,10 @@ QModelIndex OOModel::rootIndex() const
 
 void OOModel::setRoot(ModelItem * newRoot)
 {
+  beginResetModel();
   delete root;
-  root = newRoot;
+  setupRoot(newRoot);
+  endResetModel();
 }
 
 OOModel::~OOModel()
@@ -121,3 +127,50 @@ OOModel::~OOModel()
   delete root;
 }
 
+void OOModel::setupRoot(ModelItem * nr)
+{
+  root = nr;
+  connect(root, SIGNAL(itemChanged(ModelItem *, int, int)),
+          SLOT(onItemChanged(ModelItem *, int, int)));
+  connect(root, SIGNAL(rowsChanged(ModelItem *)),
+          SLOT(onRowsChanged(ModelItem *)));
+  connect(root, SIGNAL(rowsWillChange(ModelItem *, int, int)),
+          SLOT(onRowsAboutToChange(ModelItem *, int, int)));
+
+}
+          
+          
+void OOModel::onItemChanged(ModelItem * item, int left, int right)
+{
+  emit(dataChanged(indexForItem(item, left), indexForItem(item, right)));
+}
+
+void OOModel::onRowsAboutToChange(ModelItem * item, int start, int nb)
+{
+  if(nb == 0)
+    return;
+  QModelIndex idx = indexForItem(item);
+  int end = start + abs(nb) - 1;
+  QTextStream o(stdout);
+  o << "Rows about to change: " << item 
+    << " - " << start << " -- " << nb << " -- " << end <<  endl;
+  if(nb > 0) {
+    beginInsertRows(idx, start, end);
+    lastChangeIsInsertion = true;
+  }
+  else {
+    beginRemoveRows(idx, start, end);
+    lastChangeIsInsertion = false;
+  }
+}
+
+void OOModel::onRowsChanged(ModelItem * item)
+{
+  QTextStream o(stdout);
+  o << "Rows finished to change: " << item  << endl;
+  if(lastChangeIsInsertion)
+    endInsertRows();
+  else
+    endRemoveRows();
+}
+          
