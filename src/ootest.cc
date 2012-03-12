@@ -23,6 +23,8 @@
 
 #include <widgetwrapperdialog.hh>
 
+#include <accountmodel.hh>
+
 class RootItem : public FixedChildrenModelItem {
   
 public:
@@ -60,58 +62,144 @@ public:
 
 };
 
+class TransactionItem : public LeafModelItem {
 
-OOTest::OOTest()
+  Transaction * transaction;
+public:
+  TransactionItem(Transaction * t) : transaction(t) {
+  };
+
+
+  virtual int columnCount() const {
+    return AccountModel::LastColumn;
+  };
+
+  virtual QVariant data(int column, int role) const {
+    const Transaction *t = transaction;
+    if(! t)
+      return QVariant();
+    if(role == Qt::DisplayRole) {
+      switch(column) {
+      case AccountModel::DateColumn: return QVariant(t->getDate());
+      case AccountModel::AmountColumn: return QVariant(t->getAmountString());
+      case AccountModel::BalanceColumn: return QVariant(t->getBalanceString());
+      case AccountModel::NameColumn: return QVariant(t->getName());
+      case AccountModel::CategoryColumn: return QVariant(t->categoryName());
+      case AccountModel::TagsColumn: return QVariant(t->tagString());
+      case AccountModel::MemoColumn: return t->getDescription();
+      default:
+        return QVariant();
+      }
+    }
+    if(role == Qt::EditRole) {
+      switch(column) {
+      case AccountModel::CategoryColumn: return QVariant(t->categoryName());
+      case AccountModel::TagsColumn: return QVariant(t->tagString());
+      case AccountModel::LinksColumn: if(t->links.size())
+          return t->links.htmlLinkList().join(", ");
+        return QVariant();
+      default:
+        return QVariant();
+      }
+    }
+    if(role == Qt::DecorationRole) {
+      if(column == AccountModel::RecentColumn) {
+        if(t->isRecent())
+          return AccountModel::statusIcon("recent");
+        else
+          return AccountModel::statusIcon("default");
+      }
+      return QVariant();
+    }
+    if(role == Qt::TextAlignmentRole) {
+      switch(column) {
+      case AccountModel::AmountColumn:
+      case AccountModel::BalanceColumn:
+        return QVariant(Qt::AlignRight);
+      default:
+        return QVariant();
+      }
+    }
+
+    if(role == Qt::FontRole && 
+       (column == AccountModel::BalanceColumn 
+        || t->isRecent())) {
+      QFont font;
+      font.setBold(true);
+      return font;
+    }
+    // if(role == Qt::BackgroundRole) {
+    //   QColor background;
+    //   int month = t->date.month() - 1;
+    //   background.setHsv(month * 170 % 360, 0,
+    // 		      (index.row() % 2 ? 220 : 240));
+    //   return QBrush(background);
+    // }
+    if(role == Qt::ForegroundRole) {
+      if(column == AccountModel::DateColumn) {
+        QColor color;
+        int month = t->getDate().month() - 1;
+        color.setHsv(month * 170 % 360, 255, 100);
+        return QBrush(color);
+      }
+
+      if(t->getCategory() &&
+         (column == AccountModel::CategoryColumn ||
+          column == AccountModel::NameColumn))
+        return QBrush(t->getCategory()->categoryColor());
+      if(column == AccountModel::AmountColumn) {
+        QColor color;
+        /// \todo Provide customization of the colors
+        if(t->getAmount() < 0)
+          color.setHsv(240,200,130);
+        else
+          color.setHsv(120,200,130);
+        return QBrush(color);
+      }
+      return QVariant();
+    }
+    else
+      return QVariant();
+  };
+};
+
+
+class TransactionListItem : public FixedChildrenModelItem {
+
+  TransactionList * transactions;
+
+public:
+  TransactionListItem(TransactionList * trs) : transactions(trs) {
+    for(int i = transactions->size(); i > 0; )
+      appendChild(new TransactionItem(&(transactions->operator[](--i))));
+  };
+
+  virtual QVariant data(int column, int role) const {
+    return QVariant();
+  };
+  
+};
+
+
+OOTest::OOTest(TransactionList * transactions)
 {
-  model = new OOModel(new RootItem);
+  model = new OOModel(new TransactionListItem(transactions));
   QVBoxLayout * layout = new QVBoxLayout(this);
   
   view = new QTreeView();
   view->setModel(model);
   layout->addWidget(view);
   view->setRootIndex(model->rootIndex());
+  view->setRootIsDecorated(false);
 
-  QPushButton * bt = new QPushButton("Change root !");
-  connect(bt, SIGNAL(clicked()), SLOT(changeRoot()));
-  layout->addWidget(bt);
-
-  bt = new QPushButton("Append !");
-  connect(bt, SIGNAL(clicked()), SLOT(appendChild()));
-  layout->addWidget(bt);
-
-  bt = new QPushButton("Modify !");
-  connect(bt, SIGNAL(clicked()), SLOT(modifyChild()));
-  layout->addWidget(bt);
 }
 
-void OOTest::test()
+void OOTest::test(TransactionList * transactions)
 {
   WidgetWrapperDialog * dlg = 
-    new WidgetWrapperDialog(new OOTest, 
+    new WidgetWrapperDialog(new OOTest(transactions), 
                             tr("test !"));
   dlg->show();
-}
-
-void OOTest::changeRoot()
-{
-  model->setRoot(new RootItem(3));
-  view->setRootIndex(model->rootIndex());
-}
-
-void OOTest::appendChild()
-{
-  static int idx = 0;           // Arg !
-  RootItem * it = static_cast<RootItem *>(model->currentRoot());
-  QString str = QString("new item %1").arg(++idx);
-  it->makeNew(str);
-  QTextStream o(stdout);
-  o << "Trying to add item " << str << endl;
-}
-
-void OOTest::modifyChild()
-{
-  RootItem * it = static_cast<RootItem *>(model->currentRoot());
-  it->modifyFirst();
 }
 
 OOTest::~OOTest()

@@ -392,5 +392,5 @@ void MainWin::displayLog()
 {
   // LogViewer * viewer = new LogViewer(storage);
   // viewer->show();
-  OOTest::test();
+  OOTest::test(&cabinet->wallet.accounts[0].transactions);
 }

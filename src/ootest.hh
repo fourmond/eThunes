@@ -21,6 +21,7 @@
 #ifndef __OOTEST_HH
 #define __OOTEST_HH
 
+class TransactionList;
 class OOModel;
 /// A widget displaying a QTreeView based on an
 class OOTest : public QWidget {
@@ -33,17 +34,13 @@ class OOTest : public QWidget {
   OOModel * model;
 
 public:
-  OOTest();
+  OOTest(TransactionList * transactions);
 
   /// Test the model !
-  static void test();
+  static void test(TransactionList * transactions);
 
   ~OOTest();
 
-public slots:
-  void changeRoot();
-  void appendChild();
-  void modifyChild();
 };
 
 

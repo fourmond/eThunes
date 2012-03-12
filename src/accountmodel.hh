@@ -54,10 +54,12 @@ protected:
   /// Static cache for icons
   static QHash<QString, QIcon> statusIcons;
 
+
+public:
+
   /// Returns a small icon (16x16) representing a given status
   static const QIcon & statusIcon(const QString & status);
 
-public:
   AccountModel(TransactionList * transactions);
   AccountModel(TransactionPtrList * transactions);
 
