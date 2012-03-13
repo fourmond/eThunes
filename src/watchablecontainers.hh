@@ -98,12 +98,14 @@ public:
   virtual void removeAt(int i) {
     data.removeAt(i);
     numberChanged();
+    objectRemoved(i, 1);
   };
 
   /// Appends. We make it a virtual function
   virtual void append(const T& d) {
     data.append(d);
     numberChanged();
+    objectInserted(data.size() - 1, 1);
   };
 
   void replace(int i, const T & v) {
@@ -118,8 +120,10 @@ public:
 
   /// Append list
   void append(const WatchedList& list) {
+    int at = data.size();
     data.append(list);
     numberChanged();
+    objectInserted(data.size(), list.size());
   };
 
   int size() const {
@@ -131,8 +135,10 @@ public:
   };
 
   void clear() {
+    int sz = data.size();
     data.clear();
     numberChanged();
+    objectRemoved(0, sz);
   };
 
   /// @}

@@ -59,6 +59,12 @@ signals:
   /// Emitted whenever the object changed.
   void changed(const Watchdog * source);
 
+  /// Emitted whenever an object is inserted
+  void objectInserted(const Watchdog * source, int at, int nb = 1);
+
+  /// Emitted whenever an object is removed
+  void objectRemoved(const Watchdog * source, int at, int nb = 1);
+
 private slots:
   
   /// Catch any change in objects underneath
@@ -102,6 +108,19 @@ protected:
       watchdog->numberChanged(watchDog());
   }
 
+
+  /// Sends message through the watchdog that objects were inserted
+  void objectInserted(int at, int nb = 1) {
+    if(watchdog)
+      watchdog->objectInserted(watchDog(), at, nb);
+  };
+
+  /// Sends message through the watchdog that objects were removed
+  void objectRemoved(int at, int nb = 1) {
+    if(watchdog)
+      watchdog->objectRemoved(watchDog(), at, nb);
+  }
+
   /// A helper function to 
   template<typename T> void setAttribute(T & dest, const T& source, 
                                          const char * name =  "") {
@@ -120,6 +139,8 @@ protected:
   void unwatchChild(const Watchable* child) {
     watchDog()->unwatchChild(child);
   };
+
+
 };
 
 #endif

@@ -181,6 +181,8 @@ void TransactionList::sortByDate()
 {
   qSort(MyQListIterator<Transaction>(&rawData(), 0),
         MyQListIterator<Transaction>(&rawData(), size()));
+  // We signal that all members have changed
+  attributeChanged("all");
 }
 
 void TransactionList::computeBalance(int balance)

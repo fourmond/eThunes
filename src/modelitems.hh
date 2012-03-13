@@ -95,8 +95,7 @@ signals:
 
 /// Base class of items containing a more-or-less fixed number of
 /// items.
-///
-/// @todo Add dummy wrapper
+/// @todo Add facilities for displaying the list in reverse...
 class FixedChildrenModelItem : public ModelItem {
   Q_OBJECT;
 
