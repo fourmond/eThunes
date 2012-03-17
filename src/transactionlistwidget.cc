@@ -20,37 +20,42 @@
 #include <account.hh>
 #include <wallet.hh>
 #include <transactionlistwidget.hh>
+#include <ootest.hh>
+
+#include <accountmodel.hh>
 
 TransactionListWidget::TransactionListWidget(TransactionList *transactions,
 					     QWidget * parent) :
-  QWidget(parent), model(NULL), proxy(NULL) {
+  QWidget(parent), model(NULL) {
   setupFrame();
   showTransactions(transactions);
 }
 
 TransactionListWidget::TransactionListWidget(TransactionPtrList *transactions,
 					     QWidget * parent) :
-  QWidget(parent), model(NULL), proxy(NULL)  {
+  QWidget(parent), model(NULL)  {
   setupFrame();
   showTransactions(transactions);
 }
 
 TransactionListWidget::TransactionListWidget(QWidget * parent) :
-  QWidget(parent), model(NULL), proxy(NULL)  {
+  QWidget(parent), model(NULL)  {
   setupFrame();
 }
 
 void TransactionListWidget::showTransactions(TransactionList *transactions)
 {
   delete model;
-  model = new AccountModel(transactions);
+  rootItem = new TransactionListItem(transactions);
+  model = new OOModel(rootItem);
   setupTreeView();
 }
 
 void TransactionListWidget::showTransactions(TransactionPtrList *transactions)
 {
   delete model;
-  model = new AccountModel(transactions);
+  rootItem = new TransactionListItem(transactions);
+  model = new OOModel(rootItem);
   setupTreeView();
 
   // By default, we hide the balance, as it usually doesnt make sense
@@ -69,26 +74,9 @@ void TransactionListWidget::setupFrame()
 
 void TransactionListWidget::setupTreeView()
 {
-  delete proxy;
-  proxy = new QSortFilterProxyModel();
-  proxy->setSourceModel(model);
-  // proxy->setFilterRegExp(".*");
-  // proxy->setFilterKeyColumn(4);
-  // proxy->setDynamicSortFilter(true);
-  // view->setModel(proxy);
   view->setModel(model);
 
-  QTextStream o(stdout);
-  QModelIndex root = model->index(0,0, QModelIndex());
-  // o << "Original row count: " << model->rowCount(root) << endl
-  //   << (root.isValid() ? " -> valid root " : " -> invalid root") << endl;
-  // root = root.parent();
-  // o << "Original row count: " << model->rowCount(root) << endl
-  //   << (root.isValid() ? " -> valid root " : " -> invalid root") << endl;
-  // root = proxy->mapFromSource(root);
-  // root = proxy->index(0,0);
-  // o << "Final row count: " << proxy->rowCount(root) << endl
-  //   << (root.isValid() ? " -> valid root " : " -> invalid root") << endl;
+  QModelIndex root = model->rootIndex();
   
   view->setRootIndex(root);
   view->setRootIsDecorated(false);
@@ -113,6 +101,8 @@ void TransactionListWidget::setupTreeView()
   /// \todo We need to intercept the signals from the model saying
   /// columns have been inserted to ensure all have their persistent
   /// editor opened.
+  ///
+  /// @todo This simply won't work right.
   for(int i = 0; i < model->rowCount(root); i++)
     view->openPersistentEditor(root.child(i, AccountModel::LinksColumn));
 
@@ -131,7 +121,8 @@ TransactionListWidget::~TransactionListWidget()
 
 void TransactionListWidget::showTransaction(Transaction * transaction)
 {
-  view->setCurrentIndex(model->index(transaction));
+  /// @todo !!!
+  // view->setCurrentIndex(model->index(transaction));
 }
 
 int TransactionListWidget::naturalWidth() const
@@ -238,8 +229,9 @@ TransactionPtrList TransactionListWidget::selectedTransactions() const
 {
   TransactionPtrList list;
   QModelIndexList l = view->selectionModel()->selectedIndexes();
-  for(int i = 0; i < l.size(); i++)
-    list << model->indexedTransaction(l[i]);
+  /// @todo !
+  // for(int i = 0; i < l.size(); i++)
+  //   list << model->indexedTransaction(l[i]);
   return list;
 }
 
@@ -280,8 +272,8 @@ void TransactionListWidget::contextMenuActionFired(QAction * action)
   
 Wallet * TransactionListWidget::wallet() const
 {
-  if(model->account())
-    return model->account()->wallet;
+  if(rootItem->account())
+    return rootItem->account()->wallet;
   return NULL;
 }
 

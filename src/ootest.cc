@@ -219,7 +219,7 @@ void TransactionItem::changeTransaction(Transaction * newt)
 
 
 TransactionListItem::TransactionListItem(TransactionList * trs) : 
-  transactions(trs) 
+  transactions(trs), transactionsPtr(NULL) 
 {
   for(int i = transactions->size(); i > 0; )
       appendChild(new TransactionItem(&(transactions->operator[](--i))));
@@ -237,9 +237,25 @@ TransactionListItem::TransactionListItem(TransactionList * trs) :
 
 }
 
+TransactionListItem::TransactionListItem(TransactionPtrList * ptr) : 
+  transactions(NULL), transactionsPtr(ptr)
+{
+  for(int i = 0; i < transactionsPtr->size(); i++ )
+    appendChild(new TransactionItem(transactionsPtr->value(i)));
+}
+
 QVariant TransactionListItem::data(int column, int role) const
 {
     return QVariant();
+}
+
+Account * TransactionListItem::account() const
+{
+  if(transactions && transactions->size() > 0)
+    return transactions->value(0).account;
+  if(transactionsPtr && transactionsPtr->size() > 0)
+    return transactionsPtr->value(0)->account;
+  return NULL;
 }
 
 void TransactionListItem::onAttributeChanged(const Watchdog * wd, 

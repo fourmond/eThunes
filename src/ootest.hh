@@ -50,11 +50,17 @@ class TransactionListItem : public FixedChildrenModelItem {
   Q_OBJECT;
 
   TransactionList * transactions;
+  TransactionPtrList * transactionsPtr;
 
 public:
   TransactionListItem(TransactionList * trs);
+  TransactionListItem(TransactionPtrList * trs);
 
   virtual QVariant data(int column, int role) const;  
+
+  /// Returns the account linked to the transactions (ie the first one
+  /// found)
+  Account * account() const;
 
 
 protected slots:

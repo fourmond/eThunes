@@ -20,7 +20,10 @@
 #ifndef __TRANSACTIONLISTWIDGET_HH
 #define __TRANSACTIONLISTWIDGET_HH
 
+#include <oomodel.hh>
 #include <accountmodel.hh>
+
+class TransactionListItem;
 
 /// This Widget is a thin wrapper around a QTreeView with an
 /// AccoutModel as model.
@@ -56,10 +59,10 @@ public:
 
 
   /// The model holding the data
-  AccountModel * model;
+  OOModel * model;
 
-  /// A proxy for sorting/filtering
-  QSortFilterProxyModel * proxy;
+  /// The root item
+  TransactionListItem * rootItem;
 
   /// And the widget to actually display stuff
   QTreeView * view;
