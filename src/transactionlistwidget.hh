@@ -59,7 +59,7 @@ public:
 
 
   /// The model holding the data
-  OOModel * model;
+  AccountModel * model;
 
   /// The root item
   TransactionListItem * rootItem;

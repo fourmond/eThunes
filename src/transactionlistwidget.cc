@@ -45,17 +45,19 @@ TransactionListWidget::TransactionListWidget(QWidget * parent) :
 
 void TransactionListWidget::showTransactions(TransactionList *transactions)
 {
-  delete model;
-  rootItem = new TransactionListItem(transactions);
-  model = new OOModel(rootItem);
+  if(! model)
+    model = new AccountModel(transactions);
+  else
+    model->setRoot(new TransactionListItem(transactions));
   setupTreeView();
 }
 
 void TransactionListWidget::showTransactions(TransactionPtrList *transactions)
 {
-  delete model;
-  rootItem = new TransactionListItem(transactions);
-  model = new OOModel(rootItem);
+  if(! model)
+    model = new AccountModel(transactions);
+  else
+    model->setRoot(new TransactionListItem(transactions));
   setupTreeView();
 
   // By default, we hide the balance, as it usually doesnt make sense
@@ -229,9 +231,11 @@ TransactionPtrList TransactionListWidget::selectedTransactions() const
 {
   TransactionPtrList list;
   QModelIndexList l = view->selectionModel()->selectedIndexes();
-  /// @todo !
-  // for(int i = 0; i < l.size(); i++)
-  //   list << model->indexedTransaction(l[i]);
+  for(int i = 0; i < l.size(); i++) {
+    Transaction * t = model->indexedTransaction(l[i]);
+    if(t)                       // Don't stash NULL pointers here.
+      list << t;
+  }
   return list;
 }
 
@@ -272,8 +276,8 @@ void TransactionListWidget::contextMenuActionFired(QAction * action)
   
 Wallet * TransactionListWidget::wallet() const
 {
-  if(rootItem->account())
-    return rootItem->account()->wallet;
+  if(model->account())
+    return model->account()->wallet;
   return NULL;
 }
 

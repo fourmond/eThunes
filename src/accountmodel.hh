@@ -23,6 +23,67 @@
 
 #include <transaction.hh>
 #include <transactionlists.hh>
+#include <modelitems.hh>
+#include <oomodel.hh>
+
+
+/// ModelItem (sub)child representing a single transaction
+/// @todo Change that when subtransactions are in.
+class TransactionItem : public LeafModelItem {
+  Q_OBJECT;
+
+  Transaction * transaction;
+
+public:
+  TransactionItem(Transaction * t);
+  virtual int columnCount() const;
+  virtual QVariant data(int column, int role) const;
+  virtual Qt::ItemFlags flags(int column) const;
+  virtual bool setData(int column, const QVariant & value,
+		       int role);
+
+  /// Changes the underlying transaction pointer.
+  void changeTransaction(Transaction * newt);
+
+  /// Returns the transaction 
+  Transaction * getTransaction() const { return transaction; };
+
+protected slots:
+  void transactionChanged();
+
+};
+
+/// ModelItem (sub)child representing a list of transactions.
+class TransactionListItem : public FixedChildrenModelItem {
+  Q_OBJECT;
+
+  /// @todo get rid of those ?
+  TransactionList * transactions;
+  TransactionPtrList * transactionsPtr;
+
+public:
+  TransactionListItem(TransactionList * trs);
+  TransactionListItem(TransactionPtrList * trs);
+
+  virtual QVariant data(int column, int role) const;  
+  virtual QVariant headerData(int column, Qt::Orientation orientation, 
+                              int role) const;  
+
+  /// Returns the account linked to the transactions (ie the first one
+  /// found)
+  Account * account() const;
+
+
+  /// Returns the transaction pointed at by the numbered child
+  Transaction * indexedTransaction(int index) const;
+
+protected slots:
+  void onAttributeChanged(const Watchdog * wd, const QString &name);
+  void onObjectInserted(const Watchdog * wd, int at, int nb);
+  void onObjectRemoved(const Watchdog * wd, int at, int nb);
+};
+
+
 
 /// Class in charge of organising the data of a list of Transaction
 /// objects into something viewable with a Tree or Table view.
@@ -36,7 +97,7 @@
 /// \todo Tanya says it would be much nicer if the transactions were
 /// grouped by month in a tree-like fashion. This is easy, but maybe a
 /// little long ?
-class AccountModel : public QAbstractItemModel {
+class AccountModel : public OOModel {
 
   Q_OBJECT;
 
@@ -46,10 +107,9 @@ class AccountModel : public QAbstractItemModel {
   /// Or this way:
   TransactionPtrList * transactionsPtr;
 
+  TransactionListItem * rootItem() const;
 
 protected:
-  /// returns transaction at the given index.
-  Transaction * indexedTransaction(int idx) const;
 
   /// Static cache for icons
   static QHash<QString, QIcon> statusIcons;
@@ -90,41 +150,6 @@ public:
 
   /// Returns the QModelIndex corresponding to the given transaction
   QModelIndex index(Transaction * transaction);
-
-  virtual QModelIndex index(int row, int column,
-			    const QModelIndex & parent = QModelIndex() ) const;
-
-  virtual QModelIndex parent(const QModelIndex&) const;
-
-  virtual int rowCount(const QModelIndex&) const;
-
-  virtual int columnCount(const QModelIndex&) const;
-
-  virtual QVariant data(const QModelIndex&, int) const;
-
-  virtual QVariant headerData(int section, Qt::Orientation orientation,
-			      int role) const ;
-
-  virtual Qt::ItemFlags flags(const QModelIndex & index) const;
-
-  virtual bool setData(const QModelIndex & index, const QVariant & value,
-		       int role = Qt::EditRole);
-
-public slots:
-
-  /// Radically changes things that have changed ;-)...
-  void accountChanged();
-
-protected:
-
-  /// Number of transactions in the list
-  int transactionCount() const {
-    if(transactions)
-      return transactions->count();
-    if(transactionsPtr)
-      return transactionsPtr->count();
-    return 0;
-  };
 };
 
 /// A specific delegate to handle in particular the edition of

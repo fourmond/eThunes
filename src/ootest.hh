@@ -24,52 +24,6 @@
 #include <accountmodel.hh>
 #include <modelitems.hh>
 
-class TransactionItem : public LeafModelItem {
-
-  Q_OBJECT;
-
-  Transaction * transaction;
-public:
-  TransactionItem(Transaction * t);
-  virtual int columnCount() const;
-  virtual QVariant data(int column, int role) const;
-  virtual Qt::ItemFlags flags(int column) const;
-  virtual bool setData(int column, const QVariant & value,
-		       int role);
-
-  /// Changes the underlying transaction pointer.
-  void changeTransaction(Transaction * newt);
-
-protected slots:
-  void transactionChanged();
-
-};
-
-class TransactionListItem : public FixedChildrenModelItem {
-
-  Q_OBJECT;
-
-  TransactionList * transactions;
-  TransactionPtrList * transactionsPtr;
-
-public:
-  TransactionListItem(TransactionList * trs);
-  TransactionListItem(TransactionPtrList * trs);
-
-  virtual QVariant data(int column, int role) const;  
-
-  /// Returns the account linked to the transactions (ie the first one
-  /// found)
-  Account * account() const;
-
-
-protected slots:
-  void onAttributeChanged(const Watchdog * wd, const QString &name);
-  void onObjectInserted(const Watchdog * wd, int at, int nb);
-  void onObjectRemoved(const Watchdog * wd, int at, int nb);
-};
-
-
 
 class OOModel;
 /// A widget displaying a QTreeView based on an

@@ -27,191 +27,57 @@
 
 QHash<QString, QIcon> AccountModel::statusIcons;
 
-/// @todo This class should be rewritten with object-oriented things
-/// in mind. Items should be objects with appropriate virtual methods.
-/// This would allow painlessly to have objects for months only. That
-/// would also allow easily to follow objects:
-/// \li this way, each object watches the target object
-/// \li we don't invalidate the whole view each time a category
-/// changes, which is very expensive.
-
-const QIcon & AccountModel::statusIcon(const QString & status)
-{
-  if(! statusIcons.contains(status)) {
-    if(QFile::exists("icons:accountmodel-" + status + ".png"))
-      statusIcons[status] = QIcon("icons:accountmodel-" + status + ".png");
-    else
-      statusIcons[status] = QIcon(QPixmap(16,16));
-  }
-  return statusIcons[status];
-}
-
-AccountModel::AccountModel(TransactionList * t) :
-  transactions(t), transactionsPtr(NULL)
-{
-  connect(*t, SIGNAL(changed(const Watchdog *)),
-          SLOT(accountChanged())); 
-}
-
-AccountModel::AccountModel(TransactionPtrList * t) :
-  transactions(NULL), transactionsPtr(t)
-{
-  connect(*t, SIGNAL(changed(const Watchdog *)),
-          SLOT(accountChanged())); 
-}
-
-Transaction * AccountModel::indexedTransaction(int idx) const
-{
-  if(transactions) {
-    if(idx < transactions->size())
-      return const_cast<Transaction *>(& (*transactions)[transactions->count() - idx - 1]);
-
-    else
-      return NULL;
-  }
-  else {
-    if(idx < transactionsPtr->size())
-      return transactionsPtr->operator[](idx);
-    else
-      return NULL;
-  }
-}
-
-Account * AccountModel::account() const
-{
-  Transaction * first = indexedTransaction(0);
-  if(first)
-    return first->account;
-  return NULL;
-}
-
-QModelIndex AccountModel::index(Transaction * transaction)
-{
-  Transaction * t;
-  int i = 0;
-  do {
-    t = indexedTransaction(i);
-    if(t == transaction) {
-      return createIndex(i, 0, i);
-    }
-    i++;
-  } while(t);
-  return QModelIndex();
+TransactionItem::TransactionItem(Transaction * t) : transaction(t) {
+  connect(transaction->watchDog(), SIGNAL(changed(const Watchdog *)), 
+          SLOT(transactionChanged()));
 }
 
 
-Transaction * AccountModel::indexedTransaction(QModelIndex index) const
-{
-  if(index.isValid() && index.internalId() >= 0)
-    return indexedTransaction(index.internalId());
-  return NULL;
+int TransactionItem::columnCount() const {
+  return AccountModel::LastColumn;
 }
 
-QModelIndex AccountModel::index(int row, int column,
-				const QModelIndex & parent) const
-{
-  // printf("Index: %d %d %d\n", row, column, parent.internalId());
-  if(parent.isValid())
-    return createIndex(row, column, row);
-  else
-    return createIndex(row, column, -1);
-}
-
-QModelIndex AccountModel::parent(const QModelIndex & index) const
-{
-  // printf("Parent: %d %d %d\n", index.row(), index.column(), index.internalId());
-  if(index.isValid()) {
-    if(index.internalId() >= 0)
-      return createIndex(0, 0, -1);
-    else
-      return QModelIndex();
-  }
-  else
-    return QModelIndex();
-}
-
-int AccountModel::rowCount(const QModelIndex & index) const
-{
-  // printf("row: %d %d %d\n", index.row(), index.column(), index.internalId());
-  if(index.isValid()) {
-    if(index.internalId() >= 0)
-      return 0;
-    else
-      return transactionCount();
-  }
-  return 0;
-}
-
-int AccountModel::columnCount(const QModelIndex & /*index*/) const
-{
-  return LastColumn;
-}
-
-QVariant AccountModel::headerData(int section,
-				  Qt::Orientation /*orientation*/,
-				  int role) const
-{
-  if(role == Qt::DisplayRole) {
-    switch(section) {
-    case DateColumn: return QVariant(tr("Date"));
-    case AmountColumn: return QVariant(tr("Amount"));
-    case BalanceColumn: return QVariant(tr("Balance"));
-    case NameColumn: return QVariant(tr("Name"));
-    case LinksColumn: return QVariant(tr("Links"));
-    case MemoColumn: return QVariant(tr("Memo"));
-    case TagsColumn: return QVariant(tr("Tags"));
-    case CategoryColumn: return QVariant(tr("Category"));
-    default:
-      return QVariant();
-    }
-  }
-  else
-    return QVariant();
-}
-
-
-QVariant AccountModel::data(const QModelIndex& index, int role) const
-{
-  const Transaction *t = indexedTransaction(index);
+QVariant TransactionItem::data(int column, int role) const {
+  const Transaction *t = transaction;
   if(! t)
     return QVariant();
   if(role == Qt::DisplayRole) {
-    switch(index.column()) {
-    case DateColumn: return QVariant(t->getDate());
-    case AmountColumn: return QVariant(t->getAmountString());
-    case BalanceColumn: return QVariant(t->getBalanceString());
-    case NameColumn: return QVariant(t->getName());
-    case CategoryColumn: return QVariant(t->categoryName());
-    case TagsColumn: return QVariant(t->tagString());
-    case MemoColumn: return t->getDescription();
+    switch(column) {
+    case AccountModel::DateColumn: return QVariant(t->getDate());
+    case AccountModel::AmountColumn: return QVariant(t->getAmountString());
+    case AccountModel::BalanceColumn: return QVariant(t->getBalanceString());
+    case AccountModel::NameColumn: return QVariant(t->getName());
+    case AccountModel::CategoryColumn: return QVariant(t->categoryName());
+    case AccountModel::TagsColumn: return QVariant(t->tagString());
+    case AccountModel::MemoColumn: return t->getDescription();
     default:
       return QVariant();
     }
   }
   if(role == Qt::EditRole) {
-    switch(index.column()) {
-    case CategoryColumn: return QVariant(t->categoryName());
-    case TagsColumn: return QVariant(t->tagString());
-    case LinksColumn: if(t->links.size())
-	return t->links.htmlLinkList().join(", ");
+    switch(column) {
+    case AccountModel::CategoryColumn: return QVariant(t->categoryName());
+    case AccountModel::TagsColumn: return QVariant(t->tagString());
+    case AccountModel::LinksColumn: if(t->links.size())
+        return t->links.htmlLinkList().join(", ");
       return QVariant();
     default:
       return QVariant();
     }
   }
   if(role == Qt::DecorationRole) {
-    if(index.column() == RecentColumn) {
+    if(column == AccountModel::RecentColumn) {
       if(t->isRecent())
-	return statusIcon("recent");
+        return AccountModel::statusIcon("recent");
       else
-	return statusIcon("default");
+        return AccountModel::statusIcon("default");
     }
     return QVariant();
   }
   if(role == Qt::TextAlignmentRole) {
-    switch(index.column()) {
-    case AmountColumn:
-    case BalanceColumn:
+    switch(column) {
+    case AccountModel::AmountColumn:
+    case AccountModel::BalanceColumn:
       return QVariant(Qt::AlignRight);
     default:
       return QVariant();
@@ -219,7 +85,7 @@ QVariant AccountModel::data(const QModelIndex& index, int role) const
   }
 
   if(role == Qt::FontRole && 
-     (index.column() == BalanceColumn 
+     (column == AccountModel::BalanceColumn 
       || t->isRecent())) {
     QFont font;
     font.setBold(true);
@@ -233,7 +99,7 @@ QVariant AccountModel::data(const QModelIndex& index, int role) const
   //   return QBrush(background);
   // }
   if(role == Qt::ForegroundRole) {
-    if(index.column() == DateColumn) {
+    if(column == AccountModel::DateColumn) {
       QColor color;
       int month = t->getDate().month() - 1;
       color.setHsv(month * 170 % 360, 255, 100);
@@ -241,54 +107,55 @@ QVariant AccountModel::data(const QModelIndex& index, int role) const
     }
 
     if(t->getCategory() &&
-       (index.column() == CategoryColumn ||
-	index.column() == NameColumn))
+       (column == AccountModel::CategoryColumn ||
+        column == AccountModel::NameColumn))
       return QBrush(t->getCategory()->categoryColor());
-    if(index.column() == AmountColumn) {
+    if(column == AccountModel::AmountColumn) {
       QColor color;
       /// \todo Provide customization of the colors
       if(t->getAmount() < 0)
-	color.setHsv(240,200,130);
+        color.setHsv(240,200,130);
       else
-	color.setHsv(120,200,130);
+        color.setHsv(120,200,130);
       return QBrush(color);
     }
     return QVariant();
   }
   else
     return QVariant();
-}
+};
 
-Qt::ItemFlags AccountModel::flags(const QModelIndex & index) const
+Qt::ItemFlags TransactionItem::flags(int column) const  
 {
-  if(index.isValid()) {
-    switch(index.column()) {
-    case CategoryColumn:
-    case TagsColumn:
-      return Qt::ItemIsSelectable|
-	Qt::ItemIsEnabled|Qt::ItemIsEditable;
-    default: return Qt::ItemIsSelectable|
-	Qt::ItemIsEnabled;
-    }
+  switch(column) {
+  case AccountModel::CategoryColumn:
+  case AccountModel::TagsColumn:
+    return Qt::ItemIsSelectable|
+      Qt::ItemIsEnabled|Qt::ItemIsEditable;
+  default: return Qt::ItemIsSelectable|
+      Qt::ItemIsEnabled;
   }
   return 0;
 }
 
-bool AccountModel::setData(const QModelIndex & index, const QVariant & value,
-			   int role)
+void TransactionItem::transactionChanged() 
 {
-  Transaction *t = indexedTransaction(index);
-  if(t && role == Qt::EditRole) {
-    switch(index.column()) {
-    case CategoryColumn:
+  emit(itemChanged(this, 0, AccountModel::LastColumn));
+}
+
+bool TransactionItem::setData(int column, const QVariant & value,
+                                      int role) 
+{
+  Transaction *t = transaction;
+  if(role == Qt::EditRole) {
+    switch(column) {
+    case AccountModel::CategoryColumn:
       t->setCategoryFromName(value.toString());
-      emit(dataChanged(index, index));
+      emit(itemChanged(this, column, column));
       return true;
-    case TagsColumn:
+    case AccountModel::TagsColumn:
       t->setTagList(value.toString());
-      emit(dataChanged(index, index));
-      // if(t->account && t->account->wallet)
-      // 	t->account->wallet->didChangeCategories();
+      emit(itemChanged(this, column, column));
       return true;
     default:
       return false;
@@ -297,16 +164,185 @@ bool AccountModel::setData(const QModelIndex & index, const QVariant & value,
   return false;
 }
 
-
-void AccountModel::accountChanged()
+void TransactionItem::changeTransaction(Transaction * newt)
 {
-  int size = transactions ? transactions->size() : 
-    transactionsPtr->size();
-  emit(dataChanged(index(0,0, index(0,0,QModelIndex())),
-		   index(size-1,LastColumn-1,
-			 index(0,0,QModelIndex()))));
+  if(newt == transaction)
+    return;                     // nothing to do!
+  disconnect(transaction->watchDog(), SIGNAL(changed(const Watchdog *)), 
+             this, SLOT(transactionChanged()));
+  transaction = newt;
+  connect(transaction->watchDog(), SIGNAL(changed(const Watchdog *)), 
+          SLOT(transactionChanged()));
+  transactionChanged();
 }
 
+
+//////////////////////////////////////////////////////////////////////
+ 
+
+TransactionListItem::TransactionListItem(TransactionList * trs) : 
+  transactions(trs), transactionsPtr(NULL) 
+{
+  for(int i = transactions->size(); i > 0; )
+      appendChild(new TransactionItem(&(transactions->operator[](--i))));
+  connect(transactions->watchDog(), 
+          SIGNAL(attributeChanged(const Watchdog *, const QString &)),
+          SLOT(onAttributeChanged(const Watchdog *, const QString &)));
+
+  connect(transactions->watchDog(), 
+          SIGNAL(objectInserted(const Watchdog *, int, int)),
+          SLOT(onObjectInserted(const Watchdog *, int, int)));
+
+  connect(transactions->watchDog(), 
+          SIGNAL(objectRemoved(const Watchdog *, int, int)),
+          SLOT(onObjectRemoved(const Watchdog *, int, int)));
+
+}
+
+TransactionListItem::TransactionListItem(TransactionPtrList * ptr) : 
+  transactions(NULL), transactionsPtr(ptr)
+{
+  for(int i = 0; i < transactionsPtr->size(); i++ )
+    appendChild(new TransactionItem(transactionsPtr->value(i)));
+}
+
+QVariant TransactionListItem::data(int column, int role) const
+{
+    return QVariant();
+}
+
+Transaction * TransactionListItem::indexedTransaction(int index) const
+{
+  TransactionItem * it = dynamic_cast<TransactionItem *>(children[index]);
+  if(it)
+    return it->getTransaction();
+  return NULL;
+}
+
+
+
+QVariant TransactionListItem::headerData(int section, 
+                                         Qt::Orientation /*orientation*/, 
+                                         int role) const
+{
+  if(role == Qt::DisplayRole) {
+    switch(section) {
+    case AccountModel::DateColumn: return QVariant(tr("Date"));
+    case AccountModel::AmountColumn: return QVariant(tr("Amount"));
+    case AccountModel::BalanceColumn: return QVariant(tr("Balance"));
+    case AccountModel::NameColumn: return QVariant(tr("Name"));
+    case AccountModel::LinksColumn: return QVariant(tr("Links"));
+    case AccountModel::MemoColumn: return QVariant(tr("Memo"));
+    case AccountModel::TagsColumn: return QVariant(tr("Tags"));
+    case AccountModel::CategoryColumn: return QVariant(tr("Category"));
+    default:
+      return QVariant();
+    }
+  }
+  else
+    return QVariant();
+}
+
+
+void TransactionListItem::onAttributeChanged(const Watchdog * wd, 
+                                             const QString &name)
+{
+  if(name == "all") {
+    // All the members were probably swapped, so we'll ensure the
+    // transactions pointers are matching
+
+    /// @todo assert that the source's size and the current number of
+    /// children are the same
+    int sz = transactions->size();
+    for(int i = 0; i < sz; i++) {
+      TransactionItem * it = dynamic_cast<TransactionItem *>(childAt(i));
+      if(!it) {
+        QTextStream o(stdout);
+        o << "Null pointer " << endl;
+        continue;               // But shouldn't happen
+      }
+      it->changeTransaction(&(transactions->operator[](sz - 1 - i)));
+    }
+    
+  }
+}
+
+void TransactionListItem::onObjectInserted(const Watchdog * wd, int at, int nb)
+{
+  int na = children.size() - at - 1;
+  emit(rowsWillChange(this, at, nb));
+  for(int i = nb - 1; i >= 0 ; i--)
+    insertChild(na, new TransactionItem(&(transactions->
+                                          operator[](at + nb - i - 1))));
+  emit(rowsChanged(this));
+}
+
+void TransactionListItem::onObjectRemoved(const Watchdog * wd, int at, int nb)
+{
+}
+
+Account * TransactionListItem::account() const
+{
+  if(transactions && transactions->size() > 0)
+    return transactions->value(0).account;
+  if(transactionsPtr && transactionsPtr->size() > 0)
+    return transactionsPtr->value(0)->account;
+  return NULL;
+}
+
+
+//////////////////////////////////////////////////////////////////////
+
+const QIcon & AccountModel::statusIcon(const QString & status)
+{
+  if(! statusIcons.contains(status)) {
+    if(QFile::exists("icons:accountmodel-" + status + ".png"))
+      statusIcons[status] = QIcon("icons:accountmodel-" + status + ".png");
+    else
+      statusIcons[status] = QIcon(QPixmap(16,16));
+  }
+  return statusIcons[status];
+}
+
+AccountModel::AccountModel(TransactionList * t) :
+  OOModel(NULL), transactions(t), transactionsPtr(NULL)
+{
+  setRoot(new TransactionListItem(transactions));
+}
+
+AccountModel::AccountModel(TransactionPtrList * t) :
+  OOModel(NULL), transactions(NULL), transactionsPtr(t)
+{
+  setRoot(new TransactionListItem(transactionsPtr));
+}
+
+Account * AccountModel::account() const
+{
+
+  TransactionListItem * it = rootItem();
+  if(it)
+    return it->account();
+  return NULL;
+}
+
+QModelIndex AccountModel::index(Transaction * transaction)
+{
+  return QModelIndex();
+}
+
+TransactionListItem * AccountModel::rootItem() const
+{
+  return dynamic_cast<TransactionListItem *>(root);
+}
+
+Transaction * AccountModel::indexedTransaction(QModelIndex index) const
+{
+  TransactionItem * it = 
+    dynamic_cast<TransactionItem *>(item(index));
+  if(it)
+    return it->getTransaction();
+  return NULL;
+}
 
 ///////////////////////////////////////////////////////////////
 

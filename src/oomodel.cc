@@ -130,6 +130,8 @@ OOModel::~OOModel()
 void OOModel::setupRoot(ModelItem * nr)
 {
   root = nr;
+  if(root == NULL)
+    return;
   connect(root, SIGNAL(itemChanged(ModelItem *, int, int)),
           SLOT(onItemChanged(ModelItem *, int, int)));
   connect(root, SIGNAL(rowsChanged(ModelItem *)),
