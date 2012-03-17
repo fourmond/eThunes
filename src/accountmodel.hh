@@ -53,7 +53,16 @@ protected slots:
 
 };
 
-/// ModelItem (sub)child representing a list of transactions.
+/// ModelItem (sub)child representing a list of transactions. All
+/// objects holding one or more transactions should probably come from
+/// this ? 
+///
+/// @todo Come up with a child of that holding month-based lists of
+/// transactions ?
+///
+/// @todo I will have a whole mess to cleanup when I find out that
+/// actually it is not Transaction that I'm after, but the simpler
+/// parent version !
 class TransactionListItem : public FixedChildrenModelItem {
   Q_OBJECT;
 
@@ -73,9 +82,10 @@ public:
   /// found)
   Account * account() const;
 
-
-  /// Returns the transaction pointed at by the numbered child
-  Transaction * indexedTransaction(int index) const;
+  /// Looks for a given transaction, and returns its parent object and
+  /// the number of the child as a pair object. The parent is NULL and
+  /// the index -1 if the transaction wasn't found.
+  TransactionItem * findTransaction(const Transaction * tr);
 
 protected slots:
   void onAttributeChanged(const Watchdog * wd, const QString &name);

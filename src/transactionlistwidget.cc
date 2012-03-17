@@ -123,8 +123,9 @@ TransactionListWidget::~TransactionListWidget()
 
 void TransactionListWidget::showTransaction(Transaction * transaction)
 {
-  /// @todo !!!
-  // view->setCurrentIndex(model->index(transaction));
+  QModelIndex idx = model->index(transaction);
+  if(idx.isValid())
+    view->setCurrentIndex(idx);
 }
 
 int TransactionListWidget::naturalWidth() const

@@ -211,14 +211,6 @@ QVariant TransactionListItem::data(int column, int role) const
     return QVariant();
 }
 
-Transaction * TransactionListItem::indexedTransaction(int index) const
-{
-  TransactionItem * it = dynamic_cast<TransactionItem *>(children[index]);
-  if(it)
-    return it->getTransaction();
-  return NULL;
-}
-
 
 
 QVariant TransactionListItem::headerData(int section, 
@@ -291,6 +283,32 @@ Account * TransactionListItem::account() const
 }
 
 
+/// @todo This function can probably move one degree of abstraction
+/// higher.
+TransactionItem * TransactionListItem::findTransaction(const Transaction * tr)
+{
+  for(int i = 0; i < children.size(); i++) {
+    ModelItem * item = children[i];
+    TransactionItem * ti = dynamic_cast<TransactionItem *>(item);
+    if(ti) {
+      if(ti->getTransaction() == tr)
+        return ti;
+      else
+        continue;
+    }
+
+    TransactionListItem * til = dynamic_cast<TransactionListItem *>(item);
+    if(til) {
+      TransactionItem * ti = til->findTransaction(tr);
+      if(ti)
+        return ti;
+    }
+  }
+  return NULL;
+}
+
+
+
 //////////////////////////////////////////////////////////////////////
 
 const QIcon & AccountModel::statusIcon(const QString & status)
@@ -327,6 +345,9 @@ Account * AccountModel::account() const
 
 QModelIndex AccountModel::index(Transaction * transaction)
 {
+  TransactionItem * it = rootItem()->findTransaction(transaction);
+  if(it)
+    return indexForItem(it);
   return QModelIndex();
 }
 
