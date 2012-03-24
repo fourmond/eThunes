@@ -32,26 +32,142 @@
 class Wallet;
 class Account;
 
+class Transaction;
+
+/// This reprensents an atomic transaction, ie what is left after you
+/// split a Transaction into several sub-transactions. 
+class AtomicTransaction : public Linkable {
+protected:
+  /// The amount of the transation, in cents
+  int amount;
+
+  /// The category
+  Category * category;
+
+  /// The list of tags.
+  TagList tags;
+
+public:
+
+  /// The transaction this one is derived from. If not NULL, then this
+  /// is a sub-transaction.
+  Transaction * baseTransaction;
+
+
+  AtomicTransaction();
+
+  /// Returns the Account associated to the AtomicTransaction, or NULL
+  /// if there isn't.
+  virtual Account * getAccount() const;
+
+  /// \name Accessors
+  ///
+  /// Returns the various attributes linked to the
+  /// AtomicTransaction. Most of them are derived from the
+  /// baseTransaction.
+  ///
+  /// @{
+
+
+  /// Returns the list of tags, formatted as in TagList::toString.
+  QString tagString() const {
+    return tags.toString();
+  };
+
+  /// Sets the tag list, from a comma-separated string. The wallet is
+  /// necessary.
+  void setTagList(const QString & str, Wallet * wallet = NULL);
+
+  /// Clears the given tag
+  void clearTag(Tag * t) {
+    tags.clearTag(t);
+  }; 
+
+  /// Sets the given tag
+  void setTag(Tag * t) {
+    tags.setTag(t);
+  }; 
+
+  /// Sets the category from the given String. If wallet is NULL, it
+  /// is taken to be account->wallet, which shouldn't be NULL.
+  void setCategoryFromName(const QString & str, Wallet * wallet = NULL);
+
+  /// Returns the full name of the Category, suitable for saving, or
+  /// an empty string when there isn't a category.
+  QString categoryName() const ;
+
+  /// Returns the category.
+  Category * getCategory() const {
+    return category;
+  };
+
+  /// sets the category.
+  void setCategory(Category * c) {
+    setAttribute(category, c, "category");
+  };
+
+  /// Returns the amount of the transaction. To be more precise, it is
+  /// the amount that matches the Category and the Tag. For splitted
+  /// transactions, this will only correspond to the difference
+  /// between the subtransactions and this one.
+  virtual int getAmount() const {
+    return amount;
+  };
+
+  virtual int getTotalAmount() const {
+    return amount;
+  };
+
+  virtual QString getCheckNumber() const;
+
+  /// Returns the date
+  virtual QDate getDate() const;
+
+  /// Returns the name of the transaction.
+  virtual QString getName() const;
+
+  /// Returns the memo.
+  virtual QString getMemo() const;
+  /// @}
+
+  virtual SerializationAccessor * serializationAccessor();
+
+  /// Fills in a AttributeHash with the Transaction
+  /// information. Mostly useful for feeding the data to interpreted
+  /// scripts.
+  AttributeHash toHash() const;
+
+public:
+
+  virtual QString typeName() const {
+    return "transaction";
+  };
+
+  virtual QString publicTypeName() const {
+    return QObject::tr("Transaction");
+  };
+
+  virtual void followLink();
+
+private:
+
+  /// Same as setTagList, but using the currently serialized wallet.
+  void setTagListPrivate(const QString & str);
+
+  /// Same as setCategoryFromName, but using the currently serialized
+  /// wallet.
+  void setCategoryFromNamePrivate(const QString & str);
+
+};
+
 /// Represents one transaction in a bank account.
-/// Members are public for ease of use.
 ///
-/// \todo We are missing several attributes:
-///
-/// \li first, it would be interesting to add tags in addition to
-///   categories, to be able to estimate the cost of something in a
-///   way orthogonal to caterogies. Typical use: "Trip to Venice" ?
-///
-/// \li second, we need means to "subdivise" an atomic transaction into
-///   several parts, because it often is the case that one bill falls
-///   into several categories (this could be modified without
-///   unlocking)
-///
-/// \li third, it would be interesting to save somewhere the "origin" of
-///   the transaction: does it come straight from the bank or has it
-///   been entered manually (or modified manually) ? This would allow
-///   to "enter" transactions manually and then check them against web
-///   download ?
-class Transaction : public Linkable {
+/// \todo it would be interesting to save somewhere the "origin" of
+/// the transaction: does it come straight from the bank or has it
+/// been entered manually (or modified manually) ? This would allow to
+/// "enter" transactions manually and then check them against web
+/// download ?
+class Transaction : public AtomicTransaction {
 public:
 
   /// \name Global functions
@@ -110,9 +226,6 @@ protected:
   ///
   /// @{
 
-  /// The amount of the transation, in cents
-  int amount;
-
   /// The name of the transaction
   QString name;
 
@@ -129,25 +242,18 @@ protected:
 
   /// \name User-defined attributes
   ///
-  /// Along with their accessors.
-  /// 
   /// @{
 
   /// Whether the transaction is locked for manual modification or not.
   /// By default, they are all locked.
+  ///
+  /// @todo This currently isn't used.
   bool locked;
-
-  /// The main category. NULL means no category.
-  Category * category;
-
 
   /// Whether the transaction has been added recently or not (when the
   /// user has already seen it). This flag should be set for every
   /// data import.
   bool recent;
-
-  /// The list of tags.
-  TagList tags;
 
   /// @}
 
@@ -164,32 +270,22 @@ protected:
 
   /// @}
 
-  /// We make OFXImport a friend class that
+  /// We make OFXImport a friend class.
   friend class OFXImport;
 
 public:
 
+  /// The list of all the sub transactions but the one derived from
+  /// this one (ie, to complement)
+  ///
+  /// @todo Do we need this to be protected ?
+  QList<AtomicTransaction> subTransactions;
+
+
   /// \name Accessors
   /// @{ 
-  /// Returns the list of tags, formatted as in TagList::toString.
-  QString tagString() const {
-    return tags.toString();
-  };
 
-  /// Sets the tag list, from a comma-separated string. The wallet is
-  /// necessary.
-  void setTagList(const QString & str, Wallet * wallet = NULL);
-
-  /// Clears the given tag
-  void clearTag(Tag * t) {
-    tags.clearTag(t);
-  }; 
-
-  /// Sets the given tag
-  void setTag(Tag * t) {
-    tags.setTag(t);
-  }; 
-
+  virtual int getAmount() const;
 
   /// Sets the "recent" status of the Transaction.
   void setRecent(bool rec = true) {
@@ -217,38 +313,15 @@ public:
   };
 
 
-  /// Sets the category from the given String. If wallet is NULL, it
-  /// is taken to be account->wallet, which shouldn't be NULL.
-  void setCategoryFromName(const QString & str, Wallet * wallet = NULL);
-
-  /// Returns the full name of the Category, suitable for saving, or
-  /// an empty string when there isn't a category.
-  QString categoryName() const ;
-
-  /// Returns the category.
-  Category * getCategory() const {
-    return category;
-  };
-
-  /// sets the category.
-  void setCategory(Category * c) {
-    setAttribute(category, c, "category");
-  };
-
   /// Returns the string representing the check number, or the empty
   /// string if the Transaction doesn't originate from a check.
-  const QString & getCheckNumber() const {
+  virtual QString getCheckNumber() const {
     return checkNumber;
   };
 
   /// Returns the date
-  const QDate & getDate() const {
+  virtual QDate getDate() const {
     return date;
-  };
-
-  /// Returns the amount of the transaction.
-  int getAmount() const {
-    return amount;
   };
 
   /// Returns the amount of the transaction as a string.
@@ -257,17 +330,17 @@ public:
   };
 
   /// Returns the name of the transaction.
-  const QString &getName() const {
+  virtual QString getName() const {
     return name;
   };
 
   /// Returns the memo. For display purposes, you'd rather want
   /// getDescription().
-  const QString & getMemo() const {
+  virtual QString getMemo() const {
     return memo;
   };
 
-  /// Returns a string made either of the memo or
+  /// Returns a string made either of the memo or the check number.
   QString getDescription() const {
     if(! memo.isEmpty()) 
       return memo;
@@ -286,8 +359,12 @@ public:
 
   /// The account of the transaction. NULL means no account, ie the
   /// transaction is invalid.
+  ///
+  /// @todo This probably should be turned protected with appropriate
+  /// accessors.
   Account * account;
 
+  virtual Account * getAccount() const;
   
   /// @}
 
@@ -312,15 +389,12 @@ public:
   bool operator==(const Transaction & t) const;
 
   virtual SerializationAccessor * serializationAccessor();
+  virtual void prepareSerializationRead();
+  virtual void finishedSerializationRead();
 
   /// Compares the checkNumber of two transactions (to use for qSort,
   /// for instance)
   static bool compareCheckNumbers(Transaction * a, Transaction * b);
-
-  /// Fills in a AttributeHash with the Transaction
-  /// information. Mostly useful for feeding the data to interpreted
-  /// scripts.
-  AttributeHash toHash() const;
 
   /// Returns a string that identifies uniquely a transaction within
   /// the account it's in.
@@ -330,26 +404,7 @@ public:
 
   virtual QString uniqueID() const;
 
-  virtual QString typeName() const {
-    return "transaction";
-  };
 
-  virtual QString publicTypeName() const {
-    return QObject::tr("Transaction");
-  };
-
-  virtual void followLink();
-
-
-private:
-
-  /// Same as setTagList, but using the currently serialized wallet.
-  void setTagListPrivate(const QString & str);
-
-  /// Same as setCategoryFromName, but using the currently serialized
-  /// wallet.
-  void setCategoryFromNamePrivate(const QString & str);
-  
 
 };
 

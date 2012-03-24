@@ -42,13 +42,17 @@ void Account::followLink()
 }
 
 
-void Transaction::followLink()
+void AtomicTransaction::followLink()
 {
+  Account * account = getAccount();
   if(! account)
     return;                     /// @todo Should log error
   AccountPage * acPage =
     AccountPage::getAccountPage(account);
-  acPage->showTransaction(this);
+  /// @todo CHange that !
+  Transaction * t = dynamic_cast<Transaction*>(this);
+  if(t)
+    acPage->showTransaction(t);
   NavigationWidget::gotoPage(acPage);
 }
 

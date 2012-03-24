@@ -22,6 +22,126 @@
 #include <wallet.hh>
 
 
+AtomicTransaction::AtomicTransaction() :
+  amount(0), category(NULL), baseTransaction(NULL)
+{
+  watchChild(&tags, "tags");
+}
+
+SerializationAccessor * AtomicTransaction::serializationAccessor()
+{
+  SerializationAccessor * ac = new SerializationAccessor(this);
+  ac->addScalarAttribute("amount", &amount);
+  ac->addAccessorsAttribute("category",this, 
+                            &Transaction::setCategoryFromNamePrivate, 
+                            &Transaction::categoryName);
+  ac->addAccessorsAttribute("tags",this, 
+                            &Transaction::setTagListPrivate, 
+                            &Transaction::tagString);
+  addLinkAttributes(ac);
+  return ac;
+}
+
+Account * AtomicTransaction::getAccount() const
+{
+  if(baseTransaction)
+    return baseTransaction->getAccount();
+  return NULL;
+}
+
+
+QDate AtomicTransaction::getDate() const
+{
+  if(baseTransaction)
+    return baseTransaction->getDate();
+  return QDate();
+}
+
+
+QString AtomicTransaction::getName() const
+{
+  if(baseTransaction)
+    return baseTransaction->getName();
+  return QString();
+}
+
+QString AtomicTransaction::getMemo() const
+{
+  if(baseTransaction)
+    return baseTransaction->getMemo();
+  return QString();
+}
+
+QString AtomicTransaction::getCheckNumber() const
+{
+  if(baseTransaction)
+    return baseTransaction->getCheckNumber();
+  return QString();
+}
+
+QString AtomicTransaction::categoryName() const
+{
+  if(category)
+    return category->fullName();
+  return QString();
+}
+
+void AtomicTransaction::setCategoryFromName(const QString & str, Wallet * w)
+{
+  if(! w) {
+    Account * account = getAccount();
+    if(! account || ! account->wallet) {
+      QTextStream e(stderr);
+      e <<  "We have serious problems setting a Category from a Name: "
+        << str << endl;
+      return;
+    }
+    w = account->wallet;
+  }
+  // We create by default ?
+  setCategory(w->categories.namedSubCategory(str, true));
+}
+
+
+void AtomicTransaction::setTagListPrivate(const QString & str) 
+{
+  setTagList(str, Wallet::walletCurrentlyRead);
+}
+
+void AtomicTransaction::setCategoryFromNamePrivate(const QString & str) 
+{
+  setCategoryFromName(str, Wallet::walletCurrentlyRead);
+}
+
+void AtomicTransaction::setTagList(const QString & str, Wallet * w)
+{
+  if(! w) {
+    Account * account = getAccount();
+    if(! account || ! account->wallet) {
+      fprintf(stderr, "We have serious problems setting a "
+	      "TagList from a Name\n");
+      return;
+    }
+    w = account->wallet;
+  }
+
+  tags.fromString(str, w);
+}
+
+AttributeHash AtomicTransaction::toHash() const
+{
+  AttributeHash retval;
+  retval["amount"] = getAmount();
+  retval["date"] = getDate();
+  retval["memo"] = getMemo();
+  retval["name"] = getName();
+
+  return retval;
+}
+
+
+//////////////////////////////////////////////////////////////////////
+
 void Transaction::dump(QIODevice * dev)
 {
   QTextStream stream(dev);
@@ -46,15 +166,12 @@ void Transaction::dump(QTextStream & stream)
 int Transaction::formatAmountModulo = 0;
 
 Transaction::Transaction() :
-  amount(0),
   checkNumber(""),
   locked(true),
   recent(false),
   balanceMeaningful(false),
   account(NULL)
 {
-  category = NULL;
-  watchChild(&tags, "tags");
 }
 
 bool Transaction::operator<(const Transaction & t) const
@@ -84,62 +201,39 @@ SerializationAccessor * Transaction::serializationAccessor()
   /// @todo it may be nice to implement a << -chained initialization,
   /// but that won't work really well as addAttribute needs
   /// two parameters ;-)...
-  SerializationAccessor * ac = new SerializationAccessor(this);
-  ac->addScalarAttribute("amount", &amount);
+  SerializationAccessor * ac = AtomicTransaction::serializationAccessor();
   ac->addScalarAttribute("date", &date);
   ac->addScalarAttribute("name", &name);
   ac->addScalarAttribute("memo", &memo);
   ac->addScalarAttribute("check-number", &checkNumber);
-  ac->addAccessorsAttribute("category",this, 
-                            &Transaction::setCategoryFromNamePrivate, 
-                            &Transaction::categoryName);
-  ac->addAccessorsAttribute("tags",this, 
-                            &Transaction::setTagListPrivate, 
-                            &Transaction::tagString);
-
-  addLinkAttributes(ac);
+  ac->addListAttribute("sub", &subTransactions);
+  
   return ac;
 }
 
-QString Transaction::categoryName() const
+void Transaction::prepareSerializationRead()
 {
-  if(category)
-    return category->fullName();
-  return QString();
 }
 
-void Transaction::setCategoryFromName(const QString & str, Wallet * w)
+void Transaction::finishedSerializationRead()
 {
-  if(! w) {
-    if(! account || ! account->wallet) {
-      QTextStream e(stderr);
-      e <<  "We have serious problems setting a Category from a Name: "
-        << str << endl;
-      return;
-    }
-    w = account->wallet;
-  }
-  // We create by default ?
-  setCategory(w->categories.namedSubCategory(str, true));
+  for(int i = 0; i < subTransactions.size(); i++)
+    subTransactions[i].baseTransaction = this;
 }
 
+int Transaction::getAmount() const
+{
+  int a = amount;
+  for(int i = 0; i < subTransactions.size(); i++)
+    a -= subTransactions[i].getAmount();
+  return a;
+}
 
 bool Transaction::compareCheckNumbers(Transaction * a, Transaction * b)
 {
   return a->checkNumber < b->checkNumber;
 }
 
-
-AttributeHash Transaction::toHash() const
-{
-  AttributeHash retval;
-  retval["amount"] = amount;
-  retval["date"] = date;
-  retval["memo"] = memo;
-  retval["name"] = name;
-
-  return retval;
-}
 
 QString Transaction::transactionID() const
 {
@@ -153,26 +247,7 @@ QString Transaction::uniqueID() const
   return account->accountID() + "##" + transactionID();
 }
 
-void Transaction::setTagListPrivate(const QString & str) 
+Account * Transaction::getAccount() const
 {
-  setTagList(str, Wallet::walletCurrentlyRead);
-}
-
-void Transaction::setCategoryFromNamePrivate(const QString & str) 
-{
-  setCategoryFromName(str, Wallet::walletCurrentlyRead);
-}
-
-void Transaction::setTagList(const QString & str, Wallet * w)
-{
-  if(! w) {
-    if(! account || ! account->wallet) {
-      fprintf(stderr, "We have serious problems setting a "
-	      "TagList from a Name\n");
-      return;
-    }
-    w = account->wallet;
-  }
-
-  tags.fromString(str, w);
+  return account;
 }
