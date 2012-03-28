@@ -1,7 +1,7 @@
 /**
     \file transaction.hh
-    Transaction, and transaction lists
-    Copyright 2008,2010 by Vincent Fourmond
+    Transaction and sub transactions
+    Copyright 2008,2010,2012 by Vincent Fourmond
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@
 #include <tag.hh>
 #include <attributehash.hh>
 #include <linkable.hh>
-
+#include <watchablecontainers.hh>
 
 // Necessary classes
 class Wallet;
@@ -279,7 +279,7 @@ public:
   /// this one (ie, to complement)
   ///
   /// @todo Do we need this to be protected ?
-  QList<AtomicTransaction> subTransactions;
+  WatchableList<AtomicTransaction> subTransactions;
 
 
   /// \name Accessors
@@ -398,14 +398,13 @@ public:
 
   /// Returns a string that identifies uniquely a transaction within
   /// the account it's in.
+  ///
+  /// @todo I'm unsure this is still used. Probably should be removed ?
   QString transactionID() const;
 
-  // Linkable functions
-
-  virtual QString uniqueID() const;
-
-
-
+  /// Returns all the sub transactions (ie one more than there are
+  /// elements in subTransactions)
+  QList<AtomicTransaction*> allSubTransactions();
 };
 
 #endif

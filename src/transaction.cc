@@ -172,6 +172,7 @@ Transaction::Transaction() :
   balanceMeaningful(false),
   account(NULL)
 {
+  watchChild(&subTransactions, "sub-transactions");
 }
 
 bool Transaction::operator<(const Transaction & t) const
@@ -241,13 +242,16 @@ QString Transaction::transactionID() const
     formatString("%{date%date:dd/MM/yy}##%{amount%A}##%{memo}##%{name}");
 }
 
-/// @todo This should be replaced by a unique ID support for all
-QString Transaction::uniqueID() const
-{
-  return account->accountID() + "##" + transactionID();
-}
-
 Account * Transaction::getAccount() const
 {
   return account;
+}
+
+QList<AtomicTransaction*> Transaction::allSubTransactions()
+{
+  QList<AtomicTransaction *> ret;
+  ret << this;
+  for(int i = 0; i < subTransactions.size(); i++)
+    ret << &(subTransactions[i]);
+  return ret;
 }

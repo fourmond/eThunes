@@ -103,6 +103,12 @@ protected slots:
   /// To be fired up from the context menu.
   void contextMenuActionFired(QAction * action);
 
+  void onItemExpanded(const QModelIndex & idx);
+
+  /// This slot ensures that all Link "editors" are created where
+  /// needed
+  void ensureEditorsOn(const QModelIndex & tl, const QModelIndex & bl);
+
 };
 
 #endif

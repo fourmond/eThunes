@@ -94,26 +94,28 @@ void TransactionListWidget::setupTreeView()
   // Multiple selection
   view->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
-  connect(view,SIGNAL(customContextMenuRequested(const QPoint &)),
+  connect(view, SIGNAL(customContextMenuRequested(const QPoint &)),
 	  SLOT(fireUpContextMenu(const QPoint &)));
   view->setContextMenuPolicy(Qt::CustomContextMenu);
 
+  connect(view, SIGNAL(expanded(const QModelIndex &)),
+	  SLOT(onItemExpanded(const QModelIndex &)));
+
+  connect(model, 
+          SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)),
+          SLOT(ensureEditorsOn(const QModelIndex &, const QModelIndex &)));
 
 
-  /// \todo We need to intercept the signals from the model saying
-  /// columns have been inserted to ensure all have their persistent
-  /// editor opened.
-  ///
-  /// @todo This simply won't work right.
-  for(int i = 0; i < model->rowCount(root); i++)
-    view->openPersistentEditor(root.child(i, AccountModel::LinksColumn));
+
 
   /// This is a must.
   view->setAlternatingRowColors(true);
 
+  onItemExpanded(root);
   // We make sure the columns have the right size.
   for(int i = 0; i < AccountModel::LastColumn; i++)
     view->resizeColumnToContents(i);
+
 }
 
 TransactionListWidget::~TransactionListWidget()
@@ -290,4 +292,28 @@ void TransactionListWidget::showBalance()
 void TransactionListWidget::hideBalance() 
 {
   view->hideColumn(AccountModel::BalanceColumn);
+}
+
+void TransactionListWidget::onItemExpanded(const QModelIndex & idx)
+{
+  if(idx.isValid()) {
+    // Make sure the persistent editors are opened
+    int rc = idx.model()->rowCount(idx);
+    ensureEditorsOn(idx.child(0, AccountModel::LinksColumn),
+                    idx.child(rc-1, AccountModel::LinksColumn));
+  }
+}
+
+void TransactionListWidget::ensureEditorsOn(const QModelIndex & tl, 
+                                            const QModelIndex & bl)
+{
+  if(! (tl.isValid() && bl.isValid()))
+    return;                     // Doesn't make sense.
+  QModelIndex idx = tl.sibling(tl.row(), AccountModel::LinksColumn);
+  while(idx.isValid() && (idx < bl || idx == bl)) {
+    QString s = idx.data(Qt::EditRole).toString();
+    if(! s.isEmpty())
+      view->openPersistentEditor(idx);
+    idx = idx.sibling(idx.row() + 1, AccountModel::LinksColumn);
+  }
 }
