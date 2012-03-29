@@ -70,14 +70,18 @@ void LoanPage::updatePage()
     arg(plugin->getName());
 
   int totalDebt = 0;
+  int totalPaid = 0;
 
   for(int i = 0; i < plugin->loans.size(); i++) {
     str += plugin->loans[i].html();
     totalDebt += plugin->loans[i].amountLeft;
+    totalPaid += plugin->loans[i].totalPaid;
   }
 
   str += tr("<p><b>Total debt:</b> %1<br>").
     arg(Transaction::formatAmount(totalDebt));
+  str += tr("<b>Total paid:</b> %1<br>").
+    arg(Transaction::formatAmount(totalPaid));
   
   str += HTTarget::linkToMember("(add loan)", this, &LoanPage::addLoan);
 
