@@ -22,12 +22,14 @@
 HTLabel::HTLabel(QWidget * parent) : QLabel(parent) {
   connect(this, SIGNAL(linkActivated(const QString &)),
           SLOT(onLinkClicked(const QString &)));
+  setWordWrap(true);
 }
 
 HTLabel::HTLabel(const QString & txt, QWidget * parent) : QLabel(parent) {
   connect(this, SIGNAL(linkActivated(const QString &)),
           SLOT(onLinkClicked(const QString &)));
   setText(txt);
+  setWordWrap(true);
 }
 
 
