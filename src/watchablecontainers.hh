@@ -156,7 +156,7 @@ public:
 
   T & operator[](int i) {
     /// The target is Watchable, it'll handle itself the changes.
-    return WatchedList<T>::unwatchedValue(i);
+    return this->unwatchedValue(i);
   };
 
   const T & operator[](int i) const {
@@ -165,7 +165,7 @@ public:
 
   virtual void append(const T& d) {
     WatchedList<T>::append(d);
-    watchChild(&unwatchedValue(WatchedList<T>::size()-1), "members");
+    this->watchChild(&this->unwatchedValue(WatchedList<T>::size()-1), "members");
   };
 
   void append(const WatchableList& list) {
@@ -178,7 +178,7 @@ public:
   void watchAll() {
     int size = WatchedList<T>::size();
     for(int i = 0; i < size; i++)
-      watchChild(&WatchedList<T>::unwatchedValue(i), "members");
+      this->watchChild(&this->unwatchedValue(i), "members");
   };
 
 };
@@ -205,7 +205,7 @@ public:
 
   virtual void append(T * d) {
     WatchedList<T*>::append(d);
-    watchChild(unwatchedValue(WatchedList<T*>::size()-1), "members");
+    this->watchChild(this->unwatchedValue(WatchedList<T*>::size()-1), "members");
   };
 
   void append(const WatchablePtrList& list) {
@@ -218,7 +218,7 @@ public:
   void watchAll() {
     int size = WatchedList<T*>::size();
     for(int i = 0; i < size; i++)
-      watchChild(WatchedList<T*>::unwatchedValue(i), "members");
+      this->watchChild(WatchedList<T*>::unwatchedValue(i), "members");
   };
 
 };
