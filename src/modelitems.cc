@@ -58,6 +58,11 @@ QVariant ModelItem::headerData(int , Qt::Orientation, int) const
   return QVariant();            // No header data by default.
 }
 
+bool ModelItem::popupContextMenu(const QPoint & /*pos*/)
+{
+  return false;
+}
+
 //////////////////////////////////////////////////////////////////////
 
 FixedChildrenModelItem::FixedChildrenModelItem() :

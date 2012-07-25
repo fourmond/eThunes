@@ -77,6 +77,12 @@ public:
   virtual QVariant headerData(int column, Qt::Orientation orientation, 
                               int role) const;
 
+  /// Pops up a context menu for the given item. Returns false if no
+  /// context menu is available for that item.
+  ///
+  /// \a pos is to be understood in global coordinates.
+  virtual bool popupContextMenu(const QPoint & pos);
+
 signals:
   /// Emitted whenever this or a child item change state.
   void itemChanged(ModelItem * item, int left, int right);

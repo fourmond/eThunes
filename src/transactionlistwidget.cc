@@ -115,7 +115,6 @@ void TransactionListWidget::setupTreeView()
   // We make sure the columns have the right size.
   for(int i = 0; i < AccountModel::LastColumn; i++)
     view->resizeColumnToContents(i);
-
 }
 
 TransactionListWidget::~TransactionListWidget()
