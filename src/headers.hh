@@ -89,6 +89,7 @@
 
 // Templates
 #include <QHash>
+#include <QCache>
 #include <QMultiHash>
 #include <QList>
 

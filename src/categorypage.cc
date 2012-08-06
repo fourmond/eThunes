@@ -18,6 +18,7 @@
 
 #include <headers.hh>
 #include <categorypage.hh>
+#include <statisticsmodel.hh>
 #include <transactionlistdialog.hh>
 
 CategoryPage::CategoryPage(Wallet * w) : wallet(w)

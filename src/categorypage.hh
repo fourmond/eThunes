@@ -22,7 +22,8 @@
 
 #include <wallet.hh>
 #include <navigationpage.hh>
-#include <categorymodel.hh>
+
+class CategoryModel;
 
 /// This NavigationPage displays various informations about
 /// categories of a Wallet.
