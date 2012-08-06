@@ -131,9 +131,15 @@ public:
   /// Returns the Transaction objects of the account that belong to
   /// the given Category, or possibly to one of its descendants.
   ///
-  /// @todo make that a TransactionPtrList one day ?
+  /// @todo Hmmm... This will have to be turned into a list of Atomic
+  /// transactions ? (although that doesn't matter so much as we're
+  /// returning pointers )
   QList<Transaction *> categoryTransactions(const Category * category,
 					    bool parents = true);
+
+  /// Returns the Transaction objects of the account that belong to
+  /// the given Category, or possibly to one of its descendants.
+  TransactionPtrList taggedTransactions(const Tag * tag);
 
 
   /// Returns a list of checks (for which checkNumber is not empty).

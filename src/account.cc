@@ -96,6 +96,17 @@ QList<Transaction *> Account::categoryTransactions(const Category * category,
   return found;
 }
 
+TransactionPtrList Account::taggedTransactions(const Tag * tag)
+{
+  TransactionPtrList lst;
+  for(int i = 0; i < transactions.size(); i++) {
+    Transaction * t = &transactions[i];
+    if(t->hasTag(tag))
+      lst.append(t);
+  }
+  return lst;
+}
+
 int Account::firstMonthID() const
 {
   if(transactions.size() > 0)

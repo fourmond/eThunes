@@ -1,7 +1,7 @@
 /**
     \file wallet.hh
     Class representing a collection of accounts.
-    Copyright 2010 by Vincent Fourmond
+    Copyright 2010, 2012 by Vincent Fourmond
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -61,7 +61,7 @@ public:
   /// Runs the filters on all the account transactions
   void runFilters();
 
-  /// \name Category-based functions
+  /// \name Category- and tag-related functions
   ///
   /// @{
 
@@ -74,10 +74,15 @@ public:
   Tag * namedTag(const QString &name);
 
   /// The list of Transaction objects that belong to one category. If
-  /// \p parents is true (default), then we also look for category in
-  /// the transactions ancestry.
+  /// \p parents is true (default), then we also look for children of
+  /// the category.
   TransactionPtrList categoryTransactions(const Category * category,
 					  bool parents = true);
+
+  /// The list of Transaction objects that belong to one category. If
+  /// \p parents is true (default), then we also look for category in
+  /// the transactions ancestry.
+  TransactionPtrList taggedTransactions(const Tag * tag);
 
   /// @}
 

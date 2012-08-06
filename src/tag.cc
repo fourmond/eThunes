@@ -54,6 +54,11 @@ void TagList::clearTag(Tag * t)
     removeAt(i);
 }
 
+bool TagList::hasTag(Tag * t) const
+{
+  return constData().contains(t);
+}
+
 
 Tag * TagHash::namedTag(const QString &name, bool create)
 {

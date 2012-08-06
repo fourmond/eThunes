@@ -88,6 +88,11 @@ public:
     tags.setTag(t);
   }; 
 
+  /// Whether the taglist contains the the given tag
+  bool hasTag(const Tag * t) const {
+    return tags.hasTag(const_cast<Tag*>(t));
+  }; 
+
   /// Sets the category from the given String. If wallet is NULL, it
   /// is taken to be account->wallet, which shouldn't be NULL.
   void setCategoryFromName(const QString & str, Wallet * wallet = NULL);

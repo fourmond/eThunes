@@ -1,6 +1,6 @@
 /*
     wallet.cc: The Wallet class
-    Copyright 2010 by Vincent Fourmond
+    Copyright 2010, 2012 by Vincent Fourmond
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -135,6 +135,14 @@ TransactionPtrList Wallet::categoryTransactions(const Category * category,
   TransactionPtrList vals;
   for(int i = 0; i < accounts.size(); i++)
     vals.append(accounts[i].categoryTransactions(category, parents));
+  return vals;
+}
+
+TransactionPtrList Wallet::taggedTransactions(const Tag * tag)
+{
+  TransactionPtrList vals;
+  for(int i = 0; i < accounts.size(); i++)
+    vals.append(accounts[i].taggedTransactions(tag));
   return vals;
 }
 
