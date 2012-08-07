@@ -62,9 +62,6 @@ public:
 
 public slots:
 
-  /// Updates the page. Mostly useless for now
-  void updateContents();
-
   /// Displays the context menu for tweaking
   void tagsContextMenu(const QPoint & pos);
 

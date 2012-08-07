@@ -33,7 +33,6 @@ TagPage::TagPage(Wallet * w) : wallet(w)
   // view->setRootIsDecorated(false);
   view->setContextMenuPolicy(Qt::CustomContextMenu);
   view->setAlternatingRowColors(true);
-  updateContents();
   connect(view, SIGNAL(customContextMenuRequested(const QPoint &)),
 	  SLOT(tagsContextMenu(const QPoint &)));
 }
@@ -55,27 +54,6 @@ TagPage * TagPage::getTagPage(Wallet * wallet)
   if(! tagPages.contains(wallet))
     tagPages[wallet] = new TagPage(wallet);
   return tagPages[wallet];
-}
-
-void TagPage::updateContents()
-{
-  // // For now, we only display top-leve categories
-  // QString text = "<table><tr><th><strong>" + tr("Tag") + "</strong></th>"
-  //   "<th><strong>" + tr("Total") + "</strong></th></tr>";
-  // QStringList toplevelCategories = wallet->categories.keys();
-  // toplevelCategories.sort();
-  // for(int i = 0; i < toplevelCategories.count(); i++) {
-  //   Tag * c = &(wallet->categories[toplevelCategories[i]]);
-  //   int amount = 0;
-  //   QList<Transaction *> transactions =
-  //     wallet->tagTransactions(c);
-  //   for(int j = 0; j < transactions.size(); j++)
-  //     amount += transactions[j]->amount;
-  //   text += "<tr><td>" + toplevelCategories[i] + "</td><td>" +
-  //     Transaction::formatAmount(amount) + "</td></tr>";
-  // }
-  // text += "</table>";
-  // contents->setText(text);
 }
 
 void TagPage::tagsContextMenu(const QPoint & pos)

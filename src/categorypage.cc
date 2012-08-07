@@ -33,7 +33,6 @@ CategoryPage::CategoryPage(Wallet * w) : wallet(w)
   // view->setRootIsDecorated(false);
   view->setContextMenuPolicy(Qt::CustomContextMenu);
   view->setAlternatingRowColors(true);
-  updateContents();
   connect(view, SIGNAL(customContextMenuRequested(const QPoint &)),
 	  SLOT(categoriesContextMenu(const QPoint &)));
 }
@@ -57,26 +56,6 @@ CategoryPage * CategoryPage::getCategoryPage(Wallet * wallet)
   return categoryPages[wallet];
 }
 
-void CategoryPage::updateContents()
-{
-  // // For now, we only display top-leve categories
-  // QString text = "<table><tr><th><strong>" + tr("Category") + "</strong></th>"
-  //   "<th><strong>" + tr("Total") + "</strong></th></tr>";
-  // QStringList toplevelCategories = wallet->categories.keys();
-  // toplevelCategories.sort();
-  // for(int i = 0; i < toplevelCategories.count(); i++) {
-  //   Category * c = &(wallet->categories[toplevelCategories[i]]);
-  //   int amount = 0;
-  //   QList<Transaction *> transactions =
-  //     wallet->categoryTransactions(c);
-  //   for(int j = 0; j < transactions.size(); j++)
-  //     amount += transactions[j]->amount;
-  //   text += "<tr><td>" + toplevelCategories[i] + "</td><td>" +
-  //     Transaction::formatAmount(amount) + "</td></tr>";
-  // }
-  // text += "</table>";
-  // contents->setText(text);
-}
 
 void CategoryPage::categoriesContextMenu(const QPoint & pos)
 {
