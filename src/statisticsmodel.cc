@@ -242,3 +242,108 @@ QVariant CategoryModel::data(const QModelIndex& index, int role) const
 
 
 
+//////////////////////////////////////////////////////////////////////
+
+TagModel::TagModel(Wallet * w) :
+  wallet(w)
+{
+}
+
+Tag * TagModel::indexedTag(const QModelIndex &index) const
+{
+  return static_cast<Tag *>(index.internalPointer());
+}
+
+TagHash * TagModel::indexedTagHash(const QModelIndex &index) const
+{
+  Tag * c = indexedTag(index);
+  if(c)
+    return NULL;
+  else
+    return &wallet->tags;
+}
+
+TransactionPtrList * TagModel::transactionsForItem(const QModelIndex & idx) const
+{
+  Tag * c = indexedTag(idx);
+  if(! c)
+    return NULL;
+
+  /// @todo Cache never gets invalidated... That's pretty bad ;-)...
+  if(cachedLists.contains(c)) 
+    return cachedLists[c];
+
+  TransactionPtrList * trs = 
+    new TransactionPtrList(wallet->taggedTransactions(c));
+  cachedLists.insert(c, trs);
+  return trs;
+  
+}
+
+
+QModelIndex TagModel::index(int row, int column,
+				 const QModelIndex & parent) const
+{
+  if(parent.isValid()) {
+    TagHash * h = indexedTagHash(parent);
+    if(! h)
+      return QModelIndex();
+
+    QStringList l = h->keys();
+    l.sort();
+    if(row >= l.count())
+      return QModelIndex();
+    return createIndex(row, column,
+		       &(h->operator[](l[row])));
+  }
+  else
+    return createIndex(row, column, (void *)NULL);
+}
+
+QModelIndex TagModel::parent(const QModelIndex & index) const
+{
+  if(index.isValid()) {
+    Tag * t = indexedTag(index);
+    if(t)
+      return createIndex(0,0, (void *)NULL);
+    return QModelIndex();
+  }
+  else
+    return QModelIndex();
+}
+
+int TagModel::rowCount(const QModelIndex & index) const
+{
+  if(index.isValid()) {
+    TagHash * h = indexedTagHash(index);
+    if(h)
+      return h->count();
+    else
+      return 0;
+  }
+  return 0;
+}
+
+QVariant TagModel::data(const QModelIndex& index, int role) const
+{
+  if(index.column() == StatisticsModel::NameColumn) {
+    const Tag *c = indexedTag(index);
+    if(! c)
+      return QVariant();
+    switch(role) {
+    case Qt::DisplayRole:
+      return c->name;
+    case Qt::ForegroundRole:
+      //      return QBrush(c->categoryColor());
+    default:
+      return QVariant();
+    }
+    return QVariant();          // useless but required by g++
+  }
+  else 
+    return StatisticsModel::data(index, role);
+}
+
+
+
+

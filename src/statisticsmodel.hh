@@ -131,4 +131,46 @@ public slots:
 
 };
 
+/////////////////////////////////////////////////////////////////////////
+
+/// Derived class handling specifically tags.
+class TagModel : public StatisticsModel {
+
+  Q_OBJECT;
+
+  /// The Wallet whose categories we'll display.
+  Wallet * wallet;
+
+protected:
+
+
+  /// A cache for the transaction lists
+  mutable QCache<Tag *, TransactionPtrList> cachedLists;
+
+  TagHash * indexedTagHash(const QModelIndex &index) const;
+
+public:
+
+  virtual TransactionPtrList * transactionsForItem(const QModelIndex & idx) const;
+
+  /// Returns the category corresponding to the index, or NULL for
+  /// root/invalid
+  Tag * indexedTag(const QModelIndex &index) const;
+
+  /// The transactions to be displayed.
+  TagModel(Wallet * wallet);
+
+  virtual QModelIndex index(int row, int column,
+			    const QModelIndex & parent = QModelIndex() ) const;
+
+  virtual QModelIndex parent(const QModelIndex&) const;
+
+  virtual int rowCount(const QModelIndex&) const;
+
+  virtual QVariant data(const QModelIndex&, int) const;
+
+public slots:
+
+};
+
 #endif

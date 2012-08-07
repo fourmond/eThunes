@@ -1,6 +1,6 @@
 /*
     walletdw.cc: Implementation of WalletDW
-    Copyright 2010 by Vincent Fourmond
+    Copyright 2010, 2012 by Vincent Fourmond
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
 #include <navigationwidget.hh>
 #include <filterpage.hh>
 #include <categorypage.hh>
+#include <tagpage.hh>
 
 #include <htlabel.hh>
 #include <httarget-templates.hh>
@@ -52,6 +53,11 @@ void WalletDW::showCategoriesPage()
   NavigationWidget::gotoPage(CategoryPage::getCategoryPage(wallet));
 }
 
+void WalletDW::showTagsPage()
+{
+  NavigationWidget::gotoPage(TagPage::getTagPage(wallet));
+}
+
 void WalletDW::updateSummary()
 {
   QString text = tr("<h2>Wallet</h2>");
@@ -60,7 +66,10 @@ void WalletDW::updateSummary()
 
   text += HTTarget::linkToMember(tr("%1 categories").
                                  arg(wallet->categories.categoryCount()),
-                                 this, &WalletDW::showCategoriesPage)
+                                 this, &WalletDW::showCategoriesPage) 
+    + "\n" + HTTarget::linkToMember(tr("%1 tags").
+                                    arg(wallet->tags.count()),
+                                    this, &WalletDW::showTagsPage)
     + "\n" + HTTarget::linkToMember(tr("%1 filters").
                                     arg(wallet->filters.count()),
                                     this, &WalletDW::showFiltersPage)

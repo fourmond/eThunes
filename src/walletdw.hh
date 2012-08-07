@@ -1,7 +1,7 @@
 /**
     \file walletdw.hh
     DashboarWidget for the wallet class
-    Copyright 2010 by Vincent Fourmond
+    Copyright 2010, 2012 by Vincent Fourmond
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -62,8 +62,8 @@ public slots:
 
 protected:
   void showFiltersPage();
-
   void showCategoriesPage();
+  void showTagsPage();
 
 };
 
