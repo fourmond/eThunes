@@ -63,6 +63,13 @@ void TransactionListDialog::displayCategory(Category * category,
 	      tr("Category: %1").arg(category->fullName()));
 }
 
+void TransactionListDialog::displayTag(Tag * tag,
+                                       Wallet * wallet)
+{
+  displayList(wallet->taggedTransactions(tag),
+	      tr("Tag: %1").arg(tag->name));
+}
+
 void TransactionListDialog::displayMonthlyTransactions(Account * account, 
                                                        int monthID, 
                                                        int number)

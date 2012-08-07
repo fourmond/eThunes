@@ -70,6 +70,9 @@ public slots:
   /// Displays the transactions of the given Category
   void displayCategory(Category * category, Wallet * wallet);
 
+  /// Displays the transactions marked with the given Tag
+  void displayTag(Tag * tag, Wallet * wallet);
+
   /// Displays the transactions for the given Month and the given
   /// account.
   void displayMonthlyTransactions(Account * account, int monthID, 

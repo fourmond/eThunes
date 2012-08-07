@@ -99,6 +99,8 @@ public:
 ///
 /// It (will) provides quite a lot of functionality for obtaining
 /// statistics.
+///
+/// @todo This should be pointers to AtomicTransaction !
 class TransactionPtrList : public WatchablePtrList<Transaction> {
 public:
 

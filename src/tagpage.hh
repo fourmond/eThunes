@@ -66,7 +66,7 @@ public slots:
   void updateContents();
 
   /// Displays the context menu for tweaking
-  void categoriesContextMenu(const QPoint & pos);
+  void tagsContextMenu(const QPoint & pos);
 
   /// Prompts the user for changing the color of the current tag.
   void changeCurrentColor();

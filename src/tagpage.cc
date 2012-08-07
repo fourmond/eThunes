@@ -35,7 +35,7 @@ TagPage::TagPage(Wallet * w) : wallet(w)
   view->setAlternatingRowColors(true);
   updateContents();
   connect(view, SIGNAL(customContextMenuRequested(const QPoint &)),
-	  SLOT(categoriesContextMenu(const QPoint &)));
+	  SLOT(tagsContextMenu(const QPoint &)));
 }
 
 
@@ -45,7 +45,7 @@ TagPage::~TagPage()
 
 QString TagPage::pageTitle()
 {
-  return tr("Categories");
+  return tr("Tags");
 }
 
 QHash<Wallet *, TagPage *> TagPage::tagPages;
@@ -78,19 +78,17 @@ void TagPage::updateContents()
   // contents->setText(text);
 }
 
-void TagPage::categoriesContextMenu(const QPoint & pos)
+void TagPage::tagsContextMenu(const QPoint & pos)
 {
-  // QModelIndex i = view->indexAt(pos);
-  // Tag * c = model->indexedTag(i);
-  // if(c) {
-  //   // We popup a menu for modifying a few things.
-  //   QMenu * menu = new QMenu();
-  //   menu->addAction("Change tag color",this,
-  //       	    SLOT(changeCurrentColor()));
-  //   menu->addAction("Display tag transactions",this,
-  //       	    SLOT(displayCurrentTransactions()));
-  //   menu->exec(view->viewport()->mapToGlobal(pos));
-  // }
+  QModelIndex i = view->indexAt(pos);
+  Tag * c = model->indexedTag(i);
+  if(c) {
+    // We popup a menu for modifying a few things.
+    QMenu * menu = new QMenu();
+    menu->addAction("Display tag transactions",this,
+        	    SLOT(displayCurrentTransactions()));
+    menu->exec(view->viewport()->mapToGlobal(pos));
+  }
 }
 
 void TagPage::changeCurrentColor()
@@ -108,11 +106,11 @@ void TagPage::changeCurrentColor()
 
 void TagPage::displayCurrentTransactions()
 {
-  // QModelIndex i = view->currentIndex();
-  // Tag * c = model->indexedTag(i);
-  // if(c) {
-  //   TransactionListDialog * ct = new TransactionListDialog();
-  //   ct->displayTag(c, wallet);
-  //   ct->show();
-  // }
+  QModelIndex i = view->currentIndex();
+  Tag * c = model->indexedTag(i);
+  if(c) {
+    TransactionListDialog * ct = new TransactionListDialog();
+    ct->displayTag(c, wallet);
+    ct->show();
+  }
 }
