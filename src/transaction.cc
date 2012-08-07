@@ -139,6 +139,11 @@ AttributeHash AtomicTransaction::toHash() const
   return retval;
 }
 
+int AtomicTransaction::monthID() const
+{
+  return monthID(getDate());
+}
+
 
 //////////////////////////////////////////////////////////////////////
 
@@ -230,9 +235,10 @@ int Transaction::getAmount() const
   return a;
 }
 
-bool Transaction::compareCheckNumbers(Transaction * a, Transaction * b)
+bool Transaction::compareCheckNumbers(AtomicTransaction * a, 
+                                      AtomicTransaction * b)
 {
-  return a->checkNumber < b->checkNumber;
+  return a->getCheckNumber() < b->getCheckNumber();
 }
 
 

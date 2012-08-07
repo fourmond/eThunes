@@ -26,6 +26,7 @@
 #include <attributehash.hh>
 
 class CollectionDefinition;
+class AtomicTransaction;
 class Transaction;
 class Collection;
 class Fetcher;
@@ -119,7 +120,7 @@ public:
   /// Transaction). This could take the form of a
   /// dynamically-allocated "static" list of <Transaction *, QString
   /// docname ?>
-  int scoreForTransaction(Document * doc, Transaction * tr) const;
+  int scoreForTransaction(Document * doc, AtomicTransaction * tr) const;
 
 
   /// Extracts the meta-data from a file

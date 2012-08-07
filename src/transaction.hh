@@ -54,6 +54,28 @@ public:
   Transaction * baseTransaction;
 
 
+  /// Returns a unique monthID for the given month
+  static inline int monthID(const QDate &date) {
+    return date.month()-1 + date.year() * 12;
+  };
+
+  /// Returns a date from a monthID
+  static inline QDate dateFromID(int monthID, int day = 1) {
+    return QDate(monthID/12, monthID % 12 + 1, day);
+  };
+
+  /// Returns the monthID for this month
+  static inline int thisMonthID() {
+    return monthID(QDate::currentDate());
+  };
+
+  /// Returns the monthID for last month
+  static inline int lastMonthID() {
+    return monthID(QDate::currentDate()) - 1; /// \todo hard-wired to
+					      /// the representation
+					      /// of monthID
+  };
+
   AtomicTransaction();
 
   /// Returns the Account associated to the AtomicTransaction, or NULL
@@ -128,6 +150,9 @@ public:
   /// Returns the date
   virtual QDate getDate() const;
 
+  /// Returns the month ID for this transaction
+  int monthID() const;
+
   /// Returns the name of the transaction.
   virtual QString getName() const;
 
@@ -195,27 +220,6 @@ public:
   };
 
 
-  /// Returns a unique monthID for the given month
-  static inline int monthID(const QDate &date) {
-    return date.month()-1 + date.year() * 12;
-  };
-
-  /// Returns a date from a monthID
-  static inline QDate dateFromID(int monthID, int day = 1) {
-    return QDate(monthID/12, monthID % 12 + 1, day);
-  };
-
-  /// Returns the monthID for this month
-  static inline int thisMonthID() {
-    return monthID(QDate::currentDate());
-  };
-
-  /// Returns the monthID for last month
-  static inline int lastMonthID() {
-    return monthID(QDate::currentDate()) - 1; /// \todo hard-wired to
-					      /// the representation
-					      /// of monthID
-  };
 
   /// @}
 
@@ -382,9 +386,6 @@ public:
 
   void dump(QTextStream & stream);
 
-  /// Returns the month ID for this transaction
-  int monthID() const { return monthID(date); };
-
   /// Implements the comparison for sorting. Based on the date.
   ///
   /// \todo implement a full sort so that two slightly different items
@@ -399,7 +400,8 @@ public:
 
   /// Compares the checkNumber of two transactions (to use for qSort,
   /// for instance)
-  static bool compareCheckNumbers(Transaction * a, Transaction * b);
+  // static bool compareCheckNumbers(Transaction * a, Transaction * b);
+  static bool compareCheckNumbers(AtomicTransaction * a, AtomicTransaction * b);
 
   /// Returns a string that identifies uniquely a transaction within
   /// the account it's in.

@@ -202,8 +202,12 @@ TransactionListItem::TransactionListItem(TransactionList * trs) :
 TransactionListItem::TransactionListItem(TransactionPtrList * ptr) : 
   transactions(NULL), transactionsPtr(ptr)
 {
-  for(int i = 0; i < transactionsPtr->size(); i++ )
-    appendChild(new TransactionItem(transactionsPtr->value(i)));
+  for(int i = 0; i < transactionsPtr->size(); i++ ) {
+    Transaction * trs = 
+      dynamic_cast<Transaction *>(transactionsPtr->value(i));
+    if(trs)
+      appendChild(new TransactionItem(trs));
+  }
 }
 
 QVariant TransactionListItem::data(int column, int role) const
@@ -278,7 +282,7 @@ Account * TransactionListItem::account() const
   if(transactions && transactions->size() > 0)
     return transactions->value(0).account;
   if(transactionsPtr && transactionsPtr->size() > 0)
-    return transactionsPtr->value(0)->account;
+    return transactionsPtr->value(0)->getAccount();
   return NULL;
 }
 

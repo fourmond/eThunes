@@ -173,15 +173,15 @@ TransactionPtrList Cabinet::transactionMatchingCandidates(Document * document)
 					base.addDays(def->transactionDateTolerance));
 }
 
-Transaction * Cabinet::matchingTransaction(Document * document)
+AtomicTransaction * Cabinet::matchingTransaction(Document * document)
 {
   TransactionPtrList candidates = transactionMatchingCandidates(document);
   for(int i = 0; i < candidates.size(); i++) {
-    if(document->collection->definition->code.scoreForTransaction(document,
-								  candidates[i]) > 1000)
+    if(document->collection->
+       definition->code.scoreForTransaction(document,
+                                            candidates[i]) > 1000)
       return candidates[i];
     /// \todo This is very primitive...
   }
   return NULL;
-
 }

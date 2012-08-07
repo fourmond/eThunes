@@ -30,13 +30,13 @@ BasicStatistics::BasicStatistics() :
 {
 }
 
-void BasicStatistics::addTransaction(const Transaction * t)
+void BasicStatistics::addTransaction(const AtomicTransaction * t)
 {
   number += 1;
   totalAmount += t->getAmount();
-  if(t->account && (firstMonthID < 0 ||
-		    t->account->firstMonthID() < firstMonthID))
-    firstMonthID = t->account->firstMonthID();
+  if(t->getAccount() && (firstMonthID < 0 ||
+		    t->getAccount()->firstMonthID() < firstMonthID))
+    firstMonthID = t->getAccount()->firstMonthID();
   if(t->getAmount() < 0) {
     totalDebit += t->getAmount();
     numberDebit ++;
@@ -66,7 +66,7 @@ TransactionListStatistics::TransactionListStatistics()
 {
 }
 
-void TransactionListStatistics::addTransaction(const Transaction * t)
+void TransactionListStatistics::addTransaction(const AtomicTransaction * t)
 {
   BasicStatistics::addTransaction(t);
   monthlyStats[t->monthID()].addTransaction(t);
@@ -262,15 +262,38 @@ TransactionPtrList TransactionList::transactionsWithinRange(const QDate & before
 
 ////////////////////////////////////////////////////////////////////////////
 
-static bool compareTransactionsByDate(Transaction * a, Transaction * b)
+static bool compareTransactionsByDate(AtomicTransaction * a, 
+                                      AtomicTransaction * b)
 {
   return a->getDate() < b->getDate();
 }
 
 void TransactionPtrList::sortByDate()
 {
-  
   qSort(rawData().begin(), rawData().end(), &compareTransactionsByDate);
+}
+
+void TransactionPtrList::append(const QList<Transaction *> & lst)
+{
+  for(int i = 0; i < lst.size(); i++)
+    append(lst[i]);
+}
+
+void TransactionPtrList::append(const QList<AtomicTransaction *> & lst)
+{
+  for(int i = 0; i < lst.size(); i++)
+    append(lst[i]);
+}
+
+void TransactionPtrList::append(const TransactionPtrList & lst)
+{
+  for(int i = 0; i < lst.size(); i++)
+    append(lst[i]);
+}
+
+void TransactionPtrList::append(AtomicTransaction * tr)
+{
+  WatchablePtrList<AtomicTransaction>::append(tr);
 }
 
 
@@ -297,7 +320,7 @@ public:
   QString memo;
   int amount;
   HashKey() {;};
-  HashKey(const Transaction * t, bool permissive) {
+  HashKey(const AtomicTransaction * t, bool permissive) {
     memo = (permissive ? "": t->getMemo());
     amount = abs(t->getAmount());
   };
@@ -316,18 +339,18 @@ QList<Link *> TransactionPtrList::findInternalMoves(QList<TransactionPtrList> li
   QList<Link *> retval;
   // We'll proceed by browsing through all the transactions date by
   // date.
-  QList<QListIterator<Transaction *> > iterators;
+  QList<QListIterator<AtomicTransaction *> > iterators;
 
   QList<IndexedDate> dates;
-  QMultiHash<HashKey, Transaction *> transactions;
+  QMultiHash<HashKey, AtomicTransaction *> transactions;
   QList<HashKey> tkeys;
-  QList<Transaction *> tvalues;
+  QList<AtomicTransaction *> tvalues;
   LogStream err(Log::Error);
 
   // Initialize the iterators.
   for(QList<TransactionPtrList>::iterator i = lists.begin();
       i != lists.end(); i++)
-    iterators.append(QListIterator<Transaction *>(i->rawData()));
+    iterators.append(QListIterator<AtomicTransaction *>(i->rawData()));
 
   while(iterators.size() > 1) {
     dates.clear();
@@ -354,7 +377,7 @@ QList<Link *> TransactionPtrList::findInternalMoves(QList<TransactionPtrList> li
 
       // Then, we catch up.
 
-      QListIterator<Transaction *> & it = iterators[dates[0].i];
+      QListIterator<AtomicTransaction *> & it = iterators[dates[0].i];
       while(it.hasNext() && it.peekNext()->getDate() < dates[1].d) {
 	it.next();
       }
@@ -379,7 +402,7 @@ QList<Link *> TransactionPtrList::findInternalMoves(QList<TransactionPtrList> li
     for(int i = 0; i < iterators.size(); i++) {
       while(iterators[i].hasNext() && 
 	    iterators[i].peekNext()->getDate() == theDate) {
-	Transaction * t = iterators[i].next();
+	AtomicTransaction * t = iterators[i].next();
 	transactions.insert(HashKey(t, permissive), t);
       }
     }
@@ -399,9 +422,9 @@ QList<Link *> TransactionPtrList::findInternalMoves(QList<TransactionPtrList> li
 	}
 	else {
 	  // We check the assumptions:
-	  Transaction * t1, * t2;
+	  AtomicTransaction * t1, * t2;
 	  t1 = tvalues[0]; t2 = tvalues[1];
-	  if(! t1->account->isSameAccount(*t2->account) &&
+	  if(! t1->getAccount()->isSameAccount(*t2->getAccount()) &&
 	     (t1->getAmount() + t2->getAmount()) == 0) {
 	    if(t1->links.namedLinks("internal move").count() == 0) {
 	      t1->addLink(t2, "internal move");

@@ -29,7 +29,7 @@ class Category;
 class CategorizedStatistics : public QHash<const Category *, BasicStatistics> {
 public:
   /// Adds a Transaction to the statistics.
-  void addTransaction(const Transaction * t, bool topLevel = true);
+  void addTransaction(const AtomicTransaction * t, bool topLevel = true);
 
   class Item {
   public:
@@ -69,7 +69,8 @@ public:
   PeriodicCategorizedStatistics(Account * ac);
 
   /// Adds a Transaction to the statistics.
-  virtual void addTransaction(const Transaction * t, bool topLevel = true) = 0;
+  virtual void addTransaction(const AtomicTransaction * t, 
+                              bool topLevel = true) = 0;
 
   /// The name for one element (hopefully crosslinked)
   virtual QString elementName(int id) const = 0;
@@ -94,7 +95,8 @@ public:
 
   CategorizedMonthlyStatistics(Account * ac) : 
     PeriodicCategorizedStatistics(ac) {;};
-  virtual void addTransaction(const Transaction * t, bool topLevel = true);
+  virtual void addTransaction(const AtomicTransaction * t, 
+                              bool topLevel = true);
   virtual QString elementName(int id) const;
   virtual QString categoryName(int id,
                                const QString & category, 
@@ -108,7 +110,8 @@ public:
   CategorizedTrimesterStatistics(Account * ac) : 
     PeriodicCategorizedStatistics(ac) {;};
 
-  virtual void addTransaction(const Transaction * t, bool topLevel = true);
+  virtual void addTransaction(const AtomicTransaction * t, 
+                              bool topLevel = true);
   virtual QString elementName(int id) const;
   virtual QString categoryName(int id,
                                const QString & category, 
@@ -125,7 +128,8 @@ class CategorizedYearlyStatistics : public PeriodicCategorizedStatistics {
 public:
   CategorizedYearlyStatistics(Account * ac) : 
     PeriodicCategorizedStatistics(ac) {;};
-  virtual void addTransaction(const Transaction * t, bool topLevel = true);
+  virtual void addTransaction(const AtomicTransaction * t, 
+                              bool topLevel = true);
   virtual QString elementName(int id) const;
   virtual QString categoryName(int id,
                                const QString & category, 

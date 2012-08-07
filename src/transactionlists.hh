@@ -54,7 +54,7 @@ public:
   int firstMonthID;
 
   /// Adds the given Transaction to the statistics
-  void addTransaction(const Transaction * t);
+  void addTransaction(const AtomicTransaction * t);
 
   /// Adds other stats to this one.
   BasicStatistics & operator+=(const BasicStatistics & stats);
@@ -75,7 +75,7 @@ public:
   QHash<int, BasicStatistics> yearlyStats;
 
   /// Adds the given Transaction to the statistics
-  void addTransaction(const Transaction * t);
+  void addTransaction(const AtomicTransaction * t);
 
   /// Returns the BasicStatistics for this month
   inline const BasicStatistics & thisMonthStats() {
@@ -101,7 +101,7 @@ public:
 /// statistics.
 ///
 /// @todo This should be pointers to AtomicTransaction !
-class TransactionPtrList : public WatchablePtrList<Transaction> {
+class TransactionPtrList : public WatchablePtrList<AtomicTransaction> {
 public:
 
   /// Returns various interesting statistics about the list.
@@ -131,6 +131,12 @@ public:
   /// Sorts the list according to the transaction date.
   void sortByDate();
 
+
+  /// Appends a list of Transaction objects
+  void append(const QList<Transaction *> & trs);
+  void append(const QList<AtomicTransaction *> & trs);
+  void append(const TransactionPtrList & trs);
+  void append(AtomicTransaction * tr);
 };
 
 /// This class represents a list of Transaction objects, ready for

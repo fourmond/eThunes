@@ -134,7 +134,7 @@ QString Loan::html()
   str += QObject::tr("<b>Payments</b>: ");
   QStringList trs;
   for(int i = 0; i < matchingTransactions.size(); i++) {
-    Transaction * t = matchingTransactions[i];
+    AtomicTransaction * t = matchingTransactions[i];
     trs << QString("%1: %2").
       arg(HTTarget::linkTo(t->getDate().toString("dd/MM/yyyy"),
                            t)).
@@ -245,7 +245,7 @@ void Loan::findMatchingTransactions()
     transactionsWithinRange(dateContracted.addMonths(1), end);
 
   for(int j = 0; j < transactions.size(); j++) {
-    Transaction * t = transactions[j];
+    AtomicTransaction * t = transactions[j];
     if(t->hasNamedLinks("loan-payment"))
       continue;
 
@@ -298,7 +298,7 @@ void Loan::computeDebt()
     while(trid < matchingTransactions.size() && 
           matchingTransactions[trid]->monthID() < mid)
       trid++;
-    Transaction * cur = matchingTransactions.value(trid, NULL);
+    AtomicTransaction * cur = matchingTransactions.value(trid, NULL);
     if(cur && cur->monthID() == mid) {
       lastMonthlyPayment = -cur->getAmount();
       totalPaid -= cur->getAmount(); // Don't forget the amount is NEGATIVE !

@@ -27,7 +27,7 @@
 #include <httarget-templates.hh>
 
 /// @todo ignore transactions that have an "internal move" link.
-void CategorizedStatistics::addTransaction(const Transaction * t, 
+void CategorizedStatistics::addTransaction(const AtomicTransaction * t, 
                                            bool topLevel)
 {
   // We ignored transactions flagged as internal move
@@ -58,7 +58,7 @@ PeriodicCategorizedStatistics::PeriodicCategorizedStatistics(Account * ac) {
 
 //////////////////////////////////////////////////////////////////////
 
-void CategorizedMonthlyStatistics::addTransaction(const Transaction * t, 
+void CategorizedMonthlyStatistics::addTransaction(const AtomicTransaction * t, 
                                                   bool tl)
 {
   (*this)[t->monthID()].addTransaction(t, tl);
@@ -86,7 +86,7 @@ QString CategorizedMonthlyStatistics::categoryName(int id,
 
 //////////////////////////////////////////////////////////////////////
 
-void CategorizedTrimesterStatistics::addTransaction(const Transaction * t, 
+void CategorizedTrimesterStatistics::addTransaction(const AtomicTransaction * t, 
                                                     bool tl)
 {
   /// @bug This assumes that the monthID % 3 is 0 for the beginning of
@@ -118,7 +118,7 @@ QString CategorizedTrimesterStatistics::categoryName(int id,
 
 //////////////////////////////////////////////////////////////////////
 
-void CategorizedYearlyStatistics::addTransaction(const Transaction * t, 
+void CategorizedYearlyStatistics::addTransaction(const AtomicTransaction * t, 
                                                     bool tl)
 {
   (*this)[t->getDate().year()].addTransaction(t, tl);
@@ -149,7 +149,7 @@ QString CategorizedYearlyStatistics::categoryName(int id,
 Statistics::Statistics(const TransactionPtrList & lst, bool topLevel)
 {
   if(lst.size() > 0) 
-    account = lst.first()->account;
+    account = lst.first()->getAccount();
   else
     account = NULL;
 

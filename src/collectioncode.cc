@@ -97,7 +97,7 @@ int CollectionCode::scoreForTransaction(DocumentDefinition * def,
 
 
 int CollectionCode::scoreForTransaction(Document * doc,
-					Transaction * tr) const
+					AtomicTransaction * tr) const
 {
   return scoreForTransaction(doc->definition, doc->attributes,
 			     tr->toHash());

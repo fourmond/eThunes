@@ -122,7 +122,7 @@ TransactionPtrList Account::checks()
   for(int i = 0; i < transactions.size(); i++)
     if(! transactions[i].getCheckNumber().isEmpty())
       t << &transactions[i];
-  QList<Transaction*> & lst = t.rawData();
+  QList<AtomicTransaction*> & lst = t.rawData();
   qSort(lst.begin(), lst.end(), Transaction::compareCheckNumbers);
   return t;
 }
