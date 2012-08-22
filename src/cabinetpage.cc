@@ -29,6 +29,10 @@
 #include <httarget-templates.hh>
 #include <htlabel.hh>
 
+// Temporary
+#include <timebasedwidget.hh>
+#include <timebasedcurve.hh>
+
 CabinetPage::CabinetPage(Cabinet * c) : cabinet(c)
 {
   QVBoxLayout * layout = new QVBoxLayout(this);
@@ -49,6 +53,20 @@ CabinetPage::CabinetPage(Cabinet * c) : cabinet(c)
 
   stats = new StatisticsWidget(cabinet);
   layout->addWidget(stats);
+
+
+  TimeBasedCurve * cv = new TimeBasedCurve;
+  *cv << DataPoint(QDate(2010, 1, 1), 100)
+      << DataPoint(QDate(2010, 1, 10), 20)
+      << DataPoint(QDate(2010, 2, 2), 50)
+      << DataPoint(QDate(2010, 5, 2), 120)
+      << DataPoint(QDate(2011, 1, 1), 200);
+
+  TimeBasedWidget * wd = new TimeBasedWidget();
+
+  wd->addCurve(cv);
+  wd->setMinimumSize(QSize(400,200));
+  layout->addWidget(wd);
   
 
   updateContents();

@@ -57,11 +57,35 @@ public:
 /// @todo How to integrate that ? I need a draw operation of some
 /// kind, into an appropriate widget.
 class TimeBasedCurve {
-public:
 
   /// Data points
   QList<DataPoint> data;
 
+  /// Whether the list of data points is sorted by date
+  bool isSorted;
+
+  /// Make sure the list is sorted
+  void ensureSorted();
+
+public:
+
+  TimeBasedCurve();
+
+  /// Adds the given point
+  void addPoint(const DataPoint & dp);
+
+  /// Same thing as addPoint();
+  TimeBasedCurve & operator<<(const DataPoint & dp);
+
+  /// Gets the date of the earliest data point
+  QDate earliestPoint();
+
+  /// Gets the date of the latest point
+  QDate latestPoint();
+
+  /// Paints the curve. Needs:
+  void paint(QPainter * dest, const QDate & origin, double pixelPerDay);
+  
 };
 
 #endif

@@ -45,6 +45,7 @@
 #include <QDateTimeEdit>
 #include <QDateEdit>
 #include <QTimeEdit>
+#include <QPainter>
 
 // Deeply digging into Qt4...
 #include <QStyledItemDelegate>

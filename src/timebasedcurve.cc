@@ -43,3 +43,57 @@ bool DataPoint::operator<(const DataPoint & other) const
 {
   return d < other.d;
 }
+
+//////////////////////////////////////////////////////////////////////
+
+TimeBasedCurve::TimeBasedCurve() : isSorted(false)
+{
+}
+
+void TimeBasedCurve::ensureSorted()
+{
+  if(isSorted)
+    return;
+  qSort(data);
+  isSorted = true;
+}
+
+QDate TimeBasedCurve::earliestPoint()
+{
+  ensureSorted();
+  /// @tdexception handle empty list
+  return data.first().date();
+}
+
+QDate TimeBasedCurve::latestPoint()
+{
+  ensureSorted();
+  /// @tdexception handle empty list
+  return data.last().date();
+}
+
+
+void TimeBasedCurve::paint(QPainter * dest, const QDate & origin, 
+                           double pixelPerDay)
+{
+  // For now, basic marker
+  for(int i = 0; i < data.size(); i++) {
+    const DataPoint & dp = data[i];
+    int x = origin.daysTo(dp.date()) * pixelPerDay;
+    int y = dp.amount();        // Not bad ?
+    dest->drawEllipse(x,y, 5, 5);
+  }
+}
+
+void TimeBasedCurve::addPoint(const DataPoint & dp)
+{
+  isSorted = false;
+  data.append(dp);
+}
+
+
+TimeBasedCurve & TimeBasedCurve::operator<<(const DataPoint & dp)
+{
+  addPoint(dp);
+  return *this;
+}
