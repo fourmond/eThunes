@@ -68,6 +68,9 @@ public slots:
   /// Selects and shows the given Transaction, if it is visible
   void showTransaction(Transaction * transaction);
 
+  /// Displays the balance
+  void displayBalance();
+
 public:
 
   /// Returns the AccountPage for the given account, or create it if

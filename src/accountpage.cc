@@ -22,6 +22,8 @@
 #include <htlabel.hh>
 #include <httarget-templates.hh>
 
+#include <curvesdisplay.hh>
+
 
 QHash<Account *, AccountPage *> AccountPage::accountPages;
 
@@ -58,9 +60,12 @@ void AccountPage::updateAccountSummary()
                                &AccountPage::renameAccount)).
     arg(account->balance() * 0.01 );
   
-  str += HTTarget::linkToFunction("(see checks)",
-                                  &TransactionListDialog::showChecks,
-                                  account);
+  str += " " + HTTarget::linkToFunction("(see checks)",
+                                        &TransactionListDialog::showChecks,
+                                        account)
+    + " " + HTTarget::linkToMember("(display balance)", this,
+                                   &AccountPage::displayBalance);
+
   accountSummary->setText(str);
 }
 
@@ -84,4 +89,11 @@ void AccountPage::renameAccount()
 void AccountPage::showTransaction(Transaction * transaction)
 {
   view->showTransaction(transaction);
+}
+
+void AccountPage::displayBalance()
+{
+  CurvesDisplay * dlg = new CurvesDisplay();
+  dlg->displayBalance(& account->transactions);
+  dlg->show();
 }

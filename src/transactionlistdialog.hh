@@ -18,8 +18,8 @@
 */
 
 
-#ifndef __ACCOUNTCHECKS_HH
-#define __ACCOUNTCHECKS_HH
+#ifndef __TRANSACTIONLISTDIALOG_HH
+#define __TRANSACTIONLISTDIALOG_HH
 
 #include <transaction.hh>
 #include <account.hh>
