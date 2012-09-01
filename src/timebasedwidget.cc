@@ -20,6 +20,10 @@
 #include <timebasedwidget.hh>
 #include <timebasedcurve.hh>
 
+
+/// @todo Reimplement all this to use QGraphicsScene and
+/// background/foreground stuff. If I play correctly this time, I
+/// shouldn't have problems... 
 TimeBasedWidget::TimeBasedWidget(QWidget * w) : QWidget(w)
 {
   pixelPerDay = 2;
@@ -27,7 +31,9 @@ TimeBasedWidget::TimeBasedWidget(QWidget * w) : QWidget(w)
 
 void TimeBasedWidget::paintEvent(QPaintEvent * ev)
 {
+  // An absolute must !
   QPainter p(this);
+  p.setRenderHints(QPainter::Antialiasing);
 
   QRect r = rect();
 

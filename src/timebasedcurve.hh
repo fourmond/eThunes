@@ -52,6 +52,24 @@ public:
   bool operator<(const DataPoint & other) const;
 };
 
+
+/// The style of a curve
+class CurveStyle {
+public:
+
+  /// Pen for drawing the lines
+  QPen pen;
+
+  /// Brush for drawing the points
+  QBrush brush;
+
+  /// Brush for drawing the points
+  QPen markerPen;
+
+  CurveStyle(const QColor & c = QColor("red"));
+};
+
+
 /// A full time based curve
 ///
 /// @todo How to integrate that ? I need a draw operation of some
@@ -73,7 +91,9 @@ class TimeBasedCurve {
 
 public:
 
-  TimeBasedCurve();
+  CurveStyle style;
+
+  TimeBasedCurve(const CurveStyle & style = CurveStyle());
 
   /// Adds the given point
   void addPoint(const DataPoint & dp);

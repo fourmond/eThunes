@@ -43,10 +43,20 @@ bool DataPoint::operator<(const DataPoint & other) const
 {
   return d < other.d;
 }
+//////////////////////////////////////////////////////////////////////
+
+CurveStyle::CurveStyle(const QColor &c)
+{
+  pen = QPen(c, 3);
+  brush = QBrush(c);
+  markerPen = QPen(QColor("black"), 1);
+}
+
 
 //////////////////////////////////////////////////////////////////////
 
-TimeBasedCurve::TimeBasedCurve() : isSorted(false)
+TimeBasedCurve::TimeBasedCurve(const CurveStyle & s) : 
+  isSorted(false), style(s)
 {
 }
 
@@ -100,13 +110,32 @@ void TimeBasedCurve::paint(QPainter * dest, const QDate & origin,
                            double pixelPerDay, double yOrg, 
                            double yScale)
 {
-  // For now, basic marker
+  dest->save();
+  dest->setPen(style.pen);
+
+  QPoint last;
   for(int i = 0; i < data.size(); i++) {
     const DataPoint & dp = data[i];
     int x = origin.daysTo(dp.date()) * pixelPerDay;
     int y = (yOrg - dp.amount())/yScale;        // Not bad ?
-    dest->drawEllipse(x,y, 5, 5);
+    QPoint cur(x,y);
+    if(i)
+      dest->drawLine(last, cur);
+    last = cur;
   }
+
+
+  dest->setPen(style.markerPen);
+  dest->setBrush(style.brush);
+
+  for(int i = 0; i < data.size(); i++) {
+    const DataPoint & dp = data[i];
+    int x = origin.daysTo(dp.date()) * pixelPerDay;
+    int y = (yOrg - dp.amount())/yScale;        // Not bad ?
+    int hsz = 4;
+    dest->drawEllipse(x-hsz,y-hsz, 2*hsz, 2*hsz);
+  }
+  dest->restore();
 }
 
 void TimeBasedCurve::addPoint(const DataPoint & dp)
