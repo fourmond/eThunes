@@ -38,8 +38,17 @@ protected:
   /// The latest one
   QDate latest;
 
+  /// The minimum value
+  int min;
+  
+  /// The maximum value
+  int max;
+
   /// Number of pixels to represent one day.
   double pixelPerDay;
+
+  /// Vertical scale
+  double verticalScale;
 
 public:
 

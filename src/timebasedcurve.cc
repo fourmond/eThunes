@@ -55,6 +55,17 @@ void TimeBasedCurve::ensureSorted()
   if(isSorted)
     return;
   qSort(data);
+  // We cache min and max
+  min = max = data.first().amount();
+
+  for(int i = 1; i < data.size(); i++) {
+    int a = data[i].amount();
+    if(a < min)
+      min = a;
+    if(a > max)
+      max = a;
+  }
+
   isSorted = true;
 }
 
@@ -72,15 +83,28 @@ QDate TimeBasedCurve::latestPoint()
   return data.last().date();
 }
 
+int TimeBasedCurve::minimumValue()
+{
+  ensureSorted();
+  return min;
+}
+
+int TimeBasedCurve::maximumValue()
+{
+  ensureSorted();
+  return max;
+}
+
 
 void TimeBasedCurve::paint(QPainter * dest, const QDate & origin, 
-                           double pixelPerDay)
+                           double pixelPerDay, double yOrg, 
+                           double yScale)
 {
   // For now, basic marker
   for(int i = 0; i < data.size(); i++) {
     const DataPoint & dp = data[i];
     int x = origin.daysTo(dp.date()) * pixelPerDay;
-    int y = dp.amount();        // Not bad ?
+    int y = (yOrg - dp.amount())/yScale;        // Not bad ?
     dest->drawEllipse(x,y, 5, 5);
   }
 }

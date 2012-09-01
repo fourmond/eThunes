@@ -29,11 +29,22 @@ void TimeBasedWidget::paintEvent(QPaintEvent * ev)
 {
   QPainter p(this);
 
+  QRect r = rect();
+
+  double pad = 6;
+
+  // First, we try to be clever about scaling the things...
+  double yscale = (max - min)/(r.height() - pad);
+
+  // Translate the paint object so that 0 is at the bottom
+  p.translate(QPoint(0, r.height() - pad));
+
+
   // First, paint the curves themselves
 
   /// @todo Setup clipping.
   for(int i = 0; i < curves.size(); i++)
-    curves[i]->paint(&p, earliest, pixelPerDay);
+    curves[i]->paint(&p, earliest, pixelPerDay, min, yscale);
 
   // Then, legends, and the like ?
 }
@@ -46,6 +57,12 @@ void TimeBasedWidget::addCurve(TimeBasedCurve * curve)
 
   if(curve->latestPoint() > latest || (! latest.isValid()))
     latest = curve->latestPoint();
+
+  if(curves.size() == 0 || min > curve->minimumValue())
+    min = curve->minimumValue();
+
+  if(curves.size() == 0 || max < curve->maximumValue())
+    max = curve->maximumValue();
 
   QSize s = size();
   

@@ -64,6 +64,10 @@ class TimeBasedCurve {
   /// Whether the list of data points is sorted by date
   bool isSorted;
 
+  /// Cached values
+  int min;
+  int max;
+
   /// Make sure the list is sorted
   void ensureSorted();
 
@@ -83,8 +87,20 @@ public:
   /// Gets the date of the latest point
   QDate latestPoint();
 
-  /// Paints the curve. Needs:
-  void paint(QPainter * dest, const QDate & origin, double pixelPerDay);
+
+  /// Minimum value
+  int minimumValue();
+
+  /// Maximum value
+  int maximumValue();
+
+  /// Paints the curve.
+  ///
+  /// @a yOrigin corresponds to the point where is the Y = 0 in the
+  /// coordinates. This means that translations probably should happen
+  /// before that...
+  void paint(QPainter * dest, const QDate & origin, double pixelPerDay,
+             double yOrigin, double yScale);
   
 };
 
