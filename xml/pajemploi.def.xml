@@ -2,8 +2,8 @@
 <collection-definition>
   <!-- Comment -->
   <document-type name="payslip">
-  <display-format>Bulletin de paie du %{month%date:MM/yyyy}: %{salary%A} %{fees%A}(%{})</display-format>
-    <filename-format>Pajemploi/Bulletin-%{}-%{month%date:yyyy-MM}-%{ref}.pdf</filename-format>
+  <display-format>Bulletin de paie du %{month%date:MM/yyyy}: %{salary%A} %{fees%A}(%{employer})</display-format>
+    <filename-format>Pajemploi/Bulletin-%{employer}-%{month%date:yyyy-MM}.pdf</filename-format>
     <public-name>Bulletin de paie</public-name>
   </document-type>
   <ruby-class-code module-name="Pajemploi">
