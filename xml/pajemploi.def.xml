@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<collection-definition>
+  <!-- Comment -->
+  <document-type name="payslip">
+  <display-format>Bulletin de paie du %{month%date:MM/yyyy}: %{salary%A} %{fees%A}(%{})</display-format>
+    <filename-format>Pajemploi/Bulletin-%{}-%{month%date:yyyy-MM}-%{ref}.pdf</filename-format>
+    <public-name>Bulletin de paie</public-name>
+  </document-type>
+  <ruby-class-code module-name="Pajemploi">
+    <code><![CDATA[
+module Pajemploi
+  def self.parse_payslip(doc)
+    res = {}
+    if doc['text-layout'] =~ /du\s*:\s*(\d+)\/(\d+)\/(\d+)\s*au\s*:\s*/i
+      res['month'] = Time.local($3.to_i, $2.to_i, $1.to_i)
+    end
+    if doc['text-layout'] =~ /Employeur\s*:\s*(\w+)/i
+      res['employer'] = $1
+    end
+    if doc['text-layout'] =~ /jours?\s+d'activit.{1,3}\s*(\d+)/i
+      res['days'] = $1.to_i
+    end
+    if doc['text-layout'] =~ /heures\s+normales?\s*(\d+)/i
+      res['hours'] = $1.to_i
+    end
+    if doc['text-layout'] =~ /Salaire\s+net\s*(\d+),(\d+)/i
+      res['salary'] = $1.to_i * 100 + $2.to_i
+    end
+    if doc['text-layout'] =~ /Indemni.*entretien\s+\s*(\d+),(\d+)/i
+      res['fees'] = $1.to_i * 100 + $2.to_i
+    end
+    return res
+  end
+
+end
+]]>
+    </code>
+  </ruby-class-code>
+</collection-definition>
