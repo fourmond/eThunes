@@ -67,6 +67,12 @@ public:
     return documentsByName.value(name, NULL);
   };
 
+  /// Browses over the whole list of collections, and returns all the
+  /// documents whose collection type name and type name match those
+  /// given.
+  QList<Document*> documentsByType(const QString & collection, 
+                                   const QString & type);
+
 
   Cabinet();
 
