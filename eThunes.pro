@@ -105,7 +105,8 @@ HEADERS += src/account.hh src/mainwin.hh src/actions.hh \
         src/modelitems.hh src/oomodel.hh \
         src/ootest.hh src/tagpage.hh \
         src/timebasedcurve.hh src/timebasedwidget.hh \
-        src/curvesdisplay.hh
+        src/curvesdisplay.hh \
+        src/pointersafesort.hh
 
 
 # Plugins:

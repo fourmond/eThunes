@@ -22,6 +22,7 @@
 #include <wallet.hh>
 
 #include <logstream.hh>
+#include <pointersafesort.hh>
 
 BasicStatistics::BasicStatistics() :
   number(0), numberCredit(0), numberDebit(0), 
@@ -105,83 +106,17 @@ TransactionList TransactionList::sublist(const Account &ac) const
   return retval;
 }
 
-
-/// Here begins the code for pointer-safe sorting:
-template <typename T> class MyQListIterator {
-public:
-  QList<T> * list;
-
-  int idx;
-
-  /// The exact same thing as QListIterator, but under another name
-  /// and with different semantics.
-  class PointedTo {
-  public:
-    QList<T> * list;
-
-    int idx;
-
-    const T & value() const {
-      return (*list)[idx];
-    };
-
-    PointedTo(const MyQListIterator & i) : list(i.list), idx(i.idx) {;};
-    
-    bool operator <(const PointedTo & b) const {
-      return value() < b.value();
-    };
-
-  };
-  
-  MyQListIterator(QList<T> * l, int i) : list(l), idx(i) {;};
-
-  PointedTo operator*() { return PointedTo(*this);};
-
-  MyQListIterator operator+(int i) const { 
-    return MyQListIterator(list, idx+i);
-  };
-
-  MyQListIterator operator-(int i) const { 
-    return MyQListIterator(list, idx-i);
-  };
-
-  bool operator<(const MyQListIterator & b) const {
-    return idx < b.idx;
-  };
-
-  bool operator!=(const MyQListIterator & b) const {
-    return idx != b.idx;
-  };
-
-  MyQListIterator& operator++() {
-    idx++;
-    return *this;
-  };
-
-  MyQListIterator& operator--() {
-    idx--;
-    return *this;
-  };
-
-  operator int() const {
-    return idx;
-  };
-  
-};
-
-// Funny, this should be explicit and not a template, else g++ is
-// unable to pick it.
-inline void qSwap(MyQListIterator<Transaction>::PointedTo a, 
-                  MyQListIterator<Transaction>::PointedTo b) {
-  a.list->swap(a.idx, b.idx);
+/// We need that to make g++ find the correct swap function.
+void qSwap(MyQListIterator<Transaction>::PointedTo a, 
+           MyQListIterator<Transaction>::PointedTo b) 
+{
+  MyQListIterator<Transaction>::swap(a,b);
 }
 
 
 void TransactionList::sortByDate()
 {
-  qSort(MyQListIterator<Transaction>(&rawData(), 0),
-        MyQListIterator<Transaction>(&rawData(), size()));
-  // We signal that all members have changed
+  pointerSafeSortList(&rawData());
   attributeChanged("all");
 }
 
