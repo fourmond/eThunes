@@ -38,6 +38,9 @@ class Serializable : public SerializationAttribute, public Watchable {
   /// The application-wide unique ID. A value of -1 means that the ID
   /// hasn't been attributed yet. Mutable as the only accessor to that
   /// always returns the same value, once it's set.
+  ///
+  /// @todo All the object ID stuff should move to Linkable, as it
+  /// only makes sense there !
   mutable int serializableID;
 
   /// The application-wide correspondance between ID and Serializable
@@ -59,6 +62,8 @@ public:
 
   /// Returns the unique objectID for this object, creating it if
   /// necessary.
+  ///
+  /// @todo As the rest, this should move to Linkable.
   int objectID() const;
 
 
@@ -76,6 +81,10 @@ public:
   /// Functions called at some time in the reading or writing process,
   /// for instance to ensure the attributes are in a well-defined
   /// state.
+  ///
+  /// @todo Find a way to add hooks to the serializationAccessor
+  /// stuff... Possibly in a list fashion ? (pushing
+  /// functions-to-member ?)
   ///
   /// @{
 

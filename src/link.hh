@@ -29,7 +29,7 @@ class Cabinet;
 class Link : public Serializable {
 protected:
   /// The target of the link
-  Linkable * target;
+  Linkable * target __attribute__((deprecated));
 
   
 public:
@@ -57,24 +57,25 @@ public:
   /// repair by ensuring that a link is always reciprocal.
   static int finalizePendingLinks(Cabinet * cabinet);
 
-  Linkable * linkTarget() const {
-    return target;
-  };
+  Linkable * linkTarget() const;
 
 protected:
-  /// The ID of the link as stored on disk; the value of
-  /// Linkable::uniqueID().
-  QString linkID;
-
   /// The unique object ID of the target. Supercedes linkID
   int targetID;
 
+  // The ID of the link as stored on disk; the value of
+  /// Linkable::uniqueID().
+  QString linkID __attribute__((deprecated));
+
   /// The type name, as in Linkable::typeName()
-  QString typeName;
+  QString typeName __attribute__((deprecated));
 
   /// This is a global list of links whose target should be adjusted
   /// after everything has been serialized.
+  ///
+  /// @todo Maybe we won't need that anymore using the new scheme ?
   static QList<Link*> linksToBeFinalized;
+
 };
 
 

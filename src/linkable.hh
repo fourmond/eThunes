@@ -57,21 +57,39 @@ protected:
   /// Preparation of the serializationAccessor for links
   void addLinkAttributes(SerializationAccessor * accessor);
 
+
+  /// The unique ID of the object. Objects are not assigned an ID
+  /// until they become the target of a link.
+  ///
+  /// Conflicts with objectID in Serializable. Doesn't make much
+  /// sense, somehow... I have to come up with something decent here
+  // int objectID;
+
+  /// This hash contains all the (potential) targets of links, indexed
+  /// by their targetID.
+  static QHash<int, QSet<Linkable * > > * targets;
+
+  /// Adds the given object to the targets hash
+  void registerSelf() const;
+
+  /// Removes the object from the targets hash
+  void unregisterSelf() const;
+
 public:
+
+  Linkable();
+  virtual ~Linkable();
 
   /// The list of links.
   LinkList links;
 
   /// Adds a link to the given Target (and add this as a link to the
-  /// target too). It is a no-op when target is NULL.
+  /// target too, ie the link is bidirectionnal). It is a no-op when
+  /// target is NULL.
   void addLink(Linkable * target, const QString & name = "");
 
   /// The number of named links:
   int hasNamedLinks(const QString & name) const;
-
-  // /// Returns the unique String ID for this object, suitable for
-  // /// serialization.
-  // virtual QString uniqueID() const = 0;
 
   /// Returns the (internal) type of the object. It should match the
   /// one that LinksHandler recognizes.

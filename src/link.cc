@@ -48,6 +48,11 @@ void Link::setLinkTarget(Linkable * t)
     targetID = -1;
 }
 
+Linkable * Link::linkTarget() const
+{
+  return target;
+}
+
 void Link::finishedSerializationRead()
 {
   linksToBeFinalized << this;

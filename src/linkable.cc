@@ -39,3 +39,11 @@ int Linkable::hasNamedLinks(const QString & name) const
 {
   return links.namedLinks(name).size();
 }
+
+Linkable::Linkable()
+{
+}
+
+Linkable::~Linkable()
+{
+}
