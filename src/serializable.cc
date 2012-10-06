@@ -1,6 +1,6 @@
 /*
     serializable.cc: Infrastructure for data serialization
-    Copyright 2010 by Vincent Fourmond
+    Copyright 2010, 2012 by Vincent Fourmond
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 */
 
 #include <serializable.hh>
+#include <exceptions.hh>
 
 QList<Serializable *> Serializable::registeredObjects;
 
@@ -99,7 +100,8 @@ void Serializable::serializableIDSet(const QString & g)
   }
   Serializable * ptr = registeredObjects[id];
   if(ptr && ptr != this) {
-    throw QString("Conflict !"); // Probably a little too brutal...
+    throw RuntimeError(QString("Pointer conflict on objet id %1").
+                       arg(id)); // Probably a little too brutal...
   }
   registeredObjects[id] = this;
   serializableID = id;

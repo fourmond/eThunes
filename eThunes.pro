@@ -2,7 +2,7 @@
 # QMake configuration file for QCam
 
 TEMPLATE = app
-CONFIG += precompile_header debug warn_on thread
+CONFIG += exception precompile_header debug warn_on thread
 INCLUDEPATH += . src
 
 DEPENDPATH += src
@@ -64,7 +64,8 @@ SOURCES += src/qmain.cc src/account.cc src/mainwin.cc src/actions.cc \
         src/modelitems.cc src/oomodel.cc \
         src/ootest.cc src/tagpage.cc \
         src/timebasedcurve.cc src/timebasedwidget.cc \
-        src/curvesdisplay.cc
+        src/curvesdisplay.cc \
+        src/exceptions.cc
 
 HEADERS += src/account.hh src/mainwin.hh src/actions.hh \
 	src/ofximport.hh src/accountmodel.hh \
@@ -106,7 +107,8 @@ HEADERS += src/account.hh src/mainwin.hh src/actions.hh \
         src/ootest.hh src/tagpage.hh \
         src/timebasedcurve.hh src/timebasedwidget.hh \
         src/curvesdisplay.hh \
-        src/pointersafesort.hh
+        src/pointersafesort.hh \
+        src/exceptions.hh
 
 
 # Plugins:

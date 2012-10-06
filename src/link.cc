@@ -22,6 +22,8 @@
 #include <cabinet.hh>
 #include <logstream.hh>
 
+#include <exceptions.hh>
+
 SerializationAccessor * Link::serializationAccessor()
 {
   SerializationAccessor * ac = new SerializationAccessor(this);
@@ -60,7 +62,9 @@ void Link::prepareSerializationWrite()
   linkID = QString();           // Not needed anymore
   // ensure the ID is correct:
   if(targetID != target->objectID()) {
-    throw "Bad";                // Surely very bad ;-)...
+    throw RuntimeError(QString("ID mismatch %1 != %2 on linkable 0x%3").
+                       arg(targetID).arg(target->objectID()).
+                       arg((long)this, 0,16));
   }
 }
 
