@@ -18,6 +18,7 @@
 
 #include <serialization.hh>
 #include <serializable.hh>
+#include <linkable.hh>
 
 void Serialization::readNextToken(QXmlStreamReader * reader)
 {
@@ -256,7 +257,9 @@ void SerializationHash::writeXML(const QString & name,
 
 SerializationAccessor::SerializationAccessor(Serializable * t) { 
   target = t;
-  if(t)
-      t->addIDSerialization(this); /// @todo It should be possible to
-                                   /// add hooks here!
+  Linkable * t2 = dynamic_cast<Linkable *>(t);
+  if(t2) {
+    /// @todo add links serialization there too...
+    t2->addIDSerialization(this);
+  }
 }

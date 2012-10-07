@@ -35,37 +35,8 @@
 /// dreadfull easy to embed complex objects in attributes ;-)...
 class Serializable : public SerializationAttribute, public Watchable {
 
-  /// The application-wide unique ID. A value of -1 means that the ID
-  /// hasn't been attributed yet. Mutable as the only accessor to that
-  /// always returns the same value, once it's set.
-  ///
-  /// @todo All the object ID stuff should move to Linkable, as it
-  /// only makes sense there !
-  mutable int serializableID;
-
-  /// The application-wide correspondance between ID and Serializable
-  static QList<Serializable *> registeredObjects;
-
-  /// Helpers for serializing the ID
-  QString serializableIDGet() const;
-  void serializableIDSet(const QString & g);
-
-protected:
-
-  /// This functions makes sure that the object has a registered ID.
-  void ensureHasID() const;
-
-  /// Gets the numbered Serializable
-  static Serializable * objectFromID(int id);
 
 public:
-
-  /// Returns the unique objectID for this object, creating it if
-  /// necessary.
-  ///
-  /// @todo As the rest, this should move to Linkable.
-  int objectID() const;
-
 
   Serializable();
 
@@ -122,13 +93,6 @@ public:
   /// Serializable object definitely should *not* be free by
   /// default...
   virtual bool shouldBeDeleted() { return false;};
-
-  /// Adds the ID attribute to the given accessor.
-  ///
-  /// \b Important this function should probably only be called by
-  /// SerializationAccessor::SerializationAccessor(). This looks like
-  /// a poor design and it is ;-)...
-  void addIDSerialization(SerializationAccessor * accs);
 
   virtual ~Serializable();
 };

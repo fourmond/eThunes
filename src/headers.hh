@@ -94,6 +94,10 @@
 #include <QMultiHash>
 #include <QList>
 
+#include <QMutex>
+#include <QMutexLocker>
+
+
 // Item-model stuff
 #include <QAbstractItemModel>
 #include <QTreeView>

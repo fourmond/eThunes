@@ -54,30 +54,63 @@
 /// class.
 class Linkable : public Serializable, public HTTarget {
 protected:
+
+  /// @name ID-related functions
+  ///
+  /// @{
+
+  friend class SerializationAccessor;
+
   /// Preparation of the serializationAccessor for links
+  ///
+  /// @todo this should be called directly from SerializationAccessor
   void addLinkAttributes(SerializationAccessor * accessor);
+
+  /// Adds serialization of the object ID
+  void addIDSerialization(SerializationAccessor * accs);
+
+  /// Helpers for serializing the ID
+  QString objectIDGet() const;
+  void objectIDSet(const QString & g);
 
 
   /// The unique ID of the object. Objects are not assigned an ID
   /// until they become the target of a link.
-  ///
-  /// Conflicts with objectID in Serializable. Doesn't make much
-  /// sense, somehow... I have to come up with something decent here
-  // int objectID;
+  int objectID;
 
   /// This hash contains all the (potential) targets of links, indexed
   /// by their targetID.
   static QHash<int, QSet<Linkable * > > * targets;
 
-  /// Adds the given object to the targets hash
+  /// Adds the given object to the targets hash. Does not create an
+  /// ID.
   void registerSelf() const;
 
   /// Removes the object from the targets hash
   void unregisterSelf() const;
 
+  /// Gets the first free object. Not MT-safe, so has to be
+  /// synchronized using the appropriate mutex.
+  static int getFreeID();
+
+public:
+
+  /// This functions makes sure that the object has a registered ID.
+  int ensureHasID() const;
+
+  /// Gets the numbered Serializable
+  static Linkable * objectFromID(int id);
+
+  /// @}
+
 public:
 
   Linkable();
+
+  Linkable(const Linkable & a);
+
+  Linkable & operator=(const Linkable & a);
+
   virtual ~Linkable();
 
   /// The list of links.

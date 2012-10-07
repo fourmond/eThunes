@@ -41,36 +41,37 @@ SerializationAccessor * Link::serializationAccessor()
 /// ?).
 void Link::setLinkTarget(Linkable * t) 
 {
-  target = t;
+  // target = t;
   if(t)
-    targetID = t->objectID();
+    targetID = t->ensureHasID();
   else
     targetID = -1;
 }
 
 Linkable * Link::linkTarget() const
 {
-  return target;
+  return Linkable::objectFromID(targetID);
 }
 
 void Link::finishedSerializationRead()
 {
-  linksToBeFinalized << this;
+  // linksToBeFinalized << this;
+  // We don't need that anymore ?
 }
 
 // @todo : add things here !
 void Link::prepareSerializationWrite()
 {
-  if(! target)
-    return;
-  typeName = target->typeName();
-  linkID = QString();           // Not needed anymore
-  // ensure the ID is correct:
-  if(targetID != target->objectID()) {
-    throw RuntimeError(QString("ID mismatch %1 != %2 on linkable 0x%3").
-                       arg(targetID).arg(target->objectID()).
-                       arg((long)this, 0,16));
-  }
+  // if(! target)
+  //   return;
+  // typeName = target->typeName();
+  // // linkID = QString();           // Not needed anymore
+  // // ensure the ID is correct:
+  // if(targetID != target->objectID()) {
+  //   throw RuntimeError(QString("ID mismatch %1 != %2 on linkable 0x%3").
+  //                      arg(targetID).arg(target->objectID()).
+  //                      arg((long)this, 0,16));
+  // }
 }
 
 QList<Link*> Link::linksToBeFinalized;
@@ -79,33 +80,38 @@ QList<Link*> Link::linksToBeFinalized;
 /// @todo In principle, I don't need the reference to Cabinet now.
 int Link::finalizePendingLinks(Cabinet * cabinet)
 {
-  int dangling = 0;
-  QList<Linkable *> targets;
-  QHash<Linkable *, bool> done;
-  for(int i = 0; i < linksToBeFinalized.size(); i++) {
-    Link * link = linksToBeFinalized[i];
-    if(link->targetID >= 0) {
-      Serializable * t = Serializable::objectFromID(link->targetID);
-      Linkable * target = dynamic_cast<Linkable *>(t);
-      link->setLinkTarget(target);
-    }
-    else {                      // old style link
-      LogStream o;
-      o << "Found old-style link (ID: " 
-        << link->linkID << "), converting to new style" << endl;
-      if(link->typeName == "document")
-        link->setLinkTarget(cabinet->namedDocument(link->linkID));
-      else if(link->typeName == "transaction")
-        link->setLinkTarget(cabinet->wallet.namedTransaction(link->linkID));
-    }
 
-    if(! link->target) {
-      dangling++;
-    }
+  /// @todo This should be put back, as dangling links can become
+  /// bothersome !
 
-  }
-  linksToBeFinalized.clear();
-  return dangling;
+  // int dangling = 0;
+  // QList<Linkable *> targets;
+  // QHash<Linkable *, bool> done;
+  // for(int i = 0; i < linksToBeFinalized.size(); i++) {
+  //   Link * link = linksToBeFinalized[i];
+  //   if(link->targetID >= 0) {
+  //     Serializable * t = Serializable::objectFromID(link->targetID);
+  //     Linkable * target = dynamic_cast<Linkable *>(t);
+  //     link->setLinkTarget(target);
+  //   }
+  //   else {                      // old style link
+  //     LogStream o;
+  //     o << "Found old-style link (ID: " 
+  //       << link->linkID << "), converting to new style" << endl;
+  //     if(link->typeName == "document")
+  //       link->setLinkTarget(cabinet->namedDocument(link->linkID));
+  //     else if(link->typeName == "transaction")
+  //       link->setLinkTarget(cabinet->wallet.namedTransaction(link->linkID));
+  //   }
+
+  //   if(! link->target) {
+  //     dangling++;
+  //   }
+
+  // }
+  // linksToBeFinalized.clear();
+  // return dangling;
+  return 0;
 }
 
 void LinkList::addLink(Linkable * target, const QString & name)
