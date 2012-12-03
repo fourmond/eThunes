@@ -27,11 +27,6 @@ class Linkable;
 class Cabinet;
 
 class Link : public Serializable {
-protected:
-  /// The target of the link
-  Linkable * target __attribute__((deprecated));
-
-  
 public:
   /// Sets the link target
   void setLinkTarget(Linkable * t);
@@ -62,13 +57,6 @@ public:
 protected:
   /// The unique object ID of the target. Supercedes linkID
   int targetID;
-
-  // The ID of the link as stored on disk; the value of
-  /// Linkable::uniqueID().
-  QString linkID __attribute__((deprecated));
-
-  /// The type name, as in Linkable::typeName()
-  QString typeName __attribute__((deprecated));
 
   /// This is a global list of links whose target should be adjusted
   /// after everything has been serialized.

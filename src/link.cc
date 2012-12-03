@@ -27,9 +27,7 @@
 SerializationAccessor * Link::serializationAccessor()
 {
   SerializationAccessor * ac = new SerializationAccessor(this);
-  ac->addScalarAttribute("id", &linkID);
   ac->addScalarAttribute("target-id", &targetID);
-  ac->addScalarAttribute("type", &typeName);
   ac->addScalarAttribute("name", &linkName);
   return ac;
 }
