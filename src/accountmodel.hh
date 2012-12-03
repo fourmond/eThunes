@@ -28,7 +28,7 @@
 
 
 /// ModelItem (sub)child representing a single transaction
-/// @todo Change that when subtransactions are in.
+/// @todo Replace with AtomicTransaction !
 class TransactionItem : public LeafModelItem {
   Q_OBJECT;
 
@@ -135,6 +135,8 @@ public:
 
   /// Returns the transaction corresponding to the index, or NULL if
   /// invalid or root.
+  ///
+  /// @todo Replace with AtomicTransaction !
   Transaction * indexedTransaction(QModelIndex index) const;
 
 

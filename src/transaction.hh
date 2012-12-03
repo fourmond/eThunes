@@ -76,7 +76,7 @@ public:
 					      /// of monthID
   };
 
-  AtomicTransaction();
+  AtomicTransaction(int amount = 0);
 
   /// Returns the Account associated to the AtomicTransaction, or NULL
   /// if there isn't.

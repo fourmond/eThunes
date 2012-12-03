@@ -152,6 +152,9 @@ QSize TransactionListWidget::sizeHint() const
 
 void TransactionListWidget::fireUpContextMenu(const QPoint & pos)
 {
+  /// @todo This function should disappear to be handled by the
+  /// objects themselves.
+
   // We fire up a neat menu to select categories, for instance.
   QMenu menu;
 
@@ -175,6 +178,13 @@ void TransactionListWidget::fireUpContextMenu(const QPoint & pos)
     fillMenuWithTags(subMenu, &wallet()->tags, "add-tag");
   }
   menu.addMenu(subMenu);
+
+  if(true) { /// @todo add a readonly attribute ?
+    /// @todo add only for real transactions ?
+    QAction * a = new QAction(tr("Add subtransaction"), this);
+    a->setData(QStringList() << "add-sub");
+    menu.addAction(a);
+  }
 
   
 
@@ -241,6 +251,11 @@ TransactionPtrList TransactionListWidget::selectedTransactions() const
   return list;
 }
 
+AtomicTransaction * TransactionListWidget::currentTransaction() const
+{
+  return model->indexedTransaction(view->currentIndex());
+}
+
 void TransactionListWidget::contextMenuActionFired(QAction * action)
 {
   QStringList l = action->data().toStringList();
@@ -270,8 +285,19 @@ void TransactionListWidget::contextMenuActionFired(QAction * action)
       for(int i = 0; i < selected.count(); i++)
 	selected[i]->setTag(t);
     }
-  }
-  else {
+  } else if(what == "add-sub") { 
+    // Add a subtransaction to the current transaction
+    Transaction * t = dynamic_cast<Transaction*>(currentTransaction());
+    if(! t)
+      return;                   // Must be a real transaction !
+    int amount = 
+      QInputDialog::getInt(this, 
+                           tr("Create subtransaction"),
+                           tr("Enter subtransaction amount"));
+    if(! amount)
+      return;
+    t->subTransactions.append(AtomicTransaction(amount));
+  } else {
     /// @todo Log !
   }
 }

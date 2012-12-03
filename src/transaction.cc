@@ -22,8 +22,8 @@
 #include <wallet.hh>
 
 
-AtomicTransaction::AtomicTransaction() :
-  amount(0), category(NULL), baseTransaction(NULL)
+AtomicTransaction::AtomicTransaction(int am) :
+  amount(am), category(NULL), baseTransaction(NULL)
 {
   watchChild(&tags, "tags");
 }

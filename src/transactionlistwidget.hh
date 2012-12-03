@@ -78,6 +78,9 @@ public:
   /// Returns a list of the currently selected transactions.
   TransactionPtrList selectedTransactions() const;
 
+  /// Returns the current transaction
+  AtomicTransaction *  currentTransaction() const;
+
   /// Returns the Wallet associated
   Wallet * wallet() const;
 
