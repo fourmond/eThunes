@@ -81,17 +81,29 @@ void Account::clearContents()
   transactions.clear();
 }
 
-QList<Transaction *> Account::categoryTransactions(const Category * category,
-						   bool parents)
+TransactionPtrList Account::allTransactions()
 {
-  QList<Transaction *> found;
-  for(int i = 0; i < transactions.size(); i++) {
-    Transaction * t = &transactions[i];
+  /// @todo This should be rewritten using iterators !
+  TransactionPtrList ret;
+  for(int i = 0; i < transactions.size(); i++)
+    ret.append(transactions[i].allSubTransactions());
+  return ret;
+}
+
+
+TransactionPtrList Account::categoryTransactions(const Category * category,
+                                                 bool parents)
+{
+  TransactionPtrList found;
+  /// @todo Rewrite using iterators when available !
+  TransactionPtrList all = allTransactions();
+  for(int i = 0; i < all.size(); i++) {
+    AtomicTransaction * t = all[i];
     if(t->getCategory() == category || 
        (parents && t->getCategory() && 
         t->getCategory()->isChildOf(category))
        )
-      found.push_back(t);
+      found.append(t);
   }
   return found;
 }
@@ -99,8 +111,10 @@ QList<Transaction *> Account::categoryTransactions(const Category * category,
 TransactionPtrList Account::taggedTransactions(const Tag * tag)
 {
   TransactionPtrList lst;
-  for(int i = 0; i < transactions.size(); i++) {
-    Transaction * t = &transactions[i];
+  /// @todo Rewrite using iterators when available !
+  TransactionPtrList all = allTransactions();
+  for(int i = 0; i < all.size(); i++) {
+    AtomicTransaction * t = all[i];
     if(t->hasTag(tag))
       lst.append(t);
   }

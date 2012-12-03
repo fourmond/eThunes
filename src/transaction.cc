@@ -261,3 +261,4 @@ QList<AtomicTransaction*> Transaction::allSubTransactions()
     ret << &(subTransactions[i]);
   return ret;
 }
+

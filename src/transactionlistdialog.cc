@@ -100,7 +100,7 @@ displayMonthlyCategoryTransactions(Category * category,
                                    int monthID, int number)
 {
   QDate d = Transaction::dateFromID(monthID);
-  QList<Transaction *> l = account->categoryTransactions(category);
+  TransactionPtrList l = account->categoryTransactions(category);
   TransactionPtrList l2;
   for(int i = 0; i < l.size(); i++)
     if(l[i]->monthID() >= monthID && l[i]->monthID() < monthID + number)

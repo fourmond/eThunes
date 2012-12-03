@@ -1,20 +1,20 @@
 /**
-    \file transaction.hh
-    Transaction and sub transactions
-    Copyright 2008,2010,2012 by Vincent Fourmond
+   \file transaction.hh
+   Transaction and sub transactions
+   Copyright 2008,2010,2012 by Vincent Fourmond
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+   You should have received a copy of the GNU General Public License
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 
@@ -411,7 +411,43 @@ public:
 
   /// Returns all the sub transactions (ie one more than there are
   /// elements in subTransactions)
+  ///
+  /// @todo I should write a proper iterator to browse through all the
+  /// transactions.
   QList<AtomicTransaction*> allSubTransactions();
+
+
+  /// @name Iterators
+  ///
+  /// Iterators for the transactions
+  ///
+  /// @{
+
+  class iterator {
+    friend class Transaction;
+    Transaction * transaction;
+    int idx;
+    iterator(Transaction * trs, int i = -1) : 
+      transaction(trs), idx(i) {
+    };
+  public:
+    inline AtomicTransaction * operator*() { 
+      if(idx >= 0)
+        return &transaction->subTransactions[idx];
+      else
+        return transaction;
+    };
+    inline bool operator==(const iterator &o) const { 
+      return (transaction == o.transaction) && (idx == o.idx);
+    };
+    inline bool operator!=(const iterator &o) const { return ! (*this == o); };
+    inline iterator &operator++() { ++idx; return *this; };
+  };
+
+  iterator begin() { return iterator(this);};
+  iterator end() { return iterator(this, subTransactions.size());};
+  /// @}
+
 };
 
 #endif

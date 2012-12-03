@@ -134,8 +134,14 @@ public:
   /// @todo Hmmm... This will have to be turned into a list of Atomic
   /// transactions ? (although that doesn't matter so much as we're
   /// returning pointers )
-  QList<Transaction *> categoryTransactions(const Category * category,
-					    bool parents = true);
+  TransactionPtrList categoryTransactions(const Category * category,
+                                          bool parents = true);
+
+
+  /// This returns all the atomic transactions. This just returns a
+  /// sum of Transaction::allSubTransactions. Probably, the best way
+  /// here would be to use iterators
+  TransactionPtrList allTransactions();
 
   /// Returns the Transaction objects of the account that belong to
   /// the given Category, or possibly to one of its descendants.
