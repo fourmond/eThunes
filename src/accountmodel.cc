@@ -27,24 +27,147 @@
 
 QHash<QString, QIcon> AccountModel::statusIcons;
 
-TransactionItem::TransactionItem(Transaction * t) : transaction(t) {
+LeafTransactionItem::LeafTransactionItem(AtomicTransaction * t) : 
+  transaction(t) {
   connect(transaction->watchDog(), SIGNAL(changed(const Watchdog *)), 
           SLOT(transactionChanged()));
 }
 
 
-int TransactionItem::columnCount() const {
+int LeafTransactionItem::columnCount() const {
   return AccountModel::LastColumn;
 }
 
-QVariant TransactionItem::data(int column, int role) const {
+/// @todo There is quite a lot of code shared between this and
+/// FullTransactionItem::data. Maybe have that shared ?
+QVariant LeafTransactionItem::data(int column, int role) const {
+  const AtomicTransaction *t = transaction;
+  if(! t)
+    return QVariant();
+  if(role == Qt::DisplayRole) {
+    switch(column) {
+    case AccountModel::DateColumn: return QVariant(t->getDate());
+    case AccountModel::AmountColumn: 
+      return Transaction::formatAmount(t->getAmount());
+    case AccountModel::CategoryColumn: return QVariant(t->categoryName());
+    case AccountModel::TagsColumn: return QVariant(t->tagString());
+    default:
+      return QVariant();
+    }
+  }
+  if(role == Qt::EditRole) {
+    switch(column) {
+    case AccountModel::CategoryColumn: return QVariant(t->categoryName());
+    case AccountModel::TagsColumn: return QVariant(t->tagString());
+    case AccountModel::LinksColumn: if(t->links.size())
+        return t->links.htmlLinkList().join(", ");
+      return QVariant();
+    default:
+      return QVariant();
+    }
+  }
+  if(role == Qt::TextAlignmentRole) {
+    switch(column) {
+    case AccountModel::AmountColumn:
+    case AccountModel::BalanceColumn:
+      return QVariant(Qt::AlignRight);
+    default:
+      return QVariant();
+    }
+  }
+
+  if(role == Qt::ForegroundRole) {
+    if(column == AccountModel::DateColumn) {
+      QColor color;
+      int month = t->getDate().month() - 1;
+      color.setHsv(month * 170 % 360, 255, 100);
+      return QBrush(color);
+    }
+
+    if(t->getCategory() &&
+       (column == AccountModel::CategoryColumn ||
+        column == AccountModel::NameColumn))
+      return QBrush(t->getCategory()->categoryColor());
+    if(column == AccountModel::AmountColumn) {
+      QColor color;
+      /// \todo Provide customization of the colors
+      if(t->getAmount() < 0)
+        color.setHsv(240,200,130);
+      else
+        color.setHsv(120,200,130);
+      return QBrush(color);
+    }
+    return QVariant();
+  }
+  else
+    return QVariant();
+};
+
+Qt::ItemFlags LeafTransactionItem::flags(int column) const  
+{
+  switch(column) {
+  case AccountModel::CategoryColumn:
+  case AccountModel::TagsColumn:
+    return Qt::ItemIsSelectable|
+      Qt::ItemIsEnabled|Qt::ItemIsEditable;
+  default: return Qt::ItemIsSelectable|
+      Qt::ItemIsEnabled;
+  }
+  return 0;
+}
+
+void LeafTransactionItem::transactionChanged() 
+{
+  emit(itemChanged(this, 0, AccountModel::LastColumn));
+}
+
+/// @todo Lots of code shared too with FullTransaction here. Two
+/// approaches: shared (static) functions or variable-less base class.
+bool LeafTransactionItem::setData(int column, const QVariant & value,
+                                  int role) 
+{
+  AtomicTransaction *t = transaction;
+  if(role == Qt::EditRole) {
+    switch(column) {
+    case AccountModel::CategoryColumn:
+      t->setCategoryFromName(value.toString());
+      emit(itemChanged(this, column, column));
+      return true;
+    case AccountModel::TagsColumn:
+      t->setTagList(value.toString());
+      emit(itemChanged(this, column, column));
+      return true;
+    default:
+      return false;
+    }
+  }
+  return false;
+}
+
+void LeafTransactionItem::changeTransaction(AtomicTransaction * newt)
+{
+  if(newt == transaction)
+    return;                     // nothing to do!
+  disconnect(transaction->watchDog(), SIGNAL(changed(const Watchdog *)), 
+             this, SLOT(transactionChanged()));
+  transaction = newt;
+  connect(transaction->watchDog(), SIGNAL(changed(const Watchdog *)), 
+          SLOT(transactionChanged()));
+  transactionChanged();
+}
+
+
+//////////////////////////////////////////////////////////////////////
+
+QVariant FullTransactionItem::data(int column, int role) const {
   const Transaction *t = transaction;
   if(! t)
     return QVariant();
   if(role == Qt::DisplayRole) {
     switch(column) {
     case AccountModel::DateColumn: return QVariant(t->getDate());
-    case AccountModel::AmountColumn: return QVariant(t->getAmountString());
+    case AccountModel::AmountColumn: 
+      return Transaction::formatAmount(t->getTotalAmount());
     case AccountModel::BalanceColumn: return QVariant(t->getBalanceString());
     case AccountModel::NameColumn: return QVariant(t->getName());
     case AccountModel::CategoryColumn: return QVariant(t->categoryName());
@@ -125,101 +248,17 @@ QVariant TransactionItem::data(int column, int role) const {
     return QVariant();
 };
 
-Qt::ItemFlags TransactionItem::flags(int column) const  
-{
-  switch(column) {
-  case AccountModel::CategoryColumn:
-  case AccountModel::TagsColumn:
-    return Qt::ItemIsSelectable|
-      Qt::ItemIsEnabled|Qt::ItemIsEditable;
-  default: return Qt::ItemIsSelectable|
-      Qt::ItemIsEnabled;
-  }
-  return 0;
-}
-
-void TransactionItem::transactionChanged() 
-{
-  emit(itemChanged(this, 0, AccountModel::LastColumn));
-}
-
-bool TransactionItem::setData(int column, const QVariant & value,
-                                      int role) 
-{
-  Transaction *t = transaction;
-  if(role == Qt::EditRole) {
-    switch(column) {
-    case AccountModel::CategoryColumn:
-      t->setCategoryFromName(value.toString());
-      emit(itemChanged(this, column, column));
-      return true;
-    case AccountModel::TagsColumn:
-      t->setTagList(value.toString());
-      emit(itemChanged(this, column, column));
-      return true;
-    default:
-      return false;
-    }
-  }
-  return false;
-}
-
-void TransactionItem::changeTransaction(Transaction * newt)
-{
-  if(newt == transaction)
-    return;                     // nothing to do!
-  disconnect(transaction->watchDog(), SIGNAL(changed(const Watchdog *)), 
-             this, SLOT(transactionChanged()));
-  transaction = newt;
-  connect(transaction->watchDog(), SIGNAL(changed(const Watchdog *)), 
-          SLOT(transactionChanged()));
-  transactionChanged();
-}
-
-
 //////////////////////////////////////////////////////////////////////
  
-
-TransactionListItem::TransactionListItem(TransactionList * trs) : 
-  transactions(trs), transactionsPtr(NULL) 
-{
-  for(int i = transactions->size(); i > 0; )
-      appendChild(new TransactionItem(&(transactions->operator[](--i))));
-  connect(transactions->watchDog(), 
-          SIGNAL(attributeChanged(const Watchdog *, const QString &)),
-          SLOT(onAttributeChanged(const Watchdog *, const QString &)));
-
-  connect(transactions->watchDog(), 
-          SIGNAL(objectInserted(const Watchdog *, int, int)),
-          SLOT(onObjectInserted(const Watchdog *, int, int)));
-
-  connect(transactions->watchDog(), 
-          SIGNAL(objectRemoved(const Watchdog *, int, int)),
-          SLOT(onObjectRemoved(const Watchdog *, int, int)));
-
-}
-
-TransactionListItem::TransactionListItem(TransactionPtrList * ptr) : 
-  transactions(NULL), transactionsPtr(ptr)
-{
-  for(int i = 0; i < transactionsPtr->size(); i++ ) {
-    Transaction * trs = 
-      dynamic_cast<Transaction *>(transactionsPtr->value(i));
-    if(trs)
-      appendChild(new TransactionItem(trs));
-  }
-}
-
-QVariant TransactionListItem::data(int column, int role) const
+QVariant BaseTransactionListItem::data(int column, int role) const
 {
     return QVariant();
 }
 
 
-
-QVariant TransactionListItem::headerData(int section, 
-                                         Qt::Orientation /*orientation*/, 
-                                         int role) const
+QVariant BaseTransactionListItem::headerData(int section, 
+                                             Qt::Orientation /*orientation*/, 
+                                             int role) const
 {
   if(role == Qt::DisplayRole) {
     switch(section) {
@@ -239,8 +278,82 @@ QVariant TransactionListItem::headerData(int section,
     return QVariant();
 }
 
+void BaseTransactionListItem::onAttributeChanged(const Watchdog * wd, const QString &name)
+{
+  effAttributeChanged(wd, name);
+}
 
-void TransactionListItem::onAttributeChanged(const Watchdog * wd, 
+void BaseTransactionListItem::onObjectInserted(const Watchdog * wd, int at, int nb)
+{
+  effObjectInserted(wd, at, nb);
+}
+
+void BaseTransactionListItem::onObjectRemoved(const Watchdog * wd, int at, int nb)
+{
+  effObjectRemoved(wd, at, nb);
+}
+
+
+//////////////////////////////////////////////////////////////////////
+
+/// ModelItem (sub)child representing a list of transactions. All
+/// objects holding one or more transactions should probably come from
+/// this ? 
+///
+/// @todo Come up with a child of that holding month-based lists of
+/// transactions ?
+///
+/// @todo have a base class for that to minimize the number of
+/// functions instantiated
+template <class Type, class Item, class Holder> 
+class TransactionListItem : public BaseTransactionListItem {
+  Holder * list;
+
+public:
+  TransactionListItem(Holder * list);
+
+  virtual QVariant data(int column, int role) const;  
+  virtual QVariant headerData(int column, Qt::Orientation orientation, 
+                              int role) const;  
+
+  /// Returns the account linked to the transactions (ie the first one
+  /// found)
+  virtual Account * account() const;
+
+  /// Looks for a given transaction, and returns the corresponding item
+  ///
+  ///  (make that return a ModelItem ?) or split the class ?
+  virtual ModelItem * findTransaction(const AtomicTransaction * t);
+  virtual ModelItem * findTransaction(const Transaction * t);
+
+protected:
+  virtual void effAttributeChanged(const Watchdog * wd, const QString &name);
+  virtual void effObjectInserted(const Watchdog * wd, int at, int nb);
+  virtual void effObjectRemoved(const Watchdog * wd, int at, int nb);
+};
+
+template <class Type, class Item, class Holder> 
+TransactionListItem<Type, Item, Holder>::TransactionListItem(Holder * lst) : 
+  list(lst)
+{
+  for(int i = list->size(); i > 0; )
+    appendChild(new Item(list->pointerTo(--i)));
+  connect(list->watchDog(), 
+          SIGNAL(attributeChanged(const Watchdog *, const QString &)),
+          SLOT(onAttributeChanged(const Watchdog *, const QString &)));
+
+  connect(list->watchDog(), 
+          SIGNAL(objectInserted(const Watchdog *, int, int)),
+          SLOT(onObjectInserted(const Watchdog *, int, int)));
+
+  connect(list->watchDog(), 
+          SIGNAL(objectRemoved(const Watchdog *, int, int)),
+          SLOT(onObjectRemoved(const Watchdog *, int, int)));
+
+}
+
+template <class Type, class Item, class Holder> 
+void TransactionListItem<Type, Item, Holder>::effAttributeChanged(const Watchdog * wd, 
                                              const QString &name)
 {
   if(name == "all") {
@@ -249,63 +362,78 @@ void TransactionListItem::onAttributeChanged(const Watchdog * wd,
 
     /// @todo assert that the source's size and the current number of
     /// children are the same
-    int sz = transactions->size();
+    int sz = list->size();
     for(int i = 0; i < sz; i++) {
-      TransactionItem * it = dynamic_cast<TransactionItem *>(childAt(i));
+      Item * it = dynamic_cast<Item *>(childAt(i));
       if(!it) {
         QTextStream o(stdout);
         o << "Null pointer " << endl;
         continue;               // But shouldn't happen
       }
-      it->changeTransaction(&(transactions->operator[](sz - 1 - i)));
+      it->changeTransaction(list->pointerTo(sz - 1 - i));
     }
     
   }
 }
 
-void TransactionListItem::onObjectInserted(const Watchdog * wd, int at, int nb)
+template <class Type, class Item, class Holder> 
+void TransactionListItem<Type, Item, Holder>::effObjectInserted(const Watchdog * wd, int at, int nb)
 {
   int na = children.size() - at - 1;
   emit(rowsWillChange(this, at, nb));
   for(int i = nb - 1; i >= 0 ; i--)
-    insertChild(na, new TransactionItem(&(transactions->
-                                          operator[](at + nb - i - 1))));
+    insertChild(na, new Item(list->pointerTo(at + nb - i - 1)));
   emit(rowsChanged(this));
 }
 
-void TransactionListItem::onObjectRemoved(const Watchdog * wd, int at, int nb)
+template <class Type, class Item, class Holder> 
+void TransactionListItem<Type, Item, Holder>::effObjectRemoved(const Watchdog * wd, int at, int nb)
 {
 }
 
-Account * TransactionListItem::account() const
+template <class Type, class Item, class Holder> 
+Account * TransactionListItem<Type, Item, Holder>::account() const
 {
-  if(transactions && transactions->size() > 0)
-    return transactions->value(0).account;
-  if(transactionsPtr && transactionsPtr->size() > 0)
-    return transactionsPtr->value(0)->getAccount();
+  if(list->size() > 0)
+    return list->pointerTo(0)->getAccount();
   return NULL;
 }
 
 
 /// @todo This function can probably move one degree of abstraction
-/// higher.
-TransactionItem * TransactionListItem::findTransaction(const Transaction * tr)
+/// higher ??
+template <class Type, class Item, class Holder> 
+ModelItem * TransactionListItem<Type, Item, Holder>::findTransaction(const AtomicTransaction * tr)
 {
   for(int i = 0; i < children.size(); i++) {
     ModelItem * item = children[i];
-    TransactionItem * ti = dynamic_cast<TransactionItem *>(item);
+    Item * ti = dynamic_cast<Item *>(item);
     if(ti) {
-      if(ti->getTransaction() == tr)
+      if(dynamic_cast<AtomicTransaction*>(ti->getTransaction()) == tr)
         return ti;
       else
         continue;
     }
+  }
+  return NULL;
+}
 
-    TransactionListItem * til = dynamic_cast<TransactionListItem *>(item);
-    if(til) {
-      TransactionItem * ti = til->findTransaction(tr);
-      if(ti)
+/// @todo This function can probably move one degree of abstraction
+/// higher. By this, I mean that all the objects that handle
+/// transactions could descend from the same base class that has the
+/// facility for finding transactions (and use it recursively when
+/// applicable).
+template <class Type, class Item, class Holder> 
+ModelItem * TransactionListItem<Type, Item, Holder>::findTransaction(const Transaction * tr)
+{
+  for(int i = 0; i < children.size(); i++) {
+    ModelItem * item = children[i];
+    Item * ti = dynamic_cast<Item *>(item);
+    if(ti) {
+      if(dynamic_cast<Transaction*>(ti->getTransaction()) == tr)
         return ti;
+      else
+        continue;
     }
   }
   return NULL;
@@ -329,19 +457,19 @@ const QIcon & AccountModel::statusIcon(const QString & status)
 AccountModel::AccountModel(TransactionList * t) :
   OOModel(NULL), transactions(t), transactionsPtr(NULL)
 {
-  setRoot(new TransactionListItem(transactions));
+  setRoot(new TransactionListItem<Transaction, FullTransactionItem, TransactionList>(transactions));
 }
 
 AccountModel::AccountModel(TransactionPtrList * t) :
   OOModel(NULL), transactions(NULL), transactionsPtr(t)
 {
-  setRoot(new TransactionListItem(transactionsPtr));
+  setRoot(new TransactionListItem<AtomicTransaction, LeafTransactionItem, TransactionPtrList>(transactionsPtr));
 }
 
 Account * AccountModel::account() const
 {
 
-  TransactionListItem * it = rootItem();
+  BaseTransactionListItem * it = rootItem();
   if(it)
     return it->account();
   return NULL;
@@ -349,21 +477,22 @@ Account * AccountModel::account() const
 
 QModelIndex AccountModel::index(Transaction * transaction)
 {
-  TransactionItem * it = rootItem()->findTransaction(transaction);
+  ModelItem * it = rootItem()->findTransaction(transaction);
   if(it)
     return indexForItem(it);
   return QModelIndex();
 }
 
-TransactionListItem * AccountModel::rootItem() const
+BaseTransactionListItem * AccountModel::rootItem() const
 {
-  return dynamic_cast<TransactionListItem *>(root);
+  return dynamic_cast<BaseTransactionListItem *>(root);
 }
 
+/// @todo See also for AtomicTransaction !
 Transaction * AccountModel::indexedTransaction(QModelIndex index) const
 {
-  TransactionItem * it = 
-    dynamic_cast<TransactionItem *>(item(index));
+  FullTransactionItem * it = 
+    dynamic_cast<FullTransactionItem *>(item(index));
   if(it)
     return it->getTransaction();
   return NULL;

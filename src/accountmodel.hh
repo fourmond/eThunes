@@ -1,7 +1,7 @@
 /**
     \file account-model.hh
     An item model providing transaction data
-    Copyright 2010 by Vincent Fourmond
+    Copyright 2010, 2012 by Vincent Fourmond
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -27,15 +27,14 @@
 #include <oomodel.hh>
 
 
-/// ModelItem (sub)child representing a single transaction
-/// @todo Replace with AtomicTransaction !
-class TransactionItem : public LeafModelItem {
+/// This item represents a single \b leaf transaction
+class LeafTransactionItem : public LeafModelItem {
   Q_OBJECT;
 
-  Transaction * transaction;
+  AtomicTransaction * transaction;
 
 public:
-  TransactionItem(Transaction * t);
+  LeafTransactionItem(AtomicTransaction * t);
   virtual int columnCount() const;
   virtual QVariant data(int column, int role) const;
   virtual Qt::ItemFlags flags(int column) const;
@@ -43,49 +42,36 @@ public:
 		       int role);
 
   /// Changes the underlying transaction pointer.
-  void changeTransaction(Transaction * newt);
+  void changeTransaction(AtomicTransaction * newt);
 
   /// Returns the transaction 
-  Transaction * getTransaction() const { return transaction; };
+  AtomicTransaction * getTransaction() const { return transaction; };
 
 protected slots:
   void transactionChanged();
 
 };
 
-/// ModelItem (sub)child representing a list of transactions. All
-/// objects holding one or more transactions should probably come from
-/// this ? 
-///
-/// @todo Come up with a child of that holding month-based lists of
-/// transactions ?
-///
-/// @todo I will have a whole mess to cleanup when I find out that
-/// actually it is not Transaction that I'm after, but the simpler
-/// parent version !
-class TransactionListItem : public FixedChildrenModelItem {
+/// This represents a full transaction along with its subtransactions
+/// when applicable.
+class FullTransactionItem : public FixedChildrenModelItem {
   Q_OBJECT;
 
-  /// @todo get rid of those ?
-  TransactionList * transactions;
-  TransactionPtrList * transactionsPtr;
+  Transaction * transaction;
 
 public:
-  TransactionListItem(TransactionList * trs);
-  TransactionListItem(TransactionPtrList * trs);
+  FullTransactionItem(Transaction * transaction);
 
   virtual QVariant data(int column, int role) const;  
   virtual QVariant headerData(int column, Qt::Orientation orientation, 
                               int role) const;  
 
-  /// Returns the account linked to the transactions (ie the first one
-  /// found)
-  Account * account() const;
+  /// Changes the underlying transaction pointer.
+  void changeTransaction(Transaction * newt);
 
-  /// Looks for a given transaction, and returns its parent object and
-  /// the number of the child as a pair object. The parent is NULL and
-  /// the index -1 if the transaction wasn't found.
-  TransactionItem * findTransaction(const Transaction * tr);
+  /// Returns the transaction 
+  Transaction * getTransaction() const { return transaction; };
+
 
 protected slots:
   void onAttributeChanged(const Watchdog * wd, const QString &name);
@@ -93,6 +79,33 @@ protected slots:
   void onObjectRemoved(const Watchdog * wd, int at, int nb);
 };
 
+
+/// Base class for the TransactionListItem template classes
+class BaseTransactionListItem : public FixedChildrenModelItem {
+  Q_OBJECT;
+
+public:
+  virtual QVariant data(int column, int role) const;  
+  virtual QVariant headerData(int column, Qt::Orientation orientation, 
+                              int role) const;  
+
+  /// Returns the account linked to the transactions (ie the first one
+  /// found)
+  virtual Account * account() const = 0;
+
+  /// Looks for a given transaction, and returns the corresponding item
+  virtual ModelItem * findTransaction(const AtomicTransaction * t) = 0;
+  virtual ModelItem * findTransaction(const Transaction * t) = 0;
+
+protected slots:
+  void onAttributeChanged(const Watchdog * wd, const QString &name);
+  void onObjectInserted(const Watchdog * wd, int at, int nb);
+  void onObjectRemoved(const Watchdog * wd, int at, int nb);
+protected:
+  virtual void effAttributeChanged(const Watchdog * wd, const QString &name) = 0;
+  virtual void effObjectInserted(const Watchdog * wd, int at, int nb) = 0;
+  virtual void effObjectRemoved(const Watchdog * wd, int at, int nb) = 0;
+};
 
 
 /// Class in charge of organising the data of a list of Transaction
@@ -117,7 +130,7 @@ class AccountModel : public OOModel {
   /// Or this way:
   TransactionPtrList * transactionsPtr;
 
-  TransactionListItem * rootItem() const;
+  BaseTransactionListItem * rootItem() const;
 
 protected:
 

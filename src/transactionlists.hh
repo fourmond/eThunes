@@ -137,6 +137,12 @@ public:
   void append(const QList<AtomicTransaction *> & trs);
   void append(const TransactionPtrList & trs);
   void append(AtomicTransaction * tr);
+
+  /// Returns a pointer to the numbered element.
+  ///
+  /// This function is necessary to play well in template things
+  AtomicTransaction * pointerTo(int nb);
+
 };
 
 /// This class represents a list of Transaction objects, ready for
@@ -189,6 +195,10 @@ public:
   /// \todo this one should also be part of TransactionPtrList.
   TransactionPtrList transactionsWithinRange(const QDate & before,
 					     const QDate & after);
+
+
+  /// Returns a pointer to the numbered element
+  Transaction * pointerTo(int nb);
 
   
 };

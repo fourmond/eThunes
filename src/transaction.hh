@@ -333,11 +333,6 @@ public:
     return date;
   };
 
-  /// Returns the amount of the transaction as a string.
-  QString getAmountString() const {
-    return formatAmount(amount);
-  };
-
   /// Returns the name of the transaction.
   virtual QString getName() const {
     return name;

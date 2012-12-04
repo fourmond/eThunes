@@ -195,6 +195,11 @@ TransactionPtrList TransactionList::transactionsWithinRange(const QDate & before
   return list;
 }
 
+Transaction * TransactionList::pointerTo(int i)
+{
+  return &(*this)[i];
+}
+
 ////////////////////////////////////////////////////////////////////////////
 
 static bool compareTransactionsByDate(AtomicTransaction * a, 
@@ -225,6 +230,12 @@ void TransactionPtrList::append(const TransactionPtrList & lst)
   for(int i = 0; i < lst.size(); i++)
     append(lst[i]);
 }
+
+AtomicTransaction * TransactionPtrList::pointerTo(int i)
+{
+  return value(i);
+}
+
 
 void TransactionPtrList::append(AtomicTransaction * tr)
 {
