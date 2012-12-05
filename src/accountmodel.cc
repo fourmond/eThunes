@@ -454,16 +454,29 @@ const QIcon & AccountModel::statusIcon(const QString & status)
   return statusIcons[status];
 }
 
+void AccountModel::setList(TransactionList * t)
+{
+  this->transactions = t;
+  setRoot(new TransactionListItem<Transaction, FullTransactionItem, TransactionList>(transactions));
+}
+
+
+void AccountModel::setList(TransactionPtrList * t)
+{
+  transactionsPtr = t;
+  setRoot(new TransactionListItem<AtomicTransaction, LeafTransactionItem, TransactionPtrList>(transactionsPtr));
+}
+
 AccountModel::AccountModel(TransactionList * t) :
   OOModel(NULL), transactions(t), transactionsPtr(NULL)
 {
-  setRoot(new TransactionListItem<Transaction, FullTransactionItem, TransactionList>(transactions));
+  setList(t);
 }
 
 AccountModel::AccountModel(TransactionPtrList * t) :
   OOModel(NULL), transactions(NULL), transactionsPtr(t)
 {
-  setRoot(new TransactionListItem<AtomicTransaction, LeafTransactionItem, TransactionPtrList>(transactionsPtr));
+  setList(t);
 }
 
 Account * AccountModel::account() const

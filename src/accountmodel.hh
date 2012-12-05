@@ -146,6 +146,10 @@ public:
   AccountModel(TransactionList * transactions);
   AccountModel(TransactionPtrList * transactions);
 
+  /// Setup the model to be looking at the given list
+  void setList(TransactionList * transactions);
+  void setList(TransactionPtrList * transactions);
+
   /// Returns the transaction corresponding to the index, or NULL if
   /// invalid or root.
   ///

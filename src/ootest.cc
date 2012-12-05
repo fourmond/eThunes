@@ -67,26 +67,26 @@ public:
 
 OOTest::OOTest(TransactionList * transactions)
 {
-  model = new OOModel(new TransactionListItem(transactions));
-  QVBoxLayout * layout = new QVBoxLayout(this);
+  // model = new OOModel(new TransactionListItem(transactions));
+  // QVBoxLayout * layout = new QVBoxLayout(this);
   
-  view = new QTreeView();
-  view->setModel(model);
-  layout->addWidget(view);
-  view->setRootIndex(model->rootIndex());
-  view->setRootIsDecorated(false);
+  // view = new QTreeView();
+  // view->setModel(model);
+  // layout->addWidget(view);
+  // view->setRootIndex(model->rootIndex());
+  // view->setRootIsDecorated(false);
 
 }
 
 void OOTest::test(TransactionList * transactions)
 {
-  WidgetWrapperDialog * dlg = 
-    new WidgetWrapperDialog(new OOTest(transactions), 
-                            tr("test !"));
-  dlg->show();
+  // WidgetWrapperDialog * dlg = 
+  //   new WidgetWrapperDialog(new OOTest(transactions), 
+  //                           tr("test !"));
+  // dlg->show();
 }
 
 OOTest::~OOTest()
 {
-  delete model;
+  //  delete model;
 }

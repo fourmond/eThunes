@@ -48,7 +48,7 @@ void TransactionListWidget::showTransactions(TransactionList *transactions)
   if(! model)
     model = new AccountModel(transactions);
   else
-    model->setRoot(new TransactionListItem(transactions));
+    model->setList(transactions);
   setupTreeView();
 }
 
@@ -57,7 +57,7 @@ void TransactionListWidget::showTransactions(TransactionPtrList *transactions)
   if(! model)
     model = new AccountModel(transactions);
   else
-    model->setRoot(new TransactionListItem(transactions));
+    model->setList(transactions);
   setupTreeView();
 
   // By default, we hide the balance, as it usually doesnt make sense

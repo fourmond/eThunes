@@ -23,7 +23,7 @@
 #include <oomodel.hh>
 #include <accountmodel.hh>
 
-class TransactionListItem;
+class BaseTransactionListItem;
 
 /// This Widget is a thin wrapper around a QTreeView with an
 /// AccoutModel as model.
@@ -62,7 +62,7 @@ public:
   AccountModel * model;
 
   /// The root item
-  TransactionListItem * rootItem;
+  BaseTransactionListItem * rootItem;
 
   /// And the widget to actually display stuff
   QTreeView * view;
