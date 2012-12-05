@@ -312,10 +312,6 @@ class TransactionListItem : public BaseTransactionListItem {
 public:
   TransactionListItem(Holder * list);
 
-  virtual QVariant data(int column, int role) const;  
-  virtual QVariant headerData(int column, Qt::Orientation orientation, 
-                              int role) const;  
-
   /// Returns the account linked to the transactions (ie the first one
   /// found)
   virtual Account * account() const;
@@ -438,8 +434,6 @@ ModelItem * TransactionListItem<Type, Item, Holder>::findTransaction(const Trans
   }
   return NULL;
 }
-
-
 
 //////////////////////////////////////////////////////////////////////
 
