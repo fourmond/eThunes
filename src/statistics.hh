@@ -67,6 +67,7 @@ protected:
 public:
 
   PeriodicCategorizedStatistics(Account * ac);
+  virtual ~PeriodicCategorizedStatistics() {;};
 
   /// Adds a Transaction to the statistics.
   virtual void addTransaction(const AtomicTransaction * t, 

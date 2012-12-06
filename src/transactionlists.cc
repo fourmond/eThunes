@@ -125,8 +125,8 @@ void TransactionList::computeBalance(int balance)
   /// \todo Maybe there should be a way to check the balance, through
   /// a checkBalance function ?
   for(int i = 0; i< size(); i++) {
-    Transaction & t = operator[](i); // Rather inelegant, I find...
-    balance += t.getAmount();
+    Transaction & t = (*this)[i];
+    balance += t.getTotalAmount();
     t.setBalance(balance);
     // t.balanceMeaningful = true;
     // for now useless ?

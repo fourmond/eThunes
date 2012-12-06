@@ -49,7 +49,7 @@ void TransactionListWidget::showTransactions(TransactionList *transactions)
     model = new AccountModel(transactions);
   else
     model->setList(transactions);
-  setupTreeView();
+  setupTreeView(true);
 }
 
 void TransactionListWidget::showTransactions(TransactionPtrList *transactions)
@@ -74,14 +74,14 @@ void TransactionListWidget::setupFrame()
   layout->addWidget(view);
 }
 
-void TransactionListWidget::setupTreeView()
+void TransactionListWidget::setupTreeView(bool decorate)
 {
   view->setModel(model);
 
   QModelIndex root = model->rootIndex();
   
   view->setRootIndex(root);
-  view->setRootIsDecorated(false);
+  view->setRootIsDecorated(decorate);
 
   if(wallet())
     view->setItemDelegateForColumn(AccountModel::CategoryColumn,
@@ -244,7 +244,7 @@ TransactionPtrList TransactionListWidget::selectedTransactions() const
   TransactionPtrList list;
   QModelIndexList l = view->selectionModel()->selectedIndexes();
   for(int i = 0; i < l.size(); i++) {
-    Transaction * t = model->indexedTransaction(l[i]);
+    AtomicTransaction * t = model->indexedTransaction(l[i]);
     if(t)                       // Don't stash NULL pointers here.
       list << t;
   }

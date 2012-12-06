@@ -34,7 +34,7 @@ protected:
   /// \todo Find a way to disable columns on demand.
   void setupFrame();
 
-  void setupTreeView();
+  void setupTreeView(bool decorate = false);
 
   /// Fills the menu with the given Category and its children.
   void fillMenuWithCategory(QMenu * menu, Category * category);

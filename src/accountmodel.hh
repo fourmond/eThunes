@@ -161,7 +161,7 @@ public:
   /// invalid or root.
   ///
   /// @todo Replace with AtomicTransaction !
-  Transaction * indexedTransaction(QModelIndex index) const;
+  AtomicTransaction * indexedTransaction(QModelIndex index) const;
 
 
   /// @todo The order of the columns should probably be made

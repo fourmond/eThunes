@@ -209,6 +209,21 @@ void LeafTransactionItem::changeTransaction(AtomicTransaction * newt)
 
 //////////////////////////////////////////////////////////////////////
 
+
+FullTransactionItem::FullTransactionItem(Transaction * t) : 
+  transaction(t) {
+  connect(transaction->watchDog(), SIGNAL(changed(const Watchdog *)), 
+          SLOT(transactionChanged()));
+
+  // For now, setup subtransations only here.
+
+  if(transaction->subTransactions.size() > 0) {
+    QList<AtomicTransaction *> subs = transaction->allSubTransactions();
+    for(int i = 0; i < subs.size(); i++)
+      appendChild(new LeafTransactionItem(subs[i]));
+  }
+}
+
 int FullTransactionItem::rootColumns() const
 {
   return AccountModel::LastColumn;
@@ -234,11 +249,6 @@ void FullTransactionItem::onObjectRemoved(const Watchdog * wd, int at, int nb)
  
 }
 
-FullTransactionItem::FullTransactionItem(Transaction * t) : 
-  transaction(t) {
-  connect(transaction->watchDog(), SIGNAL(changed(const Watchdog *)), 
-          SLOT(transactionChanged()));
-}
 
 void FullTransactionItem::changeTransaction(Transaction * newt)
 {
@@ -512,13 +522,23 @@ BaseTransactionListItem * AccountModel::rootItem() const
   return dynamic_cast<BaseTransactionListItem *>(root);
 }
 
-/// @todo See also for AtomicTransaction !
-Transaction * AccountModel::indexedTransaction(QModelIndex index) const
+/// @todo This show that, to some extent, FullTransactionItem and
+/// LeafTransactionItem should share some code, probably through a
+/// given base class ?
+AtomicTransaction * AccountModel::indexedTransaction(QModelIndex index) const
 {
-  FullTransactionItem * it = 
-    dynamic_cast<FullTransactionItem *>(item(index));
-  if(it)
-    return it->getTransaction();
+  {
+    FullTransactionItem * it = 
+      dynamic_cast<FullTransactionItem *>(item(index));
+    if(it)
+      return it->getTransaction();
+  }
+  {
+    LeafTransactionItem * it = 
+      dynamic_cast<LeafTransactionItem *>(item(index));
+    if(it)
+      return it->getTransaction();
+  }
   return NULL;
 }
 
