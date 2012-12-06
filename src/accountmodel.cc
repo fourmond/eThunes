@@ -27,30 +27,30 @@
 
 QHash<QString, QIcon> AccountModel::statusIcons;
 
-LeafTransactionItem::LeafTransactionItem(AtomicTransaction * t) : 
-  transaction(t) {
-  connect(transaction->watchDog(), SIGNAL(changed(const Watchdog *)), 
-          SLOT(transactionChanged()));
-}
 
-
-int LeafTransactionItem::columnCount() const {
-  return AccountModel::LastColumn;
-}
-
-/// @todo There is quite a lot of code shared between this and
-/// FullTransactionItem::data. Maybe have that shared ?
-QVariant LeafTransactionItem::data(int column, int role) const {
-  const AtomicTransaction *t = transaction;
+/// Returns the data for the given transaction
+static QVariant transactionData(AtomicTransaction * t, 
+                                int column, int role, bool full = true)
+{
   if(! t)
     return QVariant();
   if(role == Qt::DisplayRole) {
     switch(column) {
     case AccountModel::DateColumn: return QVariant(t->getDate());
     case AccountModel::AmountColumn: 
-      return Transaction::formatAmount(t->getAmount());
+      if(full)
+        return Transaction::formatAmount(t->getTotalAmount());
+      else
+        return Transaction::formatAmount(t->getAmount());
+    case AccountModel::BalanceColumn: 
+      if(full)
+        return QVariant(Transaction::formatAmount(t->getBalance()));
+      else
+        return QVariant();
+    case AccountModel::NameColumn: return QVariant(t->getName());
     case AccountModel::CategoryColumn: return QVariant(t->categoryName());
     case AccountModel::TagsColumn: return QVariant(t->tagString());
+    case AccountModel::MemoColumn: return t->getDescription();
     default:
       return QVariant();
     }
@@ -66,6 +66,18 @@ QVariant LeafTransactionItem::data(int column, int role) const {
       return QVariant();
     }
   }
+  if(role == Qt::DecorationRole) {
+    if(full && column == AccountModel::RecentColumn) {
+      Transaction * tr = dynamic_cast<Transaction*>(t);
+      if(tr) {
+        if(tr->isRecent())
+          return AccountModel::statusIcon("recent");
+        else
+          return AccountModel::statusIcon("default");
+      }
+    }
+    return QVariant();
+  }
   if(role == Qt::TextAlignmentRole) {
     switch(column) {
     case AccountModel::AmountColumn:
@@ -76,6 +88,27 @@ QVariant LeafTransactionItem::data(int column, int role) const {
     }
   }
 
+  if(role == Qt::FontRole) {
+    bool tst = column == AccountModel::BalanceColumn;
+    if(! tst && full) {
+      // check if full transaction
+      Transaction * tr = dynamic_cast<Transaction*>(t);
+      tst = tr->isRecent();
+    }
+    if(tst) {
+      QFont font;
+      font.setBold(true);
+      return font;
+    }
+    return QVariant();
+  }
+  // if(role == Qt::BackgroundRole) {
+  //   QColor background;
+  //   int month = t->date.month() - 1;
+  //   background.setHsv(month * 170 % 360, 0,
+  // 		      (index.row() % 2 ? 220 : 240));
+  //   return QBrush(background);
+  // }
   if(role == Qt::ForegroundRole) {
     if(column == AccountModel::DateColumn) {
       QColor color;
@@ -101,7 +134,24 @@ QVariant LeafTransactionItem::data(int column, int role) const {
   }
   else
     return QVariant();
-};
+}
+
+LeafTransactionItem::LeafTransactionItem(AtomicTransaction * t) : 
+  transaction(t) {
+  connect(transaction->watchDog(), SIGNAL(changed(const Watchdog *)), 
+          SLOT(transactionChanged()));
+}
+
+
+int LeafTransactionItem::columnCount() const {
+  return AccountModel::LastColumn;
+}
+
+/// @todo There is quite a lot of code shared between this and
+/// FullTransactionItem::data. Maybe have that shared ?
+QVariant LeafTransactionItem::data(int column, int role) const {
+  return transactionData(transaction, column, role, false);
+}
 
 Qt::ItemFlags LeafTransactionItem::flags(int column) const  
 {
@@ -166,93 +216,8 @@ int FullTransactionItem::rootColumns() const
 
 
 QVariant FullTransactionItem::data(int column, int role) const {
-  const Transaction *t = transaction;
-  if(! t)
-    return QVariant();
-  if(role == Qt::DisplayRole) {
-    switch(column) {
-    case AccountModel::DateColumn: return QVariant(t->getDate());
-    case AccountModel::AmountColumn: 
-      return Transaction::formatAmount(t->getTotalAmount());
-    case AccountModel::BalanceColumn: return QVariant(t->getBalanceString());
-    case AccountModel::NameColumn: return QVariant(t->getName());
-    case AccountModel::CategoryColumn: return QVariant(t->categoryName());
-    case AccountModel::TagsColumn: return QVariant(t->tagString());
-    case AccountModel::MemoColumn: return t->getDescription();
-    default:
-      return QVariant();
-    }
-  }
-  if(role == Qt::EditRole) {
-    switch(column) {
-    case AccountModel::CategoryColumn: return QVariant(t->categoryName());
-    case AccountModel::TagsColumn: return QVariant(t->tagString());
-    case AccountModel::LinksColumn: if(t->links.size())
-        return t->links.htmlLinkList().join(", ");
-      return QVariant();
-    default:
-      return QVariant();
-    }
-  }
-  if(role == Qt::DecorationRole) {
-    if(column == AccountModel::RecentColumn) {
-      if(t->isRecent())
-        return AccountModel::statusIcon("recent");
-      else
-        return AccountModel::statusIcon("default");
-    }
-    return QVariant();
-  }
-  if(role == Qt::TextAlignmentRole) {
-    switch(column) {
-    case AccountModel::AmountColumn:
-    case AccountModel::BalanceColumn:
-      return QVariant(Qt::AlignRight);
-    default:
-      return QVariant();
-    }
-  }
-
-  if(role == Qt::FontRole && 
-     (column == AccountModel::BalanceColumn 
-      || t->isRecent())) {
-    QFont font;
-    font.setBold(true);
-    return font;
-  }
-  // if(role == Qt::BackgroundRole) {
-  //   QColor background;
-  //   int month = t->date.month() - 1;
-  //   background.setHsv(month * 170 % 360, 0,
-  // 		      (index.row() % 2 ? 220 : 240));
-  //   return QBrush(background);
-  // }
-  if(role == Qt::ForegroundRole) {
-    if(column == AccountModel::DateColumn) {
-      QColor color;
-      int month = t->getDate().month() - 1;
-      color.setHsv(month * 170 % 360, 255, 100);
-      return QBrush(color);
-    }
-
-    if(t->getCategory() &&
-       (column == AccountModel::CategoryColumn ||
-        column == AccountModel::NameColumn))
-      return QBrush(t->getCategory()->categoryColor());
-    if(column == AccountModel::AmountColumn) {
-      QColor color;
-      /// \todo Provide customization of the colors
-      if(t->getAmount() < 0)
-        color.setHsv(240,200,130);
-      else
-        color.setHsv(120,200,130);
-      return QBrush(color);
-    }
-    return QVariant();
-  }
-  else
-    return QVariant();
-};
+  return transactionData(transaction, column, role, true);
+}
 
 void FullTransactionItem::onAttributeChanged(const Watchdog * wd, const QString &name)
 {

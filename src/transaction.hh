@@ -145,6 +145,12 @@ public:
     return amount;
   };
 
+  /// Balance is not necessary meaningful
+  virtual int getBalance() const {
+    return 0;
+  };
+
+
   virtual QString getCheckNumber() const;
 
   /// Returns the date
@@ -166,6 +172,18 @@ public:
   /// information. Mostly useful for feeding the data to interpreted
   /// scripts.
   AttributeHash toHash() const;
+
+  /// Returns a string made either of the memo or the check number.
+  QString getDescription() const {
+    QString s = getMemo();
+    if(! s.isEmpty()) 
+      return s;
+    s = getCheckNumber();
+    if(! s.isEmpty())
+      return QObject::tr("Check: %1").arg(s);
+    return QString();
+  };
+
 
 public:
 
@@ -312,12 +330,12 @@ public:
   };
 
   /// Gets the balance
-  int getBalance() const {
+  virtual int getBalance() const {
     return balance;
   };
 
   /// Gets the balance as a string
-  QString getBalanceString() const {
+  QString getBalanceString() const __attribute__((deprecated)) {
     return formatAmount(balance);
   };
 
@@ -344,14 +362,6 @@ public:
     return memo;
   };
 
-  /// Returns a string made either of the memo or the check number.
-  QString getDescription() const {
-    if(! memo.isEmpty()) 
-      return memo;
-    if(! checkNumber.isEmpty())
-      return QObject::tr("Check: %1").arg(checkNumber);
-    return QString();
-  };
 
   /// @}
 
