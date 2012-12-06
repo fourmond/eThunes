@@ -1,6 +1,6 @@
 /*
     accountmodel.cc: model for transaction lists
-    Copyright 2010, 2011 by Vincent Fourmond
+    Copyright 2010, 2011, 2012 by Vincent Fourmond
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -159,6 +159,12 @@ void LeafTransactionItem::changeTransaction(AtomicTransaction * newt)
 
 //////////////////////////////////////////////////////////////////////
 
+int FullTransactionItem::rootColumns() const
+{
+  return AccountModel::LastColumn;
+}
+
+
 QVariant FullTransactionItem::data(int column, int role) const {
   const Transaction *t = transaction;
   if(! t)
@@ -247,6 +253,52 @@ QVariant FullTransactionItem::data(int column, int role) const {
   else
     return QVariant();
 };
+
+void FullTransactionItem::onAttributeChanged(const Watchdog * wd, const QString &name)
+{
+
+}
+
+void FullTransactionItem::onObjectInserted(const Watchdog * wd, int at, int nb)
+{
+
+}
+
+void FullTransactionItem::onObjectRemoved(const Watchdog * wd, int at, int nb)
+{
+ 
+}
+
+FullTransactionItem::FullTransactionItem(Transaction * t) : 
+  transaction(t) {
+  connect(transaction->watchDog(), SIGNAL(changed(const Watchdog *)), 
+          SLOT(transactionChanged()));
+}
+
+void FullTransactionItem::changeTransaction(Transaction * newt)
+{
+  if(newt == transaction)
+    return;                     // nothing to do!
+  disconnect(transaction->watchDog(), SIGNAL(changed(const Watchdog *)), 
+             this, SLOT(transactionChanged()));
+  transaction = newt;
+  connect(transaction->watchDog(), SIGNAL(changed(const Watchdog *)), 
+          SLOT(transactionChanged()));
+  transactionChanged();
+}
+
+void FullTransactionItem::transactionChanged() 
+{
+  emit(itemChanged(this, 0, AccountModel::LastColumn));
+}
+
+QVariant FullTransactionItem::headerData(int section, 
+                                         Qt::Orientation /*orientation*/, 
+                                         int role) const
+{
+  return QVariant();
+}
+
 
 //////////////////////////////////////////////////////////////////////
  

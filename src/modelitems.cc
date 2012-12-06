@@ -124,10 +124,16 @@ int FixedChildrenModelItem::rowCount() const
   return children.size();
 }
 
+int FixedChildrenModelItem::rootColumns() const
+{
+  return 0;                     // empty root by default
+}
+
 int FixedChildrenModelItem::columnCount() const
 {
-  return maxCols;
+  return std::max(maxCols, rootColumns());
 }
+
 
 
 //////////////////////////////////////////////////////////////////////

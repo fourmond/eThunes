@@ -99,8 +99,9 @@ signals:
 
 };
 
-/// Base class of items containing a more-or-less fixed number of
-/// items.
+/// Base class of items representing a tree with a more-or-less fixed
+/// number of items.
+/// 
 /// @todo Add facilities for displaying the list in reverse...
 class FixedChildrenModelItem : public ModelItem {
   Q_OBJECT;
@@ -108,11 +109,14 @@ class FixedChildrenModelItem : public ModelItem {
 protected:
   QList<ModelItem *> children;
 
-  /// Maximum number of columns
+  /// Maximum number of columns for the children
   int maxCols;
 
   /// Child with the maximum number of columns
   int maxColsIndex;
+
+  /// Returns the number of columns for the root element.
+  virtual int rootColumns() const;
 
 public:
 
@@ -121,6 +125,7 @@ public:
   virtual ModelItem * childAt(int line);
   virtual int rowCount() const;
   virtual int columnCount() const;
+
 
   virtual ~FixedChildrenModelItem();
 

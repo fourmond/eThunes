@@ -1,7 +1,7 @@
 /**
     \file account-model.hh
     An item model providing transaction data
-    Copyright 2010, 2012 by Vincent Fourmond
+    Copyright 2010, 2011, 2012 by Vincent Fourmond
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -59,6 +59,11 @@ class FullTransactionItem : public FixedChildrenModelItem {
 
   Transaction * transaction;
 
+protected:
+
+  virtual int rootColumns() const;
+
+
 public:
   FullTransactionItem(Transaction * transaction);
 
@@ -77,6 +82,8 @@ protected slots:
   void onAttributeChanged(const Watchdog * wd, const QString &name);
   void onObjectInserted(const Watchdog * wd, int at, int nb);
   void onObjectRemoved(const Watchdog * wd, int at, int nb);
+
+  void transactionChanged();
 };
 
 
