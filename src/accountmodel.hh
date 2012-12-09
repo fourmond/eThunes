@@ -80,6 +80,9 @@ public:
   virtual QVariant data(int column, int role) const;  
   virtual QVariant headerData(int column, Qt::Orientation orientation, 
                               int role) const;  
+  virtual Qt::ItemFlags flags(int column) const;
+  virtual bool setData(int column, const QVariant & value,
+		       int role);
 
   /// Changes the underlying transaction pointer.
   void changeTransaction(Transaction * newt);
@@ -186,6 +189,8 @@ public:
     LinksColumn,
     TagsColumn,			// The column holding the tags.
     MemoColumn,
+    /// Column holding comments
+    CommentColumn,              // 
     LastColumn
   };
 

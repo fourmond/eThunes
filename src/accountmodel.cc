@@ -51,6 +51,7 @@ static QVariant transactionData(AtomicTransaction * t,
     case AccountModel::CategoryColumn: return QVariant(t->categoryName());
     case AccountModel::TagsColumn: return QVariant(t->tagString());
     case AccountModel::MemoColumn: return t->getDescription();
+    case AccountModel::CommentColumn: return t->getComment();
     default:
       return QVariant();
     }
@@ -62,6 +63,7 @@ static QVariant transactionData(AtomicTransaction * t,
     case AccountModel::LinksColumn: if(t->links.size())
         return t->links.htmlLinkList().join(", ");
       return QVariant();
+    case AccountModel::CommentColumn: return t->getComment();
     default:
       return QVariant();
     }
@@ -136,6 +138,28 @@ static QVariant transactionData(AtomicTransaction * t,
     return QVariant();
 }
 
+static Qt::ItemFlags transactionFlags(AtomicTransaction * t, 
+                                 int column, bool full = true)
+{
+  // Returns the flags for the given transaction.
+
+  /// @todo Make the amount editable for sub-transactions when not in
+  /// PtrList mode ?
+
+  switch(column) {
+  case AccountModel::CategoryColumn:
+  case AccountModel::TagsColumn:
+  case AccountModel::CommentColumn:
+    return Qt::ItemIsSelectable|
+      Qt::ItemIsEnabled|Qt::ItemIsEditable;
+  default: return Qt::ItemIsSelectable|
+      Qt::ItemIsEnabled;
+  }
+  return 0;
+}
+
+
+//////////////////////////////////////////////////////////////////////
 LeafTransactionItem::LeafTransactionItem(AtomicTransaction * t) : 
   transaction(t) {
   connect(transaction->watchDog(), SIGNAL(changed(const Watchdog *)), 
@@ -155,15 +179,7 @@ QVariant LeafTransactionItem::data(int column, int role) const {
 
 Qt::ItemFlags LeafTransactionItem::flags(int column) const  
 {
-  switch(column) {
-  case AccountModel::CategoryColumn:
-  case AccountModel::TagsColumn:
-    return Qt::ItemIsSelectable|
-      Qt::ItemIsEnabled|Qt::ItemIsEditable;
-  default: return Qt::ItemIsSelectable|
-      Qt::ItemIsEnabled;
-  }
-  return 0;
+  return transactionFlags(transaction, column, false);
 }
 
 void LeafTransactionItem::transactionChanged() 
@@ -173,10 +189,13 @@ void LeafTransactionItem::transactionChanged()
 
 /// @todo Lots of code shared too with FullTransaction here. Two
 /// approaches: shared (static) functions or variable-less base class.
+///
+/// Here, the static function approach doesn't work, as we are sending
+/// signals. Maybe use pointer to members ? That's ugly, though. 
 bool LeafTransactionItem::setData(int column, const QVariant & value,
                                   int role) 
 {
-  AtomicTransaction *t = transaction;
+  AtomicTransaction * t = transaction;
   if(role == Qt::EditRole) {
     switch(column) {
     case AccountModel::CategoryColumn:
@@ -185,6 +204,10 @@ bool LeafTransactionItem::setData(int column, const QVariant & value,
       return true;
     case AccountModel::TagsColumn:
       t->setTagList(value.toString());
+      emit(itemChanged(this, column, column));
+      return true;
+    case AccountModel::CommentColumn:
+      t->setComment(value.toString());
       emit(itemChanged(this, column, column));
       return true;
     default:
@@ -253,6 +276,37 @@ int FullTransactionItem::rootColumns() const
 QVariant FullTransactionItem::data(int column, int role) const {
   return transactionData(transaction, column, role, true);
 }
+
+Qt::ItemFlags FullTransactionItem::flags(int column) const  
+{
+  return transactionFlags(transaction, column, true);
+}
+
+bool FullTransactionItem::setData(int column, const QVariant & value,
+                                  int role) 
+{
+  AtomicTransaction * t = transaction;
+  if(role == Qt::EditRole) {
+    switch(column) {
+    case AccountModel::CategoryColumn:
+      t->setCategoryFromName(value.toString());
+      emit(itemChanged(this, column, column));
+      return true;
+    case AccountModel::TagsColumn:
+      t->setTagList(value.toString());
+      emit(itemChanged(this, column, column));
+      return true;
+    case AccountModel::CommentColumn:
+      t->setComment(value.toString());
+      emit(itemChanged(this, column, column));
+      return true;
+    default:
+      return false;
+    }
+  }
+  return false;
+}
+
 
 void FullTransactionItem::ensureHasChildren()
 {
@@ -337,6 +391,7 @@ QVariant BaseTransactionListItem::headerData(int section,
     case AccountModel::MemoColumn: return QVariant(tr("Memo"));
     case AccountModel::TagsColumn: return QVariant(tr("Tags"));
     case AccountModel::CategoryColumn: return QVariant(tr("Category"));
+    case AccountModel::CommentColumn: return QVariant(tr("Comment"));
     default:
       return QVariant();
     }

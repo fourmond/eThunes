@@ -47,6 +47,9 @@ protected:
   /// The list of tags.
   TagList tags;
 
+  /// A user-set comment
+  QString comment;
+
 public:
 
   /// The transaction this one is derived from. If not NULL, then this
@@ -76,7 +79,7 @@ public:
 					      /// of monthID
   };
 
-  AtomicTransaction(int amount = 0);
+  AtomicTransaction(int amount = 0, Transaction * bt = NULL);
 
   /// Returns the Account associated to the AtomicTransaction, or NULL
   /// if there isn't.
@@ -150,6 +153,16 @@ public:
     return 0;
   };
 
+
+  /// Returns a user-set comment
+  const QString & getComment() const {
+    return comment;
+  };
+
+  /// Sets the comment  
+  void setComment(const QString & cmt) {
+    setAttribute(comment, cmt, "comment");
+  };
 
   virtual QString getCheckNumber() const;
 

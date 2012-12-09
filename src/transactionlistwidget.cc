@@ -256,6 +256,16 @@ AtomicTransaction * TransactionListWidget::currentTransaction() const
   return model->indexedTransaction(view->currentIndex());
 }
 
+/// @todo This and the corresponding menu-populating function must
+/// somehow be reimplemented by the AccountModel.
+///
+/// Maybe there should be ways to customize the presence of things -
+/// ie have different modes (a read-only mode, a read-write, and so
+/// on...). This could be implemented thus:
+/// @li having a ModelItem function that returns annotated connected
+/// actions
+/// @li having the AccountModel that takes care of building a menu
+/// with that, possibly filtering out some of them ?
 void TransactionListWidget::contextMenuActionFired(QAction * action)
 {
   QStringList l = action->data().toStringList();
@@ -296,7 +306,7 @@ void TransactionListWidget::contextMenuActionFired(QAction * action)
                            tr("Enter subtransaction amount"));
     if(! amount)
       return;
-    t->subTransactions.append(AtomicTransaction(amount));
+    t->subTransactions.append(AtomicTransaction(amount, t));
   } else {
     /// @todo Log !
   }

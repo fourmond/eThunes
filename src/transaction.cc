@@ -22,7 +22,7 @@
 #include <wallet.hh>
 
 
-AtomicTransaction::AtomicTransaction(int am) :
+AtomicTransaction::AtomicTransaction(int am, Transaction * bt) :
   amount(am), category(NULL), baseTransaction(NULL)
 {
   watchChild(&tags, "tags");
@@ -32,6 +32,7 @@ SerializationAccessor * AtomicTransaction::serializationAccessor()
 {
   SerializationAccessor * ac = new SerializationAccessor(this);
   ac->addScalarAttribute("amount", &amount);
+  ac->addScalarAttribute("comment", &comment);
   ac->addAccessorsAttribute("category",this, 
                             &Transaction::setCategoryFromNamePrivate, 
                             &Transaction::categoryName);
