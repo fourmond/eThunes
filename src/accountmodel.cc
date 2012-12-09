@@ -212,17 +212,37 @@ void LeafTransactionItem::changeTransaction(AtomicTransaction * newt)
 
 FullTransactionItem::FullTransactionItem(Transaction * t) : 
   transaction(t) {
+  transactionConnect();
+  ensureHasChildren();
+}
+
+void FullTransactionItem::transactionConnect()
+{
   connect(transaction->watchDog(), SIGNAL(changed(const Watchdog *)), 
           SLOT(transactionChanged()));
-
-  // For now, setup subtransations only here.
-
-  if(transaction->subTransactions.size() > 0) {
-    QList<AtomicTransaction *> subs = transaction->allSubTransactions();
-    for(int i = 0; i < subs.size(); i++)
-      appendChild(new LeafTransactionItem(subs[i]));
-  }
+  connect(transaction->subTransactions.watchDog(), 
+          SIGNAL(objectInserted(const Watchdog *, int, int)), 
+          SLOT(onObjectInserted(const Watchdog *, int, int)));
+  connect(transaction->subTransactions.watchDog(), 
+          SIGNAL(objectRemoved(const Watchdog *, int, int)), 
+          SLOT(onObjectRemoved(const Watchdog *, int, int)));
 }
+
+void FullTransactionItem::transactionDisconnect()
+{
+  disconnect(transaction->watchDog(), SIGNAL(changed(const Watchdog *)), 
+             this,
+             SLOT(transactionChanged()));
+  disconnect(transaction->subTransactions.watchDog(), 
+             SIGNAL(objectInserted(const Watchdog *, int, int)), 
+             this,
+             SLOT(onObjectInserted(const Watchdog *, int, int)));
+  disconnect(transaction->subTransactions.watchDog(), 
+             SIGNAL(objectRemoved(const Watchdog *, int, int)), 
+             this,
+             SLOT(onObjectRemoved(const Watchdog *, int, int)));
+}
+
 
 int FullTransactionItem::rootColumns() const
 {
@@ -234,19 +254,40 @@ QVariant FullTransactionItem::data(int column, int role) const {
   return transactionData(transaction, column, role, true);
 }
 
+void FullTransactionItem::ensureHasChildren()
+{
+  if(transaction->subTransactions.size() > 0) {
+    int idx = 0;
+    for(Transaction::iterator i = transaction->begin();
+        i != transaction->end();
+        ++i) {
+      if(idx < children.size()) {
+        LeafTransactionItem * it = 
+          dynamic_cast<LeafTransactionItem *>(children[idx]);
+        it->changeTransaction(*i);
+      }
+      else
+        appendChild(new LeafTransactionItem(*i));
+      ++idx;
+    }
+  }
+}
+
 void FullTransactionItem::onAttributeChanged(const Watchdog * wd, const QString &name)
 {
-
+  // What to do here ?
 }
 
 void FullTransactionItem::onObjectInserted(const Watchdog * wd, int at, int nb)
 {
-
+  QTextStream o(stdout);
+  o << "object inserted: " << at << " -- " << nb << endl;
+  ensureHasChildren();
 }
 
 void FullTransactionItem::onObjectRemoved(const Watchdog * wd, int at, int nb)
 {
- 
+  ensureHasChildren();
 }
 
 
@@ -254,11 +295,10 @@ void FullTransactionItem::changeTransaction(Transaction * newt)
 {
   if(newt == transaction)
     return;                     // nothing to do!
-  disconnect(transaction->watchDog(), SIGNAL(changed(const Watchdog *)), 
-             this, SLOT(transactionChanged()));
+  transactionDisconnect();
   transaction = newt;
-  connect(transaction->watchDog(), SIGNAL(changed(const Watchdog *)), 
-          SLOT(transactionChanged()));
+  ensureHasChildren();
+  transactionConnect();
   transactionChanged();
 }
 

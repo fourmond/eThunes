@@ -64,6 +64,16 @@ protected:
   virtual int rootColumns() const;
 
 
+  /// Ensure that this has the right number of children
+  void ensureHasChildren();
+
+  /// Connect all Transaction-related signals
+  void transactionConnect();
+
+  /// Disconnects all Transaction-related signals
+  void transactionDisconnect();
+
+
 public:
   FullTransactionItem(Transaction * transaction);
 

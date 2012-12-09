@@ -71,7 +71,8 @@ private slots:
   void catchChange(const Watchdog * source);
 };
 
-/// This is the base class for all classes that 
+/// This is the base class for all classes that emit signals when they
+/// get modified.
 class Watchable {
   /// The watchdog responsible for sending signals. Only created
   /// on-demand.
@@ -96,29 +97,24 @@ protected:
   /// Sends message through the watchdog that an attribute has
   /// changed.
   void attributeChanged(const char * name) {
-    if(watchdog) {
-      watchdog->attributeChanged(watchDog(), name);
-    }
+    watchdog->attributeChanged(watchDog(), name);
   }
 
   /// Sends message through the watchdog that the number of elements
   /// has changed.
   void numberChanged() {
-    if(watchdog)
-      watchdog->numberChanged(watchDog());
+    watchdog->numberChanged(watchDog());
   }
 
 
   /// Sends message through the watchdog that objects were inserted
   void objectInserted(int at, int nb = 1) {
-    if(watchdog)
-      watchdog->objectInserted(watchDog(), at, nb);
+    watchdog->objectInserted(watchDog(), at, nb);
   };
 
   /// Sends message through the watchdog that objects were removed
   void objectRemoved(int at, int nb = 1) {
-    if(watchdog)
-      watchdog->objectRemoved(watchDog(), at, nb);
+    watchdog->objectRemoved(watchDog(), at, nb);
   }
 
   /// A helper function to 
@@ -132,12 +128,12 @@ protected:
 
   /// Setup watching a child
   void watchChild(const Watchable* child, const QString & attrName) {
-    watchDog()->watchChild(child, attrName);
+    watchdog->watchChild(child, attrName);
   };
 
   /// Stop watching a child
   void unwatchChild(const Watchable* child) {
-    watchDog()->unwatchChild(child);
+    watchdog->unwatchChild(child);
   };
 
 
