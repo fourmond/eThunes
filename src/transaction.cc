@@ -23,7 +23,7 @@
 
 
 AtomicTransaction::AtomicTransaction(int am, Transaction * bt) :
-  amount(am), category(NULL), baseTransaction(NULL)
+  amount(am), category(NULL), baseTransaction(bt)
 {
   watchChild(&tags, "tags");
 }
