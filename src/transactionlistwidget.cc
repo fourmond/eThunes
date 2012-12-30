@@ -23,6 +23,7 @@
 #include <ootest.hh>
 
 #include <accountmodel.hh>
+#include <widgetwrapperdialog.hh>
 
 TransactionListWidget::TransactionListWidget(TransactionList *transactions,
 					     QWidget * parent) :
@@ -154,6 +155,8 @@ void TransactionListWidget::fireUpContextMenu(const QPoint & pos)
 {
   /// @todo This function should disappear to be handled by the
   /// objects themselves.
+  ///
+  /// However, handling a full selection won't come in too easy
 
   // We fire up a neat menu to select categories, for instance.
   QMenu menu;
@@ -187,7 +190,11 @@ void TransactionListWidget::fireUpContextMenu(const QPoint & pos)
   }
 
   
-
+  menu.addSeparator();
+  action = new QAction(tr("Statistics"), this);
+  action->setData(QStringList() << "stats");
+  menu.addAction(action);
+  
 
   connect(&menu, SIGNAL(triggered(QAction *)),
 	  SLOT(contextMenuActionFired(QAction *)));
@@ -243,10 +250,13 @@ TransactionPtrList TransactionListWidget::selectedTransactions() const
 {
   TransactionPtrList list;
   QModelIndexList l = view->selectionModel()->selectedIndexes();
+  QSet<AtomicTransaction *> dup;
   for(int i = 0; i < l.size(); i++) {
     AtomicTransaction * t = model->indexedTransaction(l[i]);
-    if(t)                       // Don't stash NULL pointers here.
+    if(t && !(dup.contains(t))) {
       list << t;
+      dup.insert(t);
+    }
   }
   return list;
 }
@@ -307,6 +317,17 @@ void TransactionListWidget::contextMenuActionFired(QAction * action)
     if(! amount)
       return;
     t->subTransactions.append(AtomicTransaction(amount, t));
+  } else if(what == "stats") { 
+    TransactionListStatistics stats = selected.statistics();
+    QString statsString = 
+      tr("<b>Stats: </b><br/>\n"
+         "Total: %1<br/>\n"
+         "Number of transactions: %2").
+      arg(Transaction::formatAmount(stats.totalAmount)).
+      arg(stats.number);
+    WidgetWrapperDialog * dlg = 
+      new WidgetWrapperDialog(new QLabel(statsString));
+    dlg->show();
   } else {
     /// @todo Log !
   }

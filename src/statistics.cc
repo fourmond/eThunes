@@ -26,7 +26,6 @@
 
 #include <httarget-templates.hh>
 
-/// @todo ignore transactions that have an "internal move" link.
 void CategorizedStatistics::addTransaction(const AtomicTransaction * t, 
                                            bool topLevel)
 {

@@ -171,11 +171,16 @@ void TransactionList::sanitizeList(Account * ac)
   }
 }
 
-TransactionPtrList TransactionList::toPtrList()
+TransactionPtrList TransactionList::toPtrList(bool subtransactions)
 {
   TransactionPtrList list;
-  for(int i = 0; i < size(); i++)
-    list << &(operator[](i));
+  for(int i = 0; i < size(); i++) {
+    if(subtransactions)
+      /// @todo Ugly const_cast
+      list.append(const_cast<Transaction &>(value(i)).allSubTransactions());
+    else
+      list << &(operator[](i));
+  }
   return list;
 }
 

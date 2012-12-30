@@ -186,7 +186,10 @@ public:
   };
 
   /// Transforms into a pointer list, for further manipulations.
-  TransactionPtrList toPtrList();
+  ///
+  /// If @a subtractions is true (the default), then an
+  /// AtomicTransaction is returned for all subtransactions too
+  TransactionPtrList toPtrList(bool subtransactions = true);
 
   /// Returns a list of Transaction pointers for Transaction within
   /// the date range. The list is assume to be sorted, at least with
