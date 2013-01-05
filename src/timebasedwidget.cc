@@ -45,6 +45,7 @@ TimeBasedWidget::TimeBasedWidget(QWidget * w) : QScrollArea(w)
 {
   pixelPerDay = 2;
   setWidget(new InnerWidget(this));
+  setAlignment(Qt::AlignCenter);
 }
 
 void TimeBasedWidget::paintMe(QPaintEvent * ev)
@@ -54,12 +55,10 @@ void TimeBasedWidget::paintMe(QPaintEvent * ev)
   QPainter p(widget());
   p.setRenderHints(QPainter::Antialiasing);
 
-  QRect r = rect();
-
-  double pad = 6;
+  QRect r = widget()->rect();
 
   // Translate the paint object so that 0 is at the bottom
-  p.translate(QPoint(0, r.height() - pad));
+  p.translate(QPoint(0, r.height() - 5));
 
 
   // First, paint the curves themselves
@@ -89,7 +88,7 @@ void TimeBasedWidget::addCurve(TimeBasedCurve * curve)
   QSize s = viewport()->size();
 
   int newWidth = earliest.daysTo(latest) * pixelPerDay;
-  verticalScale = (max - min)/(s.height() - 6); // 6, and what ?
+  verticalScale = (max - min)/(s.height() - 10); // 10, and what ?
 
   curves << curve;
 
