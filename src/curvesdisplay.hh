@@ -38,7 +38,6 @@ protected:
 
   /// The widget for displaying the curves
   TimeBasedWidget * curvesWidget;
-  
 
 public:
   CurvesDisplay();

@@ -21,45 +21,31 @@
 #include <timebasedcurve.hh>
 
 
-class InnerWidget : public QWidget {
-
-  TimeBasedWidget * timeBasedWidget;
-protected:
-
-  /// We want to be able to paint the widget how we like...
-  virtual void paintEvent(QPaintEvent * event) {
-    timeBasedWidget->paintMe(event);
-  };
-public:
-
-  InnerWidget(TimeBasedWidget * tbw) : 
-  timeBasedWidget(tbw) { ;};
-  
-};
-
-
 /// @todo Reimplement all this to use QGraphicsScene and
 /// background/foreground stuff ? If I play correctly this time, I
 /// shouldn't have problems...
-TimeBasedWidget::TimeBasedWidget(QWidget * w) : QScrollArea(w)
+/// I'm not sure it's sooo nice after all, because QGraphicsScene is not
+/// designed for objects whose line width is always the same pixel size.
+TimeBasedWidget::TimeBasedWidget(QWidget * w) : QAbstractScrollArea(w)
 {
   pixelPerDay = 2;
-  setWidget(new InnerWidget(this));
-  setAlignment(Qt::AlignCenter);
 }
 
-void TimeBasedWidget::paintMe(QPaintEvent * ev)
+void TimeBasedWidget::paintEvent(QPaintEvent * ev)
 {
   // An absolute must !
   // QPainter p(widget());
-  QPainter p(widget());
+  QPainter p(viewport());
   p.setRenderHints(QPainter::Antialiasing);
 
-  QRect r = widget()->rect();
+  QRect r = viewport()->rect();
 
   // Translate the paint object so that 0 is at the bottom
-  p.translate(QPoint(0, r.height() - 5));
+  p.translate(QPoint(-horizontalScrollBar()->value(), 
+                     verticalScrollBar()->maximum() - 
+                     verticalScrollBar()->value() + r.height() - 5));
 
+  //
 
   // First, paint the curves themselves
 
@@ -85,16 +71,12 @@ void TimeBasedWidget::addCurve(TimeBasedCurve * curve)
   if(curves.size() == 0 || max < curve->maximumValue())
     max = curve->maximumValue();
 
-  QSize s = viewport()->size();
-
-  int newWidth = earliest.daysTo(latest) * pixelPerDay;
+  // QSize s = viewport()->size(); // Not sure the viewport is defined now.
+  QSize s = size();
   verticalScale = (max - min)/(s.height() - 10); // 10, and what ?
 
   curves << curve;
-
-  QSize ns(newWidth, s.height());
-  widget()->setMinimumSize(ns);
-  widget()->resize(ns);
+  updateSliders();
 }
 
 
@@ -103,4 +85,39 @@ TimeBasedWidget::~TimeBasedWidget()
 {
   for(int i = 0; i < curves.size(); i++)
     delete curves[i];
+}
+
+QSize TimeBasedWidget::computeGraphSize() const
+{
+  return QSize(earliest.daysTo(latest) * pixelPerDay, 
+               (max - min) / verticalScale);
+}
+
+
+void TimeBasedWidget::resizeEvent(QResizeEvent * event)
+{
+  updateSliders();
+}
+
+// Updates the range to min <-> max - page, keeping the value
+// constant.
+static void updateSlider(QAbstractSlider * slider, 
+                         int min, int max, int page)
+{
+  slider->setRange(min, max - page);
+  slider->setPageStep(page);
+  QTextStream o(stdout);
+  o << slider 
+    << "\tmin: " << min 
+    << "\tmax: " << max  
+    << "\tpage: " << page << endl;
+}
+
+void TimeBasedWidget::updateSliders()
+{
+  QSize graph = computeGraphSize();
+  QSize vp = viewport()->size();
+  
+  updateSlider(horizontalScrollBar(), 0, graph.width(), vp.width());
+  updateSlider(verticalScrollBar(), 0, graph.height(), vp.height());
 }

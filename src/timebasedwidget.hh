@@ -23,15 +23,13 @@
 class TimeBasedCurve;
 
 /// This widget displays series of TimeBasedCurves (or apparented ?)
-class TimeBasedWidget : public QScrollArea {
+class TimeBasedWidget : public QAbstractScrollArea {
 protected:
 
   /// Displayed stuff...
   QList<TimeBasedCurve *> curves;
 
-  friend class InnerWidget;
-
-  void paintMe(QPaintEvent * event);
+  virtual void paintEvent(QPaintEvent * event);
 
   /// The earliest date
   QDate earliest;
@@ -50,6 +48,16 @@ protected:
 
   /// Vertical scale
   double verticalScale;
+
+  /// Computes the overall size of the graph using the current
+  /// horizontal and vertical scales.
+  QSize computeGraphSize() const;
+
+  /// Update the scrollers range according to the overall size of the
+  /// graph and the current size of the widget
+  void updateSliders();
+
+  virtual void resizeEvent(QResizeEvent * event);
 
 public:
 

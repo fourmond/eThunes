@@ -47,6 +47,10 @@
 #include <QTimeEdit>
 #include <QPainter>
 
+#include <QScrollBar>
+#include <QAbstractSlider>
+#include <QAbstractScrollArea>
+
 // Deeply digging into Qt4...
 #include <QStyledItemDelegate>
 
