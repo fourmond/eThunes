@@ -26,9 +26,23 @@
 /// shouldn't have problems...
 /// I'm not sure it's sooo nice after all, because QGraphicsScene is not
 /// designed for objects whose line width is always the same pixel size.
-TimeBasedWidget::TimeBasedWidget(QWidget * w) : QAbstractScrollArea(w)
+TimeBasedWidget::TimeBasedWidget(QWidget * w) : 
+QAbstractScrollArea(w), graphAreaMargins(20,5,5,20)
 {
   pixelPerDay = 2;
+  padding = 5;
+}
+
+static QRect adjustedRect(const QRect & r, const QMargins & m)
+{
+  return r.normalized().adjusted(m.left(), m.top(), 
+                                 -m.right(), -m.bottom());
+}
+
+static QSize adjustedSize(const QSize & s, const QMargins & m)
+{
+  return s - QSize(m.left() + m.right(),
+                   m.top() + m.bottom());
 }
 
 void TimeBasedWidget::paintEvent(QPaintEvent * ev)
@@ -40,18 +54,34 @@ void TimeBasedWidget::paintEvent(QPaintEvent * ev)
 
   QRect r = viewport()->rect();
 
-  // Translate the paint object so that 0 is at the bottom
-  p.translate(QPoint(-horizontalScrollBar()->value(), 
-                     verticalScrollBar()->maximum() - 
-                     verticalScrollBar()->value() + r.height() - 5));
 
-  //
+  QRect graphRect = adjustedRect(r, graphAreaMargins);
 
-  // First, paint the curves themselves
+  {
+    // Setting up the coordinates and transforms for the graph area
+    p.save();
+    p.setClipRect(graphRect);
+    p.translate(graphRect.topLeft());
 
-  /// @todo Setup clipping.
-  for(int i = 0; i < curves.size(); i++)
-    curves[i]->paint(&p, earliest, pixelPerDay, min, verticalScale);
+
+  
+
+    // Translate the paint object so that 0 is at the bottom
+    p.translate(QPoint(-horizontalScrollBar()->value(), 
+                       verticalScrollBar()->maximum() - 
+                       verticalScrollBar()->value() + graphRect.height() 
+                       - padding));
+
+    //
+
+    // First, paint the curves themselves
+
+    /// @todo Setup clipping.
+    for(int i = 0; i < curves.size(); i++)
+      curves[i]->paint(&p, earliest, pixelPerDay, min, verticalScale);
+    p.restore();
+  }
+  p.drawRect(graphRect);
 
   // Then, legends, and the like ?
 }
@@ -73,7 +103,7 @@ void TimeBasedWidget::addCurve(TimeBasedCurve * curve)
 
   // QSize s = viewport()->size(); // Not sure the viewport is defined now.
   QSize s = size();
-  verticalScale = (max - min)/(s.height() - 10); // 10, and what ?
+  verticalScale = (max - min)/(s.height() - padding * 2); // 10, and what ?
 
   curves << curve;
   updateSliders();
@@ -87,10 +117,13 @@ TimeBasedWidget::~TimeBasedWidget()
     delete curves[i];
 }
 
-QSize TimeBasedWidget::computeGraphSize() const
+QSize TimeBasedWidget::computeGraphSize(bool includePadding) const
 {
-  return QSize(earliest.daysTo(latest) * pixelPerDay, 
-               (max - min) / verticalScale);
+  QSize sz(earliest.daysTo(latest) * pixelPerDay, 
+           (max - min) / verticalScale);
+  if(includePadding)
+    sz += QSize(padding * 2, padding * 2);
+  return sz;
 }
 
 
@@ -106,17 +139,12 @@ static void updateSlider(QAbstractSlider * slider,
 {
   slider->setRange(min, max - page);
   slider->setPageStep(page);
-  QTextStream o(stdout);
-  o << slider 
-    << "\tmin: " << min 
-    << "\tmax: " << max  
-    << "\tpage: " << page << endl;
 }
 
 void TimeBasedWidget::updateSliders()
 {
   QSize graph = computeGraphSize();
-  QSize vp = viewport()->size();
+  QSize vp = adjustedSize(viewport()->size(), graphAreaMargins);
   
   updateSlider(horizontalScrollBar(), 0, graph.width(), vp.width());
   updateSlider(verticalScrollBar(), 0, graph.height(), vp.height());

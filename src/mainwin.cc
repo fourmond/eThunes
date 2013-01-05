@@ -90,6 +90,11 @@
    thinking as far as the structure is concerned. It could support
    following loans too.
 
+   \li <b>Advanced cheque checks</b>
+   It should be possible to detect chequebooks and find out which
+   cheques are currently missing. There's probably other functionalities
+   to think of here.
+
    \li <b>Document "type safety"</b> 
    For now, there is no guarantee that a document is "correct". A
    simple things would be to add a list of required fields to a

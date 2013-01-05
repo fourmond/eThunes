@@ -43,6 +43,9 @@ protected:
   /// The maximum value
   int max;
 
+  /// Pixel padding around the graph
+  int padding;
+
   /// Number of pixels to represent one day.
   double pixelPerDay;
 
@@ -51,7 +54,7 @@ protected:
 
   /// Computes the overall size of the graph using the current
   /// horizontal and vertical scales.
-  QSize computeGraphSize() const;
+  QSize computeGraphSize(bool includePadding = true) const;
 
   /// Update the scrollers range according to the overall size of the
   /// graph and the current size of the widget
@@ -59,6 +62,9 @@ protected:
 
   virtual void resizeEvent(QResizeEvent * event);
 
+  /// Margins around the "graph area" of the plot
+  QMargins graphAreaMargins;
+  
 public:
 
 
