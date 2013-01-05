@@ -21,26 +21,42 @@
 #include <timebasedcurve.hh>
 
 
+class InnerWidget : public QWidget {
+
+  TimeBasedWidget * timeBasedWidget;
+protected:
+
+  /// We want to be able to paint the widget how we like...
+  virtual void paintEvent(QPaintEvent * event) {
+    timeBasedWidget->paintMe(event);
+  };
+public:
+
+  InnerWidget(TimeBasedWidget * tbw) : 
+  timeBasedWidget(tbw) { ;};
+  
+};
+
+
 /// @todo Reimplement all this to use QGraphicsScene and
-/// background/foreground stuff. If I play correctly this time, I
-/// shouldn't have problems... 
-TimeBasedWidget::TimeBasedWidget(QWidget * w) : QWidget(w)
+/// background/foreground stuff ? If I play correctly this time, I
+/// shouldn't have problems...
+TimeBasedWidget::TimeBasedWidget(QWidget * w) : QScrollArea(w)
 {
   pixelPerDay = 2;
+  setWidget(new InnerWidget(this));
 }
 
-void TimeBasedWidget::paintEvent(QPaintEvent * ev)
+void TimeBasedWidget::paintMe(QPaintEvent * ev)
 {
   // An absolute must !
-  QPainter p(this);
+  // QPainter p(widget());
+  QPainter p(widget());
   p.setRenderHints(QPainter::Antialiasing);
 
   QRect r = rect();
 
   double pad = 6;
-
-  // First, we try to be clever about scaling the things...
-  double yscale = (max - min)/(r.height() - pad);
 
   // Translate the paint object so that 0 is at the bottom
   p.translate(QPoint(0, r.height() - pad));
@@ -50,7 +66,7 @@ void TimeBasedWidget::paintEvent(QPaintEvent * ev)
 
   /// @todo Setup clipping.
   for(int i = 0; i < curves.size(); i++)
-    curves[i]->paint(&p, earliest, pixelPerDay, min, yscale);
+    curves[i]->paint(&p, earliest, pixelPerDay, min, verticalScale);
 
   // Then, legends, and the like ?
 }
@@ -70,16 +86,19 @@ void TimeBasedWidget::addCurve(TimeBasedCurve * curve)
   if(curves.size() == 0 || max < curve->maximumValue())
     max = curve->maximumValue();
 
-  QSize s = size();
-  
+  QSize s = viewport()->size();
+
   int newWidth = earliest.daysTo(latest) * pixelPerDay;
+  verticalScale = (max - min)/(s.height() - 6); // 6, and what ?
 
   curves << curve;
-  
-  resize(newWidth, s.height());
 
-  
+  QSize ns(newWidth, s.height());
+  widget()->setMinimumSize(ns);
+  widget()->resize(ns);
 }
+
+
 
 TimeBasedWidget::~TimeBasedWidget()
 {

@@ -23,14 +23,15 @@
 class TimeBasedCurve;
 
 /// This widget displays series of TimeBasedCurves (or apparented ?)
-class TimeBasedWidget : public QWidget {
+class TimeBasedWidget : public QScrollArea {
 protected:
 
   /// Displayed stuff...
   QList<TimeBasedCurve *> curves;
 
-  /// We want to be able to paint the widget how we like...
-  virtual void paintEvent(QPaintEvent * event);
+  friend class InnerWidget;
+
+  void paintMe(QPaintEvent * event);
 
   /// The earliest date
   QDate earliest;
@@ -57,6 +58,7 @@ public:
 
   virtual ~TimeBasedWidget();
 
+public slots:
   /// Adds the given curve and updates the widget's size.
   void addCurve(TimeBasedCurve * curve);
 
