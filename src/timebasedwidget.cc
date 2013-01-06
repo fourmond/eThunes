@@ -20,6 +20,9 @@
 #include <timebasedwidget.hh>
 #include <timebasedcurve.hh>
 
+#include <transaction.hh>
+
+#include <math.h>
 
 /// @todo Reimplement all this to use QGraphicsScene and
 /// background/foreground stuff ? If I play correctly this time, I
@@ -27,7 +30,7 @@
 /// I'm not sure it's sooo nice after all, because QGraphicsScene is not
 /// designed for objects whose line width is always the same pixel size.
 TimeBasedWidget::TimeBasedWidget(QWidget * w) : 
-QAbstractScrollArea(w), graphAreaMargins(20,5,5,20)
+QAbstractScrollArea(w), graphAreaMargins(80,5,5,20)
 {
   pixelPerDay = 2;
   padding = 5;
@@ -45,6 +48,55 @@ static QSize adjustedSize(const QSize & s, const QMargins & m)
                    m.top() + m.bottom());
 }
 
+static double naturalDistances[] = { 1.0, 2.0, /*2.5,*/ 5.0, 10.0 };
+const int nbNaturalDistances = sizeof(naturalDistances)/sizeof(double);
+
+/// This function tries to picks ticks reasonably.
+///
+/// This code comes from Tioga's axes.c file.
+static void pickMajorTicksLocation(double min, double max, 
+                                   double * tick, double tickMin,
+                                   double * fact,
+                                   double * firstTick,
+                                   double * lastTick,
+                                   int * nb)
+{
+  /* The factor by which you need to divide to get
+     the tick_min within [1,10[ */
+  double factor = pow(10, floor(log10(tickMin)));
+  double norm_tick_min = tickMin/factor;
+  bool done = false;
+
+  /* In principle, the loop below show run at most twice, but a
+     safeguard is not too expensive ;-)... */
+  int nb_tries = 0;
+   
+  do {
+    nb_tries ++;
+    int i;
+    for(i = 0; i < nbNaturalDistances; i++)
+      if(naturalDistances[i] >= norm_tick_min)
+        break;
+    /* Now, there is a corner case when there is not enough */
+
+    *tick = naturalDistances[i] * factor;
+      
+    /* If the there is room for at most one tick here, there is a
+       problem, so take the size down. */
+    if( (max - min) < 2.0 * *tick) {
+      factor = pow(10, floor(log10(tickMin/2)));
+      norm_tick_min = tickMin/(2*factor);
+    }
+    else
+      done = true;
+  } while(! done && nb_tries < 3);
+
+   *firstTick = ceil(min /(*tick)) * (*tick);
+   *lastTick = floor(max /(*tick)) * (*tick);
+
+   * nb = (int)round((*lastTick - *firstTick)/(*tick));
+}
+
 void TimeBasedWidget::paintEvent(QPaintEvent * ev)
 {
   // An absolute must !
@@ -56,6 +108,21 @@ void TimeBasedWidget::paintEvent(QPaintEvent * ev)
 
 
   QRect graphRect = adjustedRect(r, graphAreaMargins);
+
+  double firstTick;
+  double lastTick, tick, fact;
+  int nbTicks;
+
+  QSize gs = computeGraphSize();
+  int vertPos = verticalScrollBar()->value();
+
+  QTextStream o(stdout);
+  double ymin = min + verticalScale * (gs.height() - vertPos -
+                                       graphRect.height());
+  double ymax = min + verticalScale * (gs.height() - vertPos);
+  o << "ymin: " << ymin << " -- ymax: " << ymax << endl;
+  pickMajorTicksLocation(ymin, ymax, &tick, 40 * verticalScale, 
+                         &fact, &firstTick, &lastTick, &nbTicks);
 
   {
     // Setting up the coordinates and transforms for the graph area
@@ -69,14 +136,28 @@ void TimeBasedWidget::paintEvent(QPaintEvent * ev)
     // Translate the paint object so that 0 is at the bottom
     p.translate(QPoint(-horizontalScrollBar()->value(), 
                        verticalScrollBar()->maximum() - 
-                       verticalScrollBar()->value() + graphRect.height() 
+                       vertPos + graphRect.height() 
                        - padding));
 
-    //
+    // First, paint background lines
+    {
+      p.save();
 
-    // First, paint the curves themselves
+      // Vertical lines
+      QPen pen = QPen(QColor("gray"), 1.5, Qt::DashLine);
+      p.setPen(pen);
+      for(int i = 0; i < nbTicks; i++) {
+        int pos = (firstTick - min + i * tick)/verticalScale;
+        p.drawLine(0, -pos, gs.width(), -pos);
+      }
 
-    /// @todo Setup clipping.
+      // Horizontal lines to come...
+      
+      p.restore();
+    }
+
+    // Then, paint the curves themselves
+
     for(int i = 0; i < curves.size(); i++)
       curves[i]->paint(&p, earliest, pixelPerDay, min, verticalScale);
     p.restore();
@@ -84,6 +165,30 @@ void TimeBasedWidget::paintEvent(QPaintEvent * ev)
   p.drawRect(graphRect);
 
   // Then, legends, and the like ?
+  {
+    p.save();
+
+
+    // Translate the paint object so that 0 is at the bottom
+    p.translate(QPoint(0, 
+                       verticalScrollBar()->maximum() - 
+                       vertPos + graphRect.height() 
+                       - padding));
+
+
+    for(int i = 0; i < nbTicks; i++) {
+      int pos = (firstTick - min + i * tick)/verticalScale;
+      int value = (firstTick + i * tick);
+      QString str = Transaction::formatAmount(value);
+      /// @todo more fancy text !
+      p.drawText(5, -pos, str);
+    }
+    
+
+    p.restore();
+  }
+
+  ///
 }
 
 
