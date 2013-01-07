@@ -76,6 +76,11 @@ public slots:
   /// Adds the given curve and updates the widget's size.
   void addCurve(TimeBasedCurve * curve);
 
+
+  /// Zooms in by the given factors.
+  void zoomIn(const QSizeF & zF);
+
+
 };
 
 #endif

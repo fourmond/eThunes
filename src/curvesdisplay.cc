@@ -29,12 +29,28 @@ CurvesDisplay::CurvesDisplay()
   topLabel = new QLabel();
   l1->addWidget(topLabel);
 
+  QHBoxLayout * hl = new QHBoxLayout();
+  QPushButton * bt;
+  bt = new QPushButton(tr("H zoom in"));
+  connect(bt, SIGNAL(clicked()), SLOT(hZoomIn()));
+  hl->addWidget(bt);
+  bt = new QPushButton(tr("H zoom out"));
+  connect(bt, SIGNAL(clicked()), SLOT(hZoomOut()));
+  hl->addWidget(bt);
+  bt = new QPushButton(tr("V zoom in"));
+  connect(bt, SIGNAL(clicked()), SLOT(vZoomIn()));
+  hl->addWidget(bt);
+  bt = new QPushButton(tr("V zoom out"));
+  connect(bt, SIGNAL(clicked()), SLOT(vZoomOut()));
+  hl->addWidget(bt);
+  l1->addLayout(hl);
+
   curvesWidget = new TimeBasedWidget;
   l1->addWidget(curvesWidget);
   curvesWidget->setMinimumSize(QSize(400,200));
 
 
-  QPushButton * bt = new QPushButton(tr("Close"));
+  bt = new QPushButton(tr("Close"));
   connect(bt, SIGNAL(clicked()), SLOT(close()));
   l1->addWidget(bt);
 
@@ -68,3 +84,30 @@ void CurvesDisplay::displayBalance(const TransactionList * transactions,
 
   curvesWidget->addCurve(c);
 }
+
+void CurvesDisplay::zoomIn(const QSizeF & zF)
+{
+  curvesWidget->zoomIn(zF);
+}
+
+void CurvesDisplay::hZoomIn(double fact)
+{
+  curvesWidget->zoomIn(QSizeF(fact, 1));
+}
+
+void CurvesDisplay::vZoomIn(double fact)
+{
+  curvesWidget->zoomIn(QSizeF(1, fact));
+}
+
+void CurvesDisplay::hZoomOut(double fact)
+{
+  curvesWidget->zoomIn(QSizeF(1/fact, 1));
+}
+
+void CurvesDisplay::vZoomOut(double fact)
+{
+  curvesWidget->zoomIn(QSizeF(1, 1/fact));
+}
+
+

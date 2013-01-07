@@ -116,11 +116,9 @@ void TimeBasedWidget::paintEvent(QPaintEvent * ev)
   QSize gs = computeGraphSize();
   int vertPos = verticalScrollBar()->value();
 
-  QTextStream o(stdout);
   double ymin = min + verticalScale * (gs.height() - vertPos -
                                        graphRect.height());
   double ymax = min + verticalScale * (gs.height() - vertPos);
-  o << "ymin: " << ymin << " -- ymax: " << ymax << endl;
   pickMajorTicksLocation(ymin, ymax, &tick, 40 * verticalScale, 
                          &fact, &firstTick, &lastTick, &nbTicks);
 
@@ -237,13 +235,17 @@ void TimeBasedWidget::resizeEvent(QResizeEvent * event)
   updateSliders();
 }
 
-// Updates the range to min <-> max - page, keeping the value
-// constant.
+// Updates the range to min <-> max - page, keeping the position
+// constant (ie same ratio between)
 static void updateSlider(QAbstractSlider * slider, 
                          int min, int max, int page)
 {
+  double value = slider->value();
+  double oldRange  = slider->maximum() - slider->minimum();
   slider->setRange(min, max - page);
   slider->setPageStep(page);
+  double newRange  = slider->maximum() - slider->minimum();
+  slider->setValue(value * newRange / oldRange);
 }
 
 void TimeBasedWidget::updateSliders()
@@ -253,4 +255,13 @@ void TimeBasedWidget::updateSliders()
   
   updateSlider(horizontalScrollBar(), 0, graph.width(), vp.width());
   updateSlider(verticalScrollBar(), 0, graph.height(), vp.height());
+}
+
+
+void TimeBasedWidget::zoomIn(const QSizeF & zF)
+{
+  verticalScale /= zF.height();
+  pixelPerDay *= zF.width();
+  updateSliders();
+  viewport()->update();
 }

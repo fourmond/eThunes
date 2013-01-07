@@ -50,6 +50,14 @@ public slots:
   void displayBalance(const TransactionList * transactions, 
                       const QColor & col = QColor("red"));
 
+protected slots:
+
+  void zoomIn(const QSizeF & zF);
+  void hZoomIn(double fact = 2);
+  void hZoomOut(double fact = 2);
+  void vZoomIn(double fact = 2);
+  void vZoomOut(double fact = 2);
+
 };
 
 #endif
