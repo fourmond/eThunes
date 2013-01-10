@@ -11,10 +11,10 @@
 module Pajemploi
   def self.parse_payslip(doc)
     res = {}
-    if doc['text-layout'] =~ /du\s*:\s*(\d+)\/(\d+)\/(\d+)\s*au\s*:\s*/i
+    if doc['text-layout'] =~ /du\s*:?\s*(\d+)\/(\d+)\/(\d+)\s*au\s*:?\s*/i
       res['month'] = Time.local($3.to_i, $2.to_i, $1.to_i)
     end
-    if doc['text-layout'] =~ /Employeur\s*:\s*(\w+)/i
+    if doc['text-layout'] =~ /Employeur\s*:?\s*(\w+)/
       res['employer'] = $1
     end
     if doc['text-layout'] =~ /jours?\s+d'activit.{1,3}\s*(\d+)/i
