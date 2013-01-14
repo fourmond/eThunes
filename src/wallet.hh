@@ -132,6 +132,10 @@ public:
   /// Returns all the transactions within the given date range.
   TransactionPtrList transactionsWithinRange(const QDate & before,
 					     const QDate & after);
+
+  /// Returns the overall balance for all the accounts
+  int balance(const QDate & date) const;
+
 };
 
 #endif

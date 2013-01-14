@@ -28,6 +28,8 @@
 #include <htlabel.hh>
 #include <httarget-templates.hh>
 
+#include <curvesdisplay.hh>
+
 
 WalletDW::WalletDW(Wallet * w) : wallet(w)
 {
@@ -94,6 +96,10 @@ void WalletDW::updateSummary()
     arg(Transaction::formatAmount(totalBalance));
   text += "</table>\n";
 
+  text += HTTarget::linkToMember("(display balance)", this,
+                                 &WalletDW::displayBalance);
+
+
 
   if(wallet->accountGroups.size() > 0) {
     text += "<h3>Groups</h3>\n<table>\n";
@@ -150,4 +156,11 @@ void WalletDW::findInternalMovesPermissive()
 {
   if(wallet)
     wallet->findInternalMoves(true);
+}
+
+void WalletDW::displayBalance()
+{
+  CurvesDisplay * dlg = new CurvesDisplay();
+  dlg->displayBalance(wallet);
+  dlg->show();
 }

@@ -152,3 +152,4 @@ void CabinetPage::promptAddPlugin()
   plugin->cabinet = cabinet;
   updateContents();
 }
+

@@ -196,3 +196,10 @@ void Wallet::findInternalMoves(bool permissive)
   TransactionPtrList::findInternalMoves(lists, permissive);
 }
 
+int Wallet::balance(const QDate & date) const
+{
+  int balance = 0;
+  for(int i = 0; i < accounts.size(); i++)
+    balance += accounts[i].balance(date);
+  return balance;
+}

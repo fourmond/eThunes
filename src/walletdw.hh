@@ -60,10 +60,14 @@ public slots:
 
   void findInternalMovesPermissive();
 
+  /// Displays overall balance
+  void displayBalance();
+
 protected:
   void showFiltersPage();
   void showCategoriesPage();
   void showTagsPage();
+
 
 };
 

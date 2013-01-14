@@ -26,6 +26,7 @@
 
 
 class TransactionList;
+class Wallet;
 
 /// Display one or more curves.
 ///
@@ -48,6 +49,10 @@ public slots:
 
   /// Setup the display to show the balance
   void displayBalance(const TransactionList * transactions, 
+                      const QColor & col = QColor("red"));
+
+  /// Setup the display to show the overall balance
+  void displayBalance(const Wallet * wallet, 
                       const QColor & col = QColor("red"));
 
 protected slots:

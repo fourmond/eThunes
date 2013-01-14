@@ -183,6 +183,7 @@ public:
   /// Finds the Transaction matching to the document. In case of
   /// ambiguity or if none is found, NULL is returned.
   AtomicTransaction * matchingTransaction(Document * document);
+
 };
 
 #endif

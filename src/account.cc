@@ -168,3 +168,20 @@ Transaction * Account::namedTransaction(const QString & name)
       return &transactions[i];
   return NULL;
 }
+
+int Account::balance(const QDate & date) const
+{
+
+  QList<QDate> mirror;          /// @todo bad, but, well...  Maybe
+                                /// with a cache it would be nice ?
+  for(int i = 0; i < transactions.size(); i++)
+    mirror << transactions[i].getDate();
+
+  int which =  qUpperBound(mirror, date) - mirror.begin();
+  if(!which)
+    return 0;
+  else {
+    which--;
+    return transactions[which].getBalance();
+  }
+}

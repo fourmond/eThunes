@@ -111,6 +111,10 @@ public:
       return transactions.last().getBalance(); return 0;
   };
 
+
+  /// Returns the balance at the given date
+  int balance(const QDate & date) const;
+
   /// Implementation of the Serialization accessor
   virtual SerializationAccessor * serializationAccessor();
 

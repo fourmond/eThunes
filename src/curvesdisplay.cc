@@ -85,6 +85,23 @@ void CurvesDisplay::displayBalance(const TransactionList * transactions,
   curvesWidget->addCurve(c);
 }
 
+// We do two years
+void CurvesDisplay::displayBalance(const Wallet * w, 
+                                   const QColor & col)
+{
+  TimeBasedCurve * c = new TimeBasedCurve(col);
+  
+  QDate now = QDate::currentDate();
+  QDate i = now.addYears(-2);
+  while(i < now) {
+    (*c) << DataPoint(i, w->balance(i));
+    i = i.addDays(1);
+  }
+  curvesWidget->addCurve(c);
+}
+
+
+
 void CurvesDisplay::zoomIn(const QSizeF & zF)
 {
   curvesWidget->zoomIn(zF);
