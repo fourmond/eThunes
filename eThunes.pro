@@ -21,10 +21,26 @@ OBJECTS_DIR = build
 # best case
 QMAKE_CXXFLAGS += -Werror=return-type 
 
-# Handling of Ruby sources, but rather bad for now
-# Bad for now
-INCLUDEPATH += /usr/lib/ruby/1.8/x86_64-linux
-LIBS += -lruby1.8 -lpoppler-qt4
+# We use poppler
+LIBS += -lpoppler-qt4
+
+# You can specify the full path of ruby on the command-line using:
+# qmake RUBY=/usr/local/ruby1.8/bin/ruby
+isEmpty(RUBY):RUBY = ruby
+
+# Ruby detection/installation
+RUBY_LIB_ARG = $$system($$RUBY ./get-ruby-config.rb libarg)
+RUBY_INCLUDE_DIRS = $$system($$RUBY ./get-ruby-config.rb includedir)
+RUBY_LIB_DIR = $$system($$RUBY ./get-ruby-config.rb libdir)
+
+isEmpty(RUBY_LIB_ARG) {
+  error("Could not find ruby, make sure $$RUBY is in the PATH !")
+}
+
+message("Ruby: using $$RUBY, found library: $$RUBY_LIB_ARG and includes at $$RUBY_INCLUDE_DIRS")
+INCLUDEPATH += $$RUBY_INCLUDE_DIRS
+LIBS += $$RUBY_LIB_ARG
+
 
 # Input files
 SOURCES += src/qmain.cc src/account.cc src/mainwin.cc src/actions.cc \

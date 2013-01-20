@@ -19,7 +19,7 @@
 #include <headers.hh>
 // Ruby-specific stuff
 #include <ruby-utils.hh>
-#include <st.h>
+// #include <st.h>
 
 #include <attributehash.hh>
 #include <transaction.hh>

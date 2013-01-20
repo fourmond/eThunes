@@ -21,8 +21,6 @@
 #ifndef __RUBY_UTILS_HH
 #define __RUBY_UTILS_HH
 
-#include <intern.h>
-
 /// Ruby-related functions and classes.
 ///
 /// This namespace contains a whole bunch of Ruby-related functions and
