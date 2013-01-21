@@ -97,6 +97,78 @@ static void pickMajorTicksLocation(double min, double max,
    * nb = (int)round((*lastTick - *firstTick)/(*tick));
 }
 
+static QList<QDate> pickXAxisLocation(const QDate & left,
+                                      const QDate & right,
+                                      int number)
+{
+  // Try to find the appropriate number of 
+  double nbDays = (left.daysTo(right))/(1.0 * number);
+  QList<QDate> ticks;
+  
+  if(nbDays <= 1.1) {              // Days-based
+    QDate l = left;
+    while(l < right) {
+      ticks << l;
+      l = l.addDays(1);
+    }
+    return ticks;
+  }
+
+  if(nbDays <= 7) {              // Weeks-based
+    QDate l = left.addDays(-(left.dayOfWeek() - 1));
+    while(l < right) {
+      if(l >= left)
+        ticks << l;
+      l = l.addDays(7);
+    }
+    return ticks;
+  }
+
+  if(nbDays <= 15) {            // 1 and 15 of each month
+    QDate l = left.addDays(-(left.day() - 1));
+    while(l < right) {
+      if(l >= left)
+        ticks << l;
+      if(l.day() == 1)
+        l = l.addDays(14);
+      else {
+        l = l.addMonths(1);
+        l = l.addDays(-(l.day() - 1));
+      }
+    }
+    return ticks;
+  }
+
+  if(nbDays <= 31) {            // Each month
+    QDate l = left.addDays(-(left.day() - 1));
+    while(l < right) {
+      if(l >= left)
+        ticks << l;
+      l = l.addMonths(1);
+    }
+    return ticks;
+  }
+
+  if(nbDays <= 100) {            // Each quarter
+    QDate l = left.addDays(-(left.day() - 1));
+    l = l.addMonths(l.month() % 3);
+    while(l < right) {
+      if(l >= left)
+        ticks << l;
+      l = l.addMonths(3);
+    }
+    return ticks;
+  }
+
+  QDate l = left.addDays(-(left.dayOfYear() - 1));
+  while(l < right) {
+    if(l >= left)
+      ticks << l;
+    l = l.addYears(1);
+  }
+  return ticks;
+}
+
 void TimeBasedWidget::paintEvent(QPaintEvent * ev)
 {
   // An absolute must !
@@ -122,6 +194,19 @@ void TimeBasedWidget::paintEvent(QPaintEvent * ev)
   pickMajorTicksLocation(ymin, ymax, &tick, 40 * verticalScale, 
                          &fact, &firstTick, &lastTick, &nbTicks);
 
+
+  QDate left = earliest.addDays(horizontalScrollBar()->value() / pixelPerDay);
+  int width = graphRect.width();
+  QDate right = left.addDays(width/pixelPerDay);
+  int number = width/70;       // 100 pixels for each date
+  QList<QDate> axisDates = pickXAxisLocation(left, right, number);
+  QList<int> datePositions;
+
+  for(int i = 0; i < axisDates.size(); i++) {
+    const QDate & date = axisDates[i];
+    datePositions << earliest.daysTo(date) * pixelPerDay;
+  }
+
   {
     // Setting up the coordinates and transforms for the graph area
     p.save();
@@ -130,12 +215,11 @@ void TimeBasedWidget::paintEvent(QPaintEvent * ev)
 
 
   
-
+    int ybase = verticalScrollBar()->maximum() - 
+      vertPos + graphRect.height() 
+      - padding;
     // Translate the paint object so that 0 is at the bottom
-    p.translate(QPoint(-horizontalScrollBar()->value(), 
-                       verticalScrollBar()->maximum() - 
-                       vertPos + graphRect.height() 
-                       - padding));
+    p.translate(QPoint(-horizontalScrollBar()->value(), ybase));
 
     // First, paint background lines
     {
@@ -149,10 +233,16 @@ void TimeBasedWidget::paintEvent(QPaintEvent * ev)
         p.drawLine(0, -pos, gs.width(), -pos);
       }
 
+      for(int i = 0; i < datePositions.size(); i++)
+        p.drawLine(datePositions[i], 5, datePositions[i], 
+                   -graphRect.height() - ybase);
+
       // Horizontal lines to come...
       
       p.restore();
     }
+
+
 
     // Then, paint the curves themselves
 
@@ -162,7 +252,7 @@ void TimeBasedWidget::paintEvent(QPaintEvent * ev)
   }
   p.drawRect(graphRect);
 
-  // Then, legends, and the like ?
+  // Then Y axis
   {
     p.save();
 
@@ -180,6 +270,30 @@ void TimeBasedWidget::paintEvent(QPaintEvent * ev)
       QString str = Transaction::formatAmount(value);
       /// @todo more fancy text !
       p.drawText(5, -pos, str);
+    }
+    
+
+    p.restore();
+  }
+
+  // Then X axis
+  {
+
+    p.save();
+
+    // Translate the paint object so that 0 is at the bottom
+    p.translate(graphRect.topLeft());
+    p.translate(QPoint(-horizontalScrollBar()->value(), 
+                       graphRect.height() - padding));
+
+
+    // Translate the paint object so that 0 is at the bottom
+    for(int i = 0; i < axisDates.size(); i++) {
+      const QDate & date = axisDates[i];
+      int pos = datePositions[i];
+      QString str = date.toString();
+      QRect r(QPoint(pos, 20), QSize(0,0));
+      p.drawText(r, Qt::AlignCenter|Qt::TextDontClip, str);
     }
     
 
