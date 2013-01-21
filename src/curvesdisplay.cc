@@ -62,14 +62,12 @@ CurvesDisplay::~CurvesDisplay()
 {
 }
 
-
-void CurvesDisplay::displayBalance(const TransactionList * transactions, 
-                                   const QColor & col)
+TimeBasedCurve * CurvesDisplay::balanceForTransactionList(const TransactionList * transactions)
 {
   // We must assumed that they are sorted to some extent. The last
   // transaction for one day is the balance for that day.
 
-  TimeBasedCurve * c = new TimeBasedCurve(col);
+  TimeBasedCurve * c = new TimeBasedCurve();
   
   QDate last;
   int lastBalance;
@@ -81,7 +79,15 @@ void CurvesDisplay::displayBalance(const TransactionList * transactions,
     lastBalance = t->getBalance();
   }
   (*c) << DataPoint(last, lastBalance);
+  return c;
+}
 
+
+void CurvesDisplay::displayBalance(const TransactionList * transactions, 
+                                   const QColor & col)
+{
+  TimeBasedCurve * c = balanceForTransactionList(transactions);
+  c->style = CurveStyle(QColor(col));
   curvesWidget->addCurve(c);
 }
 
@@ -98,6 +104,23 @@ void CurvesDisplay::displayBalance(const Wallet * w,
     i = i.addDays(1);
   }
   curvesWidget->addCurve(c);
+}
+
+/// @todo Fix this !
+static const char * colors[] = 
+  { "red", "blue", "#080", "orange", "purple"};
+static int nbColors = sizeof(colors)/sizeof(colors[0]);
+
+void CurvesDisplay::displayAllBalances(const Wallet * w)
+{
+  QList<TimeBasedCurve *> curves;
+  int nb = 0;
+  for(int i = 0; i < w->accounts.size(); i++) {
+    TimeBasedCurve * c = 
+      balanceForTransactionList(&(w->accounts[i].transactions));
+    c->style = CurveStyle(QColor(colors[nb++ % nbColors]));
+    curvesWidget->addCurve(c);
+  }
 }
 
 

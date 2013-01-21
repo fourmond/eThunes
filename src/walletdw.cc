@@ -99,7 +99,7 @@ void WalletDW::updateSummary()
     arg(Transaction::formatAmount(totalBalance));
   text += "</table>\n";
 
-  text += HTTarget::linkToMember("(display balance)", this,
+  text += HTTarget::linkToMember("(display balances)", this,
                                  &WalletDW::displayBalance);
 
 
@@ -164,6 +164,6 @@ void WalletDW::findInternalMovesPermissive()
 void WalletDW::displayBalance()
 {
   CurvesDisplay * dlg = new CurvesDisplay();
-  dlg->displayBalance(wallet);
+  dlg->displayAllBalances(wallet);
   dlg->show();
 }

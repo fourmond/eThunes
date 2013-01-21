@@ -107,6 +107,10 @@ public:
   /// Gets the date of the latest point
   QDate latestPoint();
 
+  const QList<DataPoint> & curveData() const {
+    return data;
+  };
+
 
   /// Minimum value
   int minimumValue();

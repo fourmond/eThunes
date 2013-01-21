@@ -40,6 +40,8 @@ protected:
   /// The widget for displaying the curves
   TimeBasedWidget * curvesWidget;
 
+  TimeBasedCurve * balanceForTransactionList(const TransactionList * transactions);
+
 public:
   CurvesDisplay();
 
@@ -54,6 +56,10 @@ public slots:
   /// Setup the display to show the overall balance
   void displayBalance(const Wallet * wallet, 
                       const QColor & col = QColor("red"));
+
+  /// Setup the display to show balance of all accounts and overall
+  /// balance too
+  void displayAllBalances(const Wallet * wallet);
 
 protected slots:
 

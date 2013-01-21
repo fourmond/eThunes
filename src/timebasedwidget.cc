@@ -151,7 +151,7 @@ static QList<QDate> pickXAxisLocation(const QDate & left,
 
   if(nbDays <= 100) {            // Each quarter
     QDate l = left.addDays(-(left.day() - 1));
-    l = l.addMonths(l.month() % 3);
+    l = l.addMonths(-((l.month()-1) % 3));
     while(l < right) {
       if(l >= left)
         ticks << l;
