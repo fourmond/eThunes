@@ -116,3 +116,14 @@ void Plugin::followLink()
   if(page)
     NavigationWidget::gotoPage(page);
 }
+
+bool Plugin::hasBalance() const
+{
+  return false;
+}
+
+int Plugin::balance() const
+{
+  return 0;
+}
+

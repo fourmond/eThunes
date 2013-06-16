@@ -91,6 +91,9 @@ void WalletDW::updateSummary()
     totalBalance += ac->balance();
   }
   text += "<tr></tr>";
+  text += QString("<tr><th" + cellStyle +">%1</th><th>%2</th></tr>\n").
+    arg(tr("Plugin")).arg(tr("Balance"));
+  for(int i = 0; i <
   text += (QString("<tr><td><strong>") + tr("Total") +
 	   "</strong></td><td><strong>%1</strong></td></tr>\n").
     arg(Transaction::formatAmount(totalBalance));

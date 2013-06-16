@@ -184,6 +184,24 @@ public:
   static QList<const PluginDefinition *> availablePlugins();
 
   virtual void followLink();
+
+  /// @name Balance-based functions
+  ///
+  /// Plugins may refer to assets (or debts) in themselves, and this
+  /// can be retrieved using the functions here.
+  /// @{
+
+
+  /// Whether or not the plugin has a balance (defaults to false)
+  virtual bool hasBalance() const;
+  
+  /// The plugins current balance
+  virtual int balance() const;
+
+  /// A transaction list that essentially tells the balance over time
+  //virtual QList<
+
+  /// @}
 };
 
 
