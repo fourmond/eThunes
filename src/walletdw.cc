@@ -24,14 +24,16 @@
 #include <filterpage.hh>
 #include <categorypage.hh>
 #include <tagpage.hh>
+#include <cabinet.hh>
 
 #include <htlabel.hh>
 #include <httarget-templates.hh>
 
 #include <curvesdisplay.hh>
+#include <plugin.hh>
 
 
-WalletDW::WalletDW(Wallet * w) : wallet(w)
+WalletDW::WalletDW(Cabinet * c) : wallet(&c->wallet), cabinet(c)
 {
   QVBoxLayout * layout = new QVBoxLayout(this);
   summary = new HTLabel();
@@ -91,15 +93,11 @@ void WalletDW::updateSummary()
     totalBalance += ac->balance();
   }
   text += "<tr></tr>";
-  text += QString("<tr><th" + cellStyle +">%1</th><th>%2</th></tr>\n").
-    arg(tr("Plugin")).arg(tr("Balance"));
   text += (QString("<tr><td><strong>") + tr("Total") +
 	   "</strong></td><td><strong>%1</strong></td></tr>\n").
     arg(Transaction::formatAmount(totalBalance));
   text += "</table>\n";
 
-  text += HTTarget::linkToMember("(display balances)", this,
-                                 &WalletDW::displayBalance);
 
 
 
@@ -117,6 +115,30 @@ void WalletDW::updateSummary()
   else {
     text += "<br>(no groups)<br>";
   }
+
+  // Now, we go through all the plugins and see if one of those
+  // advertise a balance of some kind.
+  if(cabinet->plugins.size() > 0) {
+    text += "<h3>Plugins</h3>\n<table>\n";
+    for(int i = 0; i < cabinet->plugins.size(); i++) {
+      Plugin * plugin = cabinet->plugins[i];
+      if(plugin && plugin->hasBalance()) {
+        int balance = plugin->balance();
+        totalBalance += balance;
+        text += QString("<tr><td" + cellStyle +">") +
+          plugin->getName() + 
+          QString("</td><td align='right'>%1</td></tr>\n").
+          arg(Transaction::formatAmount(balance));
+      }
+    }
+    text += (QString("<tr><td" + cellStyle +"><strong>") + tr("Total") +
+             "</strong></td><td><strong>%1</strong></td></tr>\n</table>\n").
+      arg(Transaction::formatAmount(totalBalance));
+  }
+
+  text += HTTarget::linkToMember("(display balances)", this,
+                                 &WalletDW::displayBalance);
+
 
   summary->setText(text);
 }

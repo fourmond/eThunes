@@ -36,7 +36,7 @@ CabinetPage::CabinetPage(Cabinet * c) : cabinet(c)
   layout->addWidget(summary);
 
   QHBoxLayout * hb = new QHBoxLayout();
-  walletDW = new WalletDW(&cabinet->wallet);
+  walletDW = new WalletDW(cabinet);
   hb->addWidget(walletDW);
 
   collectionsDW = new CollectionsDW(cabinet);

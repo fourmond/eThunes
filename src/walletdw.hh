@@ -25,6 +25,8 @@
 
 class HTLabel;
 
+class Cabinet;
+
 class WalletDW : public DashboardWidget {
 
   Q_OBJECT;
@@ -32,11 +34,15 @@ class WalletDW : public DashboardWidget {
   /// The wallet whose contents we should display.
   Wallet * wallet;
 
+  /// And the cabinet we're interested in, since that comes in useful,
+  /// after all...
+  Cabinet * cabinet;
+
   /// The QLabel object displaying the rich text.
   HTLabel * summary;
 
 public:
-  WalletDW(Wallet * w);
+  WalletDW(Cabinet * c);
   virtual ~WalletDW();
 
 
