@@ -289,7 +289,6 @@ void Loan::computeDebt()
   int trid = 0;
 
   lastMonthlyPayment = 0;
-  
 
   // We use a month-based way to see the things
   for(int mid = Transaction::monthID(dateContracted) + 1; 
@@ -317,6 +316,7 @@ void Loan::computeDebt()
   effectiveMonthlyPayment = (plannedMonthlyPayment < 0 ? lastMonthlyPayment : 
                              plannedMonthlyPayment);
 
+
   if(effectiveMonthlyPayment <= 0) {
     remainingMonths = -1;
     return;                     // Nothing to do here
@@ -336,6 +336,8 @@ void Loan::computeDebt()
   }
   if(remaining > 0)
     remainingMonths = -1;
+
+
 }
 
 
@@ -368,3 +370,22 @@ void LoanPlugin::finishedSerializationRead()
     loans[i].targetPlugin = this;
 }
 
+bool LoanPlugin::hasBalance() const 
+{
+  return true;
+}
+
+int LoanPlugin::balance() const 
+{
+  int balance = 0;
+  for(int i = 0; i < loans.size(); i++) {
+    Loan * ln = const_cast<Loan*>(&loans[i]);
+    /// @todo There should be a sane way to do that ;-)...
+    /// 
+    /// @todo Setup a cache for the computation of the balance (and
+    /// the time-based ones ?)
+    ln->html();                 // dirty ?
+    balance -= ln->amountLeft;
+  }
+  return balance;
+}

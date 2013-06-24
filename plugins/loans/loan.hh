@@ -33,13 +33,12 @@ class LoanPlugin;
 /// All transactions that pay back this loan are linked to it using
 /// the Linkable framework
 class Loan : public Linkable {
-protected:
+public:
 
   /// Computes all debt-related things, based on the transactions
   /// linked to it
   void computeDebt();
 
-public:
   /// The amount we still owe
   int amountLeft;
 
@@ -108,6 +107,10 @@ public:
   /// Renders as HTML
   QString html();
 
+
+  /// Returns the total debt in the 
+  int debt();
+
 protected:
 
   void promptForName();
@@ -149,6 +152,11 @@ public:
   virtual void finishedSerializationRead();
 
   LoanPlugin();
+
+  virtual bool hasBalance() const;
+
+  virtual int balance() const;
+
 
 };
 
