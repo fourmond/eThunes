@@ -43,6 +43,7 @@ Plugin * PluginDefinition::createPlugin() const
   return creator(name);
 }
 
+//////////////////////////////////////////////////////////////////////
 
 void PluginFactory::registerPlugin(const QString & name, 
                                    PluginDefinition * def)
@@ -77,11 +78,57 @@ QList<const PluginDefinition *> PluginFactory::availablePlugins() const
 PluginFactory * Plugin::factory = NULL;
 
 
+//////////////////////////////////////////////////////////////////////
+
+
+/// This class represents a missing plugin, ie a placeholder to make
+/// sure plugin data is not lost when a plugin is missing. It doesn't
+/// do anything else.
+class MissingPlugin : public Plugin {
+protected:
+
+  /// Plugin data, read at load time.
+  QString originalData;
+
+  /// Plugin original type
+  QString originalType;
+
+public:
+
+  MissingPlugin(const QString & type) : originalType(type) {
+    ;
+  };
+
+  virtual QString typeName() const {
+    return originalType;
+  };
+  
+  virtual QString writeAsString() {
+    return originalData;
+  };
+
+  virtual void readFromString(const QString & str) {
+    originalData = str;
+  };
+
+  virtual NavigationPage * pageForPlugin() {
+    return NULL;                // Probably not a good idea.
+  };
+
+};
+
+
+//////////////////////////////////////////////////////////////////////
+
+
 Plugin * Plugin::createNamedPlugin(const QString & name)
 {
+  Plugin * plugin = NULL;
   if(factory)
-    return factory->createNamedPlugin(name);
-  return NULL;                  /// @todo Or raise an exception ?
+    plugin = factory->createNamedPlugin(name);
+  if(! plugin)                  /// @todo Log that ?
+    plugin = new MissingPlugin(name);
+  return plugin;
 }
 
 void Plugin::registerPlugin(const QString & name, 

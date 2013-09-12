@@ -110,20 +110,6 @@ public:
 /// integrate directly as a subclass of SerializableAttribute)
 class Plugin : public Serializable, public HTTarget {
 private:
-  /// @name Backup attributes
-  ///
-  /// These attributes are NOT FUNCTIONAL AS OF NOW !
-  /// 
-  /// @{
-  /// The data for the plugin, saved as raw XML. This attribute is
-  /// useless in derived classes and should be empty.
-  QString savedData;
-
-  /// The type name for the plugin, saved in case no derived class
-  /// took it.
-  QString savedType;
-  //@}
-
   /// The plugin creation factory.
   static PluginFactory * factory;
 
@@ -142,7 +128,7 @@ public:
 
   /// The type name
   virtual QString typeName() const {
-    return savedType;
+    return "(null)";
   };
 
   /// Returns the user-given name for the plugin.
