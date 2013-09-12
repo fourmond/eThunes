@@ -127,3 +127,24 @@ int Plugin::balance() const
   return 0;
 }
 
+QString Plugin::writeAsString()
+{
+  QString str;
+  QXmlStreamWriter xOut(&str);
+  xOut.setAutoFormatting(true);
+  xOut.setAutoFormattingIndent(2);
+  writeXML("data", &xOut);
+  return str;
+}
+
+void Plugin::readFromString(const QString & str)
+{
+  QXmlStreamReader xIn(str);
+  Serialization::readNextToken(&xIn);
+  while(! ((xIn.isStartElement() && xIn.name() == "data") || 
+           xIn.atEnd()))
+    Serialization::readNextToken(&xIn);
+  readXML(&xIn);
+
+}
+

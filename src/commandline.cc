@@ -304,9 +304,9 @@ static CommandLineParser * myParser()
 			     -1, "Attempts to download new documents")
     << new CommandLineOption("--test-xml", testXML,
 			     0, "Various internal tests for XML")
-    << new CommandLineOption("--test-pointers", 
-                             testSerializePointers, // External
-			     0, "Test serialization of pointers...")
+    // << new CommandLineOption("--test-pointers", 
+    //                          testSerializePointers, // External
+    //     		     0, "Test serialization of pointers...")
     << new CommandLineOption("--test-latex", 
                              testLaTeX,
 			     0, "Test latex output")

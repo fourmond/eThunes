@@ -26,10 +26,17 @@
 /// classes. For type-safe serialization, the base class must provide:
 /// \li a static createObject(const QString & name) function
 /// \li a QString typeName() const function
-/// \li of course, the target class should be a child of Serializable
+/// \li the target class must provide readFromString and writeAsString
+/// functions for saving loading. As of now, as a transition measure,
+/// a readXML function is also necessary.
 ///
 /// \todo Maybe this class could integrate a fallback in case of a
 /// missing plugin ?
+///
+/// @todo Use exceptions !
+///
+/// @todo Smoothly choose between readXML/writeXML and the string
+/// thing using appropriate SFINAE
 template <class T>
 class SerializationItemPointer : public SerializationAttribute {
   T ** target;                  // Pointer to pointer
@@ -59,7 +66,12 @@ public:
       *target = T::createObject(attributes.value("typename").toString());
       if(*target) {
         Serialization::readNextToken(reader);
-        (*target)->readXML(reader);
+
+        // Here, if we have an old style 
+        if(reader->isStartElement())
+          (*target)->readXML(reader);
+        else                    // Assume CDATA or plain text
+          (*target)->readFromString(reader->text().toString());
       }
       else {
         fprintf(stderr, "For some reason, couldn't create target type\n");
@@ -78,7 +90,8 @@ public:
   virtual void writeXML(const QString & name, QXmlStreamWriter * writer) {
     writer->writeStartElement(name);
     writer->writeAttribute("typename", (*target)->typeName());
-    (*target)->writeXML("data", writer);
+    // (*target)->writeXML("data", writer);
+    writer->writeCDATA((*target)->writeAsString());
     writer->writeEndElement();
   };
   

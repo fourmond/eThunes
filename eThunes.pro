@@ -72,7 +72,6 @@ SOURCES += src/qmain.cc src/account.cc src/mainwin.cc src/actions.cc \
         src/serialization.cc src/statistics.cc src/watchable.cc \
         src/flowinggridlayout.cc src/documentlistwidget.cc \
         src/plugin.cc src/utils.cc \
-        src/testserializepointers.cc \
         src/widgetwrapperdialog.cc \
         src/httarget.cc src/htlabel.cc src/htlinks.cc \
         src/latexoutput.cc src/evolvingitemwidget.cc \
@@ -82,6 +81,8 @@ SOURCES += src/qmain.cc src/account.cc src/mainwin.cc src/actions.cc \
         src/timebasedcurve.cc src/timebasedwidget.cc \
         src/curvesdisplay.cc \
         src/exceptions.cc
+
+#        src/testserializepointers.cc \
 
 HEADERS += src/account.hh src/mainwin.hh src/actions.hh \
 	src/ofximport.hh src/accountmodel.hh \

@@ -164,9 +164,17 @@ public:
   /// For serialization
   virtual SerializationAccessor * serializationAccessor();
 
-  // // These functions need to be reimplemented to handle the case when...
-  // virtual void writeXML(const QString & name, QXmlStreamWriter * writer);
-  // virtual void readXML(QXmlStreamReader * reader) = 0;
+  /// The plugin system is somewhat disconnected from the
+  /// serialization system, in that the plugins are not required to
+  /// use XML for saving/loading. Instead, they rely on string
+  /// functions, that may in turn use the serialization functions
+  /// again or use a completely different mechanism (YAML could be
+  /// used for ruby, for instance).
+  ///
+  /// The default implementation is to wrap the object in a XML stream
+  /// again, and save it as CDATA.
+  virtual QString writeAsString();
+  virtual void readFromString(const QString & str);
 
   virtual ~Plugin();
 
