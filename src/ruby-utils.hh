@@ -1,7 +1,7 @@
 /**
     \file ruby-utils.hh
     Various (template ?) utilities for running Ruby code.
-    Copyright 2010 by Vincent Fourmond
+    Copyright 2010, 2013 by Vincent Fourmond
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -45,6 +45,11 @@ namespace Ruby {
   /// path). This assumes Ruby has been started already.
   void loadFile(QString name);
 
+
+  /// This function runs the given function (taking a void * pointer)
+  /// converting Ruby exceptions into C++ exceptions when needed.
+  VALUE exceptionSafeCall(VALUE (*function)(...), void * args);
+
 #ifndef CALL_MEMBER_FN
 #define CALL_MEMBER_FN(object,ptrToMember) ((object).*(ptrToMember))
 #endif
@@ -69,6 +74,25 @@ namespace Ruby {
 #define VALUE2QSTRING(value)			\
   Ruby::valueToQString(value)
 
+
+
+  /// @name Exception-catching routines
+  ///
+  /// A series of functions to wrap calls to ruby functions and ensure
+  /// exceptions are caught.
+  ///
+  /// These functions are defined in the ruby-templates.hh header
+  ///  
+  /// @{
+  VALUE run(VALUE (*f)());
+  template<typename A1> VALUE run(VALUE (*f)(A1), A1); 
+  template<typename A1, typename A2> VALUE run(VALUE (*f)(A1, A2), A1, A2); 
+
+
+  template<typename C, typename A1> VALUE run(C*, VALUE (C::*f)(A1), A1); 
+
+
+  /// @}
 
 
   /// Rescue exceptions from 2-arg non-member functions.

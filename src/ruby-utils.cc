@@ -30,6 +30,19 @@ VALUE Ruby::globalRescueFunction(VALUE /*dummy*/, VALUE exception)
 
 bool Ruby::rubyInitialized = false;
 
+VALUE Ruby::exceptionSafeCall(VALUE (*function)(...), void * args)
+{
+  int error;
+  VALUE ret = rb_protect((VALUE (*)(VALUE)) function, 
+                         (VALUE) args, &error);
+  if(error) {
+    // An exception occurred, we need to handle it.
+    VALUE exception = rb_gv_get("$!");
+    return Ruby::globalRescueFunction(Qnil, exception);
+  }
+  return ret;
+}
+
 
 void Ruby::ensureInitRuby()
 {
