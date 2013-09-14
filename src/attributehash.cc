@@ -19,8 +19,8 @@
 #include <headers.hh>
 // Ruby-specific stuff
 #include <ruby-utils.hh>
-// #include <st.h>
 
+#include <ruby-templates.hh>
 #include <attributehash.hh>
 #include <transaction.hh>
 
@@ -106,10 +106,11 @@ int AttributeHash::setFromRubyInternalHelper(VALUE key, VALUE val, void * arg)
   return ST_CONTINUE;
 }
 
-void AttributeHash::setFromRubyInternal(VALUE hash)
+VALUE AttributeHash::setFromRubyInternal(VALUE hash)
 {
   rb_hash_foreach(hash, (int (*)(...))AttributeHash::
 		  setFromRubyInternalHelper, (VALUE)this);
+  return Qnil;
 }
 
 void AttributeHash::setFromRuby(VALUE hash, bool clr)
@@ -117,8 +118,7 @@ void AttributeHash::setFromRuby(VALUE hash, bool clr)
   if(clr)
     clear();
   // Rescue for potential exceptions.
-  RescueMemberWrapper1Arg<AttributeHash, VALUE>::
-    wrapCall(this, &AttributeHash::setFromRubyInternal, hash);
+  Ruby::run(this,  &AttributeHash::setFromRubyInternal, hash);
 }
 
 void AttributeHash::dumpContents() const

@@ -47,7 +47,7 @@ class AttributeHash : public QHash<QString, QVariant>,
   // these two functions are for internal use.
 
   /// For internal use (exception wrapping);
-  void setFromRubyInternal(VALUE hash);
+  VALUE setFromRubyInternal(VALUE hash);
 
   /// Internal static wrapper.
   static int setFromRubyInternalHelper(VALUE key, VALUE val, void * arg);
