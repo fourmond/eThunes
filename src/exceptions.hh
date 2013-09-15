@@ -39,4 +39,13 @@ public:
   virtual ~RuntimeError() throw() {;};
 };
 
+class RubyException : public RuntimeError {
+public:
+  /// The original exception
+  VALUE rubyException;
+
+  /// The class of the original exception
+  VALUE exceptionClass;
+};
+
 #endif

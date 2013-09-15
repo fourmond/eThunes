@@ -165,6 +165,9 @@ public:
   virtual ~Plugin();
 
   /// Creates a plugin from the name.
+  ///
+  /// It creates a MissingPlugin instance should the type be
+  /// unavailable at run time.
   static Plugin * createNamedPlugin(const QString & name);
 
   static Plugin * createObject(const QString & name) {

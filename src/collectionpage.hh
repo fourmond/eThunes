@@ -83,6 +83,12 @@ public slots:
 
   /// Looks for transactions matching the documents
   void lookupMatchingTransactions();
+
+protected slots:
+
+  /// Try downloading something !
+  void tryDownload();
+
 };
 
 #endif

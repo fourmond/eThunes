@@ -11,9 +11,47 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # General Public License for more details (in the COPYING file).
 
+
+# We definitely need continuations
+p $:
+begin
+  # require 'continuation'
+  require '/usr/lib/ruby/1.9.1/x86_64-linux/continuation.so'
+rescue Exception => e
+  p e
+end
+
+p :bidule
+
 module Net
 
-  # This class is defined by the C code first.
+  # This exception is raised to give control back to the calling C
+  # code when a network transfer is under way
+  class OngoingException < Exception
+  end
+
+  # This class is defined by the C code first
+  class Fetcher
+
+    private :private_get, :private_post
+
+    # Returns the result of the get operation
+    def get(url)
+      return callcc {|cc| 
+        private_get(url, cc)
+        raise ContExc.new
+      }
+    end
+
+    def post(url, params)
+      return callcc {|cc| 
+        private_post(url, params, cc)
+        raise ContExc.new
+      }
+    end
+  end
+
+  # This class is defined by the C code first too.
   class Result
 
     # Returns the links contained in the #contents of the object.

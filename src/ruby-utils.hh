@@ -91,6 +91,8 @@ namespace Ruby {
 
   template<typename C, typename A1> VALUE run(C*, VALUE (C::*f)(A1), A1); 
 
+  template<typename C, typename A1, typename A2, typename A3> VALUE run(C*, VALUE (C::*f)(A1, A2, A3), A1, A2, A3); 
+
 
   /// @}
 

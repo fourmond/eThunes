@@ -23,6 +23,8 @@
 #include <log.hh>
 #include <commandline.hh>
 
+#include <ruby-utils.hh>
+
 void loadTranslations(const QString & locale, QCoreApplication * app)
 {
   QTranslator * translator = new QTranslator;
@@ -63,6 +65,8 @@ int main(int argc, char ** argv)
   // The search path for Ruby code (general-purpose modules)
   QDir::addSearchPath("ruby", "/home/vincent/Prog/eThunes/ruby");
   QDir::addSearchPath("icons", "/home/vincent/Prog/eThunes/data");
+
+  Ruby::ensureInitRuby();
 
   // Command-line parsing if applicable
   if(parseCommandLine())

@@ -82,6 +82,10 @@ void CollectionPage::updateContents()
     linkToMember("(find matching transactions)",
                  this,
                  &CollectionPage::lookupMatchingTransactions);
+  str += HTTarget::
+    linkToMember("(try download)",
+                 this,
+                 &CollectionPage::tryDownload);
                  
   summary->setText(str);
 
@@ -101,20 +105,18 @@ CollectionPage * CollectionPage::getCollectionPage(Collection * collection)
 }
 
 
-// void CollectionPage::openURL(const QString &str)
-// {
-//   if(str == "download") {
-//     AttributeHash user;
-//     /// \todo This should be turned into a proper handling of the
-//     /// passwords and of multiple identities...
+void CollectionPage::tryDownload()
+{
+  AttributeHash user;
+  /// \todo This should be turned into a proper handling of the
+  /// passwords and of multiple identities...
 
 
-//     user["login"] = QInputDialog::getText(this, tr("login"), tr("login"));
-//     user["passwd"] = QInputDialog::getText(this, tr("passwd"), tr("passwd"),
-// 					   QLineEdit::Password);
-//     collection->fetchNewDocumentsForUser(user);
-//   }
-// }
+  // user["login"] = QInputDialog::getText(this, tr("login"), tr("login"));
+  // user["passwd"] = QInputDialog::getText(this, tr("passwd"), tr("passwd"),
+  //       				   QLineEdit::Password);
+    collection->fetchNewDocumentsForUser(user);
+}
 
 void CollectionPage::lookupMatchingTransactions()
 {

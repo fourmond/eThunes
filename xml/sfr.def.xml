@@ -66,6 +66,9 @@ module SFR
     p fetcher.methods
     puts
 
+    p fetcher.get("http://google.com")
+    return false
+
     fetcher.get("https://moncompte-neufbox.sfr.fr/moncompte-webapp/moncompte/factures/detailFacture.action") do |res|
       if res.ok?
         # Find the login ticket

@@ -22,6 +22,7 @@
 
 // Ruby headers;
 #include <ruby-utils.hh>
+#include <ruby-templates.hh>
 
 using namespace Ruby;
 
@@ -78,17 +79,23 @@ bool RubyModuleCode::canFetch()
   return rb_respond_to(module, rb_intern("fetch"));
 }
 
-void RubyModuleCode::fetchNewDocumentsInternal(const AttributeHash & credentials,
-					       const QList<AttributeHash> &existingDocuments, 
-                                               Fetcher * f)
+VALUE RubyModuleCode::fetchNewDocumentsInternal(const AttributeHash & credentials,
+                                                const QList<AttributeHash> &existingDocuments, 
+                                                Fetcher * f)
 {
   ensureLoadModule();
+  QTextStream o(stdout);
+  o << "Bidule" << endl;
   ID func = rb_intern("fetch");
   VALUE ary = rb_ary_new();
+  o << "Bidule2" << endl;
   for(int i = 0; i < existingDocuments.size(); i++)
     rb_ary_push(ary, existingDocuments[i].toRuby());
+  o << "Bidule3" << endl;
   rb_funcall(module, func, 3, f->wrapToRuby(),
 	     credentials.toRuby(), ary);
+  o << "Bidule4" << endl;
+  return Qnil;
 }
 
 Fetcher * RubyModuleCode::fetchNewDocuments(const AttributeHash & credentials,
@@ -97,9 +104,14 @@ Fetcher * RubyModuleCode::fetchNewDocuments(const AttributeHash & credentials,
 {
   Fetcher * n = new Fetcher();
   n->setTarget(c);
-  RescueMemberWrapper3Args<RubyModuleCode, const AttributeHash &,
-			   const QList<AttributeHash> &, Fetcher *>
-    ::wrapCall(this, &RubyModuleCode::fetchNewDocumentsInternal,
-	       credentials, existingDocuments, n);
+
+  // Here, we need to explicit the template arguments, else the
+  // compiler seems unable to guess the correct const-ref-ness.
+  Ruby::run<RubyModuleCode, 
+            const AttributeHash &,
+            const QList<AttributeHash> &,
+            Fetcher *>
+  (this, &RubyModuleCode::fetchNewDocumentsInternal,
+   credentials, existingDocuments, n);
   return n;
 }

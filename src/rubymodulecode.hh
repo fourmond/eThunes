@@ -58,7 +58,7 @@ public:
 
 protected:
 
-  void fetchNewDocumentsInternal(const AttributeHash & credentials,
+  VALUE fetchNewDocumentsInternal(const AttributeHash & credentials,
   				 const QList<AttributeHash> &existingDocuments,
   				 Fetcher * fetcher);
 

@@ -142,6 +142,44 @@ template<typename C, typename A1> VALUE Ruby::run(C *cls,
   return cb.run();
 }
 
+/// Rescue exceptions from 1-arg member functions.
+///
+/// Use it via the Ruby::run appropriate wrapper.
+template <class C, typename A1, typename A2, typename A3> class RubyMember3 {
+  C * targetClass;
+
+  typedef VALUE (C::*MemberFunction)(A1, A2, A3);
+  MemberFunction targetMember;
+
+  A1 a1;
+  A2 a2;
+  A3 a3;
+
+  static VALUE wrapper(VALUE v) {
+    RubyMember3 * arg = (RubyMember3 *) v;
+    return CALL_MEMBER_FN(*(arg->targetClass), arg->targetMember)(arg->a1, arg->a2, arg->a3);
+  };
+
+
+public:
+  RubyMember3(C* tc, MemberFunction tm, A1 ar1, A2 ar2, A3 ar3) :
+    targetClass(tc), targetMember(tm), a1(ar1), a2(ar2), a3(ar3) {;};
+
+  VALUE run() {
+    return Ruby::exceptionSafeCall((VALUE (*)(...)) &wrapper, 
+                                   this);
+  };
+
+};
+
+template<typename C, typename A1, typename A2, typename A3> 
+VALUE Ruby::run(C *cls, 
+                VALUE (C::*f)(A1, A2, A3), 
+                A1 a1, A2 a2, A3 a3)
+{
+  RubyMember3<C, A1, A2, A3> cb(cls, f, a1, a2, a3);
+  return cb.run();
+}
 
 
 

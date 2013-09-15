@@ -18,6 +18,7 @@
 
 #include <headers.hh>
 #include <ruby-utils.hh>
+#include <ruby-templates.hh>
 #include <fetcher.hh>
 
 VALUE Ruby::globalRescueFunction(VALUE /*dummy*/, VALUE exception)
@@ -43,11 +44,13 @@ VALUE Ruby::exceptionSafeCall(VALUE (*function)(...), void * args)
   return ret;
 }
 
+static char * opts[] = { "-r", "continuations", NULL };
 
 void Ruby::ensureInitRuby()
 {
   if(! rubyInitialized) {
     ruby_init();
+    Ruby::run(&rb_require, "continuation");
     Fetcher::initializeRuby();
     /// \todo Do not hardwire the list, but rather acquire it somehow
     loadFile("dates");
