@@ -45,6 +45,12 @@ namespace Ruby {
   /// path). This assumes Ruby has been started already.
   void loadFile(QString name);
 
+  /// Run the application
+  void mainLoop(QApplication * app);
+
+  /// 
+  VALUE runMainLoop(VALUE obj);
+
 
   /// This function runs the given function (taking a void * pointer)
   /// converting Ruby exceptions into C++ exceptions when needed.

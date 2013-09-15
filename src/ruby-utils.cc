@@ -21,11 +21,32 @@
 #include <ruby-templates.hh>
 #include <fetcher.hh>
 
+
+// For the wrapper
+QApplication * ourApp;
+
+VALUE Ruby::runMainLoop(VALUE obj)
+{
+  ourApp->exec();
+  return Qnil;
+}
+
+VALUE mApp;
+
+void Ruby::mainLoop(QApplication * app)
+{
+  ourApp = app;
+  rb_eval_string("App::run");
+}
+
+
 VALUE Ruby::globalRescueFunction(VALUE /*dummy*/, VALUE exception)
 {
   /// \tdexception eventually, this should throw an exception
   fprintf(stderr, "A Ruby exception occured:\n");
   rb_p(exception);
+  VALUE ct = rb_funcall2(exception, rb_intern("backtrace"), 0, NULL);
+  rb_p(ct);
   return Qnil;
 }
 
@@ -50,6 +71,11 @@ void Ruby::ensureInitRuby()
 {
   if(! rubyInitialized) {
     ruby_init();
+    mApp = rb_define_module("App");
+    rb_define_singleton_method(mApp, "run",
+                               (VALUE (*)(...)) runMainLoop, 0);
+
+
     Ruby::run(&rb_require, "continuation");
     Fetcher::initializeRuby();
     /// \todo Do not hardwire the list, but rather acquire it somehow

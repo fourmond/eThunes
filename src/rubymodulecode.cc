@@ -92,7 +92,7 @@ VALUE RubyModuleCode::fetchNewDocumentsInternal(const AttributeHash & credential
   for(int i = 0; i < existingDocuments.size(); i++)
     rb_ary_push(ary, existingDocuments[i].toRuby());
   o << "Bidule3" << endl;
-  rb_funcall(module, func, 3, f->wrapToRuby(),
+  rb_funcall(rb_eval_string("Net"), func, 4, module, f->wrapToRuby(),
 	     credentials.toRuby(), ary);
   o << "Bidule4" << endl;
   return Qnil;

@@ -30,6 +30,10 @@ module Net
   class OngoingException < Exception
   end
 
+  def self.fetch(mod, fetcher, creds, ary)
+    mod.fetch(fetcher, creds, ary)
+  end
+
   # This class is defined by the C code first
   class Fetcher
 
@@ -39,14 +43,14 @@ module Net
     def get(url)
       return callcc {|cc| 
         private_get(url, cc)
-        raise ContExc.new
+        return false
       }
     end
 
     def post(url, params)
       return callcc {|cc| 
         private_post(url, params, cc)
-        raise ContExc.new
+        raise OngoingException.new
       }
     end
   end
