@@ -37,12 +37,6 @@ VALUE Fetcher::mNet;
 
 VALUE Fetcher::cFetcher;
 
-VALUE Fetcher::callCC(VALUE cont, VALUE retval)
-{
-  ID id = rb_intern("call");
-  return rb_funcall(cont, id, 1, retval);
-}
-
 Fetcher::Fetcher() : followRedirections(true),
 		     targetWallet(0),
 		     targetCollection(0)
@@ -76,10 +70,10 @@ void Fetcher::initializeRuby()
   cFetcher = rb_define_class_under(mNet, "Fetcher", rb_cObject);
 
   rb_define_method(cFetcher, "private_get",
-		   (VALUE (*)(...)) getWrapper, 2);
+		   (VALUE (*)(...)) getWrapper, 1);
 
   rb_define_method(cFetcher, "private_post",
-		   (VALUE (*)(...)) postWrapper, 3);
+		   (VALUE (*)(...)) postWrapper, 2);
 
   rb_define_method(cFetcher, "add_document",
 		   (VALUE (*)(...)) addDocumentWrapper, 2);
@@ -93,14 +87,13 @@ void Fetcher::initializeRuby()
 }
 
 Fetcher::OngoingRequest * Fetcher::get(const QNetworkRequest & request,
-				       VALUE cc, int redirections)
+                                       int redirections)
 {
   QNetworkReply * reply = manager->get(request);
-  return registerRequest(reply, cc, redirections);
+  return registerRequest(reply, redirections);
 }
 
 Fetcher::OngoingRequest * Fetcher::registerRequest(QNetworkReply * reply,
-						   VALUE cc,
 						   int redirections)
 {
   LogStream info(Log::Info);
@@ -112,7 +105,6 @@ Fetcher::OngoingRequest * Fetcher::registerRequest(QNetworkReply * reply,
        << (targetCollection ? targetCollection->name : "") 
        << endl;
     
-  r.continuation = cc;
   r.done = false;
   r.maxHops = (redirections ?  redirections : 7 /** \todo Customize this */);
   return &r;
@@ -126,8 +118,7 @@ void Fetcher::setFiber(VALUE f)
 }
 
 Fetcher::OngoingRequest * Fetcher::post(const QNetworkRequest & request,
-					const AttributeHash & parameters,
-					VALUE code)
+					const AttributeHash & parameters)
 {
   /// \todo This looks more like a dirty hack than a proper
   /// solution. Taken from:
@@ -150,7 +141,7 @@ Fetcher::OngoingRequest * Fetcher::post(const QNetworkRequest & request,
   re.setHeader(QNetworkRequest::ContentTypeHeader,
 	      "application/x-www-form-urlencoded");
   QNetworkReply * reply = manager->post(re, data);
-  return registerRequest(reply, code);
+  return registerRequest(reply);
 }
 
 VALUE Fetcher::cookiesWrapper(VALUE obj)
@@ -163,19 +154,19 @@ VALUE Fetcher::cookiesWrapper(VALUE obj)
 }
 
 
-VALUE Fetcher::getWrapper(VALUE obj, VALUE str, VALUE cc)
+VALUE Fetcher::getWrapper(VALUE obj, VALUE str)
 {
   Fetcher * f = fromValue(obj);
-  f->get(QNetworkRequest(QUrl(valueToQString(str))), cc);
+  f->get(QNetworkRequest(QUrl(valueToQString(str))));
   return Qnil;
 }
 
-VALUE Fetcher::postWrapper(VALUE obj, VALUE str, VALUE hash, VALUE cc)
+VALUE Fetcher::postWrapper(VALUE obj, VALUE str, VALUE hash)
 {
   Fetcher * f = fromValue(obj);
   AttributeHash val;
   f->post(QNetworkRequest(QUrl(valueToQString(str))),
-	  AttributeHash::fromRuby(hash), cc);
+	  AttributeHash::fromRuby(hash));
   return Qnil;
 }
 
@@ -206,7 +197,7 @@ void Fetcher::replyFinished(QNetworkReply* r)
     info << " -> redirects to " << target.toString() << endl;
     int nb = ongoingRequests[r].maxHops - 1;
     if(nb)
-      get(QNetworkRequest(target), ongoingRequests[r].continuation, nb);
+      get(QNetworkRequest(target), nb);
     else
       err << "Maximum number of redirections hit, stopping" << endl;
 
@@ -214,8 +205,6 @@ void Fetcher::replyFinished(QNetworkReply* r)
   else {
     Result * res = new Result(r);
     VALUE f = res->wrapToRuby();
-    rb_p(f);
-    rb_p(fiber);
     Ruby::wrappedFuncall(fiber, rb_intern("resume"), 1, f);
   }
   // In any case, the request is done.

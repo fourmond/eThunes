@@ -12,17 +12,6 @@
 # General Public License for more details (in the COPYING file).
 
 
-# We definitely need continuations
-p $:
-begin
-  # require 'continuation'
-  require '/usr/lib/ruby/1.9.1/x86_64-linux/continuation.so'
-rescue Exception => e
-  p e
-end
-
-p :bidule
-
 module Net
 
   # This class wraps the fetch call into a Fiber
@@ -39,12 +28,12 @@ module Net
 
     # Returns the result of the get operation
     def get(url)
-      private_get(url, nil)
+      private_get(url)
       Fiber.yield
     end
 
     def post(url, params)
-      private_post(url, params, nil)
+      private_post(url, params)
       Fiber.yield
     end
   end

@@ -17,7 +17,6 @@ module Utils
   # returning an array [retval] if everything went fine, or [nil,
   # exception] if an exception was caught
   def self.safe_call(target, symbol, *args)
-    p [target, symbol, *args]
     begin
       return [target.send(symbol, *args)]
     rescue Exception => e

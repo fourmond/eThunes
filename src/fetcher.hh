@@ -68,20 +68,12 @@ protected:
     return f;
   };
 
-  /// Calls the given continuation, with the given return value.
-  static VALUE callCC(VALUE cc, VALUE retval);
-
-
   /// Private class to handle ongoing download requests
   class OngoingRequest {
   public:
 
     /// The reply, as provided by QNetworkAccessManager
     QPointer<QNetworkReply> reply;
-
-    /// The continuation that will take us back to after the function
-    /// call in the
-    VALUE continuation;
 
     /// Whether the request processing has ended or not.
     ///
@@ -97,7 +89,7 @@ protected:
   /// Register a request in the hash, and setup the right things about
   /// it.
   OngoingRequest * registerRequest(QNetworkReply * reply,
-				   VALUE code, int redirections = 0);
+				   int redirections = 0);
 
   /// Requests currently underway
   QHash<QNetworkReply *, OngoingRequest> ongoingRequests;
@@ -123,14 +115,14 @@ protected:
   static void rubyFree(VALUE v);
 
   /// The wrapper for get
-  static VALUE getWrapper(VALUE obj, VALUE str, VALUE cc);
+  static VALUE getWrapper(VALUE obj, VALUE str);
 
   /// Spawns a get request.
-  OngoingRequest * get(const QNetworkRequest & request, VALUE cc,
+  OngoingRequest * get(const QNetworkRequest & request,
 		       int redirections = 0);
 
   /// The wrapper for post
-  static VALUE postWrapper(VALUE obj, VALUE str, VALUE hash, VALUE cc);
+  static VALUE postWrapper(VALUE obj, VALUE str, VALUE hash);
 
 
   /// The wrapper for post
@@ -138,8 +130,7 @@ protected:
 
   /// Spawns a post request with the given parameters.
   OngoingRequest * post(const QNetworkRequest & request,
-			const AttributeHash & params,
-			VALUE cc);
+			const AttributeHash & params);
 
 
   // /// The wrapper for post
