@@ -68,6 +68,12 @@ module SFR
 
     a = fetcher.get("http://google.com")
     p a
+
+
+    a = fetcher.get("http://google.fr")
+    p a
+
+
     return false
 
     fetcher.get("https://moncompte-neufbox.sfr.fr/moncompte-webapp/moncompte/factures/detailFacture.action") do |res|

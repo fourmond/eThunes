@@ -86,14 +86,11 @@ VALUE RubyModuleCode::fetchNewDocumentsInternal(const AttributeHash & credential
                                                 Fetcher * f)
 {
   ensureLoadModule();
-  QTextStream o(stdout);
-  o << "Bidule" << endl;
+
   ID func = rb_intern("fetch");
   VALUE ary = rb_ary_new();
-  o << "Bidule2" << endl;
   for(int i = 0; i < existingDocuments.size(); i++)
     rb_ary_push(ary, existingDocuments[i].toRuby());
-  o << "Bidule3" << endl;
   VALUE exception = rb_eval_string("Net::OngoingException");
 
   try {
@@ -104,7 +101,7 @@ VALUE RubyModuleCode::fetchNewDocumentsInternal(const AttributeHash & credential
     if(ex.exceptionClass != exception)
       throw;
   }
-  o << "Bidule4" << endl;
+
   return Qnil;
 }
 
