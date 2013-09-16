@@ -113,10 +113,16 @@ Fetcher::OngoingRequest * Fetcher::registerRequest(QNetworkReply * reply,
        << endl;
     
   r.continuation = cc;
-  Ruby::keepSafe(cc);           // DO NOT GARBAGE COLLECT !
   r.done = false;
   r.maxHops = (redirections ?  redirections : 7 /** \todo Customize this */);
   return &r;
+}
+
+
+void Fetcher::setFiber(VALUE f)
+{
+  fiber = f;
+  Ruby::keepSafe(fiber);           // DO NOT GARBAGE COLLECT !
 }
 
 Fetcher::OngoingRequest * Fetcher::post(const QNetworkRequest & request,
@@ -160,7 +166,6 @@ VALUE Fetcher::cookiesWrapper(VALUE obj)
 VALUE Fetcher::getWrapper(VALUE obj, VALUE str, VALUE cc)
 {
   Fetcher * f = fromValue(obj);
-  fprintf(stdout, "Cont is: %ld\n", cc);
   f->get(QNetworkRequest(QUrl(valueToQString(str))), cc);
   return Qnil;
 }
@@ -207,13 +212,11 @@ void Fetcher::replyFinished(QNetworkReply* r)
 
   }
   else {
-    VALUE cont = ongoingRequests[r].continuation;
-    fprintf(stdout, "Cont is: %ld\n", cont);
     Result * res = new Result(r);
     VALUE f = res->wrapToRuby();
     rb_p(f);
-    rb_p(cont);
-    Ruby::wrappedFuncall(cont, rb_intern("call"), 1, f);
+    rb_p(fiber);
+    Ruby::wrappedFuncall(fiber, rb_intern("resume"), 1, f);
   }
   // In any case, the request is done.
   ongoingRequests[r].done = true;

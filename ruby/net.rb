@@ -25,13 +25,11 @@ p :bidule
 
 module Net
 
-  # This exception is raised to give control back to the calling C
-  # code when a network transfer is under way
-  class OngoingException < Exception
-  end
-
+  # This class wraps the fetch call into a Fiber
   def self.fetch(mod, fetcher, creds, ary)
-    mod.fetch(fetcher, creds, ary)
+    return Fiber.new do 
+      mod.fetch(fetcher, creds, ary)
+    end
   end
 
   # This class is defined by the C code first
@@ -41,17 +39,13 @@ module Net
 
     # Returns the result of the get operation
     def get(url)
-      return callcc {|cc| 
-        private_get(url, cc)
-        raise OngoingException.new
-      }
+      private_get(url, nil)
+      Fiber.yield
     end
 
     def post(url, params)
-      return callcc {|cc| 
-        private_post(url, params, cc)
-        raise OngoingException.new
-      }
+      private_post(url, params, nil)
+      Fiber.yield
     end
   end
 

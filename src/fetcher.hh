@@ -172,6 +172,9 @@ protected:
   static VALUE addDocumentWrapper(VALUE obj, VALUE result,
 				  VALUE doctype);
 
+  /// The fiber handling the call
+  VALUE fiber;
+
 public:
 
   void setTarget(Collection * c) {
@@ -183,6 +186,8 @@ public:
     targetCollection = 0;
     targetWallet = w;
   };
+
+  void setFiber(VALUE f);
 
   /// \todo Eventually (soon) a Fetcher class should target a
   /// collection ? Or something else ? (a common base class of

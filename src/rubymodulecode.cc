@@ -91,18 +91,12 @@ VALUE RubyModuleCode::fetchNewDocumentsInternal(const AttributeHash & credential
   VALUE ary = rb_ary_new();
   for(int i = 0; i < existingDocuments.size(); i++)
     rb_ary_push(ary, existingDocuments[i].toRuby());
-  VALUE exception = rb_eval_string("Net::OngoingException");
-
-  try {
-    Ruby::wrappedFuncall(rb_eval_string("Net"), func, 4, module, f->wrapToRuby(),
+  
+  VALUE fiber = 
+    Ruby::wrappedFuncall(rb_eval_string("Net"), func, 4, module, 
+                         f->wrapToRuby(),
                          credentials.toRuby(), ary);
-  }
-  catch(RubyException & ex) {
-    if(ex.exceptionClass != exception)
-      throw;
-  }
-
-  return Qnil;
+  return fiber;
 }
 
 Fetcher * RubyModuleCode::fetchNewDocuments(const AttributeHash & credentials,
@@ -112,16 +106,11 @@ Fetcher * RubyModuleCode::fetchNewDocuments(const AttributeHash & credentials,
   Fetcher * n = new Fetcher();
   n->setTarget(c);
 
-  // Here, we need to explicit the template arguments, else the
-  // compiler seems unable to guess the correct const-ref-ness.
-  // Ruby::run<RubyModuleCode, 
-  //           const AttributeHash &,
-  //           const QList<AttributeHash> &,
-  //           Fetcher *>
-  // (this, &RubyModuleCode::fetchNewDocumentsInternal,
-  //  credentials, existingDocuments, n);
-  VALUE v = fetchNewDocumentsInternal(credentials, 
-                                      existingDocuments,
-                                      n);
+  VALUE fiber = fetchNewDocumentsInternal(credentials, 
+                                          existingDocuments,
+                                          n);
+  
+  n->setFiber(fiber);
+  Ruby::wrappedFuncall(fiber, rb_intern("resume"), 0);
   return n;
 }
