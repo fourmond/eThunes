@@ -1,5 +1,5 @@
 # net.rb: other sides of the Net implementation
-# copyright (c) 2010 by Vincent Fourmond
+# copyright (c) 2010, 2013 by Vincent Fourmond
   
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -43,7 +43,7 @@ module Net
     def get(url)
       return callcc {|cc| 
         private_get(url, cc)
-        return false
+        raise OngoingException.new
       }
     end
 

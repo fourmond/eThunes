@@ -52,6 +52,22 @@ namespace Ruby {
   VALUE runMainLoop(VALUE obj);
 
 
+  /// Runs a ruby function call, so that exceptions are caught and
+  /// transformed into appropriate C++ functions.
+  ///
+  /// These functions do not use rb_protect, and hopefully will help
+  /// us get around the stack unwinding barrier problem.
+  VALUE wrappedFuncall(VALUE tg, ID id, int number, ...);
+
+
+  /// This functions adds the given ruby object to a global hash for
+  /// it not to be garbage collected.
+  void keepSafe(VALUE obj);
+
+  /// Removes the given object from global safe-keeping hash
+  void unKeep(VALUE obj);
+
+
   /// This function runs the given function (taking a void * pointer)
   /// converting Ruby exceptions into C++ exceptions when needed.
   VALUE exceptionSafeCall(VALUE (*function)(...), void * args);
@@ -74,6 +90,11 @@ namespace Ruby {
     return QString(StringValueCStr(value));
   };
 
+  inline QString inspect(VALUE value) {
+    VALUE v = rb_inspect(value);
+    return QString(StringValueCStr(v));
+  };
+
 #define QSTRING2VALUE(str)			\
   Ruby::qStringToValue(str)
 
@@ -86,6 +107,9 @@ namespace Ruby {
   ///
   /// A series of functions to wrap calls to ruby functions and ensure
   /// exceptions are caught.
+  ///
+  /// These functions use rb_protect, and as such are not suitable for
+  /// use with the continuations.
   ///
   /// These functions are defined in the ruby-templates.hh header
   ///  

@@ -24,6 +24,8 @@
 #include <ruby-utils.hh>
 #include <ruby-templates.hh>
 
+#include <exceptions.hh>
+
 using namespace Ruby;
 
 SerializationAccessor * RubyModuleCode::serializationAccessor()
@@ -92,8 +94,16 @@ VALUE RubyModuleCode::fetchNewDocumentsInternal(const AttributeHash & credential
   for(int i = 0; i < existingDocuments.size(); i++)
     rb_ary_push(ary, existingDocuments[i].toRuby());
   o << "Bidule3" << endl;
-  rb_funcall(rb_eval_string("Net"), func, 4, module, f->wrapToRuby(),
-	     credentials.toRuby(), ary);
+  VALUE exception = rb_eval_string("Net::OngoingException");
+
+  try {
+    Ruby::wrappedFuncall(rb_eval_string("Net"), func, 4, module, f->wrapToRuby(),
+                         credentials.toRuby(), ary);
+  }
+  catch(RubyException & ex) {
+    if(ex.exceptionClass != exception)
+      throw;
+  }
   o << "Bidule4" << endl;
   return Qnil;
 }
@@ -107,11 +117,14 @@ Fetcher * RubyModuleCode::fetchNewDocuments(const AttributeHash & credentials,
 
   // Here, we need to explicit the template arguments, else the
   // compiler seems unable to guess the correct const-ref-ness.
-  Ruby::run<RubyModuleCode, 
-            const AttributeHash &,
-            const QList<AttributeHash> &,
-            Fetcher *>
-  (this, &RubyModuleCode::fetchNewDocumentsInternal,
-   credentials, existingDocuments, n);
+  // Ruby::run<RubyModuleCode, 
+  //           const AttributeHash &,
+  //           const QList<AttributeHash> &,
+  //           Fetcher *>
+  // (this, &RubyModuleCode::fetchNewDocumentsInternal,
+  //  credentials, existingDocuments, n);
+  VALUE v = fetchNewDocumentsInternal(credentials, 
+                                      existingDocuments,
+                                      n);
   return n;
 }

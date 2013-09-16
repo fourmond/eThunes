@@ -19,6 +19,8 @@
 #include <headers.hh>
 #include <ruby-utils.hh>
 #include <ruby-templates.hh>
+
+#include <exceptions.hh>
 #include <fetcher.hh>
 
 
@@ -32,7 +34,7 @@ VALUE Ruby::runMainLoop(VALUE obj)
 }
 
 VALUE mApp;
-
+ 
 void Ruby::mainLoop(QApplication * app)
 {
   ourApp = app;
@@ -67,6 +69,9 @@ VALUE Ruby::exceptionSafeCall(VALUE (*function)(...), void * args)
 
 static char * opts[] = { "-r", "continuations", NULL };
 
+VALUE mUtils;
+ID safeCallId;
+
 void Ruby::ensureInitRuby()
 {
   if(! rubyInitialized) {
@@ -74,9 +79,11 @@ void Ruby::ensureInitRuby()
     mApp = rb_define_module("App");
     rb_define_singleton_method(mApp, "run",
                                (VALUE (*)(...)) runMainLoop, 0);
-
-
-    Ruby::run(&rb_require, "continuation");
+    /// Ruby::run(&rb_require, "continuation");
+    loadFile("utils");
+    rb_eval_string("$__safe_keeping_hash__ = {}");
+    mUtils = rb_eval_string("Utils");
+    safeCallId = rb_intern("safe_call");
     Fetcher::initializeRuby();
     /// \todo Do not hardwire the list, but rather acquire it somehow
     loadFile("dates");
@@ -87,6 +94,38 @@ void Ruby::ensureInitRuby()
   /// instance), so that the user is guaranteed that information won't
   /// leak, or that the object is not used for malicious purposes.
   rubyInitialized = true;
+}
+
+void Ruby::keepSafe(VALUE obj)
+{
+  VALUE gbl = rb_gv_get("$__safe_keeping_hash__");
+  
+  rb_hash_aset(gbl, obj, Qnil);
+}
+
+VALUE Ruby::wrappedFuncall(VALUE tg, ID id, int number, ...)
+{
+  va_list args;
+  VALUE tgArgs[number + 2];
+
+  va_start(args, number);
+
+  tgArgs[0] = tg;
+  tgArgs[1] = ID2SYM(id);
+  for(int i = 0; i < number; i++)
+    tgArgs[i+2] = va_arg(args, VALUE);
+  va_end(args);
+
+  VALUE ret = rb_funcall2(mUtils, safeCallId, number+2, tgArgs);
+
+  if(BUILTIN_TYPE(ret)  != T_ARRAY)
+    throw InternalError("Did not get an array");
+
+  int nb = RARRAY_LEN(ret);
+  if(nb == 1)
+    return rb_ary_entry(ret, 0);
+  throw RubyException(rb_ary_entry(ret, 1));
+  return Qnil;
 }
 
 void Ruby::loadFile(QString str)

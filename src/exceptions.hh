@@ -39,6 +39,13 @@ public:
   virtual ~RuntimeError() throw() {;};
 };
 
+class InternalError : public Exception {
+public:
+  InternalError(const QString & msg) throw() : Exception(msg) {
+  };
+  virtual ~InternalError() throw() {;};
+};
+
 class RubyException : public RuntimeError {
 public:
   /// The original exception
@@ -46,6 +53,10 @@ public:
 
   /// The class of the original exception
   VALUE exceptionClass;
+
+  RubyException(VALUE exception);
+
+  virtual ~RubyException() throw() {;};
 };
 
 #endif

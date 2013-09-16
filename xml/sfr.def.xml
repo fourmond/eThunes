@@ -66,7 +66,8 @@ module SFR
     p fetcher.methods
     puts
 
-    p fetcher.get("http://google.com")
+    a = fetcher.get("http://google.com")
+    p a
     return false
 
     fetcher.get("https://moncompte-neufbox.sfr.fr/moncompte-webapp/moncompte/factures/detailFacture.action") do |res|
