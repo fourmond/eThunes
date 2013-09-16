@@ -23,25 +23,6 @@
 #include <exceptions.hh>
 #include <fetcher.hh>
 
-
-// For the wrapper
-QApplication * ourApp;
-
-VALUE Ruby::runMainLoop(VALUE obj)
-{
-  ourApp->exec();
-  return Qnil;
-}
-
-VALUE mApp;
- 
-void Ruby::mainLoop(QApplication * app)
-{
-  ourApp = app;
-  rb_eval_string("App::run");
-}
-
-
 VALUE Ruby::globalRescueFunction(VALUE /*dummy*/, VALUE exception)
 {
   /// \tdexception eventually, this should throw an exception
@@ -67,23 +48,25 @@ VALUE Ruby::exceptionSafeCall(VALUE (*function)(...), void * args)
   return ret;
 }
 
-static char * opts[] = { "-r", "continuations", NULL };
-
 VALUE mUtils;
 ID safeCallId;
+
+ID Ruby::fetchID;
+ID Ruby::resumeID;
 
 void Ruby::ensureInitRuby()
 {
   if(! rubyInitialized) {
     ruby_init();
-    mApp = rb_define_module("App");
-    rb_define_singleton_method(mApp, "run",
-                               (VALUE (*)(...)) runMainLoop, 0);
-    /// Ruby::run(&rb_require, "continuation");
+
     loadFile("utils");
     rb_eval_string("$__safe_keeping_hash__ = {}");
     mUtils = rb_eval_string("Utils");
     safeCallId = rb_intern("safe_call");
+
+    fetchID = rb_intern("fetch");
+    resumeID = rb_intern("resume");
+    
     Fetcher::initializeRuby();
     /// \todo Do not hardwire the list, but rather acquire it somehow
     loadFile("dates");

@@ -26,8 +26,23 @@
 /// This namespace contains a whole bunch of Ruby-related functions and
 namespace Ruby {
 
+
+  /// @name Global constants
+  ///
+  /// Used mostly for storage of IDs, classes, and the like...
+  ///
+  /// @{
+
   /// Whether Ruby has been initialized or not
   extern bool rubyInitialized;
+
+  /// ID for :fetch
+  extern ID fetchID;
+
+  /// ID for :resume
+  extern ID resumeID;
+
+  /// @}
 
   /// A static function handling Ruby exceptions when using classes such
   /// as RescueWrapper1Arg
@@ -44,13 +59,6 @@ namespace Ruby {
   /// require-like fashion somehow, but not relying on Ruby's
   /// path). This assumes Ruby has been started already.
   void loadFile(QString name);
-
-  /// Run the application
-  void mainLoop(QApplication * app);
-
-  /// 
-  VALUE runMainLoop(VALUE obj);
-
 
   /// Runs a ruby function call, so that exceptions are caught and
   /// transformed into appropriate C++ functions.

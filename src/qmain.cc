@@ -77,8 +77,6 @@ int main(int argc, char ** argv)
   main.setApplicationName("eThunes");
   win.show();
 
-  // Ruby::mainLoop(&main);
-  
   return main.exec();
 }
 

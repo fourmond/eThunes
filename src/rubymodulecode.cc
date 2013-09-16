@@ -80,7 +80,7 @@ AttributeHash RubyModuleCode::parseDocumentMetaData(const QString &doctype,
 bool RubyModuleCode::canFetch()
 {
   ensureLoadModule();
-  return rb_respond_to(module, rb_intern("fetch"));
+  return rb_respond_to(module, Ruby::fetchID);
 }
 
 VALUE RubyModuleCode::fetchNewDocumentsInternal(const AttributeHash & credentials,
@@ -89,13 +89,12 @@ VALUE RubyModuleCode::fetchNewDocumentsInternal(const AttributeHash & credential
 {
   ensureLoadModule();
 
-  ID func = rb_intern("fetch");
   VALUE ary = rb_ary_new();
   for(int i = 0; i < existingDocuments.size(); i++)
     rb_ary_push(ary, existingDocuments[i].toRuby());
   
   VALUE fiber = 
-    Ruby::wrappedFuncall(rb_eval_string("Net"), func, 4, module, 
+    Ruby::wrappedFuncall(rb_eval_string("Net"), Ruby::fetchID, 4, module, 
                          f->wrapToRuby(),
                          credentials.toRuby(), ary);
   return fiber;
@@ -113,6 +112,6 @@ Fetcher * RubyModuleCode::fetchNewDocuments(const AttributeHash & credentials,
                                           n);
   
   n->setFiber(fiber);
-  Ruby::wrappedFuncall(fiber, rb_intern("resume"), 0);
+  Ruby::wrappedFuncall(fiber, Ruby::resumeID, 0);
   return n;
 }
