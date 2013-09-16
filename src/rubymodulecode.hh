@@ -33,7 +33,7 @@
 class RubyModuleCode : public CollectionCode {
   /// Internal function used by parseDocumentMeta, wrapped with Ruby
   /// code exception protection.
-  void parseDocumentMetaDataInternal(const QString & doctype,
+  VALUE parseDocumentMetaDataInternal(const QString & doctype,
 				     const AttributeHash & contents,
 				     AttributeHash & target);
 

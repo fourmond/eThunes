@@ -50,7 +50,7 @@ RubyModuleCode::RubyModuleCode() : module(0)
 {
 }
 
-void RubyModuleCode::parseDocumentMetaDataInternal(const QString & doctype,
+VALUE RubyModuleCode::parseDocumentMetaDataInternal(const QString & doctype,
 						   const AttributeHash & contents,
 						   AttributeHash & target)
 {
@@ -61,6 +61,7 @@ void RubyModuleCode::parseDocumentMetaDataInternal(const QString & doctype,
   ID func = rb_intern((const char*)funcName.toLocal8Bit());
   VALUE result = rb_funcall(module, func, 1, hash);
   target.setFromRuby(result);
+  return result;
 }
 
 AttributeHash RubyModuleCode::parseDocumentMetaData(const QString &doctype,
@@ -68,10 +69,11 @@ AttributeHash RubyModuleCode::parseDocumentMetaData(const QString &doctype,
 {
   ensureLoadModule();			// Make sure the module is loaded.
   AttributeHash retVal;
-  RescueMemberWrapper3Args<RubyModuleCode, const QString &,
-    const AttributeHash &, AttributeHash &>::
-    wrapCall(this, &RubyModuleCode::parseDocumentMetaDataInternal,
-	     doctype, contents, retVal);
+  
+  Ruby::run<RubyModuleCode, const QString &,
+            const AttributeHash &, AttributeHash &>
+    (this, &RubyModuleCode::parseDocumentMetaDataInternal,
+     doctype, contents, retVal);
   return retVal;
 }
 

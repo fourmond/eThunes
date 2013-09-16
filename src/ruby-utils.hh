@@ -117,130 +117,15 @@ namespace Ruby {
   VALUE run(VALUE (*f)());
   template<typename A1> VALUE run(VALUE (*f)(A1), A1); 
   template<typename A1, typename A2> VALUE run(VALUE (*f)(A1, A2), A1, A2); 
-
-
+  
+  
   template<typename C, typename A1> VALUE run(C*, VALUE (C::*f)(A1), A1); 
-
+  
   template<typename C, typename A1, typename A2, typename A3> VALUE run(C*, VALUE (C::*f)(A1, A2, A3), A1, A2, A3); 
-
-
+  
+  
   /// @}
-
-
-  /// Rescue exceptions from 2-arg non-member functions.
-  template <typename Arg1, typename Arg2> class RescueWrapper2Args {
-
-    typedef VALUE (*Function)(Arg1 arg1, Arg2 arg2);
-    Function targetFunction;
-
-    Arg1 arg1;
-    Arg2 arg2;
-
-    static VALUE wrapper(VALUE v) {
-      RescueWrapper2Args * arg = (RescueWrapper2Args *) v;
-      return arg->targetFunction(arg->arg1, arg->arg2);
-    };
-
-
-  public:
-    RescueWrapper2Args(Function tf, Arg1 a1, Arg2 a2) :
-      targetFunction(tf), arg1(a1), arg2(a2) {;};
-
-    /// Runs the code wrapping it into a rb_rescue code
-    void run() {
-      rb_rescue((VALUE (*)(...)) &wrapper, (VALUE) this,
-		(VALUE (*)(...)) &globalRescueFunction, Qnil);
-    };
-
-    /// Runs a member call within
-    static void wrapCall(Function tf, Arg1 a1, Arg2 a2) {
-      RescueWrapper2Args c(tf,a1,a2);
-      c.run();
-    };
-  };
-
-
-  /// Rescue exceptions from 1-arg member functions.
-  ///
-  /// This class can be used to run member functions taking one argument
-  /// within a rescue block (in particular to avoid segfaults during the
-  /// calls if an exception occurs)
-  template <class C, typename Arg1> class RescueMemberWrapper1Arg {
-    C * targetClass;
-
-    typedef void (C::*MemberFunction)(Arg1 arg);
-    MemberFunction targetMember;
-
-    Arg1 arg;
-
-    static VALUE wrapper(VALUE v) {
-      RescueMemberWrapper1Arg * arg = (RescueMemberWrapper1Arg *) v;
-      CALL_MEMBER_FN(*(arg->targetClass), arg->targetMember)(arg->arg);
-      return Qnil;
-    };
-
-
-  public:
-    RescueMemberWrapper1Arg(C* tc, MemberFunction tm, Arg1 a) :
-      targetClass(tc), targetMember(tm), arg(a) {;};
-
-    /// Runs the code wrapping it into a rb_rescue code
-    void run() {
-      rb_rescue((VALUE (*)(...)) &wrapper, (VALUE) this,
-		(VALUE (*)(...)) &globalRescueFunction, Qnil);
-    };
-
-    /// Runs a member call within
-    static void wrapCall(C* tc, MemberFunction tm, Arg1 a) {
-      RescueMemberWrapper1Arg c(tc,tm,a);
-      c.run();
-    };
-  };
-
-  /// Rescue exceptions for 3-arg member functions.
-  ///
-  /// This class can be used to run member functions taking one argument
-  /// within a rescue block (in particular to avoid segfaults during the
-  /// calls if an exception occurs)
-  template <class C, typename Arg1, typename Arg2, typename Arg3>
-  class RescueMemberWrapper3Args {
-    C * targetClass;
-
-    typedef void (C::*MemberFunction)(Arg1 a1, Arg2 a2, Arg3 a3);
-    MemberFunction targetMember;
-
-    Arg1 arg1;
-    Arg2 arg2;
-    Arg3 arg3;
-
-    static VALUE wrapper(VALUE v) {
-      RescueMemberWrapper3Args * arg = (RescueMemberWrapper3Args *) v;
-      CALL_MEMBER_FN(*(arg->targetClass), arg->targetMember)(arg->arg1,
-							     arg->arg2,
-							     arg->arg3);
-      return Qnil;
-    };
-
-
-  public:
-    RescueMemberWrapper3Args(C* tc, MemberFunction tm, Arg1 a1, Arg2 a2, Arg3 a3) :
-      targetClass(tc), targetMember(tm), arg1(a1), arg2(a2), arg3(a3) {;};
-
-    /// Runs the code wrapping it into a rb_rescue code
-    void run() {
-      rb_rescue((VALUE (*)(...)) &wrapper, (VALUE) this,
-		(VALUE (*)(...)) &globalRescueFunction, Qnil);
-    };
-
-    /// Runs a member call within
-    static void wrapCall(C* tc, MemberFunction tm, Arg1 a1,Arg2 a2, Arg3 a3) {
-    RescueMemberWrapper3Args c(tc,tm,a1,a2,a3);
-      c.run();
-    };
-
-
-  };
-
+  
 };
 
 #endif
