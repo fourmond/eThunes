@@ -250,7 +250,9 @@ void Loan::findMatchingTransactions()
       continue;
 
     // Very simple ?
-    if(t->getMemo().contains(matcher))
+    if(t->getMemo().contains(matcher) || 
+       t->getName().contains(matcher)
+       )
       addLink(t, "loan-payment");
   }
   updatePage();
