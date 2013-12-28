@@ -175,6 +175,7 @@ Transaction::Transaction() :
   checkNumber(""),
   locked(true),
   recent(false),
+  balance(0),
   balanceMeaningful(false),
   account(NULL)
 {
