@@ -35,8 +35,19 @@ Result::Result(QNetworkReply * r) : reply(r)
 
 void Result::rubyFree(VALUE v)
 {
-  Result * f = fromValue(v);
-  delete f;
+  if(TYPE(v) == RUBY_T_DATA) {
+    Result * f = fromValue(v);
+    delete f;
+  }
+  else {
+    // For some reasons, this function gets called on VALUE objects
+    // whose type is not RUBY_T_DATA. Ignoring for now, but that means
+    // memory leaks in the end.
+    //
+    // And it means that we have some wild stack corruption
+    // here...
+    fprintf(stderr, "Object: %p with invalid type: %d\n", v, TYPE(v));
+  }
 }
 
 
