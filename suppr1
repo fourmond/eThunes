@@ -1,0 +1,66 @@
+{
+   GtkStyle1
+   Memcheck:Addr4
+   obj:/usr/lib/x86_64-linux-gnu/libQtGui.so*
+   ...
+   fun:_ZN9QGtkStyleC1Ev
+}
+
+{
+   Ruby
+   Memcheck:Cond
+   obj:/usr/lib/libruby-*
+   ...
+   fun:rb_newobj
+   fun:rb_node_newnode
+}
+
+{
+   Ruby
+   Memcheck:Value8
+   obj:/usr/lib/libruby-*
+   ...
+   fun:rb_newobj
+   fun:rb_node_newnode
+}
+
+{
+   Ruby2
+   Memcheck:Cond
+   obj:/usr/lib/libruby-*
+   fun:rb_newobj
+   ...
+   fun:rb_parser_compile_file
+}
+
+{
+   Ruby3
+   Memcheck:Value8
+   obj:/usr/lib/libruby-*
+   fun:rb_newobj
+   ...
+   fun:rb_parser_compile_file
+}
+
+{
+   Ruby4
+   Memcheck:Cond
+   obj:/usr/lib/libruby*
+   ...
+   fun:rb_enc_str_new
+   obj:/usr/lib/libruby*
+   ...
+   fun:rb_require_safe
+}
+
+{
+   Ruby5
+   Memcheck:Value8
+   obj:/usr/lib/libruby*
+   ...
+   fun:rb_enc_str_new
+   obj:/usr/lib/libruby*
+   ...
+   fun:rb_require_safe
+}
+
