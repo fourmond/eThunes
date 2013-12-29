@@ -54,10 +54,14 @@ ID safeCallId;
 ID Ruby::fetchID;
 ID Ruby::resumeID;
 
+static char* argv[]  = { "ethunes-internal", "-e", "true", NULL };
+
+
 void Ruby::ensureInitRuby()
 {
   if(! rubyInitialized) {
     ruby_init();
+    ruby_process_options(3, argv);
 
     loadFile("utils");
     rb_eval_string("$__safe_keeping_hash__ = {}");
