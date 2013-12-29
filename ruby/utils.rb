@@ -11,6 +11,12 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # General Public License for more details (in the COPYING file).
 
+begin
+  require 'nokogiri'
+rescue Exception => e
+  p e
+end
+
 module Utils
 
   # This function calls the target function with the target receiver,
