@@ -159,3 +159,12 @@ void Document::bringFileIntoOwnership(int file)
   if(! (attachedFiles[file].relativeFilePath() == cf))
     attachedFiles[file].changeFileName(cf);
 }
+
+void Document::reparseDocument()
+{
+  AttributeHash nd = 
+    collection->definition->code.parseFileMetaData(definition->name,
+                                                   canonicalFilePath());
+  /// @todo Implement some type-safety here
+  attributes = nd;
+}

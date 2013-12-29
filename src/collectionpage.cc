@@ -79,9 +79,13 @@ void CollectionPage::updateContents()
   QString str = tr("<b>Collection : </b>%1<p>").
     arg(collection->name);
   str += HTTarget::
-    linkToMember("(find matching transactions)",
+    linkToMember("(find matching transactions) ",
                  this,
                  &CollectionPage::lookupMatchingTransactions);
+  str += HTTarget::
+    linkToMember("(reparse documents) ",
+                 this,
+                 &CollectionPage::reparseDocuments);
   str += HTTarget::
     linkToMember("(try download)",
                  this,
@@ -127,4 +131,11 @@ void CollectionPage::lookupMatchingTransactions()
                    matchingTransaction(doc));
   }
   updateContents();
+}
+
+void CollectionPage::reparseDocuments()
+{
+  QList<Document *> docs = collection->allDocuments();
+  for(int i = 0; i < docs.size(); i++)
+    docs[i]->reparseDocument();
 }

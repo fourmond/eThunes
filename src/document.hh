@@ -199,6 +199,9 @@ public:
   /// the list.
   void bringFileIntoOwnership(int file = 0);
 
+  /// Reparses the file. No safety nets for now.
+  void reparseDocument();
+
   /// @}
 
   virtual QString uniqueID() const { return canonicalFileName();};

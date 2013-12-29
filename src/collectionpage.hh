@@ -89,6 +89,9 @@ protected slots:
   /// Try downloading something !
   void tryDownload();
 
+  /// Reparse all the documents
+  void reparseDocuments();
+
 };
 
 #endif
