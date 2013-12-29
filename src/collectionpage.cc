@@ -23,6 +23,7 @@
 
 #include <htlabel.hh>
 #include <httarget-templates.hh>
+#include <identitiessafe.hh>
 
 QHash<Collection *, CollectionPage *> CollectionPage::collectionPages;
 
@@ -111,7 +112,8 @@ CollectionPage * CollectionPage::getCollectionPage(Collection * collection)
 
 void CollectionPage::tryDownload()
 {
-  AttributeHash user;
+  AttributeHash user = IdentitiesSafe::getCredentialsForCollection(collection);
+  
   /// \todo This should be turned into a proper handling of the
   /// passwords and of multiple identities...
 
