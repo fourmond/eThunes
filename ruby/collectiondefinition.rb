@@ -11,6 +11,29 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # General Public License for more details (in the COPYING file).
 
+
+# All documents are instances of this class. 
+class DocumentDefinition
+
+  attr_accessor :name
+
+  def initialize(n)
+    @name = n
+  end
+
+  def public_name(n = nil)
+    @public_name = (n || @public_name)
+  end
+
+  def format(n = nil)
+    @format = (n || @format)
+  end
+
+  def display(n = nil)
+    @display = (n || @display)
+  end
+end
+
 class CollectionDefinition
 
   @collections = {}
@@ -18,24 +41,57 @@ class CollectionDefinition
   # Gives a few information about the collection
   def self.collection(name, pubname, desc)
     @name = name
-    @pubname = pubname
+    @public_name = pubname
     @description = desc
 
     CollectionDefinition.register_definition(self)
   end
 
-  def self.collection_name
+  def self.name
     return @name
   end
 
+  def self.public_name
+    return @public_name
+  end
+
   def self.register_definition(cls)
-    @collections[cls.collection_name] = cls
+    @collections[cls.name] = cls
   end
 
 
-  def self.all_collections
+  def self.collections
     return @collections
   end
 
+  def self.document(name, &blk)
+    @documents ||= {}
+    doc = DocumentDefinition.new(name)
+
+    # This block enables one to 
+    doc.instance_exec(&blk)
+
+    if !doc.respond_to? :parse
+      warn "Document type #{name} does not have a parse method"
+    else
+      @documents[name] = doc
+    end
+  end
+
+  def self.documents
+    return @documents
+  end
 end
 
+# Use:
+# class Def < CollectionDefinition
+#
+#
+# 
+#   document 'biniou' do
+#     public_name "bidule"
+#     display "machin"
+#     def parse(doc)
+#     end
+#   end
+# end

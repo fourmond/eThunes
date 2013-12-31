@@ -113,14 +113,6 @@ CollectionPage * CollectionPage::getCollectionPage(Collection * collection)
 void CollectionPage::tryDownload()
 {
   AttributeHash user = IdentitiesSafe::getCredentialsForCollection(collection);
-  
-  /// \todo This should be turned into a proper handling of the
-  /// passwords and of multiple identities...
-
-
-  // user["login"] = QInputDialog::getText(this, tr("login"), tr("login"));
-  // user["passwd"] = QInputDialog::getText(this, tr("passwd"), tr("passwd"),
-  //       				   QLineEdit::Password);
     collection->fetchNewDocumentsForUser(user);
 }
 
