@@ -164,7 +164,7 @@ void Document::reparseDocument()
 {
   AttributeHash nd = 
     collection->definition->parseFileMetaData(definition->name,
-                                              canonicalFilePath());
+                                              filePath());
   /// @todo Implement some type-safety here
   attributes = nd;
 }

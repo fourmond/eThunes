@@ -1,5 +1,5 @@
 # ruby.rb: utility functions written in Ruby
-# copyright (c) 2013 by Vincent Fourmond
+# copyright (c) 2013,2014 by Vincent Fourmond
   
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -11,11 +11,9 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # General Public License for more details (in the COPYING file).
 
-begin
-  require 'nokogiri'
-rescue Exception => e
-  p e
-end
+require 'nokogiri'
+# We need the ripper extension
+require 'ripper'
 
 module Utils
 
@@ -27,6 +25,27 @@ module Utils
       return [target.send(symbol, *args)]
     rescue Exception => e
       return [nil, e]
+    end
+  end
+
+
+  # Parses a ruby code given as string and checks there are no uses of
+  # global variables.
+  #
+  # return true if the code is safe and false if it contains uses of
+  # globals variables.
+  def self.check_for_globals(code)
+    a = Ripper.sexp(code)
+    a.flatten!
+    if a.index :@gvar
+      return false
+    end
+    return true
+  end
+
+  def self.get_tracer_hook
+  return Proc.new do |*a|
+      Utils.trace_hook(*a)
     end
   end
 end

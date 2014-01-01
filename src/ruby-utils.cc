@@ -48,11 +48,47 @@ VALUE Ruby::exceptionSafeCall(VALUE (*function)(...), void * args)
   return ret;
 }
 
-VALUE mUtils;
+static bool withinSafeCode = false;
+
+
+static VALUE inheritedHook(VALUE self, VALUE cls)
+{
+  rb_p(cls);
+
+  // Should freeze the classes defined in the code so that a nasty
+  // module cannot modify something already in place.
+  //
+  // Bad thing is, that prevents reload ;-)...
+  return Qnil;
+}
+
+static VALUE traceHook(VALUE self,
+                       VALUE what, VALUE file, VALUE line,
+                       VALUE funcall, VALUE binding, VALUE cls)
+{
+  // do something here !
+  if(! withinSafeCode)
+    return Qnil;
+  // VALUE ary = rb_ary_new();
+  // rb_ary_push(ary, self);
+  // rb_ary_push(ary, what);
+  // rb_ary_push(ary, file);
+  // rb_ary_push(ary, funcall);
+  // rb_ary_push(ary, cls);
+  // rb_p(ary);
+  return Qnil;
+}
+
+static VALUE mUtils;
 ID safeCallId;
+
 
 ID Ruby::fetchID;
 ID Ruby::resumeID;
+ID getTracerHookID;
+ID setTraceFuncID;
+
+static VALUE main;
 
 static char* argv[]  = { "ethunes-internal", "-e", "true", NULL };
 
@@ -63,10 +99,23 @@ void Ruby::ensureInitRuby()
     ruby_init();
     ruby_process_options(3, argv);
 
+    main = rb_eval_string("self");
+
     loadFile("utils");
     rb_eval_string("$__safe_keeping_hash__ = {}");
+
+    // Hook for the derivation of methods
+    rb_define_singleton_method(rb_cBasicObject, "inherited",
+                               (VALUE (*)(...)) inheritedHook, 1);
+
     mUtils = rb_eval_string("Utils");
     safeCallId = rb_intern("safe_call");
+
+    getTracerHookID = rb_intern("get_tracer_hook");
+    setTraceFuncID = rb_intern("set_trace_func");
+
+    rb_define_singleton_method(mUtils, "trace_hook",
+                               (VALUE (*)(...)) traceHook, 6);
 
     fetchID = rb_intern("fetch");
     resumeID = rb_intern("resume");
@@ -90,6 +139,20 @@ void Ruby::keepSafe(VALUE obj)
   rb_hash_aset(gbl, obj, Qnil);
 }
 
+static VALUE wrapFuncall(int nb, VALUE * args)
+{
+  VALUE ret = rb_funcall2(mUtils, safeCallId, nb, args);
+
+  if(BUILTIN_TYPE(ret)  != T_ARRAY)
+    throw InternalError("Did not get an array");
+
+  nb = RARRAY_LEN(ret);
+  if(nb == 1)
+    return rb_ary_entry(ret, 0);
+  throw RubyException(rb_ary_entry(ret, 1));
+  return Qnil;
+}
+
 VALUE Ruby::wrappedFuncall(VALUE tg, ID id, int number, ...)
 {
   va_list args;
@@ -103,16 +166,29 @@ VALUE Ruby::wrappedFuncall(VALUE tg, ID id, int number, ...)
     tgArgs[i+2] = va_arg(args, VALUE);
   va_end(args);
 
-  VALUE ret = rb_funcall2(mUtils, safeCallId, number+2, tgArgs);
+  return wrapFuncall(number + 2, tgArgs);
+}
 
-  if(BUILTIN_TYPE(ret)  != T_ARRAY)
-    throw InternalError("Did not get an array");
+VALUE Ruby::safeFuncall(VALUE tg, ID id, int number, ...)
+{
+  va_list args;
+  VALUE tgArgs[number + 2];
 
-  int nb = RARRAY_LEN(ret);
-  if(nb == 1)
-    return rb_ary_entry(ret, 0);
-  throw RubyException(rb_ary_entry(ret, 1));
-  return Qnil;
+  va_start(args, number);
+
+  tgArgs[0] = tg;
+  tgArgs[1] = ID2SYM(id);
+  for(int i = 0; i < number; i++)
+    tgArgs[i+2] = va_arg(args, VALUE);
+  va_end(args);
+
+  VALUE blk = wrappedFuncall(mUtils, getTracerHookID, 0);
+  wrappedFuncall(main, setTraceFuncID, 1, blk);
+  withinSafeCode = true;
+  VALUE ret = wrapFuncall(number + 2, tgArgs);
+  withinSafeCode = false;
+  wrappedFuncall(main, setTraceFuncID, 1, Qnil);
+  return ret;
 }
 
 void Ruby::loadFile(QString str)

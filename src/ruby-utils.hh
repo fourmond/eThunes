@@ -75,6 +75,11 @@ namespace Ruby {
   /// Removes the given object from global safe-keeping hash
   void unKeep(VALUE obj);
 
+  
+  /// Equivalent to wrappedFuncall, but makes sure no unsafe function
+  /// are called.
+  VALUE safeFuncall(VALUE tg, ID id, int number, ...);
+
 
   /// This function runs the given function (taking a void * pointer)
   /// converting Ruby exceptions into C++ exceptions when needed.

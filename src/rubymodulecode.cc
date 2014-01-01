@@ -59,7 +59,7 @@ VALUE RubyModuleCode::parseDocumentMetaDataInternal(const QString & doctype,
   ensureLoadModule();
   VALUE hash = contents.toRuby();
   ID func = rb_intern((const char*)funcName.toLocal8Bit());
-  VALUE result = rb_funcall(module, func, 1, hash);
+  VALUE result = Ruby::safeFuncall(module, func, 1, hash);
   target.setFromRuby(result);
   return result;
 }
