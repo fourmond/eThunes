@@ -50,18 +50,6 @@ protected:
 
   /// A public description
   QString description;
-public:
-  /// The definition of the types of documents supported by this
-  /// Collection.
-  QHash<QString, DocumentDefinition> documentTypes;
-
-  /// Returns a pointer to the named document definition
-  DocumentDefinition * documentDefinition(const QString & name)
-  {
-    if(documentTypes.contains(name))
-      return &documentTypes[name];
-    return NULL;
-  };
 
   /// The underlying code. For now, hardwired as RubyClassCode.
   ///
@@ -78,6 +66,20 @@ public:
   /// the element at saving and the choice of the target class at
   /// loading)
   RubyModuleCode code;
+
+public:
+  /// The definition of the types of documents supported by this
+  /// Collection.
+  QHash<QString, DocumentDefinition> documentTypes;
+
+  /// Returns a pointer to the named document definition
+  DocumentDefinition * documentDefinition(const QString & name)
+  {
+    if(documentTypes.contains(name))
+      return &documentTypes[name];
+    return NULL;
+  };
+
 
   /// Returns the name of the collection definition
   QString getName() const;
@@ -120,6 +122,33 @@ public:
   /// cache. In general, what you want is namedDefinition() instead,
   /// but you might need this for testing purposes.
   static CollectionDefinition * loadWithoutRegistering(const QString &name);
+
+
+  /// @name Interface to the underlying collection code
+  ///
+  /// These function interface to the underlying Ruby code of the
+  /// collection.
+  ///
+  /// @{
+
+  /// Parse meta-data from a file
+  AttributeHash parseDocumentMetaData(const QString & doctype,
+                                      const AttributeHash & contents);
+
+  /// Parses meta-data from a file
+  AttributeHash parseFileMetaData(const QString & doctype,
+				  const QString & fileName);
+
+
+  /// Fetches new document from the web
+  Fetcher* fetchNewDocuments(const AttributeHash & credentials,
+                             const QList<AttributeHash> &existingDocuments,
+                             Collection * target);
+
+  int scoreForTransaction(Document * doc, AtomicTransaction * tr) const;
+
+  /// @}
+  
 
 
 protected:

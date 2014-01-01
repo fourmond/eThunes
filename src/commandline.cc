@@ -153,8 +153,8 @@ static void testDocumentLoading(const QStringList & a)
   for(int i = 0; i < args.size(); i++) {
     QString file = args[i];
     AttributeHash contents = CollectionCode::readPDF(file);
-    AttributeHash outAttrs = def->code.
-      parseDocumentMetaData(name, contents);
+    AttributeHash outAttrs = 
+      def->parseDocumentMetaData(name, contents);
     o << endl << "Parsed attributes for file " 
       << file << ": " << endl;
     QStringList missing = 

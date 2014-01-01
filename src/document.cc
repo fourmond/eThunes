@@ -163,8 +163,8 @@ void Document::bringFileIntoOwnership(int file)
 void Document::reparseDocument()
 {
   AttributeHash nd = 
-    collection->definition->code.parseFileMetaData(definition->name,
-                                                   canonicalFilePath());
+    collection->definition->parseFileMetaData(definition->name,
+                                              canonicalFilePath());
   /// @todo Implement some type-safety here
   attributes = nd;
 }

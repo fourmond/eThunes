@@ -381,7 +381,7 @@ void MainWin::testCollectionDefinitionDocument()
     AttributeHash contents = CollectionCode::readPDF(file);
     o << "File " << file << "'s raw attributes: " << endl;
     contents.dumpContents();
-    AttributeHash outAttrs = def->code.
+    AttributeHash outAttrs = def->
       parseDocumentMetaData(filters[filter], contents);
     o << endl << "Parse attributes:" << endl;
     outAttrs.dumpContents();

@@ -35,6 +35,32 @@ QString CollectionDefinition::getDescription() const
   return description;
 }
 
+AttributeHash CollectionDefinition::parseDocumentMetaData(const QString & doctype,
+                                                          const AttributeHash & contents)
+{
+  return code.parseDocumentMetaData(doctype, contents);
+}
+
+AttributeHash CollectionDefinition::parseFileMetaData(const QString & doctype,
+                                                      const QString & fileName)
+{
+  return code.parseFileMetaData(doctype, fileName);
+}
+
+
+Fetcher* CollectionDefinition::fetchNewDocuments(const AttributeHash & credentials,
+                                                 const QList<AttributeHash> &existingDocuments,
+                                                 Collection * target)
+{
+  return code.fetchNewDocuments(credentials, existingDocuments, target);
+}
+
+int CollectionDefinition::scoreForTransaction(Document * doc, AtomicTransaction * tr) const
+{
+  return code.scoreForTransaction(doc, tr);
+}
+
+
 
 
 SerializationAccessor * CollectionDefinition::serializationAccessor()
