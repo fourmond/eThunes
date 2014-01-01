@@ -1,6 +1,6 @@
 /*
     managedfile.cc: Implementation of ManagedFile
-    Copyright 2010 by Vincent Fourmond
+    Copyright 2010, 2014 by Vincent Fourmond
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -49,12 +49,10 @@ void ManagedFile::prepareSerializationWrite()
 
 void ManagedFile::finishedSerializationRead()
 {
-  QTextStream o(stdout);
   if(! QDir::isAbsolutePath(savedPath))
     currentPath = baseDirectory().absoluteFilePath(savedPath);
   else
     currentPath = savedPath;
-  o << "Read " << savedPath << " -> " << currentPath << endl;
 }
 
 void ManagedFile::newFilePath(const QString & str)
