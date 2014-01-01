@@ -38,6 +38,12 @@ class ManagedFile : public Serializable {
   /// The current path of the file. It is absolute.
   QString currentPath;
 
+
+  /// The path saved:
+  /// * relative if within the base directory
+  /// * absolute if outside of the base directory
+  QString savedPath;
+
   QDir baseDirectory() const;
 
 public:
@@ -88,8 +94,10 @@ public:
   /// absolute to relative path on save when isFileManaged.
   virtual SerializationAccessor * serializationAccessor();
 
-  virtual void prepareSerializationRead();
 
+  virtual void prepareSerializationWrite();
+  virtual void prepareSerializationRead();
+  virtual void finishedSerializationRead();
 
   /// Ensures that the directory in which the given file should be
   /// exists. If the path is absolute, it is used as such; if it is

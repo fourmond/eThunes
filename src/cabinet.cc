@@ -66,10 +66,13 @@ void Cabinet::loadFromFile(QString name)
   QTextStream o(stdout);
   file.open(QIODevice::ReadOnly);
   QXmlStreamReader w(&file);
+
+  /// @todo This should move either to Utils or as a static
+  /// Serialization function.
   while(! w.isStartElement() && ! w.atEnd())
     w.readNext();
-  readXML(&w);
   filePath = name;
+  readXML(&w);
   emit(filenameChanged(filePath));
   emit(collectionsPossiblyChanged());
   setDirty(false);

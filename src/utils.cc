@@ -89,3 +89,11 @@ QDate Utils::promptForDate(QWidget * parent, const QString & title,
   delete dlg;
   return d;
 }
+
+QString Utils::relativePath(const QString & path, const QDir & dir)
+{
+  QString rp = dir.relativeFilePath(path);
+  if(rp.startsWith(".."))
+    return path;
+  return rp;
+}

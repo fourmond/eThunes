@@ -121,7 +121,9 @@ namespace Utils {
     return s;
   };
 
-
+  /// If the path is within the given directory, returns the path
+  /// relative to the directory or
+  QString relativePath(const QString & path, const QDir & dir);
 
 };
 

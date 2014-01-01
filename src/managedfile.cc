@@ -18,6 +18,7 @@
 
 #include <headers.hh>
 #include <cabinet.hh>
+#include <utils.hh>
 #include <managedfile.hh>
 
 
@@ -25,7 +26,7 @@
 SerializationAccessor * ManagedFile::serializationAccessor()
 {
   SerializationAccessor * ac = new SerializationAccessor(this);
-  ac->addScalarAttribute("path", &currentPath);
+  ac->addScalarAttribute("path", &savedPath);
   return ac;
 }
 
@@ -38,6 +39,22 @@ QDir ManagedFile::baseDirectory() const
 void ManagedFile::prepareSerializationRead()
 {
   cabinet = Cabinet::cabinetBeingSerialized;
+}
+
+
+void ManagedFile::prepareSerializationWrite()
+{
+  savedPath = Utils::relativePath(currentPath, baseDirectory());
+}
+
+void ManagedFile::finishedSerializationRead()
+{
+  QTextStream o(stdout);
+  if(! QDir::isAbsolutePath(savedPath))
+    currentPath = baseDirectory().absoluteFilePath(savedPath);
+  else
+    currentPath = savedPath;
+  o << "Read " << savedPath << " -> " << currentPath << endl;
 }
 
 void ManagedFile::newFilePath(const QString & str)
