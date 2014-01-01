@@ -193,7 +193,7 @@ QList<Document *> Cabinet::documentsByType(const QString & collection,
   QList<Document *> retval;
   for(int i = 0; i < collections.size(); i++) {
     Collection& col = collections[i];
-    if(col.definition->name != collection)
+    if(col.definition->getName() != collection)
       continue;
     QList<Document *> docs = col.allDocuments();
     for(int j = 0; j < docs.size(); j++)

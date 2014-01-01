@@ -123,9 +123,9 @@ static void showCollection(const QStringList & s)
     o << "Unable to find the collection" << s.first() << endl;
     return;
   }
-  o << "Dumping collection " << def->name << ":" << endl
-    << "\tpublic name: " << def->publicName  << endl
-    << "\tdescription: " << def->description << endl;
+  o << "Dumping collection " << def->getName() << ":" << endl
+    << "\tpublic name: " << def->getPublicName()  << endl
+    << "\tdescription: " << def->getDescription() << endl;
 
   QStringList docs = def->documentTypes.keys();
   docs.sort();

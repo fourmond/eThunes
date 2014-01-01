@@ -81,7 +81,8 @@ SOURCES += src/qmain.cc src/account.cc src/mainwin.cc src/actions.cc \
         src/timebasedcurve.cc src/timebasedwidget.cc \
         src/curvesdisplay.cc \
         src/exceptions.cc \
-        src/identitiessafe.cc
+        src/identitiessafe.cc \
+        src/collectiondefinition.cc
 
 #        src/testserializepointers.cc \
 
@@ -128,7 +129,8 @@ HEADERS += src/account.hh src/mainwin.hh src/actions.hh \
         src/pointersafesort.hh \
         src/exceptions.hh \
         src/ruby-templates.hh \
-        src/identitiessafe.hh
+        src/identitiessafe.hh \
+        src/collectiondefinition.hh
 
 
 # Plugins:

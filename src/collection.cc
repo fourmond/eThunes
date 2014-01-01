@@ -20,107 +20,6 @@
 #include <collection.hh>
 #include <cabinet.hh>
 
-SerializationAccessor * CollectionDefinition::serializationAccessor()
-{
-  SerializationAccessor * ac = new SerializationAccessor(this);
-  /// \todo This small trick probably could avoid static
-  /// "beingSerialized" things, as the serializationAccessor function
-  /// is necessarily called for every single time.
-  code.definition = this;
-
-  ac->addScalarAttribute("public-name", &publicName);
-  ac->addScalarAttribute("description", &description, false);
-  ac->addHashAttribute("document-type", &documentTypes);
-  ac->addAttribute("ruby-class-code", &code);
-  return ac;
-}
-
-void CollectionDefinition::dumpContents()
-{
-  QTextStream o(stdout);
-  QHash<QString, DocumentDefinition>::const_iterator i =
-    documentTypes.constBegin();
-  while (i != documentTypes.constEnd()) {
-    o << "Type : " << i.value().name << endl;
-    ++i;
-  }
-  o << "Code (" << code.name << "): " << code.code;
-}
-
-
-/// \todo There should be a way to customize this.
-QStringList CollectionDefinition::definitionPath("/home/vincent/Prog/eThunes/xml");
-
-CollectionDefinition * CollectionDefinition::loadWithoutRegistering(const QString &name)
-{
-  QString fileName(name + ".def.xml");
-  for(int i = 0; i < definitionPath.size(); i++) {
-    QFile file(definitionPath[i] + "/" + fileName);
-    if(file.exists()) {
-      file.open(QIODevice::ReadOnly);
-      QXmlStreamReader w(&file);
-      /// \todo should be factored out ?
-      CollectionDefinition * def = new CollectionDefinition;
-      while(! w.isStartElement() && ! w.atEnd())
-	w.readNext();
-      def->readXML(&w);
-      if(! def->name.isEmpty() && def->name != name)
-	printf("Names should match !\n"); /// \tdexception handle this!
-      def->name = name;
-      return def;
-    }
-  }
-  return NULL;
-}
-
-QHash<QString, CollectionDefinition *> CollectionDefinition::loadedDefinitions;
-
-
-void CollectionDefinition::loadFromFile(const QString &name)
-{
-  CollectionDefinition * def = loadWithoutRegistering(name);
-  if(def)
-    loadedDefinitions[name] = def;
-  /// \tdexception raise something if NULL ?
-}
-
-
-QStringList CollectionDefinition::availableDefinitions()
-{
-  QStringList names;
-  for(int i = 0; i < definitionPath.size(); i++) {
-    QDir d(definitionPath[i]);
-    QStringList files = d.entryList(QStringList("*.def.xml"));
-    for(int j = 0; j < files.size(); j++)
-      names << files[j].replace(".def.xml", "");
-  }
-  return names;
-}
-
-
-QHash<QString, QString> CollectionDefinition::documentFileFilters()
-{
-  QHash<QString, QString> filters;
-  QHash<QString, DocumentDefinition>::const_iterator i =
-    documentTypes.constBegin();
-  while(i != documentTypes.constEnd()) {
-    filters[QString("%1 (*.pdf)").arg(i.value().definitionName())] =
-      i.key();
-    i++;
-  }
-  return filters;
-}
-
-CollectionDefinition * CollectionDefinition::namedDefinition(const QString & name)
-{
-  if(! loadedDefinitions.contains(name))
-    loadFromFile(name);
-  return loadedDefinitions.value(name, NULL);
-}
-
-//////////////////////////////////////////////////////////////////////
-
-
 /// A small helper class to handle the serialization of a
 /// CollectionDefinition pointer.
 class SerializeCollectionDefinitionPointer : public SerializationItem {
@@ -140,7 +39,7 @@ public:
 
   virtual QString valueToString() {
     if(*target) {
-      return (*target)->name;
+      return (*target)->getName();
     }
     /// \tdexception Probably this should never occur.
     return QString();
