@@ -38,7 +38,7 @@ class Cabinet;
 ///
 /// \todo Add attributes to identify the author, and possibly
 /// copyright, licenses, and so on...
-class CollectionDefinition : public Serializable {
+class CollectionDefinition  {
 protected:
   /// The name of the CollectionDefinition; it must match the base of
   /// file name ! (though it will be automatically set if missing)
@@ -51,32 +51,40 @@ protected:
   /// A public description
   QString description;
 
-  /// The underlying code. For now, hardwired as RubyClassCode.
-  ///
-  /// \todo find a way to serialize pointers to objects and use it
-  /// this way. It would be enough to write a small class that
-  /// serializes a pointer to a Serializable object; several
-  /// statements could be used for the different types, with different
-  /// element names. This would work for loading, but not for saving !
-  ///
-  /// Maybe use a hash 'element name' => Serializable ? (with full
-  /// conversion ? but then finding out which one to use for writing
-  /// out isn't that trivial). Or let that be handled by virtual
-  /// functions ? but then it makes duplicated code (for the choice of
-  /// the element at saving and the choice of the target class at
-  /// loading)
-  RubyModuleCode code;
+
+  /// The Ruby base class.
+  static VALUE cCollectionDefinition;
+
+  /// The Ruby class of the collection.
+  VALUE rubyClass;
+
+  /// Returns the Ruby base class CollectionDefinition
+  static VALUE getBaseClass();
+
+
+  /// This code creates new CollectionDefinition for each new 
+  static void updateFromRubyCode();
+
+  /// Helper for updateFromRubyCode
+  static VALUE updateFromRubyCodeInternal();
+
+  /// Helper for rb_hash_foreach...
+  static int updateFromRubyHelper(VALUE key, VALUE val, void * arg);
 
 public:
+
+  /// Builds a new collection definition from the given Ruby class.
+  CollectionDefinition(VALUE cls);
+
   /// The definition of the types of documents supported by this
   /// Collection.
-  QHash<QString, DocumentDefinition> documentTypes;
+  QHash<QString, DocumentDefinition *> documentTypes;
 
   /// Returns a pointer to the named document definition
   DocumentDefinition * documentDefinition(const QString & name)
   {
     if(documentTypes.contains(name))
-      return &documentTypes[name];
+      return documentTypes[name];
     return NULL;
   };
 
@@ -102,8 +110,6 @@ public:
   /// SFR needs two domains.
   QString domain;
 
-  virtual SerializationAccessor * serializationAccessor();
-
   /// Temporary
   void dumpContents();
 
@@ -117,12 +123,6 @@ public:
 
   /// Browse definitionPath to find all the .def.xml files
   static QStringList availableDefinitions();
-
-  /// Loads the named definition, but without registering it in the
-  /// cache. In general, what you want is namedDefinition() instead,
-  /// but you might need this for testing purposes.
-  static CollectionDefinition * loadWithoutRegistering(const QString &name);
-
 
   /// @name Interface to the underlying collection code
   ///

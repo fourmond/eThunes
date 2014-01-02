@@ -85,10 +85,10 @@ Document * Collection::importFile(const QString & doctype,
   /// calling functions ?)
   AttributeHash attrs = definition->parseFileMetaData(doctype, file);
   // Already have one !
-  if(fileClashes(&definition->documentTypes[doctype], attrs))
+  if(fileClashes(definition->documentTypes[doctype], attrs))
     return NULL;
 
-  DocumentDefinition * def = &definition->documentTypes[doctype];
+  DocumentDefinition * def = definition->documentTypes[doctype];
 
   /// @todo Somehow, prompting here isn't that great. A way around
   /// this could be to define a collection of prompting facilities

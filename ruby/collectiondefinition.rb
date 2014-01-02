@@ -38,6 +38,8 @@ class CollectionDefinition
 
   @collections = {}
 
+  @last_registered = nil
+
   # Gives a few information about the collection
   def self.collection(name, pubname, desc)
     @name = name
@@ -55,8 +57,13 @@ class CollectionDefinition
     return @public_name
   end
 
+  def self.description
+    return @description
+  end
+
   def self.register_definition(cls)
     @collections[cls.name] = cls
+    @last_registered = cls
   end
 
 

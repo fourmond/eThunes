@@ -351,46 +351,46 @@ void MainWin::tryQuit()
 
 void MainWin::testCollectionDefinitionDocument()
 {
-  QString type =
-    QInputDialog::getItem(this, tr("Collection definition to test"),
-			  tr("Collection definition"),
-			  CollectionDefinition::availableDefinitions(), 0,
-			  false);
-  if(type.isEmpty())
-    return;
-  CollectionDefinition * def =
-    CollectionDefinition::loadWithoutRegistering(type);
-  if(! def)
-    return;			// Though things go wrong !
+  // QString type =
+  //   QInputDialog::getItem(this, tr("Collection definition to test"),
+  //       		  tr("Collection definition"),
+  //       		  CollectionDefinition::availableDefinitions(), 0,
+  //       		  false);
+  // if(type.isEmpty())
+  //   return;
+  // CollectionDefinition * def =
+  //   CollectionDefinition::loadWithoutRegistering(type);
+  // if(! def)
+  //   return;			// Though things go wrong !
 
-  QHash<QString, QString> filters = def->documentFileFilters();
-  QString filter = filters[filters.keys()[0]];
+  // QHash<QString, QString> filters = def->documentFileFilters();
+  // QString filter = filters[filters.keys()[0]];
 
-  do {
-    QString file =
-      QFileDialog::getOpenFileName(this,
-				   tr("Please select a file to test"),
-				   QString(),
-				   QStringList(filters.keys()).join(";;"),
-				   &filter);
+  // do {
+  //   QString file =
+  //     QFileDialog::getOpenFileName(this,
+  //       			   tr("Please select a file to test"),
+  //       			   QString(),
+  //       			   QStringList(filters.keys()).join(";;"),
+  //       			   &filter);
 
-    if(file.isEmpty())
-      return;
+  //   if(file.isEmpty())
+  //     return;
 
-    QTextStream o(stdout);
-    AttributeHash contents = CollectionCode::readPDF(file);
-    o << "File " << file << "'s raw attributes: " << endl;
-    contents.dumpContents();
-    AttributeHash outAttrs = def->
-      parseDocumentMetaData(filters[filter], contents);
-    o << endl << "Parse attributes:" << endl;
-    outAttrs.dumpContents();
+  //   QTextStream o(stdout);
+  //   AttributeHash contents = CollectionCode::readPDF(file);
+  //   o << "File " << file << "'s raw attributes: " << endl;
+  //   contents.dumpContents();
+  //   AttributeHash outAttrs = def->
+  //     parseDocumentMetaData(filters[filter], contents);
+  //   o << endl << "Parse attributes:" << endl;
+  //   outAttrs.dumpContents();
 
-    DocumentDefinition * dd = def->documentDefinition(filters[filter]);
-    o << "Final strings: " << endl;
-    o << "Display text: " << outAttrs.formatString(dd->displayFormat) << endl;
-    o << "File name: " << outAttrs.formatString(dd->fileNameFormat) << endl;
-  } while(true);
+  //   DocumentDefinition * dd = def->documentDefinition(filters[filter]);
+  //   o << "Final strings: " << endl;
+  //   o << "Display text: " << outAttrs.formatString(dd->displayFormat) << endl;
+  //   o << "File name: " << outAttrs.formatString(dd->fileNameFormat) << endl;
+  // } while(true);
 }
 
 void MainWin::displayLog()

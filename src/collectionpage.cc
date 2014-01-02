@@ -44,11 +44,11 @@ CollectionPage::CollectionPage(Collection * c) : collection(c)
 	  SLOT(updateContents()));
 
   QList<DocumentDefinition *> definitions;
-  for(QHash<QString, DocumentDefinition>::iterator i = 
+  for(QHash<QString, DocumentDefinition*>::iterator i = 
         c->definition->documentTypes.begin(); 
       i != c->definition->documentTypes.end();
       i++)
-    definitions << &i.value();
+    definitions << i.value();
 
   qSort(definitions.begin(), definitions.end(), compareDefinitions);
   for(int i = 0; i < definitions.size(); i++) {

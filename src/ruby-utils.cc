@@ -53,7 +53,7 @@ static bool withinSafeCode = false;
 
 static VALUE inheritedHook(VALUE self, VALUE cls)
 {
-  rb_p(cls);
+  // rb_p(cls);
 
   // Should freeze the classes defined in the code so that a nasty
   // module cannot modify something already in place.
@@ -87,6 +87,13 @@ ID Ruby::fetchID;
 ID Ruby::resumeID;
 ID getTracerHookID;
 ID setTraceFuncID;
+ID checkForGlobalsID;
+ID evalID;
+
+ID Ruby::nameID;
+ID Ruby::publicNameID;
+ID Ruby::descriptionID;
+
 
 static VALUE main;
 
@@ -113,6 +120,13 @@ void Ruby::ensureInitRuby()
 
     getTracerHookID = rb_intern("get_tracer_hook");
     setTraceFuncID = rb_intern("set_trace_func");
+    checkForGlobalsID = rb_intern("check_for_globals");
+    evalID = rb_intern("eval");
+
+    nameID = rb_intern("name");
+    publicNameID = rb_intern("public_name");
+    descriptionID = rb_intern("description");
+    
 
     rb_define_singleton_method(mUtils, "trace_hook",
                                (VALUE (*)(...)) traceHook, 6);
@@ -124,6 +138,7 @@ void Ruby::ensureInitRuby()
     /// \todo Do not hardwire the list, but rather acquire it somehow
     loadFile("dates");
     loadFile("net");
+    loadFile("collectiondefinition");
   }
   /// \todo Here, add a whole bunch of functions to destroy all
   /// functions for IO and process control (including require, for
@@ -199,4 +214,16 @@ void Ruby::loadFile(QString str)
   QFile code("ruby:" + str);
   code.open(QIODevice::ReadOnly);
   rb_eval_string((const char*) code.readAll());
+}
+
+void Ruby::safeLoadFile(const QString & file)
+{
+  QFile code(file);
+  code.open(QIODevice::ReadOnly);
+  QByteArray contents = code.readAll();
+  VALUE str = rb_str_new2((const char *) contents);
+  VALUE tst = wrappedFuncall(mUtils, checkForGlobalsID, 1, str);
+  if(! RTEST(tst))
+    throw "failure";
+  safeFuncall(main, evalID, 1, str);
 }

@@ -42,6 +42,15 @@ namespace Ruby {
   /// ID for :resume
   extern ID resumeID;
 
+  /// ID for :name
+  extern ID nameID;
+
+  /// ID for :public_name
+  extern ID publicNameID;
+
+  /// ID for :description
+  extern ID descriptionID;
+
   /// @}
 
   /// A static function handling Ruby exceptions when using classes such
@@ -59,6 +68,11 @@ namespace Ruby {
   /// require-like fashion somehow, but not relying on Ruby's
   /// path). This assumes Ruby has been started already.
   void loadFile(QString name);
+
+
+  /// Safely loads the given file, ie make sure no malicious code can
+  /// be run.
+  void safeLoadFile(const QString & file);
 
   /// Runs a ruby function call, so that exceptions are caught and
   /// transformed into appropriate C++ functions.
