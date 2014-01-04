@@ -23,7 +23,6 @@
 
 #include <serializable.hh>
 #include <documentdefinition.hh>
-#include <rubymodulecode.hh>
 
 #include <watchablecontainers.hh>
 #include <httarget.hh>
