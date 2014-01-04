@@ -109,15 +109,16 @@ namespace Ruby {
   /// Maybe those guys should be inline functions ?
 
   inline VALUE qStringToValue(const QString & str) {
-    return rb_str_new2((const char*) (str).toLocal8Bit());
+    // locale is UTF-8 for Ruby !
+    return rb_locale_str_new_cstr((const char*) (str).toUtf8());
   };
 
   inline VALUE byteArrayToValue(const QByteArray & ary) {
-    return rb_str_new(ary.constData(), ary.size());
+    return rb_locale_str_new(ary.constData(), ary.size());
   };
 
   inline QString valueToQString(VALUE value) {
-    return QString(StringValueCStr(value));
+    return QString::fromUtf8(StringValueCStr(value));
   };
 
   inline QString inspect(VALUE value) {

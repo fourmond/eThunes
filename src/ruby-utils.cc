@@ -103,14 +103,15 @@ ID Ruby::descriptionID;
 
 static VALUE main;
 
-static char* argv[]  = { "ethunes-internal", "-e", "true", NULL };
+static char* argv[]  = { "ethunes-internal", "-e", "true", "-E", "utf-8:utf-8"};
+static const int nbargs = sizeof(argv)/sizeof(argv[0]);
 
 
 void Ruby::ensureInitRuby()
 {
   if(! rubyInitialized) {
     ruby_init();
-    ruby_process_options(3, argv);
+    ruby_process_options(nbargs, argv);
 
     untrustedCodeString = rb_eval_string("$__untrusted_code = '(untrusted code)'");
 
@@ -230,7 +231,7 @@ void Ruby::safeLoadFile(const QString & file)
   QFile code(file);
   code.open(QIODevice::ReadOnly);
   QByteArray contents = code.readAll();
-  VALUE str = rb_str_new2((const char *) contents);
+  VALUE str = rb_locale_str_new_cstr((const char *) contents);
   VALUE tst = wrappedFuncall(mUtils, checkForGlobalsID, 1, str);
   if(! RTEST(tst))
     throw "failure";
