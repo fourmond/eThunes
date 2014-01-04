@@ -62,6 +62,8 @@ static VALUE inheritedHook(VALUE self, VALUE cls)
   return Qnil;
 }
 
+static VALUE untrustedCodeString;
+
 static VALUE traceHook(VALUE self,
                        VALUE what, VALUE file, VALUE line,
                        VALUE funcall, VALUE binding, VALUE cls)
@@ -69,13 +71,15 @@ static VALUE traceHook(VALUE self,
   // do something here !
   if(! withinSafeCode)
     return Qnil;
-  VALUE ary = rb_ary_new();
-  rb_ary_push(ary, self);
-  rb_ary_push(ary, what);
-  rb_ary_push(ary, file);
-  rb_ary_push(ary, funcall);
-  rb_ary_push(ary, cls);
-  rb_p(ary);
+  // if( RTEST(rb_str_equal(file, untrustedCodeString))) {
+    VALUE ary = rb_ary_new();
+    rb_ary_push(ary, self);
+    rb_ary_push(ary, what);
+    rb_ary_push(ary, file);
+    rb_ary_push(ary, funcall);
+    rb_ary_push(ary, cls);
+    //    rb_p(ary);
+    // }
   return Qnil;
 }
 
@@ -91,8 +95,10 @@ ID checkForGlobalsID;
 ID evalID;
 
 ID Ruby::nameID;
+ID Ruby::parseID;
 ID Ruby::publicNameID;
 ID Ruby::descriptionID;
+
 
 
 static VALUE main;
@@ -105,6 +111,8 @@ void Ruby::ensureInitRuby()
   if(! rubyInitialized) {
     ruby_init();
     ruby_process_options(3, argv);
+
+    untrustedCodeString = rb_eval_string("$__untrusted_code = '(untrusted code)'");
 
     main = rb_eval_string("self");
 
@@ -132,6 +140,7 @@ void Ruby::ensureInitRuby()
                                (VALUE (*)(...)) traceHook, 6);
 
     fetchID = rb_intern("fetch");
+    parseID = rb_intern("parse");
     resumeID = rb_intern("resume");
     
     Fetcher::initializeRuby();
@@ -225,6 +234,5 @@ void Ruby::safeLoadFile(const QString & file)
   VALUE tst = wrappedFuncall(mUtils, checkForGlobalsID, 1, str);
   if(! RTEST(tst))
     throw "failure";
-  VALUE context = rb_str_new2("(untrusted code)");
-  safeFuncall(main, evalID, 3, str, Qnil, context);
+  safeFuncall(main, evalID, 3, str, Qnil, untrustedCodeString);
 }

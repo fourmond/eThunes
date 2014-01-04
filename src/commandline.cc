@@ -150,20 +150,28 @@ static void testDocumentLoading(const QStringList & a)
   Collection * c = new Collection();
   c->definition = def;
   name = args.takeFirst();
+  DocumentDefinition * ddef = def->documentDefinition(name);
+  if(! ddef) {
+    o << "Unable to find the document " << name << endl;
+    return;
+  }
   for(int i = 0; i < args.size(); i++) {
     QString file = args[i];
     AttributeHash contents = CollectionCode::readPDF(file);
-    AttributeHash outAttrs = 
-      def->parseDocumentMetaData(name, contents);
+    AttributeHash outAttrs = ddef->parseDocumentMetaData(contents);
     o << endl << "Parsed attributes for file " 
       << file << ": " << endl;
     QStringList missing = 
-      c->missingAttributesForDocument(outAttrs, def->documentDefinition(name));
+      c->missingAttributesForDocument(outAttrs, ddef);
     outAttrs.dumpContents();
     if(missing.size() > 0)
       o << "Missing attributes: " << missing.join(", ") << endl; 
-    else
-      o << "All required attributes found" << endl;
+    else {
+      o << "All required attributes found\nFile name: "
+        << outAttrs.formatString(ddef->getFileNameFormat()) 
+        << "\nDisplay: " 
+        << outAttrs.formatString(ddef->getDisplayFormat()) << endl;
+    }
   }
   delete c;
 }

@@ -32,6 +32,10 @@ class DocumentDefinition
   def display(n = nil)
     @display = (n || @display)
   end
+
+  def description(n = nil)
+    @description = (n || @description)
+  end
 end
 
 class CollectionDefinition
@@ -95,9 +99,9 @@ class CollectionDefinition
 end
 
 # Use:
-# class Def < CollectionDefinition
+# CollectionDefinition.collection "name" do
 #
-#
+#   display_name 'A beautiful collection'
 # 
 #   document 'biniou' do
 #     public_name "bidule"

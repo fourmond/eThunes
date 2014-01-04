@@ -200,7 +200,7 @@ QList<Document *> Cabinet::documentsByType(const QString & collection,
       continue;
     QList<Document *> docs = col.allDocuments();
     for(int j = 0; j < docs.size(); j++)
-      if(docs[j]->definition->name == type)
+      if(docs[j]->definition->getName() == type)
         retval += docs[j];
   }
   return retval;

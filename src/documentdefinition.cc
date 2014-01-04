@@ -21,3 +21,50 @@
 #include <collection.hh>
 #include <cabinet.hh>
 
+#include <ruby-utils.hh>
+
+DocumentDefinition::DocumentDefinition(VALUE val) 
+  : rubyObject(val)
+{
+}
+
+QString DocumentDefinition::getName() const
+{
+  VALUE v = rb_iv_get(rubyObject, "@name");
+  return VALUE2QSTRING(v);
+}
+
+QString DocumentDefinition::getPublicName() const
+{
+  VALUE v = rb_iv_get(rubyObject, "@public_name");
+  return VALUE2QSTRING(v);
+}
+
+QString DocumentDefinition::getDisplayFormat() const
+{
+  VALUE v = rb_iv_get(rubyObject, "@display");
+  return VALUE2QSTRING(v);
+}
+
+QString DocumentDefinition::getFileNameFormat() const
+{
+  VALUE v = rb_iv_get(rubyObject, "@format");
+  return VALUE2QSTRING(v);
+}
+
+QString DocumentDefinition::definitionName() const
+{
+  QString pn = getPublicName();
+  if(pn.isEmpty())
+    return getName();
+  return pn;
+}
+
+AttributeHash DocumentDefinition::parseDocumentMetaData(const AttributeHash & contents) const
+{
+  AttributeHash target;
+  VALUE hash = contents.toRuby(); // unsafe ?
+  VALUE result = Ruby::safeFuncall(rubyObject, Ruby::parseID, 1, hash);
+  target.setFromRuby(result); // unsafe ?
+  return target;
+}

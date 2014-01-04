@@ -61,10 +61,18 @@ QString Collection::documentFileNameFormat(const DocumentDefinition * def)
   QString base;
   if(! baseDirectory.isEmpty())
     base = baseDirectory + "/";
-  return base + def->fileNameFormat;
+
+  /// @todo Hmmm... Why on earth is the base directory included here ?
+
+  return base + def->getFileNameFormat();
 };
 
 
+QString Collection::documentDisplayFormat(const DocumentDefinition * def) const
+{
+  /// \todo Here, implement user overrides.
+  return def->getDisplayFormat();
+}
 
 SerializationAccessor * Collection::serializationAccessor()
 {

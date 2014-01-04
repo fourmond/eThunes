@@ -76,7 +76,7 @@ public:
   /// attributes, the name of document type as __type__:
   AttributeHash documentAttributes() const {
     AttributeHash retval = attributes;
-    retval["__type__"] = definition->name;
+    retval["__type__"] = definition->getName();
     return retval;
   };
 

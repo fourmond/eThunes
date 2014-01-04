@@ -43,7 +43,7 @@ public:
 
   virtual QString valueToString() {
     if(*target) {
-      return (*target)->name;
+      return (*target)->getName();
     }
     /// \tdexception Probably this should never occur.
     return QString();
@@ -147,7 +147,7 @@ void Document::bringFileIntoOwnership(int file)
 void Document::reparseDocument()
 {
   AttributeHash nd = 
-    collection->definition->parseFileMetaData(definition->name,
+    collection->definition->parseFileMetaData(definition->getName(),
                                               filePath());
   /// @todo Implement some type-safety here
   attributes = nd;

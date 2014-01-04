@@ -38,29 +38,10 @@ class Transaction;
 /// return the appropriate Document object with all the
 /// meta-information correct.
 class DocumentDefinition  {
+protected:
+  /// The underlying Ruby object
+  VALUE rubyObject;
 public:
-  /// The "public" name of this particular kind of documents (bill,
-  /// summary, whatever ?)
-  QString publicName;
-
-  /// The code-like name of this type; will be used for making up file
-  /// names; this is also the hash name.
-  QString name;
-
-  /// Public description of the kind of documents, with a little more
-  /// details. Could contain links ?
-  QString description;
-
-  /// A format string (see AttributeHash::formatString) for public
-  /// display; it will be combined with Document::attributes to form
-  /// something to be displayed (a label ?)
-  ///
-  /// It could be overridden by the user in the collection.
-  QString displayFormat;
-
-  /// The format of the file name to be used as canonical file name.
-  QString fileNameFormat;
-
   /// @name Transaction-matching attributes
   /// @{
 
@@ -80,17 +61,38 @@ public:
 
   /// @}
 
-  /// Which file extensions are "valid" for the given file
-  QStringList fileExtensions() const { return QStringList() << "pdf";};
 
-  QString definitionName() const {
-    if(publicName.isEmpty())
-      return name;
-    return publicName;
-  };
+  /// @name Ruby-given attributes
+  ///
+  /// @{
+
+  /// Name of the document definition
+  QString getName() const;
+
+  /// Public name
+  QString getPublicName() const;
+
+  /// Display format
+  QString getDisplayFormat() const;
+
+  /// File name format
+  QString getFileNameFormat() const;
+
+  /// Which file extensions are "valid" for the given file
+  QStringList fileExtensions() const;
+
+  /// The name of the definition (public name, but falls back to other
+  /// name should this be empty)
+  QString definitionName() const;
+
+  /// @}
 
   /// Builds a document definition from the ruby code.
   DocumentDefinition(VALUE val);
+
+
+  /// Parses the given document
+  AttributeHash parseDocumentMetaData(const AttributeHash & contents) const;
 
 };
 

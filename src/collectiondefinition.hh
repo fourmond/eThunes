@@ -22,13 +22,14 @@
 #define __COLLECTIONDEFINITION_HH
 
 #include <serializable.hh>
-#include <document.hh>
+#include <documentdefinition.hh>
 #include <rubymodulecode.hh>
 
 #include <watchablecontainers.hh>
 #include <httarget.hh>
 
 class Cabinet;
+class Document;
 
 /// This class represents the definition of a Collection object.
 ///
@@ -96,9 +97,7 @@ public:
   /// Returns a pointer to the named document definition
   DocumentDefinition * documentDefinition(const QString & name)
   {
-    if(documentTypes.contains(name))
-      return documentTypes[name];
-    return NULL;
+    return documentTypes.value(name, NULL);
   };
 
 

@@ -69,8 +69,8 @@ void CollectionDefinition::updateFromRubyCode()
 int CollectionDefinition::updateDocumentListHelper2(VALUE key, VALUE val, void * arg)
 {
   QString k = Ruby::valueToQString(key);
-  CollectionDefinition * def = static_cast<CollectionDefinition *>(def);
-  // def->documentTypes[k] = new DocumentDefinition(val);
+  CollectionDefinition * def = static_cast<CollectionDefinition *>(arg);
+  def->documentTypes[k] = new DocumentDefinition(val);
   return ST_CONTINUE;
 }
 
@@ -115,15 +115,19 @@ QString CollectionDefinition::getDescription() const
 AttributeHash CollectionDefinition::parseDocumentMetaData(const QString & doctype,
                                                           const AttributeHash & contents)
 {
-  // return code.parseDocumentMetaData(doctype, contents);
-  return AttributeHash();
+  DocumentDefinition * def = documentDefinition(doctype);
+  if(def) {
+    return def->parseDocumentMetaData(contents);
+  }
+  else
+    return AttributeHash();
 }
 
 AttributeHash CollectionDefinition::parseFileMetaData(const QString & doctype,
                                                       const QString & fileName)
 {
-  // return code.parseFileMetaData(doctype, fileName);
-  return AttributeHash();
+  AttributeHash contents = CollectionCode::readPDF(fileName);
+  return parseDocumentMetaData(doctype, contents);
 }
 
 

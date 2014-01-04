@@ -29,7 +29,7 @@ QHash<Collection *, CollectionPage *> CollectionPage::collectionPages;
 
 static bool compareDefinitions(DocumentDefinition * a, DocumentDefinition * b)
 {
-  return a->name < b->name;
+  return a->getName() < b->getName();
 }
 
 

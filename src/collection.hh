@@ -57,16 +57,12 @@ public:
 
 
   /// Returns the display format for the given Document.
-  QString documentDisplayFormat(const Document * doc) const{
+  QString documentDisplayFormat(const Document * doc) const {
     return documentDisplayFormat(doc->definition);
   };
 
   /// Returns the display format for the given DocumentDefinition.
-  ///
-  /// \todo Here, implement user overrides.
-  QString documentDisplayFormat(const DocumentDefinition * def) const {
-    return def->displayFormat;
-  };
+  QString documentDisplayFormat(const DocumentDefinition * def) const;
 
   /// Returns a list of attributes requested for the given
   /// DocumentDefinition

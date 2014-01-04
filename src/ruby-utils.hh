@@ -51,6 +51,9 @@ namespace Ruby {
   /// ID for :description
   extern ID descriptionID;
 
+  /// ID for :parse
+  extern ID parseID;
+
   /// @}
 
   /// A static function handling Ruby exceptions when using classes such
