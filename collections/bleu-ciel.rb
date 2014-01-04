@@ -11,6 +11,8 @@ EOD
     display "Facture du %{date%date:d/MM/yyyy}: %{montant%A} (%{ref-client} -- %{facture})"
     format "EDF/Facture-%{date%date:yyyy-MM}.pdf"
 
+    matcher 'prelevement', 'montant', 9
+
     def parse(doc)
       res = {}
       if doc['text'] =~ /Facture.*?\s+du\s+(#{Dates::FrenchFullDateRE})/i

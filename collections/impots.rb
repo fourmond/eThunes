@@ -12,6 +12,8 @@ EOD
     display "Avis d'imposition %{annee} (revenus de %{annee-concernee}), numéro fiscal %{numero-fiscal}"
     format 'Impots/Avis-imposition-%{numero-fiscal}-%{annee}.pdf'
 
+    matcher 'paiment', 'montant', 15
+
     def parse(doc)
       res = {}
       if doc['text'] =~ /revenus\s*de\s*l.*ann.*(\d{4})/

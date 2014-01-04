@@ -31,6 +31,7 @@ EOD
     format 'Assedic/Paiment-%{identifiant}-%{date%date:yyyy-MM}.pdf'
     public_name 'Avis de paiment'
 
+    matcher 'date', 'montant', 5
 
     def parse(doc)
       res = {}
