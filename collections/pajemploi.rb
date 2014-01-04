@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
-class Pajemploi < CollectionDefinition
+CollectionDefinition.collection('pajemploi') do
 
-  collection 'pajemploi', "Pajemploi", <<EOD
+  public_name "Pajemploi"
+  description <<EOD
 Différents documents afférents à Pajemploi (du côté assistantes maternelles)
 EOD
   

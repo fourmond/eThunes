@@ -40,26 +40,33 @@ class CollectionDefinition
 
   @last_registered = nil
 
-  # Gives a few information about the collection
-  def self.collection(name, pubname, desc)
+  def initialize(name)
     @name = name
-    @public_name = pubname
-    @description = desc
+    @public_name = nil
+    @description = nil
     @documents = {}
-
-    CollectionDefinition.register_definition(self)
   end
 
-  def self.name
-    return @name
+  # Gives a few information about the collection
+  def self.collection(name, &blk)
+    nc = CollectionDefinition.new(name)
+    
+    nc.instance_exec(&blk)
+    
+    CollectionDefinition.register_definition(nc)
+    
   end
 
-  def self.public_name
-    return @public_name
+  def name
+    @name
   end
 
-  def self.description
-    return @description
+  def public_name(n = nil)
+    @public_name = (n || @public_name)
+  end
+
+  def description(n = nil)
+    @description = (n || @description)
   end
 
   def self.register_definition(cls)
@@ -72,7 +79,7 @@ class CollectionDefinition
     return @collections
   end
 
-  def self.document(name, &blk)
+  def document(name, &blk)
     doc = DocumentDefinition.new(name)
 
     # This block enables one to 
