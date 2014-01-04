@@ -21,22 +21,6 @@
 #include <collection.hh>
 #include <cabinet.hh>
 
-SerializationAccessor * DocumentDefinition::serializationAccessor()
-{
-  SerializationAccessor * ac = new SerializationAccessor(this);
-  ac->addScalarAttribute("name", &name);
-  ac->addScalarAttribute("display-format", &displayFormat);
-  ac->addScalarAttribute("filename-format", &fileNameFormat);
-  ac->addScalarAttribute("public-name", &publicName);
-  ac->addScalarAttribute("description", &description);
-
-  // Transaction-matching attributes
-  ac->addScalarAttribute("relevant-date", &relevantDate);
-  ac->addScalarAttribute("relevant-amount", &relevantAmount);
-  ac->addScalarAttribute("date-tolerance", &transactionDateTolerance);
-  return ac;
-}
-
 /// A small helper class to handle the serialization of a
 /// DocumentDefinition pointer.
 ///

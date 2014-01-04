@@ -71,6 +71,19 @@ protected:
   /// Helper for rb_hash_foreach...
   static int updateFromRubyHelper(VALUE key, VALUE val, void * arg);
 
+
+
+  /// This codes reads the document list from the ruby code
+  void updateDocumentList();
+
+  /// Helper 1 for updateDocumentList
+  static VALUE updateDocumentListHelper(CollectionDefinition * definition);
+
+  /// Helper 2 for updateDocumentList
+  static int updateDocumentListHelper2(VALUE key, VALUE val, void * arg);
+
+
+
 public:
 
   /// Builds a new collection definition from the given Ruby class.

@@ -45,6 +45,7 @@ class CollectionDefinition
     @name = name
     @public_name = pubname
     @description = desc
+    @documents = {}
 
     CollectionDefinition.register_definition(self)
   end
@@ -72,7 +73,6 @@ class CollectionDefinition
   end
 
   def self.document(name, &blk)
-    @documents ||= {}
     doc = DocumentDefinition.new(name)
 
     # This block enables one to 
@@ -85,9 +85,6 @@ class CollectionDefinition
     end
   end
 
-  def self.documents
-    return @documents
-  end
 end
 
 # Use:

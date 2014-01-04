@@ -69,13 +69,13 @@ static VALUE traceHook(VALUE self,
   // do something here !
   if(! withinSafeCode)
     return Qnil;
-  // VALUE ary = rb_ary_new();
-  // rb_ary_push(ary, self);
-  // rb_ary_push(ary, what);
-  // rb_ary_push(ary, file);
-  // rb_ary_push(ary, funcall);
-  // rb_ary_push(ary, cls);
-  // rb_p(ary);
+  VALUE ary = rb_ary_new();
+  rb_ary_push(ary, self);
+  rb_ary_push(ary, what);
+  rb_ary_push(ary, file);
+  rb_ary_push(ary, funcall);
+  rb_ary_push(ary, cls);
+  rb_p(ary);
   return Qnil;
 }
 
@@ -225,5 +225,6 @@ void Ruby::safeLoadFile(const QString & file)
   VALUE tst = wrappedFuncall(mUtils, checkForGlobalsID, 1, str);
   if(! RTEST(tst))
     throw "failure";
-  safeFuncall(main, evalID, 1, str);
+  VALUE context = rb_str_new2("(untrusted code)");
+  safeFuncall(main, evalID, 3, str, Qnil, context);
 }

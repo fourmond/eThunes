@@ -60,9 +60,37 @@ void CollectionDefinition::updateFromRubyCode()
   Ruby::run(&CollectionDefinition::updateFromRubyCodeInternal);
 }
 
+
+
+// The syntax of rb_hash_foreach is kinda obscure, but, well, it looks
+// like the function expected is to be called thus:
+//
+// (arg is the last argument to rb_hash_foreach)
+int CollectionDefinition::updateDocumentListHelper2(VALUE key, VALUE val, void * arg)
+{
+  QString k = Ruby::valueToQString(key);
+  CollectionDefinition * def = static_cast<CollectionDefinition *>(def);
+  // def->documentTypes[k] = new DocumentDefinition(val);
+  return ST_CONTINUE;
+}
+
+VALUE CollectionDefinition::updateDocumentListHelper(CollectionDefinition * def)
+{
+  VALUE hash = rb_iv_get(def->rubyClass, "@documents");
+  rb_hash_foreach(hash, (int (*)(...))CollectionDefinition::
+                  updateDocumentListHelper2, (VALUE) def);
+  return Qnil;
+}
+
+void CollectionDefinition::updateDocumentList()
+{
+  Ruby::run(&CollectionDefinition::updateDocumentListHelper, this);
+}
+
 CollectionDefinition::CollectionDefinition(VALUE cls) :
   rubyClass(cls)
 {
+  updateDocumentList();
 }
 
 

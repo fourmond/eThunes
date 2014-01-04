@@ -25,76 +25,13 @@
 #include <linkable.hh>
 #include <managedfile.hh>
 #include <attributehash.hh>
+#include <documentdefinition.hh>
 
 class Collection;
 class CollectionDefinition;
 
 class Transaction;
-
-/// This class defines the kind of Document objects one can find in a
-/// given CollectionDefinition.
-///
-/// \todo Here should be implemented some day a file type mechanism;
-/// this class probably would be the perfect place to do so.
-///
-/// Ideally, this class should be able to take a PDF document and
-/// return the appropriate Document object with all the
-/// meta-information correct.
-class DocumentDefinition : public Serializable {
-public:
-  /// The "public" name of this particular kind of documents (bill,
-  /// summary, whatever ?)
-  QString publicName;
-
-  /// The code-like name of this type; will be used for making up file
-  /// names; this is also the hash name.
-  QString name;
-
-  /// Public description of the kind of documents, with a little more
-  /// details. Could contain links ?
-  QString description;
-
-  /// A format string (see AttributeHash::formatString) for public
-  /// display; it will be combined with Document::attributes to form
-  /// something to be displayed (a label ?)
-  ///
-  /// It could be overridden by the user in the collection.
-  QString displayFormat;
-
-  /// The format of the file name to be used as canonical file name.
-  QString fileNameFormat;
-
-  /// @name Transaction-matching attributes
-  /// @{
-
-  /// The name of the attribute holding the date relevant for finding
-  /// a corresponding Transaction. In principle, the corresponding
-  /// Transaction should be on the same day or later.
-  QString relevantDate;
-
-  /// Tolerance for looking for the relevant Transaction, in number of
-  /// days.
-  int transactionDateTolerance;
-
-  /// The name of the attribute holding the amount of the
-  /// corresponding Transaction.
-  QString relevantAmount;
-
-
-  /// @}
-
-  virtual SerializationAccessor * serializationAccessor();
-
-  /// Which file extensions are "valid" for the given file
-  QStringList fileExtensions() const { return QStringList() << "pdf";};
-
-  QString definitionName() const {
-    if(publicName.isEmpty())
-      return name;
-    return publicName;
-  };
-
-};
+class DocumentDefinition;
 
 /// A Document is a text-like document (for now, only PDF supported ?)
 /// that stores basically anything. It belongs to a Collection, is
