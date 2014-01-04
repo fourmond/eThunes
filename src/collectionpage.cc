@@ -87,10 +87,11 @@ void CollectionPage::updateContents()
     linkToMember("(reparse documents) ",
                  this,
                  &CollectionPage::reparseDocuments);
-  str += HTTarget::
-    linkToMember("(try download)",
-                 this,
-                 &CollectionPage::tryDownload);
+  if(collection->definition->canFetch()) 
+    str += HTTarget::
+      linkToMember("(try download)",
+                   this,
+                   &CollectionPage::tryDownload);
                  
   summary->setText(str);
 
