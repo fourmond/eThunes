@@ -68,6 +68,8 @@ EOD
     display "Taxe d'habitation %{annee}, numéro fiscal %{numero-fiscal}"
     format "Impots/Taxe-habitation-%{numero-fiscal}-%{annee}.pdf"
 
+    matcher 'paiment', 'montant', 15
+
     def parse(doc)
       res = {}
       if doc['text-layout'] =~ 

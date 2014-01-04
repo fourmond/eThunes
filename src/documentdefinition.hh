@@ -26,7 +26,8 @@
 class Collection;
 class CollectionDefinition;
 
-class Transaction;
+class AtomicTransaction;
+class Document;
 
 /// This class defines the kind of Document objects one can find in a
 /// given CollectionDefinition.
@@ -42,22 +43,15 @@ protected:
   /// The underlying Ruby object
   VALUE rubyObject;
 public:
-  /// @name Transaction-matching attributes
+  /// @name Transaction-matching capacities
   /// @{
 
-  /// The name of the attribute holding the date relevant for finding
-  /// a corresponding Transaction. In principle, the corresponding
-  /// Transaction should be on the same day or later.
-  QString relevantDate;
+  /// Returns the score for the match between the given transaction
+  /// and the given document.
+  int scoreForTransaction(Document * doc, AtomicTransaction * tr) const;
 
-  /// Tolerance for looking for the relevant Transaction, in number of
-  /// days.
-  int transactionDateTolerance;
-
-  /// The name of the attribute holding the amount of the
-  /// corresponding Transaction.
-  QString relevantAmount;
-
+  /// Returns the relevant date range
+  QPair<QDate, QDate> relevantDateRange(Document * doc) const;
 
   /// @}
 
@@ -93,6 +87,7 @@ public:
 
   /// Parses the given document
   AttributeHash parseDocumentMetaData(const AttributeHash & contents) const;
+
 
 };
 

@@ -165,8 +165,10 @@ Fetcher* CollectionDefinition::fetchNewDocuments(const AttributeHash & credentia
 
 int CollectionDefinition::scoreForTransaction(Document * doc, AtomicTransaction * tr) const
 {
-  // return code.scoreForTransaction(doc, tr);
-  return 0;
+  if(! doc->definition)
+    return -1000;
+
+  return doc->definition->scoreForTransaction(doc, tr);
 }
 
 void CollectionDefinition::dumpContents()

@@ -20,6 +20,7 @@
 #include <documentdefinition.hh>
 #include <collection.hh>
 #include <cabinet.hh>
+#include <transaction.hh>
 
 #include <ruby-utils.hh>
 
@@ -67,4 +68,27 @@ AttributeHash DocumentDefinition::parseDocumentMetaData(const AttributeHash & co
   VALUE result = Ruby::safeFuncall(rubyObject, Ruby::parseID, 1, hash);
   target.setFromRuby(result); // unsafe ?
   return target;
+}
+
+QPair<QDate, QDate> DocumentDefinition::relevantDateRange(Document * doc) const
+{
+  AttributeHash document = doc->attributes;
+  VALUE ret = Ruby::safeFuncall(rubyObject, Ruby::relevantDateRangeID, 1, 
+                                document.toRuby());
+  if(! RTEST(ret))
+    return QPair<QDate, QDate> (QDate(), QDate());
+  AttributeHash rv;
+  rv.setFromRuby(ret);
+  if(rv.contains("start") && rv.contains("end"))
+    return QPair<QDate, QDate>(rv["start"].toDate(),
+                               rv["end"].toDate());
+  return QPair<QDate, QDate> (QDate(), QDate());
+}
+
+int DocumentDefinition::scoreForTransaction(Document * doc, AtomicTransaction * tr) const
+{
+  AttributeHash transaction = tr->toHash();
+  AttributeHash document = doc->attributes;
+  VALUE ret = Ruby::safeFuncall(rubyObject, Ruby::matchesID, 2, transaction.toRuby(), document.toRuby());
+  return FIX2LONG(ret);
 }

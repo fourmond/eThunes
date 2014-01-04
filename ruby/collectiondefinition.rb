@@ -12,6 +12,51 @@
 # General Public License for more details (in the COPYING file).
 
 
+# Score for a given transaction, a hash containing:
+# * amount
+# * date
+# * memo
+# * name
+class TransactionMatcher
+
+  # Crate
+  def initialize(date_key, amount_key, tol_after, tol_before = 3)
+    @date_key = date_key
+    @amount_key = amount_key
+    @tol_after = tol_after
+    @tol_before = tol_before
+  end
+
+  def matches(transaction, document)
+    date = document[@date_key]
+    amount = document[@amount_key]
+    if ! date or ! amount
+      return -10000
+    end
+    t_date = transaction["date"]
+    t_amount = transaction["amount"]
+    if t_amount == amount or t_amount == -amount
+      diff = (t_date - date)/86400
+      if (diff <= @tol_after) && (diff >= - @tol_before)
+        return 10000
+      end
+    end
+    return -10000
+  end
+
+  def relevant_date_range(document)
+    date = document[@date_key]
+    if ! date
+      return nil
+    end
+    return { 'start' => date - @tol_before * 86400,
+      'end' => date + @tol_after * 86400
+    }
+  end
+
+end
+
+
 # All documents are instances of this class. 
 class DocumentDefinition
 
@@ -35,6 +80,26 @@ class DocumentDefinition
 
   def description(n = nil)
     @description = (n || @description)
+  end
+
+  def matches(transaction, document)
+    if @matcher
+      return @matcher.matches(transaction, document)
+    else
+      return -10000
+    end
+  end
+
+  def relevant_date_range(document)
+    if @matcher
+      return @matcher.relevant_date_range(document)
+    else
+      return nil
+    end
+  end
+
+  def matcher(date_key, amount_key, tolerance)
+    @matcher = TransactionMatcher.new(date_key, amount_key, tolerance)
   end
 end
 

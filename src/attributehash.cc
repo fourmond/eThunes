@@ -115,9 +115,13 @@ VALUE AttributeHash::setFromRubyInternal(VALUE hash)
 
 void AttributeHash::setFromRuby(VALUE hash, bool clr)
 {
+  // Rescue for potential exceptions.
+  VALUE tst = rb_obj_is_kind_of(hash, rb_cHash);
+  if(! RTEST(tst))
+    throw "Should have been a Hash !";
   if(clr)
     clear();
-  // Rescue for potential exceptions.
+
   Ruby::run(this,  &AttributeHash::setFromRubyInternal, hash);
 }
 

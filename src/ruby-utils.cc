@@ -98,6 +98,8 @@ ID Ruby::nameID;
 ID Ruby::parseID;
 ID Ruby::publicNameID;
 ID Ruby::descriptionID;
+ID Ruby::matchesID;
+ID Ruby::relevantDateRangeID;
 
 
 
@@ -135,6 +137,8 @@ void Ruby::ensureInitRuby()
     nameID = rb_intern("name");
     publicNameID = rb_intern("public_name");
     descriptionID = rb_intern("description");
+    matchesID = rb_intern("matches");
+    relevantDateRangeID = rb_intern("relevant_date_range");
     
 
     rb_define_singleton_method(mUtils, "trace_hook",
@@ -216,6 +220,13 @@ VALUE Ruby::safeFuncall(VALUE tg, ID id, int number, ...)
   return ret;
 }
 
+static VALUE loadFileHelper(QByteArray ar)
+{
+  rb_eval_string((const char*) ar);
+  return Qnil;
+}
+
+
 void Ruby::loadFile(QString str)
 {
   /// \tdexception Fire away when file is missing (or log)
@@ -223,7 +234,8 @@ void Ruby::loadFile(QString str)
     str += ".rb";
   QFile code("ruby:" + str);
   code.open(QIODevice::ReadOnly);
-  rb_eval_string((const char*) code.readAll());
+  QByteArray ar = code.readAll();
+  run(loadFileHelper, ar);
 }
 
 void Ruby::safeLoadFile(const QString & file)

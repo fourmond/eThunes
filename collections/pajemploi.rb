@@ -10,6 +10,9 @@ EOD
     public_name "Bulletin de paie"
     display 'Bulletin de paie du %{month%date:MM/yyyy}: %{salary%A} %{fees%A}(%{employer})'
     format 'Pajemploi/Bulletin-%{employer}-%{month%date:yyyy-MM}.pdf'
+
+    matcher 'month', 'total', 20
+
     def parse(doc)
       res = {}
       if doc['text-layout'] =~ /du\s*:?\s*(\d+)\/(\d+)\/(\d+)\s*au\s*:?\s*/i
@@ -33,6 +36,11 @@ EOD
       if doc['text-layout'] =~ /Volet\s+social.*?(\d+\S+)/i
         res['reference'] = $1
       end
+
+      if res['salary'] && res['fees']
+        res['total'] = res['salary'] + res['fees']
+      end
+
       return res
     end
   end

@@ -54,6 +54,12 @@ namespace Ruby {
   /// ID for :parse
   extern ID parseID;
 
+  /// ID for :matches
+  extern ID matchesID;
+
+  /// ID for :relevant_date_range
+  extern ID relevantDateRangeID;
+
   /// @}
 
   /// A static function handling Ruby exceptions when using classes such

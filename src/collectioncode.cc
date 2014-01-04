@@ -82,14 +82,14 @@ int CollectionCode::scoreForTransaction(DocumentDefinition * def,
 {
   // docMetaData.dumpContents();
   // transaction.dumpContents();
-  if(def->relevantDate.isEmpty() || def->relevantAmount.isEmpty())
-    return -10000;		// No way to match !
-  int amount = docMetaData[def->relevantAmount].toInt();
-  // QDate date = docMetaData[def->relevantDate].toDate();
-  if(transaction["amount"].toInt() == amount)
-    return 10000;
-  if(! (transaction["amount"].toInt() + amount))
-    return 10000;
+  // if(def->relevantDate.isEmpty() || def->relevantAmount.isEmpty())
+  //   return -10000;		// No way to match !
+  // int amount = docMetaData[def->relevantAmount].toInt();
+  // // QDate date = docMetaData[def->relevantDate].toDate();
+  // if(transaction["amount"].toInt() == amount)
+  //   return 10000;
+  // if(! (transaction["amount"].toInt() + amount))
+  //   return 10000;
   return -10000;
   /// \todo we should elaborate later and use the name/memo and the
   /// date distance ?

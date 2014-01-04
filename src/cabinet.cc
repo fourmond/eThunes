@@ -168,12 +168,17 @@ QList<Document *> Cabinet::allDocuments()
 TransactionPtrList Cabinet::transactionMatchingCandidates(Document * document)
 {
   DocumentDefinition * def = document->definition;
-  if(def->relevantDate.isEmpty() ||
-     ! document->attributes.contains(def->relevantDate))
+  QPair<QDate, QDate> range = def->relevantDateRange(document);
+  if(! range.first.isValid())
     return TransactionPtrList();	// No need to go further
-  QDate base = document->attributes[def->relevantDate].toDate();
-  return wallet.transactionsWithinRange(base.addDays(-2),
-					base.addDays(def->transactionDateTolerance));
+
+  // TransactionPtrList pt = wallet.transactionsWithinRange(range.first,
+  //                                                        range.second);
+  // QTextStream o(stdout);
+  // o << "Doc: " << range.first.toString() << " -- " << range.second.toString()
+  //   << " -> " <<  pt.size() << endl;
+  return wallet.transactionsWithinRange(range.first,
+                                        range.second);
 }
 
 AtomicTransaction * Cabinet::matchingTransaction(Document * document)
