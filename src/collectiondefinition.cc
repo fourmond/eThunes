@@ -23,6 +23,10 @@
 #include <ruby-utils.hh>
 #include <ruby-templates.hh>
 
+// for readPDF
+#include <collectioncode.hh>
+#include <fetcher.hh>
+
 VALUE CollectionDefinition::cCollectionDefinition = Qnil;
 
 VALUE CollectionDefinition::getBaseClass()
@@ -76,7 +80,7 @@ int CollectionDefinition::updateDocumentListHelper2(VALUE key, VALUE val, void *
 
 VALUE CollectionDefinition::updateDocumentListHelper(CollectionDefinition * def)
 {
-  VALUE hash = rb_iv_get(def->rubyClass, "@documents");
+  VALUE hash = rb_iv_get(def->rubyObject, "@documents");
   rb_hash_foreach(hash, (int (*)(...))CollectionDefinition::
                   updateDocumentListHelper2, (VALUE) def);
   return Qnil;
@@ -88,27 +92,33 @@ void CollectionDefinition::updateDocumentList()
 }
 
 CollectionDefinition::CollectionDefinition(VALUE cls) :
-  rubyClass(cls)
+  rubyObject(cls)
 {
   updateDocumentList();
+  hasFetchMethod = rb_respond_to(cls, Ruby::fetchID);
+}
+
+bool CollectionDefinition::canFetch() const
+{
+  return hasFetchMethod;
 }
 
 
 QString CollectionDefinition::getName() const
 {
-  VALUE str = Ruby::safeFuncall(rubyClass, Ruby::nameID, 0);
+  VALUE str = Ruby::safeFuncall(rubyObject, Ruby::nameID, 0);
   return Ruby::valueToQString(str);
 }
 
 QString CollectionDefinition::getPublicName() const
 {
-  VALUE str = Ruby::safeFuncall(rubyClass, Ruby::publicNameID, 0);
+  VALUE str = Ruby::safeFuncall(rubyObject, Ruby::publicNameID, 0);
   return Ruby::valueToQString(str);
 }
 
 QString CollectionDefinition::getDescription() const
 {
-  VALUE str = Ruby::safeFuncall(rubyClass, Ruby::descriptionID, 0);
+  VALUE str = Ruby::safeFuncall(rubyObject, Ruby::descriptionID, 0);
   return Ruby::valueToQString(str);
 }
 
@@ -135,8 +145,21 @@ Fetcher* CollectionDefinition::fetchNewDocuments(const AttributeHash & credentia
                                                  const QList<AttributeHash> &existingDocuments,
                                                  Collection * target)
 {
-  // return code.fetchNewDocuments(credentials, existingDocuments, target);
-  return NULL;
+  Fetcher * n = new Fetcher();
+  n->setTarget(target);
+
+  VALUE ary = rb_ary_new();
+  for(int i = 0; i < existingDocuments.size(); i++)
+    rb_ary_push(ary, existingDocuments[i].toRuby());
+
+  VALUE fiber = 
+    Ruby::safeFuncall(rb_eval_string("Net"), Ruby::fetchID, 4, rubyObject, 
+                      n->wrapToRuby(),
+                      credentials.toRuby(), ary);
+  
+  n->setFiber(fiber);
+  Ruby::safeFuncall(fiber, Ruby::resumeID, 0);
+  return n;
 
 }
 

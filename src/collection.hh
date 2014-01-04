@@ -23,8 +23,6 @@
 
 #include <serializable.hh>
 #include <document.hh>
-#include <rubymodulecode.hh>
-
 #include <collectiondefinition.hh>
 
 #include <watchablecontainers.hh>

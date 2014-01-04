@@ -205,7 +205,7 @@ void Fetcher::replyFinished(QNetworkReply* r)
   else {
     Result * res = new Result(r);
     VALUE f = res->wrapToRuby();
-    Ruby::wrappedFuncall(fiber, Ruby::resumeID, 1, f);
+    Ruby::safeFuncall(fiber, Ruby::resumeID, 1, f);
   }
   // In any case, the request is done.
   ongoingRequests[r].done = true;

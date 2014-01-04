@@ -33,6 +33,9 @@
 
 #include <transaction.hh>
 
+// for readPDF
+#include <collectioncode.hh>
+
 
 
 void CommandLineOption::handle(QStringList & args)
@@ -127,6 +130,9 @@ static void showCollection(const QStringList & s)
     << "\tpublic name: " << def->getPublicName()  << endl
     << "\tdescription: " << def->getDescription() << endl;
 
+  if(def->canFetch())
+    o <<  "\nCan fetch from the net\n";
+
   QStringList docs = def->documentTypes.keys();
   docs.sort();
 
@@ -199,6 +205,10 @@ static void testDownload(const QStringList & a)
     CollectionDefinition::namedDefinition(name);
   if(! def) {
     o << "Unable to find the collection" << name << endl;
+    return;
+  }
+  if(! def->canFetch()) {
+    o << "Collection " << name << " does not have download capacities" << endl;
     return;
   }
   // Then, we build the collection:

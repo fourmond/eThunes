@@ -29,6 +29,8 @@
 
 class Cabinet;
 class Document;
+class Fetcher;
+class AtomicTransaction;
 
 /// This class represents the definition of a Collection object.
 ///
@@ -55,8 +57,8 @@ protected:
   /// The Ruby base class.
   static VALUE cCollectionDefinition;
 
-  /// The Ruby class of the collection.
-  VALUE rubyClass;
+  /// The Ruby object for the collection.
+  VALUE rubyObject;
 
   /// Returns the Ruby base class CollectionDefinition
   static VALUE getBaseClass();
@@ -83,6 +85,9 @@ protected:
   static int updateDocumentListHelper2(VALUE key, VALUE val, void * arg);
 
 
+  /// Whether the class has the fetch method (determined at
+  /// constructor time).
+  bool hasFetchMethod;
 
 public:
 
@@ -108,6 +113,10 @@ public:
 
   /// Returns the description
   QString getDescription() const;
+
+  /// Whether the collection has code to fetch new documents from
+  /// internet.
+  bool canFetch() const;
 
   /// A restricted domain: HTTP access from the code of the definition
   /// should not be done outside of this domain (strings prepended

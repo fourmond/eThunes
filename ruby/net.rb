@@ -15,9 +15,9 @@
 module Net
 
   # This class wraps the fetch call into a Fiber
-  def self.fetch(mod, fetcher, creds, ary)
+  def self.fetch(tg, fetcher, creds, ary)
     return Fiber.new do 
-      mod.fetch(fetcher, creds, ary)
+      tg.fetch(fetcher, creds, ary)
     end
   end
 
