@@ -34,7 +34,7 @@
 #include <transaction.hh>
 
 // for readPDF
-#include <collectioncode.hh>
+#include <pdftools.hh>
 
 
 
@@ -163,7 +163,7 @@ static void testDocumentLoading(const QStringList & a)
   }
   for(int i = 0; i < args.size(); i++) {
     QString file = args[i];
-    AttributeHash contents = CollectionCode::readPDF(file);
+    AttributeHash contents = PDFTools::readPDF(file);
     AttributeHash outAttrs = ddef->parseDocumentMetaData(contents);
     o << endl << "Parsed attributes for file " 
       << file << ": " << endl;
@@ -189,7 +189,7 @@ static void testDocumentParsing(const QStringList & a)
   Ruby::ensureInitRuby();
   for(int i = 0; i < args.size(); i++) {
     QString file = args[i];
-    AttributeHash contents = CollectionCode::readPDF(file);
+    AttributeHash contents = PDFTools::readPDF(file);
     o << "File " << file << "'s raw attributes: " << endl;
     contents.dumpContents();
   }

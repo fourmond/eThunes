@@ -1,6 +1,6 @@
 /*
-    collectioncode.cc: Implementation of CollectionCode common functions
-    Copyright 2010 by Vincent Fourmond
+    pdftools.cc: tools to read PDF files
+    Copyright 2014 by Vincent Fourmond
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,8 +17,7 @@
 */
 
 #include <headers.hh>
-#include <collectioncode.hh>
-#include <transaction.hh>
+#include <pdftools.hh>
 
 
 static AttributeHash popplerReadAllPages(Poppler::Document * doc)
@@ -50,10 +49,7 @@ static AttributeHash popplerReadAllPages(Poppler::Document * doc)
 }
 
 
-/// \todo this function should use Poppler::Page::text and
-/// textList... It will be much much faster, and also provide
-/// rendering ?
-AttributeHash CollectionCode::readPDF(QString file)
+AttributeHash PDFTools::readPDF(QString file)
 {
   AttributeHash retval;
   // Now using Poppler
@@ -66,39 +62,4 @@ AttributeHash CollectionCode::readPDF(QString file)
   /// \todo here: get some more information ?
 
   return retval;
-}
-
-AttributeHash CollectionCode::parseFileMetaData(const QString & doctype,
-						const QString & fileName)
-{
-  /// \todo for now, we assume that all files are PDF.
-  AttributeHash contents = readPDF(fileName);
-  return parseDocumentMetaData(doctype, contents);
-}
-
-int CollectionCode::scoreForTransaction(DocumentDefinition * def,
-					const AttributeHash & docMetaData,
-					const AttributeHash & transaction) const
-{
-  // docMetaData.dumpContents();
-  // transaction.dumpContents();
-  // if(def->relevantDate.isEmpty() || def->relevantAmount.isEmpty())
-  //   return -10000;		// No way to match !
-  // int amount = docMetaData[def->relevantAmount].toInt();
-  // // QDate date = docMetaData[def->relevantDate].toDate();
-  // if(transaction["amount"].toInt() == amount)
-  //   return 10000;
-  // if(! (transaction["amount"].toInt() + amount))
-  //   return 10000;
-  return -10000;
-  /// \todo we should elaborate later and use the name/memo and the
-  /// date distance ?
-}
-
-
-int CollectionCode::scoreForTransaction(Document * doc,
-					AtomicTransaction * tr) const
-{
-  return scoreForTransaction(doc->definition, doc->attributes,
-			     tr->toHash());
 }

@@ -55,7 +55,7 @@ SOURCES += src/qmain.cc src/account.cc src/mainwin.cc src/actions.cc \
 	src/document.cc src/collection.cc \
 	src/transactionlistdialog.cc \
 	src/attributehash.cc src/ruby-utils.cc \
-	src/collectioncode.cc src/cabinet.cc \
+	src/pdftools.cc src/cabinet.cc \
 	src/cabinetpage.cc src/collectionsdw.cc \
 	src/collectionpage.cc src/documentsmodel.cc \
 	src/documentspage.cc src/managedfile.cc \
@@ -99,7 +99,7 @@ HEADERS += src/account.hh src/mainwin.hh src/actions.hh \
 	src/document.hh src/collection.hh \
 	src/transactionlistdialog.hh \
 	src/attributehash.hh src/ruby-utils.hh \
-	src/collectioncode.hh src/cabinet.hh \
+	src/pdftools.hh src/cabinet.hh \
 	src/cabinetpage.hh src/collectionsdw.hh \
 	src/collectionpage.hh src/documentsmodel.hh \
 	src/documentspage.hh src/managedfile.hh \

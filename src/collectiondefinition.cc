@@ -24,7 +24,7 @@
 #include <ruby-templates.hh>
 
 // for readPDF
-#include <collectioncode.hh>
+#include <pdftools.hh>
 #include <fetcher.hh>
 
 VALUE CollectionDefinition::cCollectionDefinition = Qnil;
@@ -136,7 +136,7 @@ AttributeHash CollectionDefinition::parseDocumentMetaData(const QString & doctyp
 AttributeHash CollectionDefinition::parseFileMetaData(const QString & doctype,
                                                       const QString & fileName)
 {
-  AttributeHash contents = CollectionCode::readPDF(fileName);
+  AttributeHash contents = PDFTools::readPDF(fileName);
   return parseDocumentMetaData(doctype, contents);
 }
 
