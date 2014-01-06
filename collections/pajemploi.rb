@@ -76,9 +76,8 @@ EOD
       }
       stuff = fetcher.post("https://www.pajemploi.urssaf.fr/pajeweb/attesemploisala.jsp", a)
       begin
-        n = Nokogiri::HTML.parse(stuff.contents)
         nb = 0
-        n.css('a').map do |lnk|
+        stuff.css('a').map do |lnk|
           if lnk['href'] && lnk['href']  =~ /\.pdf\?ref/
             ps << lnk['href']
             nb += 1

@@ -28,7 +28,7 @@ bool Result::rubyInitialized = false;
 
 VALUE Result::cResult;
 
-Result::Result(QNetworkReply * r) : reply(r)
+Result::Result(QNetworkReply * r) : reply(r), nokoCache(Qnil)
 {
   data = reply->readAll();
 }
@@ -50,6 +50,23 @@ void Result::rubyFree(VALUE v)
   }
 }
 
+Result::~Result()
+{
+  // I somehow doubt it's being called ?
+  if(RTEST(nokoCache))
+    Ruby::unKeep(nokoCache);
+}
+
+VALUE Result::nokogiriHandle()
+{
+  if(! RTEST(nokoCache)) {
+    nokoCache = Ruby::wrappedFuncall(cNokogiriHTML, parseID, 1, 
+                                     byteArrayToValue(data));
+    keepSafe(nokoCache);
+  }
+  return nokoCache;
+}
+
 
 VALUE Result::wrapToRuby()
 {
@@ -61,6 +78,19 @@ VALUE Result::contentsAccessor(VALUE v)
   Result * f = fromValue(v);
   return byteArrayToValue(f->data);
 }
+
+VALUE Result::css(VALUE v, VALUE css)
+{
+  Result * f = fromValue(v);
+  return wrappedFuncall(f->nokogiriHandle(), cssID, 1, css);
+}
+
+VALUE Result::xpath(VALUE v, VALUE xpath)
+{
+  Result * f = fromValue(v);
+  return wrappedFuncall(f->nokogiriHandle(), xpathID, 1, xpath);
+}
+
 
 VALUE Result::rawHeadersAccessor(VALUE v)
 {
@@ -108,6 +138,9 @@ VALUE Result::inspect(VALUE v)
   return qStringToValue(retval);
 }
 
+VALUE Result::cNokogiriHTML = Qnil;
+
+
 
 void Result::initializeRuby(VALUE mNet)
 {
@@ -125,6 +158,12 @@ void Result::initializeRuby(VALUE mNet)
   rb_define_method(cResult, "url",
   		   (VALUE (*)(...)) urlAccessor, 0);
 
+  rb_define_method(cResult, "css",
+  		   (VALUE (*)(...)) css, 1);
+
+  rb_define_method(cResult, "xpath",
+  		   (VALUE (*)(...)) xpath, 1);
+
   rb_define_method(cResult, "ok?",
   		   (VALUE (*)(...)) wentOK, 0);
 
@@ -134,6 +173,11 @@ void Result::initializeRuby(VALUE mNet)
   rb_define_method(cResult, "inspect",
   		   (VALUE (*)(...)) inspect, 0);
 
+
+  // Initialize the Nokogiri stuff:
+  if(RTEST(rb_eval_string("$__have_nokogiri__"))) {
+    cNokogiriHTML = rb_eval_string("Nokogiri::HTML");
+  }
 
   rubyInitialized = true;
 }

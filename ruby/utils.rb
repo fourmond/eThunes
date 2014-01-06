@@ -11,9 +11,14 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # General Public License for more details (in the COPYING file).
 
-require 'nokogiri'
 # We need the ripper extension
 require 'ripper'
+
+begin
+  require 'nokogiri'
+  $__have_nokogiri__ = true
+rescue
+end  
 
 module Utils
 

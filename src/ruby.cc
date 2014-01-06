@@ -103,6 +103,10 @@ ID Ruby::publicNameID;
 ID Ruby::descriptionID;
 ID Ruby::matchesID;
 ID Ruby::relevantDateRangeID;
+ID Ruby::cssID;
+ID Ruby::newID;
+ID Ruby::xpathID;
+
 
 
 
@@ -130,18 +134,21 @@ void Ruby::ensureInitRuby()
                                (VALUE (*)(...)) inheritedHook, 1);
 
     mUtils = rb_eval_string("Utils");
-    safeCallId = rb_intern("safe_call");
 
+    // Initialization of IDs
+    safeCallId = rb_intern("safe_call");
     getTracerHookID = rb_intern("get_tracer_hook");
     setTraceFuncID = rb_intern("set_trace_func");
     checkForGlobalsID = rb_intern("check_for_globals");
     evalID = rb_intern("eval");
-
+    cssID = rb_intern("css");
     nameID = rb_intern("name");
     publicNameID = rb_intern("public_name");
     descriptionID = rb_intern("description");
     matchesID = rb_intern("matches");
     relevantDateRangeID = rb_intern("relevant_date_range");
+    newID = rb_intern("new");
+    xpathID = rb_intern("xpath");
     
 
     rb_define_singleton_method(mUtils, "trace_hook",
@@ -169,6 +176,11 @@ void Ruby::keepSafe(VALUE obj)
   VALUE gbl = rb_gv_get("$__safe_keeping_hash__");
   
   rb_hash_aset(gbl, obj, Qnil);
+}
+
+void Ruby::unKeep(VALUE obj)
+{
+  /// @todo !!
 }
 
 static VALUE wrapFuncall(int nb, VALUE * args)

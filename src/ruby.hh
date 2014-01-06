@@ -60,6 +60,15 @@ namespace Ruby {
   /// ID for :relevant_date_range
   extern ID relevantDateRangeID;
 
+  /// ID for :css
+  extern ID cssID;
+
+  /// ID for :new
+  extern ID newID;
+
+  /// ID for :xpath
+  extern ID xpathID;
+
   /// @}
 
   /// A static function handling Ruby exceptions when using classes such

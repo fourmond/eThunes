@@ -68,8 +68,23 @@ protected:
   /// the .inspect function to help debugging.
   static VALUE inspect(VALUE obj);
 
-  /// These two
+  /// A wrapper around the Nokogiri css function
+  static VALUE css(VALUE obj, VALUE css);
+
+  /// A wrapper around the Nokogiri xpath function
+  static VALUE xpath(VALUE obj, VALUE css);
+
+  /// These two must work together
   friend class Fetcher;
+
+  /// The underlying nokogiri parsed tree, constructed on demand.
+  VALUE nokoCache;
+
+  /// Returns the cached nokogiri parser...
+  VALUE nokogiriHandle();
+
+  /// The Nokogiri::HTML class
+  static VALUE cNokogiriHTML;
 
 public:
 
@@ -79,6 +94,9 @@ public:
   /// most probably hang forever waiting for data that will never be
   /// able to come !
   Result(QNetworkReply * r);
+
+  /// Destroys the object.
+  ~Result();
 
   /// Initializes the Ruby side of things; mNet is the Net module.
   static void initializeRuby(VALUE mNet);
