@@ -92,6 +92,9 @@ protected slots:
   /// Reparse all the documents
   void reparseDocuments();
 
+  /// Show where all documents should go
+  void fileCheckup();
+
 };
 
 #endif

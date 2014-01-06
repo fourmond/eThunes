@@ -55,17 +55,21 @@ public:
 //////////////////////////////////////////////////////////////////////
 
 
+QString Collection::getBaseDirectory() const
+{
+  if(! baseDirectory.isEmpty())
+    return baseDirectory;
+  else
+    return name;
+}
+
 QString Collection::documentFileNameFormat(const DocumentDefinition * def) 
   const {
   /// @todo Here, we should implement user overrides.
-  QString base;
-  if(! baseDirectory.isEmpty())
-    base = baseDirectory + "/";
 
-  /// @todo Hmmm... Why on earth is the base directory included here ?
-
-  return base + def->getFileNameFormat();
+  return getBaseDirectory() + "/" + def->getFileNameFormat();
 };
+
 
 
 QString Collection::documentDisplayFormat(const DocumentDefinition * def) const
@@ -80,6 +84,7 @@ SerializationAccessor * Collection::serializationAccessor()
   ac->addAttribute("definition",
 		   new SerializeCollectionDefinitionPointer(&definition));
   ac->addScalarAttribute("name", &name);
+  ac->addScalarAttribute("base-directory", &baseDirectory);
   // Now, we try the list stuff...
   ac->addListAttribute("document", &documents);
   return ac;

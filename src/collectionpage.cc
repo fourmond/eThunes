@@ -89,9 +89,14 @@ void CollectionPage::updateContents()
                  &CollectionPage::reparseDocuments);
   if(collection->definition->canFetch()) 
     str += HTTarget::
-      linkToMember("(try download)",
+      linkToMember("(try download) ",
                    this,
                    &CollectionPage::tryDownload);
+
+  str += HTTarget::
+    linkToMember("(checkup)",
+                 this,
+                 &CollectionPage::fileCheckup);
                  
   summary->setText(str);
 
@@ -133,4 +138,20 @@ void CollectionPage::reparseDocuments()
   QList<Document *> docs = collection->allDocuments();
   for(int i = 0; i < docs.size(); i++)
     docs[i]->reparseDocument();
+}
+
+void CollectionPage::fileCheckup()
+{
+  QList<Document *> docs = collection->allDocuments();
+
+  QTextStream o(stdout);
+  for(int i = 0; i < docs.size(); i++) {
+    Document * doc = docs[i];
+    o << "File: " << doc->filePath();
+    if(doc->isFileCanonical(0))
+      o << " -> canonical";
+    else
+      o << " -> " << doc->canonicalFilePath();
+    o << endl;
+  }
 }

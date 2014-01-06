@@ -37,6 +37,11 @@ class Cabinet;
 /// (eventually) raising an exception when NULL is returned.
 class Collection : 
   public Serializable, public HTTarget {
+protected:
+
+  /// The base directory for all files stored in this collection.
+  QString baseDirectory;
+
 public:
 
   /// The Cabinet this collection belongs to.
@@ -79,11 +84,13 @@ public:
   /// DocumentDefinition present in this Collection.
   QHash<DocumentDefinition *, QList<Document *> > typeDocuments();
 
-  /// A user-set name, for display purposes only
+  /// A user-set name, that is also the base directory unless changed
+  /// explicitly.
   QString name;
 
-  /// The base directory for all files stored in this collection.
-  QString baseDirectory;
+  /// Gets the base directory for the target file.
+  QString getBaseDirectory() const;
+
 
   /// Imports a file as a document of the given type, and returns a
   /// pointer to the newly-created document (whose ownership stays
