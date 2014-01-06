@@ -134,10 +134,14 @@ Document * Collection::importFile(const QString & doctype,
   doc.definition = def;
   doc.collection = this;
   doc.setFilePath(file);
-  doc.bringFileIntoOwnership();
+  if(cabinet)                   // Only do that if the cabinet is
+                                // valid !  It may be invalid when
+                                // trying downloads from command-line.
+    doc.bringFileIntoOwnership();
   documents.append(doc);
 
-  cabinet->registerDocument(&documents.last());
+  if(cabinet) 
+    cabinet->registerDocument(&documents.last());
   return &documents.last();
 }
 
@@ -177,6 +181,8 @@ void Collection::finishedSerializationRead()
 /// storage.
 bool Collection::fileClashes(const QString & cn) const
 {
+  if(! cabinet)
+    return false;
   if(cabinet->namedDocument(cn))
     return true;
   return false;

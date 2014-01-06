@@ -230,6 +230,11 @@ bool Fetcher::addDocument(Result * result, const QString & doctype)
     // Here, we save the document to a temporary file, and fire ahead
     QTemporaryFile * file = result->saveToTemporaryFile();
     retval = targetCollection->importFile(doctype, file->fileName());
+    if(! retval) {
+      file->setAutoRemove(false);
+      QTextStream o(stderr);
+      o << "File failed to be parsed, keeping as " << file->fileName() << endl;
+    }
 
     /// \todo When we will be using the poppler library to parse PDF
     /// files directly, rather than spawning pdftotext which is

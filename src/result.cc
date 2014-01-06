@@ -110,6 +110,26 @@ VALUE Result::urlAccessor(VALUE v)
 			  toEncoded(QUrl::StripTrailingSlash));
 }
 
+QString Result::normalizeURL(const QString & url) const
+{
+  QUrl tst(url);
+  if(! tst.isRelative())        // Not relative, dropping
+    return url;
+  QUrl org = reply->url();
+  tst.setScheme(org.scheme());
+  tst.setHost(org.host());
+  if(org.port() >= 0)
+    tst.setPort(org.port());
+  return tst.toEncoded();
+}
+
+VALUE Result::normalizeURL(VALUE v, VALUE url)
+{
+  Result * f = fromValue(v);
+  return qStringToValue(f->normalizeURL(VALUE2QSTRING(url)));
+}
+
+
 VALUE Result::wentOK(VALUE v)
 {
   Result * f = fromValue(v);
@@ -157,6 +177,10 @@ void Result::initializeRuby(VALUE mNet)
 
   rb_define_method(cResult, "url",
   		   (VALUE (*)(...)) urlAccessor, 0);
+
+  rb_define_method(cResult, "normalize_url",
+  		   (VALUE (*)(...)) 
+                   (static_cast<VALUE (*)(VALUE, VALUE)>(&Result::normalizeURL)), 1);
 
   rb_define_method(cResult, "css",
   		   (VALUE (*)(...)) css, 1);

@@ -59,6 +59,11 @@ protected:
   /// URL !)
   static VALUE urlAccessor(VALUE obj);
 
+  /// Makes the given URL absolute (ie, leave it absolute if it was,
+  /// or if it was relative, make it absolute using the URL of the
+  /// document)
+  static VALUE normalizeURL(VALUE obj, VALUE url);
+
   /// Whether the request went fine or not.
   static VALUE wentOK(VALUE obj);
 
@@ -105,6 +110,10 @@ public:
   ///
   /// \warning initializeRuby() must have been called beforehand.
   VALUE wrapToRuby();
+
+  /// Normalizes the given URL, ie make it absolute if it is relative
+  /// to the returned page
+  QString normalizeURL(const QString & url) const;
 
   /// Saves the contents of the reply to a temporary file.
   QTemporaryFile * saveToTemporaryFile() const ;

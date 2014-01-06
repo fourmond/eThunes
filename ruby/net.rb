@@ -40,24 +40,43 @@ module Net
   # This class is defined by the C code first too.
   class Result
 
-    # Returns the links contained in the #contents of the object.
-    def links
-      lnks = []
-      contents.scan(/<a\s*([^>]*?)\s*href=['"]([^'"]+)['"]\s*([^>]*?)\s*>(.*?)<\/a>/) do |ary|
-        link = {}
-        link[:target] = $2
-        link[:name] = $4
-        link[:pre] = $1
-        link[:post] = $3
-        if link[:target] =~ /^\w+:\/\// # Absolute
-          link[:absolute_target] = link[:target]
-        else
-          link[:absolute_target] = url + "/" + link[:target]
+    # Returns a couple:
+    # * form target
+    # * all hidden input as a hash
+    #
+    # @todo Type checking
+    def form_data(id = 0)
+      form = css('form')[id]
+      tg = normalize_url(form['action'])
+      frm = {}
+      for input in form.css("input")
+        if input['type'] == 'hidden'
+          i = input['name']
+          v = input['value']
+          if i && v
+            frm[i] = v
+          end
         end
-        # TODO: rough parsing of other fields ?
-        lnks << link
       end
-      return lnks
+      return [tg, frm]
+    end
+
+
+    # Returns the hrefs of all links matching the given css attribute
+    # (don't forget the a selector !)
+    def linked_hrefs(css_selector, strip_spaces = true)
+      lnks = css(css_selector)
+      ret = []
+      for l in lnks
+        if l['href']
+          url = l['href']
+          if strip_spaces
+            url.gsub!(/\s/,'')
+          end
+          ret << normalize_url(url)
+        end
+      end
+      return ret
     end
   end
   
