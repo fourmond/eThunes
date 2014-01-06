@@ -18,8 +18,8 @@
 */
 
 
-#ifndef __RUBY_UTILS_HH
-#define __RUBY_UTILS_HH
+#ifndef __RUBY_HH
+#define __RUBY_HH
 
 /// Ruby-related functions and classes.
 ///

@@ -26,10 +26,12 @@
 VALUE Ruby::globalRescueFunction(VALUE /*dummy*/, VALUE exception)
 {
   /// \tdexception eventually, this should throw an exception
-  fprintf(stderr, "A Ruby exception occured:\n");
-  rb_p(exception);
+  fprintf(stderr, "A Ruby exception occured: %p\n", exception);
+  VALUE inspect = rb_inspect(exception);
+  fprintf(stderr, StringValueCStr(inspect));
   VALUE ct = rb_funcall2(exception, rb_intern("backtrace"), 0, NULL);
-  rb_p(ct);
+  inspect = rb_inspect(ct);
+  fprintf(stderr, StringValueCStr(inspect));
   return Qnil;
 }
 
@@ -43,6 +45,7 @@ VALUE Ruby::exceptionSafeCall(VALUE (*function)(...), void * args)
   if(error) {
     // An exception occurred, we need to handle it.
     VALUE exception = rb_gv_get("$!");
+    fprintf(stderr, "Exception: %p\n", exception);
     return Ruby::globalRescueFunction(Qnil, exception);
   }
   return ret;
@@ -222,6 +225,8 @@ VALUE Ruby::safeFuncall(VALUE tg, ID id, int number, ...)
 
 static VALUE loadFileHelper(QByteArray ar)
 {
+  // VALUE str = rb_locale_str_new_cstr((const char *) ar);
+  // rb_funcall(main, evalID, 3, str, Qnil, untrustedCodeString);
   rb_eval_string((const char*) ar);
   return Qnil;
 }
