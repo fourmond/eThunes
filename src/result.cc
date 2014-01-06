@@ -18,7 +18,7 @@
 
 #include <headers.hh>
 // Ruby-specific stuff
-#include <ruby-utils.hh>
+#include <ruby.hh>
 #include <result.hh>
 
 using namespace Ruby;

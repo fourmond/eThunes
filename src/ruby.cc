@@ -1,5 +1,5 @@
 /*
-    ruby-utils.cc: Various Ruby utility functions
+    ruby.cc: Various Ruby utility functions
     Copyright 2010 by Vincent Fourmond
 
     This program is free software; you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 */
 
 #include <headers.hh>
-#include <ruby-utils.hh>
+#include <ruby.hh>
 #include <ruby-templates.hh>
 
 #include <exceptions.hh>

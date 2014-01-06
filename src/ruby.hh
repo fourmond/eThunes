@@ -1,5 +1,5 @@
 /**
-    \file ruby-utils.hh
+    \file ruby.hh
     Various (template ?) utilities for running Ruby code.
     Copyright 2010, 2013 by Vincent Fourmond
 

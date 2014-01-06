@@ -20,7 +20,7 @@
 #include <headers.hh>
 #include <exceptions.hh>
 
-#include <ruby-utils.hh>
+#include <ruby.hh>
 
 Exception::Exception(const QString & m) throw() : 
   msg(m) {

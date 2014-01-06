@@ -20,7 +20,7 @@
 #include <collection.hh>
 #include <cabinet.hh>
 
-#include <ruby-utils.hh>
+#include <ruby.hh>
 #include <ruby-templates.hh>
 
 // for readPDF

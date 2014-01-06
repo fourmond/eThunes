@@ -22,7 +22,7 @@
 #include <cabinet.hh>
 #include <transaction.hh>
 
-#include <ruby-utils.hh>
+#include <ruby.hh>
 
 DocumentDefinition::DocumentDefinition(VALUE val) 
   : rubyObject(val)

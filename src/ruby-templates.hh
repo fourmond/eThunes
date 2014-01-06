@@ -21,7 +21,7 @@
 #ifndef __RUBY_TEMPLATES_HH
 #define __RUBY_TEMPLATES_HH
 
-#include <ruby-utils.hh>
+#include <ruby.hh>
 
 /// Argumentless callback
 class RubyCallback0  {

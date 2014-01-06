@@ -23,7 +23,7 @@
 #include <log.hh>
 #include <commandline.hh>
 
-#include <ruby-utils.hh>
+#include <ruby.hh>
 
 void loadTranslations(const QString & locale, QCoreApplication * app)
 {

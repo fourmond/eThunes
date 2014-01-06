@@ -22,7 +22,7 @@
 // Now, stuff for handlers
 #include <collection.hh>
 
-#include <ruby-utils.hh>
+#include <ruby.hh>
 // Forst listing plugins
 #include <plugin.hh>
 
