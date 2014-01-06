@@ -9,7 +9,7 @@ EOD
   document 'facture' do
     public_name 'Facture'
     display "Facture du %{date%date:d/MM/yyyy}: %{montant%A} (%{ref-client} -- %{facture})"
-    format "SFR/Facture-%{date%date:yyyy-MM}.pdf"
+    format "Facture-%{date%date:yyyy-MM}.pdf"
 
     matcher 'prelevement', 'montant', 4
 

@@ -10,7 +10,7 @@ EOD
   document 'avis-imposition' do
     public_name "Avis d'imposition"
     display "Avis d'imposition %{annee} (revenus de %{annee-concernee}), numéro fiscal %{numero-fiscal}"
-    format 'Impots/Avis-imposition-%{numero-fiscal}-%{annee}.pdf'
+    format 'Avis-imposition-%{numero-fiscal}-%{annee}.pdf'
 
     matcher 'paiment', 'montant', 15
 
@@ -68,7 +68,7 @@ EOD
   document 'taxe-habitation' do
     public_name "Taxe d'habitation"
     display "Taxe d'habitation %{annee}, numéro fiscal %{numero-fiscal}"
-    format "Impots/Taxe-habitation-%{numero-fiscal}-%{annee}.pdf"
+    format "Taxe-habitation-%{numero-fiscal}-%{annee}.pdf"
 
     matcher 'paiment', 'montant', 15
 
@@ -112,7 +112,7 @@ EOD
 
   document "accuse-reception" do
     display "Accusé de réception de déclaration %{annee} (revenus de %{annee-concernee}), numéro fiscal %{numero-fiscal}"
-    format "Impots/Accuse-reception-%{numero-fiscal}-%{annee}.pdf"
+    format "Accuse-reception-%{numero-fiscal}-%{annee}.pdf"
     public_name "Accusé de réception de déclaration (signés)"
     
     def parse(doc)
@@ -138,7 +138,7 @@ EOD
   document "declaration" do
     public_name "Déclaration de revenus"
     display "Déclaration %{annee} (revenus de %{annee-concernee}), numéro fiscal %{numero-fiscal}"
-    format "Impots/Declaration-%{numero-fiscal}-%{annee}.pdf"
+    format "Declaration-%{numero-fiscal}-%{annee}.pdf"
 
     def self.parse(doc)
       res = {}

@@ -9,7 +9,7 @@ EOD
   document 'payslip' do
     public_name "Bulletin de paie"
     display 'Bulletin de paie du %{month%date:MM/yyyy}: %{salary%A} %{fees%A}(%{employer})'
-    format 'Pajemploi/Bulletin-%{employer}-%{month%date:yyyy-MM}.pdf'
+    format 'Bulletin-%{employer}-%{month%date:yyyy-MM}.pdf'
 
     matcher 'month', 'total', 20
 

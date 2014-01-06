@@ -7,7 +7,7 @@ EOD
 
   document 'avis' do 
     display "Avis de %{mois%date:MM/yyyy} pour %{identifiant}"
-    format "Assedic/Avis-%{identifiant}-%{mois%date:yyyy-MM}.pdf"
+    format "Avis-%{identifiant}-%{mois%date:yyyy-MM}.pdf"
     public_name "Déclaration de situation"
 
     def parse(doc)
@@ -28,7 +28,7 @@ EOD
   document "paiment" do
 
     display 'Paiment du %{date%date:dd/MM/yyyy} pour %{identifiant} : %{montant%A}'
-    format 'Assedic/Paiment-%{identifiant}-%{date%date:yyyy-MM}.pdf'
+    format 'Paiment-%{identifiant}-%{date%date:yyyy-MM}.pdf'
     public_name 'Avis de paiment'
 
     matcher 'date', 'montant', 5

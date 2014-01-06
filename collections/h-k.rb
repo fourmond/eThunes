@@ -8,7 +8,7 @@ EOD
   
   document "DA" do 
     display "Droits d'auteur %{year}: %{amount%A} (date: %{date%date:d/MM/yyyy})"
-    format "H&K/DA-%{year}.pdf"
+    format "DA-%{year}.pdf"
     public_name "Droits d'auteur"
 
     def parse(doc)
