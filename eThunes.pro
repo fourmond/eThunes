@@ -11,6 +11,9 @@ VERSION = 0.0
 
 QT += xml network
 
+# QT5:
+QT +=  widgets
+
 PRECOMPILED_HEADER = src/headers.hh
 
 # Use a build/ directory for building

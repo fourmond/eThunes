@@ -214,7 +214,7 @@ QString AttributeHash::formatString(const QString & format) const
 QString AttributeHash::formatVariant(QVariant v, const QString &spec)
 {
   if(spec.size() == 1) {
-    switch(spec[0].toAscii()) {
+    switch(spec[0].toLatin1()) {
     case 'A':
       return Transaction::formatAmount(v.toLongLong());
     case 'M':
@@ -246,7 +246,7 @@ QHash<QString, AttributeHash::HandledType> AttributeHash::requiredAttributes(con
     QString spec = formatSpecifierRE.cap(2);
     if(! spec.isEmpty()) {
       if(spec.size() == 1) {
-        switch(spec[0].toAscii()) {
+        switch(spec[0].toLatin1()) {
         case 'A':
           t = Number;
           break;

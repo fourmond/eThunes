@@ -34,13 +34,13 @@ QString HTTarget::encodePointer(HTTarget * pointer)
 {
   char buffer[50];
   ::snprintf(buffer, sizeof(buffer), "%p", pointer);
-  return QString::fromAscii(buffer);
+  return QString::fromLatin1(buffer);
 }
 
 HTTarget * HTTarget::decodePointer(const QString & str)
 {
   HTTarget * ptr;
-  ::sscanf((const char *)str.toAscii(), "%p", &ptr);
+  ::sscanf((const char *)str.toLatin1(), "%p", &ptr);
   return ptr;
 }
 

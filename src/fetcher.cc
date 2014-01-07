@@ -130,12 +130,22 @@ Fetcher::OngoingRequest * Fetcher::post(const QNetworkRequest & request,
   QByteArray data;
   QUrl params;
   QNetworkRequest re = request;
+
   AttributeHash::const_iterator i = parameters.constBegin();
+#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
   while (i != parameters.constEnd()) {
     params.addQueryItem(i.key(), i.value().toString());
     i++;
   }
   data.append(params.toString());
+#else
+  QUrlQuery q;
+  while (i != parameters.constEnd()) {
+    q.addQueryItem(i.key(), i.value().toString());
+    i++;
+  }
+  data.append(q.query(QUrl::FullyEncoded).toUtf8());
+#endif
   data.remove(0,1);
 
   re.setHeader(QNetworkRequest::ContentTypeHeader,

@@ -74,6 +74,13 @@
 
 // Desktop stuff
 #include <QUrl>
+
+// Needed for post data
+#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
+#   include <QUrlQuery>
+#   include <QStandardPaths>
+#endif
+
 #include <QDesktopServices>
 
 // Non-GUI objects
@@ -89,6 +96,7 @@
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QNetworkRequest>
+#include <QNetworkCookie>
 #include <QNetworkCookieJar>
 #include <QNetworkProxy>
 

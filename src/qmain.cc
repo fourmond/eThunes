@@ -36,7 +36,13 @@ void loadTranslations(const QString & locale, QCoreApplication * app)
   translator = new QTranslator;
 
   QStringList pathes = QStringList()
-    << QDesktopServices::storageLocation(QDesktopServices::HomeLocation) +  
+    << 
+#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
+    QDesktopServices::storageLocation(QDesktopServices::HomeLocation)
+#else
+    QStandardPaths::writableLocation(QStandardPaths::HomeLocation)
+#endif
+    + 
     "/Prog/eThunes/ts"
     << "/home/vincent/Prog/eThunes/ts";
   for(int i = 0; i < pathes.size(); i++) {
