@@ -108,9 +108,12 @@ int FlowingGridLayout::computeLayout(const QRect & geom, bool doPlacement) const
 
     QLayoutItem * it = managedItems[i];
     QSize sz = it->minimumSize();
+    sz = sz.expandedTo(it->sizeHint());
     sz.setWidth(colWidth);
     if(curColHeight < sz.height())
       curColHeight = sz.height();
+    else
+      sz.setHeight(curColHeight);
     int x = inner.left() + (i % nbCols) * colWidth;
     if(doPlacement)
       it->setGeometry(QRect(QPoint(x, curY), sz));
