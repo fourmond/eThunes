@@ -115,9 +115,9 @@ Category * CategoryHash::namedSubCategory(const QString &name, bool create)
       return NULL;
 
     insert(name, Category());
-    value(name).subCategories.dumpContents(" -> ");
-    operator[](name).name = name;
-    return &operator[](name);
+    Category * cat = &operator[](name);
+    cat->name = name;
+    return cat;
   }
 }
 
@@ -136,8 +136,10 @@ void CategoryHash::dumpContents(QString prefix) const
 Category * Category::namedSubCategory(const QString &name, bool create)
 {
   Category * sub = subCategories.namedSubCategory(name, create);
-  if(sub)
-    sub->parent = this;
+  if(sub) {
+    if(! sub->parent)
+      sub->parent = this;
+  }
   return sub;
 }
 
