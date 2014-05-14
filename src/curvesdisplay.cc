@@ -43,11 +43,14 @@ CurvesDisplay::CurvesDisplay()
   bt = new QPushButton(tr("V zoom out"));
   connect(bt, SIGNAL(clicked()), SLOT(vZoomOut()));
   hl->addWidget(bt);
+  bt = new QPushButton(tr("Auto"));
+  hl->addWidget(bt);
   l1->addLayout(hl);
 
   curvesWidget = new TimeBasedWidget;
   l1->addWidget(curvesWidget);
   curvesWidget->setMinimumSize(QSize(400,200));
+  curvesWidget->connect(bt, SIGNAL(clicked()), SLOT(autoScale()));
 
 
   bt = new QPushButton(tr("Close"));

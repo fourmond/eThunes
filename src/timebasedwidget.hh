@@ -24,6 +24,7 @@ class TimeBasedCurve;
 
 /// This widget displays series of TimeBasedCurves (or apparented ?)
 class TimeBasedWidget : public QAbstractScrollArea {
+  Q_OBJECT;
 protected:
 
   /// Displayed stuff...
@@ -52,6 +53,9 @@ protected:
   /// Vertical scale
   double verticalScale;
 
+  /// The size of one X tick label
+  int tickLabelSize;
+
   /// Computes the overall size of the graph using the current
   /// horizontal and vertical scales.
   QSize computeGraphSize(bool includePadding = true) const;
@@ -64,6 +68,9 @@ protected:
 
   /// Margins around the "graph area" of the plot
   QMargins graphAreaMargins;
+
+  /// Adjusts the margins according to the size of text
+  void adjustMargins();
   
 public:
 
@@ -79,6 +86,9 @@ public slots:
 
   /// Zooms in by the given factors.
   void zoomIn(const QSizeF & zF);
+
+  /// Autoscale
+  void autoScale();
 
 
 };

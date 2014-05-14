@@ -34,6 +34,9 @@ QAbstractScrollArea(w), graphAreaMargins(80,5,5,20)
 {
   pixelPerDay = 2;
   padding = 5;
+  tickLabelSize = 70;
+
+  
 }
 
 static QRect adjustedRect(const QRect & r, const QMargins & m)
@@ -149,7 +152,7 @@ static QList<QDate> pickXAxisLocation(const QDate & left,
     return ticks;
   }
 
-  if(nbDays <= 100) {            // Each quarter
+  if(nbDays <= 90) {            // Each quarter
     QDate l = left.addDays(-(left.day() - 1));
     l = l.addMonths(-((l.month()-1) % 3));
     while(l < right) {
@@ -167,6 +170,20 @@ static QList<QDate> pickXAxisLocation(const QDate & left,
     l = l.addYears(1);
   }
   return ticks;
+}
+
+void TimeBasedWidget::adjustMargins()
+{
+  QString str = Transaction::formatAmount(min);
+  QFontMetrics met(font());
+  int sz = met.width(str);
+  str = Transaction::formatAmount(max);
+  sz = std::max(sz, met.width(str));
+  graphAreaMargins.setLeft(sz*1.1);
+  QRect br = met.boundingRect(earliest.toString());
+  sz = br.height();
+  tickLabelSize = br.width();
+  graphAreaMargins.setBottom(sz*1.1);
 }
 
 void TimeBasedWidget::paintEvent(QPaintEvent * ev)
@@ -188,9 +205,11 @@ void TimeBasedWidget::paintEvent(QPaintEvent * ev)
   QSize gs = computeGraphSize();
   int vertPos = verticalScrollBar()->value();
 
-  double ymin = min + verticalScale * (gs.height() - vertPos -
+  int ht = std::max(gs.height(), graphRect.height());
+
+  double ymin = min + verticalScale * (ht - vertPos -
                                        graphRect.height());
-  double ymax = min + verticalScale * (gs.height() - vertPos);
+  double ymax = min + verticalScale * (ht - vertPos);
   pickMajorTicksLocation(ymin, ymax, &tick, 40 * verticalScale, 
                          &fact, &firstTick, &lastTick, &nbTicks);
 
@@ -198,7 +217,7 @@ void TimeBasedWidget::paintEvent(QPaintEvent * ev)
   QDate left = earliest.addDays(horizontalScrollBar()->value() / pixelPerDay);
   int width = graphRect.width();
   QDate right = left.addDays(width/pixelPerDay);
-  int number = width/70;       // 100 pixels for each date
+  int number = width/(tickLabelSize*1.2);       // 100 pixels for each date
   QList<QDate> axisDates = pickXAxisLocation(left, right, number);
   QList<int> datePositions;
 
@@ -230,15 +249,13 @@ void TimeBasedWidget::paintEvent(QPaintEvent * ev)
       p.setPen(pen);
       for(int i = 0; i < nbTicks; i++) {
         int pos = (firstTick - min + i * tick)/verticalScale;
-        p.drawLine(0, -pos, gs.width(), -pos);
+        p.drawLine(0, -pos, width, -pos);
       }
 
       for(int i = 0; i < datePositions.size(); i++)
         p.drawLine(datePositions[i], 5, datePositions[i], 
                    -graphRect.height() - ybase);
 
-      // Horizontal lines to come...
-      
       p.restore();
     }
 
@@ -323,6 +340,7 @@ void TimeBasedWidget::addCurve(TimeBasedCurve * curve)
   verticalScale = (max - min)/(s.height() - padding * 2); // 10, and what ?
 
   curves << curve;
+  adjustMargins();
   updateSliders();
 }
 
@@ -376,6 +394,18 @@ void TimeBasedWidget::zoomIn(const QSizeF & zF)
 {
   verticalScale /= zF.height();
   pixelPerDay *= zF.width();
+  updateSliders();
+  viewport()->update();
+}
+
+void TimeBasedWidget::autoScale()
+{
+  int delta = max - min;
+  QSize sz = adjustedSize(maximumViewportSize(), graphAreaMargins);
+  verticalScale = delta  *1.1/ sz.height();
+  delta = earliest.daysTo(latest);
+  pixelPerDay = sz.width()*0.96/delta;
+
   updateSliders();
   viewport()->update();
 }
