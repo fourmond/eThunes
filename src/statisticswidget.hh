@@ -67,6 +67,10 @@ public slots:
 
 
   void setPeriod(int nb);
+
+  /// shows the curves corresponding to the current display. (not
+  /// limiting the number of displayed stuff)
+  void showCurves();
 };
 
 

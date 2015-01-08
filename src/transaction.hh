@@ -399,6 +399,10 @@ public:
 
   Transaction();
 
+  /// Creates a dummy transaction at the given date with the given
+  /// balance.
+  Transaction(const QDate & date, int balance);
+
   /// Dump debug output about the transaction to the given stream
   void dump(QIODevice *);
 

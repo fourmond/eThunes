@@ -87,6 +87,16 @@ public:
   virtual int monthNumber() const {
     return 1;
   };
+
+  /// Date for the numbered item. Used for making transaction lists
+  /// (for display purposes)
+  virtual QDate dateOfBucket(int id) const;
+
+
+  /// Returns a category name -> TransactionList hash that can be used
+  /// for display purposes (and that wouldn't be much use else
+  /// anyway...)
+  QHash<QString, TransactionList> listsForDisplay() const;
 };
 
 
@@ -138,6 +148,10 @@ public:
 
   virtual int monthNumber() const {
     return 12;
+  };
+
+  virtual QDate dateOfBucket(int id) const {
+    return QDate(id, 1, 1);     // First of january of the year
   };
 };
 

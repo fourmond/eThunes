@@ -97,3 +97,4 @@ void AccountPage::displayBalance()
   dlg->displayBalance(& account->transactions);
   dlg->show();
 }
+

@@ -20,6 +20,7 @@
 #include <statisticswidget.hh>
 
 #include <cabinet.hh>
+#include <curvesdisplay.hh>
 
 StatisticsWidget::StatisticsWidget(Cabinet * c) : 
   cabinet(c), maxDisplayed(6)
@@ -62,6 +63,10 @@ StatisticsWidget::StatisticsWidget(Cabinet * c) :
 
   layout->addLayout(horiz);
 
+  QPushButton * bt = new QPushButton(tr("Curves"));
+  connect(bt, SIGNAL(clicked()), SLOT(showCurves()));
+  horiz->addWidget(bt);
+
   
   display = new HTDisplay();
   layout->addWidget(display);
@@ -99,4 +104,29 @@ void StatisticsWidget::setDisplayed(int nb)
 void StatisticsWidget::setPeriod(int /*nb*/)
 {
   update();
+}
+
+void StatisticsWidget::showCurves()
+{
+  if(cabinet->wallet.accounts.size() > 0) {
+    // We pick the one with the most transactions:
+    Account * account = NULL;
+    for(int i = 0; i < cabinet->wallet.accounts.size(); i++) {
+      if( ( ! account) ||
+          account->transactions.size() < 
+          cabinet->wallet.accounts[i].transactions.size())
+        account = &cabinet->wallet.accounts[i];
+    }
+    CurvesDisplay * dlg = new CurvesDisplay();
+    Statistics s(account->transactions.toPtrList(),
+                 topLevel->isChecked());
+    int l = timeFrame->itemData(timeFrame->currentIndex()).toInt();
+    QHash<QString, TransactionList> all = s.stats[l]->listsForDisplay();
+
+    for(QHash<QString, TransactionList>::iterator i = all.begin();
+        i != all.end(); i++) {
+      dlg->displayBalance(&i.value());
+    }
+    dlg->show();
+  }
 }

@@ -55,6 +55,31 @@ PeriodicCategorizedStatistics::PeriodicCategorizedStatistics(Account * ac) {
   wallet = (account ? account->wallet : NULL);
 }
 
+QDate PeriodicCategorizedStatistics::dateOfBucket(int id) const
+{
+  return Transaction::dateFromID(id);
+}
+
+/// @todo Using TransactionList for that really isn't the right thing
+/// to do !
+QHash<QString, TransactionList> PeriodicCategorizedStatistics::listsForDisplay() const
+{
+  QHash<QString, TransactionList> ret;
+  QList<int> ks = keys();
+  qSort(ks);
+
+  for(int i = 0; i < ks.size(); i++) {
+    QList<CategorizedStatistics::Item> lst = value(ks[i]).categorize();
+    for(int j = 0; j < lst.size(); j++) {
+      ret[lst[j].category].
+        append(Transaction(dateOfBucket(ks[i]), lst[j].amount));
+    }
+  }
+  return ret;
+}
+
+
+
 //////////////////////////////////////////////////////////////////////
 
 void CategorizedMonthlyStatistics::addTransaction(const AtomicTransaction * t, 

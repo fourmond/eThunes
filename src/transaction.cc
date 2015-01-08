@@ -182,6 +182,18 @@ Transaction::Transaction() :
   watchChild(&subTransactions, "sub-transactions");
 }
 
+Transaction::Transaction(const QDate & dt, int bl) :
+  date(dt),
+  checkNumber(""),
+  locked(true),
+  recent(false),
+  balance(bl),
+  balanceMeaningful(true),
+  account(NULL)
+{
+  watchChild(&subTransactions, "sub-transactions");
+}
+
 bool Transaction::operator<(const Transaction & t) const
 {
   if(date != t.date)
