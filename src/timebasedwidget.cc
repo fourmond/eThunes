@@ -337,7 +337,7 @@ void TimeBasedWidget::addCurve(TimeBasedCurve * curve)
 
   // QSize s = viewport()->size(); // Not sure the viewport is defined now.
   QSize s = size();
-  verticalScale = (max - min)/(s.height() - padding * 2); // 10, and what ?
+  verticalScale = (max - min + 1.0)/(s.height() - padding * 2); // 10, and what ?
 
   curves << curve;
   adjustMargins();
@@ -355,7 +355,7 @@ TimeBasedWidget::~TimeBasedWidget()
 QSize TimeBasedWidget::computeGraphSize(bool includePadding) const
 {
   QSize sz(earliest.daysTo(latest) * pixelPerDay, 
-           (max - min) / verticalScale);
+           (max - min + 1) / verticalScale);
   if(includePadding)
     sz += QSize(padding * 2, padding * 2);
   return sz;
@@ -402,7 +402,7 @@ void TimeBasedWidget::autoScale()
 {
   int delta = max - min;
   QSize sz = adjustedSize(maximumViewportSize(), graphAreaMargins);
-  verticalScale = delta  *1.1/ sz.height();
+  verticalScale = (delta+1.0)  *1.1/ sz.height();
   delta = earliest.daysTo(latest);
   pixelPerDay = sz.width()*0.96/delta;
 
