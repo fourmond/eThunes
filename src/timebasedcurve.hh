@@ -93,6 +93,9 @@ public:
 
   CurveStyle style;
 
+  /// Wether the curve is visible or not.
+  bool visible;
+
   TimeBasedCurve(const CurveStyle & style = CurveStyle());
 
   /// Adds the given point
@@ -123,6 +126,8 @@ public:
   /// @a yOrigin corresponds to the point where is the Y = 0 in the
   /// coordinates. This means that translations probably should happen
   /// before that...
+  ///
+  /// Does nothing if the curve is not visible.
   void paint(QPainter * dest, const QDate & origin, double pixelPerDay,
              double yOrigin, double yScale);
   

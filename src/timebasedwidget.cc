@@ -409,3 +409,23 @@ void TimeBasedWidget::autoScale()
   updateSliders();
   viewport()->update();
 }
+
+int TimeBasedWidget::number()
+{
+  return curves.size();
+}
+
+void TimeBasedWidget::show(int id, bool visible)
+{
+  if(id >= 0 && id < number()) {
+    if(curves[id]->visible != visible) { 
+      curves[id]->visible = visible;
+      viewport()->update();
+    }
+  }
+}
+
+QColor TimeBasedWidget::nextColor()
+{
+  return QColor::fromHsv(number() * 111 % 360, 225 + 25 * (number() % 3 - 1), 200);
+}

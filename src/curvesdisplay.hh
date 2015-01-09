@@ -42,6 +42,10 @@ protected:
 
   TimeBasedCurve * balanceForTransactionList(const TransactionList * transactions);
 
+  QVBoxLayout * checkBoxes;
+
+  QButtonGroup * cbGroup;
+
 public:
   CurvesDisplay();
 
@@ -49,10 +53,13 @@ public:
 
 public slots:
 
-  /// Setup the display to show the balance
-  void displayBalance(const TransactionList * transactions, 
-                      const QColor & col = QColor("red"));
+  void addCurve(TimeBasedCurve * c, QString str = "");
 
+  /// Setup the display to show the balance
+  void displayBalance(const TransactionList * transactions,
+                      const QString & str = "",
+                      QColor col = QColor());
+  
   /// Setup the display to show the overall balance
   void displayBalance(const Wallet * wallet, 
                       const QColor & col = QColor("red"));
@@ -68,6 +75,8 @@ protected slots:
   void hZoomOut(double fact = 2);
   void vZoomIn(double fact = 2);
   void vZoomOut(double fact = 2);
+
+  void cbClicked(int id);
 
 };
 

@@ -79,6 +79,12 @@ public:
 
   virtual ~TimeBasedWidget();
 
+  /// Current number of curves
+  int number();
+
+  /// Goes through the color wheel and return reasonable things ?
+  QColor nextColor();
+
 public slots:
   /// Adds the given curve and updates the widget's size.
   void addCurve(TimeBasedCurve * curve);
@@ -90,6 +96,8 @@ public slots:
   /// Autoscale
   void autoScale();
 
+  /// Shows or hides the given curve
+  void show(int id, bool visible = true);
 
 };
 

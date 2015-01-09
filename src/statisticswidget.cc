@@ -125,7 +125,7 @@ void StatisticsWidget::showCurves()
 
     for(QHash<QString, TransactionList>::iterator i = all.begin();
         i != all.end(); i++) {
-      dlg->displayBalance(&i.value());
+      dlg->displayBalance(&i.value(), i.key());
     }
     dlg->show();
   }

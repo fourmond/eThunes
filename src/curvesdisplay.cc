@@ -47,11 +47,22 @@ CurvesDisplay::CurvesDisplay()
   hl->addWidget(bt);
   l1->addLayout(hl);
 
+  hl = new QHBoxLayout();
   curvesWidget = new TimeBasedWidget;
-  l1->addWidget(curvesWidget);
+  hl->addWidget(curvesWidget);
   curvesWidget->setMinimumSize(QSize(400,200));
   curvesWidget->connect(bt, SIGNAL(clicked()), SLOT(autoScale()));
 
+  // Legends of the curves...
+  checkBoxes = new QVBoxLayout();
+  checkBoxes->addWidget(new QLabel(tr("<b>Legend</b>")));
+
+  hl->addLayout(checkBoxes);
+  cbGroup = new QButtonGroup;
+  cbGroup->setExclusive(false);
+  connect(cbGroup, SIGNAL(buttonClicked(int)), SLOT(cbClicked(int)));
+
+  l1->addLayout(hl);
 
   bt = new QPushButton(tr("Close"));
   connect(bt, SIGNAL(clicked()), SLOT(close()));
@@ -86,12 +97,15 @@ TimeBasedCurve * CurvesDisplay::balanceForTransactionList(const TransactionList 
 }
 
 
-void CurvesDisplay::displayBalance(const TransactionList * transactions, 
-                                   const QColor & col)
+void CurvesDisplay::displayBalance(const TransactionList * transactions,
+                                   const QString & str,
+                                   QColor col)
 {
   TimeBasedCurve * c = balanceForTransactionList(transactions);
-  c->style = CurveStyle(QColor(col));
-  curvesWidget->addCurve(c);
+  if(! col.isValid())
+    col = curvesWidget->nextColor();
+  c->style = CurveStyle(col);
+  addCurve(c, str);
 }
 
 // We do two years
@@ -106,7 +120,22 @@ void CurvesDisplay::displayBalance(const Wallet * w,
     (*c) << DataPoint(i, w->balance(i));
     i = i.addDays(1);
   }
+  addCurve(c);
+}
+
+void CurvesDisplay::addCurve(TimeBasedCurve * c, QString str)
+{
+  int id = curvesWidget->number();
   curvesWidget->addCurve(c);
+  if(str.isEmpty())
+    str = QString("Data %1").arg(id + 1);
+  QPixmap px(20,20);
+  px.fill(c->style.brush.color());
+  QCheckBox * cb = new QCheckBox(str);
+  cb->setChecked(true);
+  cb->setIcon(QIcon(px));
+  checkBoxes->addWidget(cb);
+  cbGroup->addButton(cb, id);
 }
 
 /// @todo Fix this !
@@ -122,7 +151,7 @@ void CurvesDisplay::displayAllBalances(const Wallet * w)
     TimeBasedCurve * c = 
       balanceForTransactionList(&(w->accounts[i].transactions));
     c->style = CurveStyle(QColor(colors[nb++ % nbColors]));
-    curvesWidget->addCurve(c);
+    addCurve(c);
     curves << c->curveData();
   }
 
@@ -178,7 +207,7 @@ void CurvesDisplay::displayAllBalances(const Wallet * w)
     }
     running = next;
   }
-  curvesWidget->addCurve(c);
+  addCurve(c);
 }
 
 
@@ -208,4 +237,7 @@ void CurvesDisplay::vZoomOut(double fact)
   curvesWidget->zoomIn(QSizeF(1, 1/fact));
 }
 
-
+void CurvesDisplay::cbClicked(int id)
+{
+  curvesWidget->show(id, cbGroup->button(id)->isChecked());
+}

@@ -56,7 +56,7 @@ CurveStyle::CurveStyle(const QColor &c)
 //////////////////////////////////////////////////////////////////////
 
 TimeBasedCurve::TimeBasedCurve(const CurveStyle & s) : 
-  isSorted(false), style(s)
+  isSorted(false), style(s), visible(true)
 {
 }
 
@@ -110,6 +110,8 @@ void TimeBasedCurve::paint(QPainter * dest, const QDate & origin,
                            double pixelPerDay, double yOrg, 
                            double yScale)
 {
+  if(!visible)
+    return;
   dest->save();
   dest->setPen(style.pen);
 
