@@ -71,7 +71,7 @@ EOD
         'debutMoisPeriode' => '01',
         'debutAnneePeriode' => '2005',
         'finMoisPeriode' => '12',
-        'finAnneePeriode' => '2013',
+        'finAnneePeriode' => Time.now.year.to_s,
         'typeActivite' => 'A'
       }
       stuff = fetcher.post("https://www.pajemploi.urssaf.fr/pajeweb/attesemploisala.jsp", a)
