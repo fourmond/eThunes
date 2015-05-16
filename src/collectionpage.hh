@@ -61,6 +61,12 @@ protected:
   /// A correspondance Collection* -> CollectionPage
   static QHash<Collection *, CollectionPage *> collectionPages;
 
+  /// The scroll area holding the elements.
+  ///
+  /// @todo incoporate that to NavigationPage or to a subclass to have
+  /// auto scrolling.
+  QScrollArea * scrollArea;
+
 public:
 
   CollectionPage(Collection * c);
@@ -95,6 +101,10 @@ protected slots:
   /// Show where all documents should go
   void fileCheckup();
 
+protected:
+  /// Updates the scroll area size
+  void resizeArea();
+  virtual void resizeEvent(QResizeEvent * event);
 };
 
 #endif

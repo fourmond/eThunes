@@ -33,10 +33,17 @@ static bool compareDefinitions(DocumentDefinition * a, DocumentDefinition * b)
 }
 
 
+
 CollectionPage::CollectionPage(Collection * c) : collection(c)
 {
-  QVBoxLayout * layout = new QVBoxLayout(this);
+  
+  QVBoxLayout * to = new QVBoxLayout(this);
+  scrollArea = new QScrollArea;
+  to->addWidget(scrollArea);
+  scrollArea->setWidget(new QWidget);
 
+  QVBoxLayout * layout = new QVBoxLayout(scrollArea->widget());
+  
   summary = new HTLabel;
 
   layout->addWidget(summary);
@@ -65,6 +72,21 @@ CollectionPage::CollectionPage(Collection * c) : collection(c)
   updateContents();
 }
 
+void CollectionPage::resizeArea()
+{
+  QSize sz = scrollArea->size();
+  QSize sz2 = scrollArea->verticalScrollBar()->sizeHint();
+  QSize sz3 = scrollArea->sizeHint();
+  int width = sz.width() - sz2.width() - sz3.width() - 5; // why 5 ??
+
+  int height = scrollArea->widget()->heightForWidth(width);
+  scrollArea->widget()->resize(width, height);
+}
+
+void CollectionPage::resizeEvent(QResizeEvent * /*event*/)
+{
+  resizeArea();
+}
 
 CollectionPage::~CollectionPage()
 {
@@ -106,6 +128,8 @@ void CollectionPage::updateContents()
   for(QHash<DocumentDefinition * , QList<Document *> >::const_iterator i =
         dd.constBegin(); i != dd.constEnd(); i++)
     documentWidgets[i.key()]->showDocuments(i.value());
+
+  resizeArea();
 }
 
 CollectionPage * CollectionPage::getCollectionPage(Collection * collection)
