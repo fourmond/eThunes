@@ -25,7 +25,7 @@ OBJECTS_DIR = build
 QMAKE_CXXFLAGS += -Werror=return-type 
 
 # We use poppler
-LIBS += -lpoppler-qt4
+LIBS += -lpoppler-qt5
 
 # You can specify the full path of ruby on the command-line using:
 # qmake RUBY=/usr/local/ruby1.8/bin/ruby

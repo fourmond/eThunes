@@ -127,7 +127,7 @@
 #include <ruby.h>
 
 // Poppler classes
-#include <poppler/qt4/poppler-qt4.h>
+#include <poppler/qt5/poppler-qt5.h>
 
 
 #endif
