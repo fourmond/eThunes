@@ -35,10 +35,10 @@ Cabinet::Cabinet() : dirty(false)
 SerializationAccessor * Cabinet::serializationAccessor()
 {
   SerializationAccessor * ac = new SerializationAccessor(this);
-  ac->addAttribute("wallet", &wallet);
-  ac->addListAttribute("collection", &collections);
   ac->addAttribute("plugin",
 		   new SerializationPointerQList<Plugin>(&plugins));
+  ac->addAttribute("wallet", &wallet);
+  ac->addListAttribute("collection", &collections);
   return ac;
 }
 

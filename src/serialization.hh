@@ -56,6 +56,8 @@ public:
   virtual void readXML(QXmlStreamReader * reader) = 0;
 
   /// Whether the given attribute could be written as XML attribute
+  ///
+  /// This value is only read at 
   virtual bool isXMLAttribute() { return false;};
 
   /// Reads from String. Must be reimplemented if isXMLAttribute can
@@ -243,11 +245,29 @@ public:
   /// Generic pointer to the target ?
   Serializable * target;
 
+
+  /// True XML attributes, in the order in which they were added to
+  /// the accessor.
+  QStringList trueAttributes;
+
+  /// Other attributes, in the order in which they were given.
+  QStringList otherAttributes;
+
+  
+
   /// This hash holds all the attributes, whether they be simple
   /// objects or complex attributes.
   QHash<QString, SerializationAttribute *> attributes;
 
+  
+
   /// Adds an attribute for this object.
+  ///
+  /// The attributes will be written in the order in which they are
+  /// given, with the exception that true attributes (for which
+  /// SerializationAttribute::isXMLAttribute) is true at the time to
+  /// the call to addAttribute are written first (keeping the original
+  /// order among them), and then the other attributes.
   void addAttribute(QString name, SerializationAttribute * ser);
 
   /// Adds a scalar attribute using SerializationItemScalar<T>. The

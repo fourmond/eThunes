@@ -50,11 +50,11 @@ void Wallet::importAccountData(const OFXImport & data, bool runFilters)
 SerializationAccessor * Wallet::serializationAccessor()
 {
   SerializationAccessor * ac = new SerializationAccessor(this);
+  ac->addHashAttribute("category", &categories);
+  ac->addHashAttribute("tag", &tags);
   ac->addListAttribute("account", &accounts);
   ac->addListAttribute("group", &accountGroups);
   ac->addListAttribute("filter", &filters);
-  ac->addHashAttribute("category", &categories);
-  ac->addHashAttribute("tag", &tags);
   return ac;
 }
 

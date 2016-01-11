@@ -125,6 +125,10 @@ void SerializationAccessor::addAttribute(QString name,
 					 SerializationAttribute * ser)
 {
   attributes[name] = ser;
+  if(ser->isXMLAttribute())
+    trueAttributes << name;
+  else
+    otherAttributes << name;
 }
 
 
@@ -155,16 +159,6 @@ void SerializationAccessor::writeXML(const QString & name,
   if(target)
     target->prepareSerializationWrite();
   writer->writeStartElement(name);
-  QStringList trueAttributes; // = XML attributes
-  QStringList otherAttributes; // = more complex ones ?
-  QHashIterator<QString, SerializationAttribute *> i(attributes);
-  while (i.hasNext()) {
-    i.next();
-    if(i.value()->isXMLAttribute())
-      trueAttributes << i.key();
-    else
-      otherAttributes << i.key();
-  }
 
   for(int i = 0; i < trueAttributes.size(); i++)
     attributes.value(trueAttributes[i])->writeXML(trueAttributes[i], writer);
