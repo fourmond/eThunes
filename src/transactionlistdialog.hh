@@ -62,7 +62,7 @@ public slots:
   /// necessary for the delegate for the Category column; it is taken
   /// from the first transaction if it is NULL (which means no
   /// delegate is created for Category edition)
-  void displayList(const TransactionPtrList & list, const QString & label);
+  void displayList(const TransactionPtrList & list, const QString & label, bool multiAccounts = false);
 
   /// Displays the checks of the given account.
   void displayChecks(Account * account);
@@ -78,10 +78,19 @@ public slots:
   void displayMonthlyTransactions(Account * account, int monthID, 
                                   int number = 1);
 
+  void displayMonthlyTransactions(const QList<Account *> accounts,
+                                  int monthID, 
+                                  int number = 1);
+
   /// Displays the transactions for the given Month and the given
   /// account.
   void displayMonthlyCategoryTransactions(Category * category,
                                           Account * account, 
+                                          int monthID, 
+                                          int number = 1);
+
+  void displayMonthlyCategoryTransactions(Category * category,
+                                          const QList<Account *> & account, 
                                           int monthID, 
                                           int number = 1);
 
@@ -101,6 +110,11 @@ public:
   static void showMonthlyTransactions(Account * account, int monthID, 
                                       int number = 1);
 
+  /// same as above, but displays all the given accounts...
+  static void showMonthlyTransactions(QList<Account *> accounts,
+                                      int monthID, 
+                                      int number = 1);
+
   /// Displays the transactions for the given Month and the given
   /// account.
   static void showMonthlyCategoryTransactions(Category * category,
@@ -109,6 +123,10 @@ public:
 
   static void showMonthlyCategoryTransactions(Category * category,
                                               Account * account, 
+                                              int monthID, int number);
+
+  static void showMonthlyCategoryTransactions(Category * category,
+                                              QList<Account *> accounts, 
                                               int monthID, int number);
 
 

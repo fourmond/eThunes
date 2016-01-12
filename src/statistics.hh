@@ -61,12 +61,12 @@ public:
 class PeriodicCategorizedStatistics : 
   public QHash<int, CategorizedStatistics> {
 protected:
-  Account * account;
+  QList<Account *> accounts;
 
   Wallet * wallet;
 public:
 
-  PeriodicCategorizedStatistics(Account * ac);
+  PeriodicCategorizedStatistics(const QList<Account *> &ac);
   virtual ~PeriodicCategorizedStatistics() {;};
 
   /// Adds a Transaction to the statistics.
@@ -104,7 +104,7 @@ public:
 class CategorizedMonthlyStatistics : public PeriodicCategorizedStatistics {
 public:
 
-  CategorizedMonthlyStatistics(Account * ac) : 
+  CategorizedMonthlyStatistics(const QList<Account *> &ac) : 
     PeriodicCategorizedStatistics(ac) {;};
   virtual void addTransaction(const AtomicTransaction * t, 
                               bool topLevel = true);
@@ -118,7 +118,7 @@ public:
 /// month.
 class CategorizedTrimesterStatistics : public PeriodicCategorizedStatistics {
 public:
-  CategorizedTrimesterStatistics(Account * ac) : 
+  CategorizedTrimesterStatistics(const QList<Account *> &ac) : 
     PeriodicCategorizedStatistics(ac) {;};
 
   virtual void addTransaction(const AtomicTransaction * t, 
@@ -137,7 +137,7 @@ public:
 /// Trimester-based statistics. The hash is the year
 class CategorizedYearlyStatistics : public PeriodicCategorizedStatistics {
 public:
-  CategorizedYearlyStatistics(Account * ac) : 
+  CategorizedYearlyStatistics(const QList<Account *>& ac) : 
     PeriodicCategorizedStatistics(ac) {;};
   virtual void addTransaction(const AtomicTransaction * t, 
                               bool topLevel = true);

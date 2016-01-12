@@ -184,6 +184,7 @@ public:
     DateColumn,
     AmountColumn,
     CategoryColumn,
+    AccountNameColumn,
     NameColumn,
     BalanceColumn,
     LinksColumn,
@@ -193,11 +194,6 @@ public:
     CommentColumn,              // 
     LastColumn
   };
-
-  /// Returns the account that corresponds to the transactions (or
-  /// NULL if there are no transactions).
-  Account * account() const;
-
 
   /// Returns the QModelIndex corresponding to the given transaction
   QModelIndex index(Transaction * transaction);

@@ -47,6 +47,13 @@ static QVariant transactionData(AtomicTransaction * t,
         return QVariant(Transaction::formatAmount(t->getBalance()));
       else
         return QVariant();
+    case AccountModel::AccountNameColumn: {
+      Account * ac = t->getAccount();
+      if(ac)
+        return QVariant(ac->name());
+      else
+        return QVariant();
+    }
     case AccountModel::NameColumn: return QVariant(t->getName());
     case AccountModel::CategoryColumn: return QVariant(t->categoryName());
     case AccountModel::TagsColumn: return QVariant(t->tagString());
@@ -386,6 +393,7 @@ QVariant BaseTransactionListItem::headerData(int section,
     case AccountModel::DateColumn: return QVariant(tr("Date"));
     case AccountModel::AmountColumn: return QVariant(tr("Amount"));
     case AccountModel::BalanceColumn: return QVariant(tr("Balance"));
+    case AccountModel::AccountNameColumn: return QVariant(tr("Account"));
     case AccountModel::NameColumn: return QVariant(tr("Name"));
     case AccountModel::LinksColumn: return QVariant(tr("Links"));
     case AccountModel::MemoColumn: return QVariant(tr("Memo"));
@@ -593,15 +601,6 @@ AccountModel::AccountModel(TransactionPtrList * t) :
   OOModel(NULL), transactions(NULL), transactionsPtr(t)
 {
   setList(t);
-}
-
-Account * AccountModel::account() const
-{
-
-  BaseTransactionListItem * it = rootItem();
-  if(it)
-    return it->account();
-  return NULL;
 }
 
 QModelIndex AccountModel::index(Transaction * transaction)

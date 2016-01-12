@@ -50,6 +50,10 @@ void TransactionListWidget::showTransactions(TransactionList *transactions)
     model = new AccountModel(transactions);
   else
     model->setList(transactions);
+  QSet<Account * > acs;
+  for(int i = 0; i < transactions->size(); i++)
+    acs << transactions->value(i).getAccount();
+  accounts = acs.toList();
   setupTreeView(true);
 }
 
@@ -59,6 +63,11 @@ void TransactionListWidget::showTransactions(TransactionPtrList *transactions)
     model = new AccountModel(transactions);
   else
     model->setList(transactions);
+  QSet<Account * > acs;
+  for(int i = 0; i < transactions->size(); i++)
+    acs << transactions->value(i)->getAccount();
+  accounts = acs.toList();
+
   setupTreeView();
 
   // By default, we hide the balance, as it usually doesnt make sense
@@ -111,6 +120,7 @@ void TransactionListWidget::setupTreeView(bool decorate)
 
   /// This is a must.
   view->setAlternatingRowColors(true);
+  hideAccountName();
 
   onItemExpanded(root);
   // We make sure the columns have the right size.
@@ -335,19 +345,31 @@ void TransactionListWidget::contextMenuActionFired(QAction * action)
   
 Wallet * TransactionListWidget::wallet() const
 {
-  if(model->account())
-    return model->account()->wallet;
+  if(accounts.size() > 0 && accounts.first())
+    return accounts.first()->wallet;
   return NULL;
 }
 
 void TransactionListWidget::showBalance() 
 {
   view->showColumn(AccountModel::BalanceColumn);
+  view->resizeColumnToContents(AccountModel::BalanceColumn);
 }
 
 void TransactionListWidget::hideBalance() 
 {
   view->hideColumn(AccountModel::BalanceColumn);
+}
+
+void TransactionListWidget::showAccountName() 
+{
+  view->showColumn(AccountModel::AccountNameColumn);
+  view->resizeColumnToContents(AccountModel::AccountNameColumn);
+}
+
+void TransactionListWidget::hideAccountName() 
+{
+  view->hideColumn(AccountModel::AccountNameColumn);
 }
 
 void TransactionListWidget::onItemExpanded(const QModelIndex & idx)

@@ -50,9 +50,10 @@ QList<CategorizedStatistics::Item> CategorizedStatistics::categorize() const
 //////////////////////////////////////////////////////////////////////
 
 
-PeriodicCategorizedStatistics::PeriodicCategorizedStatistics(Account * ac) {
-  account = ac;
-  wallet = (account ? account->wallet : NULL);
+PeriodicCategorizedStatistics::PeriodicCategorizedStatistics(const QList<Account *>& ac) :
+  accounts(ac)
+{
+  wallet = (accounts.size() > 0 && accounts.first() ? accounts.first()->wallet : NULL);
 }
 
 QDate PeriodicCategorizedStatistics::dateOfBucket(int id) const
@@ -94,7 +95,7 @@ QString CategorizedMonthlyStatistics::elementName(int id) const
   return HTTarget::
     linkToFunction(Utils::monthName(Transaction::dateFromID(id), false),
                    &TransactionListDialog::showMonthlyTransactions,
-                   account, id);
+                   accounts, id, 1);
 }
 
 QString CategorizedMonthlyStatistics::categoryName(int id,
@@ -105,7 +106,7 @@ QString CategorizedMonthlyStatistics::categoryName(int id,
     linkToFunction(disp.isEmpty() ? name : disp,
                    &TransactionListDialog::showMonthlyCategoryTransactions,
                    wallet->namedCategory(name),
-                   account, id);
+                   accounts, id, 1);
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -126,7 +127,7 @@ QString CategorizedTrimesterStatistics::elementName(int id) const
                    " - " +
                    Utils::monthName(Transaction::dateFromID(id + 2), false),
                    &TransactionListDialog::showMonthlyTransactions,
-                   account, id, 3);
+                   accounts, id, 3);
 }
 
 QString CategorizedTrimesterStatistics::categoryName(int id,
@@ -137,7 +138,7 @@ QString CategorizedTrimesterStatistics::categoryName(int id,
     linkToFunction(disp.isEmpty() ? name : disp,
                    &TransactionListDialog::showMonthlyCategoryTransactions,
                    wallet->namedCategory(name),
-                   account, id, 3);
+                   accounts, id, 3);
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -154,7 +155,7 @@ QString CategorizedYearlyStatistics::elementName(int id) const
   return HTTarget::
     linkToFunction(QString::number(id),
                    &TransactionListDialog::showMonthlyTransactions,
-                   account, id*12, 12);
+                   accounts, id*12, 12);
 }
 
 QString CategorizedYearlyStatistics::categoryName(int id,
@@ -165,21 +166,23 @@ QString CategorizedYearlyStatistics::categoryName(int id,
     linkToFunction(disp.isEmpty() ? name : disp,
                    &TransactionListDialog::showMonthlyCategoryTransactions,
                    wallet->namedCategory(name),
-                   account, id*12, 12);
+                   accounts, id*12, 12);
 }
 
 //////////////////////////////////////////////////////////////////////
 
 Statistics::Statistics(const TransactionPtrList & lst, bool topLevel)
 {
-  if(lst.size() > 0) 
-    account = lst.first()->getAccount();
-  else
-    account = NULL;
-
-  stats << new CategorizedMonthlyStatistics(account); 
-  stats << new CategorizedTrimesterStatistics(account);
-  stats << new CategorizedYearlyStatistics(account);
+  QSet<Account *> acs;
+  for(int i = 0; i < lst.size(); i++) {
+    Account * ac = lst[i]->getAccount();
+    if(ac)
+      acs << ac;
+  }
+        
+  stats << new CategorizedMonthlyStatistics(acs.toList()); 
+  stats << new CategorizedTrimesterStatistics(acs.toList());
+  stats << new CategorizedYearlyStatistics(acs.toList());
 
   for(int i = 0; i < lst.size(); i++)
     for(int j = 0; j < stats.size(); j++)

@@ -76,16 +76,11 @@ StatisticsWidget::StatisticsWidget(Cabinet * c) :
 void StatisticsWidget::update()
 {
   if(cabinet->wallet.accounts.size() > 0) {
-    // We pick the one with the most transactions:
-    Account * account = NULL;
-    for(int i = 0; i < cabinet->wallet.accounts.size(); i++) {
-      if( ( ! account) ||
-          account->transactions.size() < 
-          cabinet->wallet.accounts[i].transactions.size())
-        account = &cabinet->wallet.accounts[i];
-    }
-    Statistics s(account->transactions.toPtrList(),
-                 topLevel->isChecked());
+    TransactionPtrList lst;
+    for(int i = 0; i < cabinet->wallet.accounts.size(); i++)
+      lst.append(cabinet->wallet.accounts[i].transactions.toPtrList());
+
+    Statistics s(lst, topLevel->isChecked());
     int l = timeFrame->itemData(timeFrame->currentIndex()).toInt();
     display->setText(s.htmlStatistics(static_cast<Statistics::Period>(l), -1, 
                                       maxDisplayed, 

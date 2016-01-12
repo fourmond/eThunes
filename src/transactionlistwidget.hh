@@ -46,6 +46,8 @@ protected:
   void fillMenuWithTags(QMenu * menu, TagHash * tags, 
 			const QString &action);
 
+  QList<Account *> accounts;
+
 public:
 
   TransactionListWidget(QWidget * parent = 0);
@@ -100,6 +102,12 @@ public slots:
 
   /// Hides the balance column
   void hideBalance();
+
+  /// Shows the account name column
+  void showAccountName();
+
+  /// Hides the balance column
+  void hideAccountName();
 
 protected slots:
 
