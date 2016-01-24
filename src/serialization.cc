@@ -245,6 +245,7 @@ void SerializationHash::writeXML(const QString & name,
 				 QXmlStreamWriter * writer)
 {
   QStringList k = keys();
+  qSort(k);                     // is this the right place ?
   for(int i = 0; i < k.size();i++)
     value(k[i])->writeXML(name, writer);
 }
