@@ -141,6 +141,9 @@ namespace Ruby {
     return QString(StringValueCStr(v));
   };
 
+  /// Converts the given object to a list of strings.
+  QStringList valueToStringList(VALUE value);
+
 #define QSTRING2VALUE(str)			\
   Ruby::qStringToValue(str)
 

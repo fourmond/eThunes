@@ -82,6 +82,14 @@ class DocumentDefinition
     @description = (n || @description)
   end
 
+  # Definition of the list of compulsory attributes
+  def attributes(*args)
+    @attributes = []
+    for a in args
+      @attributes << a.to_s
+    end
+  end
+
   def matches(transaction, document)
     if @matcher
       return @matcher.matches(transaction, document)

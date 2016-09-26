@@ -75,6 +75,10 @@ public:
   /// Which file extensions are "valid" for the given file
   QStringList fileExtensions() const;
 
+
+  /// Returns the list of required attributes
+  QStringList getAttributes() const;
+
   /// The name of the definition (public name, but falls back to other
   /// name should this be empty)
   QString definitionName() const;

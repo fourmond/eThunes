@@ -53,6 +53,12 @@ QString DocumentDefinition::getFileNameFormat() const
   return VALUE2QSTRING(v);
 }
 
+QStringList DocumentDefinition::getAttributes() const
+{
+  VALUE v = rb_iv_get(rubyObject, "@attributes");
+  return Ruby::valueToStringList(v);
+}
+
 QString DocumentDefinition::definitionName() const
 {
   QString pn = getPublicName();

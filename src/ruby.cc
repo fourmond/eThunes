@@ -51,6 +51,9 @@ VALUE Ruby::exceptionSafeCall(VALUE (*function)(...), void * args)
   return ret;
 }
 
+QStringList valueToStringList(VALUE value);
+
+
 static bool withinSafeCode = false;
 
 
@@ -265,4 +268,15 @@ void Ruby::safeLoadFile(const QString & file)
   if(! RTEST(tst))
     throw "failure";
   safeFuncall(main, evalID, 3, str, Qnil, untrustedCodeString);
+}
+
+QStringList Ruby::valueToStringList(VALUE value)
+{
+  QStringList rv;
+  if(! rb_obj_is_kind_of(value, rb_cArray))
+    return rv;
+  int ln = rb_array_len(value);
+  for(int i = 0; i < ln; i++)
+    rv << VALUE2QSTRING(rb_ary_entry(value, i));
+  return rv;
 }
