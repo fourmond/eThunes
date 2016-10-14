@@ -3,6 +3,7 @@
 
 TEMPLATE = app
 CONFIG += exception precompile_header debug warn_on thread
+CONFIG += c++11
 INCLUDEPATH += . src
 
 DEPENDPATH += src
