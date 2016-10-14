@@ -141,15 +141,16 @@ void AttributeHash::dumpContents() const
 void AttributeHash::writeXML(const QString& name,
 			     QXmlStreamWriter* writer)
 {
-  const_iterator i = constBegin();
-  while (i != constEnd()) {
+  QStringList ks = keys();
+  qSort(ks);
+  for(int i = 0; i < ks.size(); i++) {
+    const QString & k = ks[i];
     writer->writeStartElement(name);
-    writer->writeAttribute("name", i.key());
-    writer->writeAttribute("type", typeNames[variantType(i.value())]);
+    writer->writeAttribute("name", k);
+    writer->writeAttribute("type", typeNames[variantType(value(k))]);
     /// \todo maybe date should be special-cased ?
-    writer->writeAttribute("value", i.value().toString());
+    writer->writeAttribute("value", value(k).toString());
     writer->writeEndElement();
-    i++;
   }
 }
 
