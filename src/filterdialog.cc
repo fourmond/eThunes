@@ -38,14 +38,17 @@ FilterDialog::FilterDialog(Wallet *w)
   QPushButton * bt = new QPushButton(tr("New filter"));
   connect(bt, SIGNAL(clicked()), SLOT(newFilter()));
   l2->addWidget(bt);
+  
   bt = new QPushButton(tr("Edit filter"));
   connect(bt, SIGNAL(clicked()), SLOT(editCurrent()));
   l2->addWidget(bt);
   l2->addSpacing(10);
+
   bt = new QPushButton(tr("Run filters"));
   connect(bt, SIGNAL(clicked()), SLOT(runFilters()));
   l2->addWidget(bt);
   l2->addSpacing(10);
+  
   bt = new QPushButton(tr("Close"));
   connect(bt, SIGNAL(clicked()), SLOT(close()));
   l2->addWidget(bt);
@@ -108,7 +111,7 @@ FilterEditDialog::FilterEditDialog(Wallet *w, Filter * f)
 
   hb = new QHBoxLayout;
   hb->addWidget(new QLabel(tr("Target category: ")));
-  edit = new QLineEdit(filter->category);
+  edit = new QLineEdit(/*filter->category*/);
   connect(edit, SIGNAL(textChanged(const QString &)),
 	  SLOT(categoryChanged(const QString &)));
   hb->addWidget(edit);
@@ -127,5 +130,5 @@ void FilterEditDialog::nameChanged(const QString & str)
 
 void FilterEditDialog::categoryChanged(const QString & str)
 {
-  filter->category = str;
+  // filter->category = str;
 }

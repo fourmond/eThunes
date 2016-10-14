@@ -50,6 +50,7 @@ WalletDW::WalletDW(Cabinet * c) : wallet(&c->wallet), cabinet(c)
 void WalletDW::showFiltersPage()
 {
   NavigationWidget::gotoPage(FilterPage::getFilterPage(wallet));
+  // manageFilters();
 }
 
 void WalletDW::showCategoriesPage()
@@ -166,8 +167,8 @@ void WalletDW::fileImportDialog()
 
 void WalletDW::manageFilters()
 {
-  FilterDialog * dlg = new FilterDialog(wallet);
-  dlg->show();
+  // FilterDialog * dlg = new FilterDialog(wallet);
+  // dlg->show();
 }
 
 void WalletDW::findInternalMoves()
