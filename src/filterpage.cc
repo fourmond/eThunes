@@ -53,15 +53,19 @@ FilterPage::FilterPage(Wallet *w) : wallet(w),
   connect(bt, SIGNAL(clicked()), SLOT(newFilter()));
   l2->addWidget(bt);
   bt = new QPushButton(tr("Delete filter"));
+  bt->setEnabled(false);
   // connect(bt, SIGNAL(clicked()), SLOT(runFilters()));
   l2->addWidget(bt);
   bt = new QPushButton(tr("Edit as new"));
+  bt->setEnabled(false);
   // connect(bt, SIGNAL(clicked()), SLOT(runFilters()));
   l2->addWidget(bt);
   bt = new QPushButton(tr("Move up"));
+  bt->setEnabled(false);
   // connect(bt, SIGNAL(clicked()), SLOT(runFilters()));
   l2->addWidget(bt);
   bt = new QPushButton(tr("Move down"));
+  bt->setEnabled(false);
   // connect(bt, SIGNAL(clicked()), SLOT(runFilters()));
   l2->addWidget(bt);
   bt = new QPushButton(tr("Run all filters"));
@@ -107,11 +111,28 @@ FilterPage::FilterPage(Wallet *w) : wallet(w),
   l1->addWidget(elementList);
 
   hb = new QHBoxLayout;
-  hb->addWidget(new QLabel(tr("Target category: ")));
+  hb->addWidget(new QLabel(tr("Target ")));
+
+
+  actionTarget = new QButtonGroup(this); // Exclusive by default
+  radioButton = new QRadioButton(tr("Category"));
+  hb->addWidget(radioButton);
+  actionTarget->addButton(radioButton, 0);
+
+  radioButton = new QRadioButton(tr("Tag"));
+  hb->addWidget(radioButton);
+  actionTarget->addButton(radioButton, 1);
+
+  connect(actionTarget, SIGNAL(buttonClicked(int)),
+	  SLOT(setActionTarget(int)));
+
+  
+
+
   // Here, use combo box !
   targetCategoryCombo = new CategoryCombo(wallet);
-  connect(targetCategoryCombo, SIGNAL(textChanged(const QString &)),
-  	  SLOT(filterCategoryChanged(const QString &)));
+  connect(targetCategoryCombo, SIGNAL(currentTextChanged(const QString &)),
+  	  SLOT(filterWhatChanged(const QString &)));
   hb->addWidget(targetCategoryCombo);
   l1->addLayout(hb);
 
@@ -126,6 +147,8 @@ FilterPage::FilterPage(Wallet *w) : wallet(w),
   hb->addWidget(bt);
   bt = new QPushButton(tr("Run filter"));
   hb->addWidget(bt);
+  bt->setEnabled(false);
+
   // connect(bt, SIGNAL(clicked()), SLOT(undoFilterChanges()));
   hb->addWidget(bt);
   l1->addLayout(hb);
@@ -171,7 +194,9 @@ void FilterPage::filterChanged()
 
     // Now, update various things:
     targetCategoryCombo->setEnabled(true);
-    targetCategoryCombo->setEditText(currentFilter->category);
+    if(currentFilter->actions.size() <= 0)
+      currentFilter->actions << FilterAction();
+    targetCategoryCombo->setEditText(currentFilter->actions[0].what);
 
     QAbstractButton * bt = 
       allOrAny->button(currentFilter->matchAny ? 1 : 0);
@@ -211,11 +236,26 @@ void FilterPage::filterNameChanged(const QString & str)
   }
 }
 
-void FilterPage::filterCategoryChanged(const QString & str)
+void FilterPage::filterWhatChanged(const QString & str)
 {
-  if(currentFilter)
-    currentFilter->category = str;
+  if(currentFilter) {
+    if(currentFilter->actions.size() <= 0)
+      currentFilter->actions << FilterAction();
+    currentFilter->actions[0].what = str;
+  }
 }
+
+void FilterPage::setActionTarget(int tg)
+{
+  if(! currentFilter)
+    return;
+
+  if(tg == 0)
+    currentFilter->actions[0].actionType = FilterAction::SetCategory;
+  if(tg == 1)
+    currentFilter->actions[0].actionType = FilterAction::AddTag;
+}
+
 
 
 void FilterPage::fillListItemWithFilter(QListWidgetItem * item,

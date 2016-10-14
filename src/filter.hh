@@ -52,10 +52,42 @@ public:
   FilterElement() : transactionAttribute(Name), regexp(false) {;};
 };
 
+/// This class represents the action taken on a Transaction that is
+/// matched by a Filter.
+class FilterAction : public Serializable {
+public:
+  /// The type of action
+  enum {
+    AddTag,                     // Adds the given tag
+                                // (unless already present)
+    SetCategory                 // sets the category (unless a
+                                // category is present already)
+  } actionType;
+
+  /// An auxiliary string used with a meaning dependent on the action.
+  QString what;
+
+  virtual SerializationAccessor * serializationAccessor();
+
+  /// Performs the action
+  void performAction(Transaction * target) const;
+
+  FilterAction(const QString & cat = QString());
+
+};
+
 /// This class represents a simple filter for setting the categories.
 ///
 /// \todo when tags are implemented, this should handle tags too.
 class Filter : public Serializable {
+
+  /// (deprecated) the target Category
+  QString category;
+
+protected:
+
+  virtual void finishedSerializationRead() override;
+
 public:
 
   /// Name of the filter
@@ -67,25 +99,29 @@ public:
   /// List of the elements of the filter
   QList<FilterElement> elements;
 
+  /// List of the actions to be performed by the filter
+  QList<FilterAction> actions;
+
   /// Should the Filter match all (false) or any (true) element ?
   bool matchAny;
 
-  /// The target Category
-  QString category;
 
   /// Implementation of the Serialization accessor
   virtual SerializationAccessor * serializationAccessor();
 
   Filter();
 
-  /// Whether or not target this Filter matches Transaction
+  /// Whether or not target this Filter matches the given Transaction
   bool matches(const Transaction * t) const;
 
   /// Loops over the list and sets the categories according to the tests.
-  void processList(TransactionList * l);
+  void processList(TransactionList * l) const;
 
   /// Returns the matching transactions of the given list.
   TransactionPtrList matchingTransactions(TransactionList * l) const;
+
+  /// Performs all the actions in the list on t
+  void performActions(Transaction * t) const;
 };
 
 #endif

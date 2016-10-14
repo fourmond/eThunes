@@ -49,6 +49,39 @@ bool FilterElement::matches(const Transaction * t) const
     return targetString.contains(match);
 }
 
+//////////////////////////////////////////////////////////////////////
+
+FilterAction::FilterAction(const QString & s) :
+  actionType(FilterAction::SetCategory), what(s)
+{
+}
+
+SerializationAccessor * FilterAction::serializationAccessor()
+{
+  SerializationAccessor * ac = new SerializationAccessor(this);
+  ac->addScalarAttribute("action", (int*)&actionType);
+  ac->addScalarAttribute("what", &what);
+  return ac;
+}
+
+void FilterAction::performAction(Transaction * target) const
+{
+  switch(actionType) {
+  case AddTag:
+    target->setTagFromName(what);
+    break;
+  case SetCategory:
+    if(!target->getCategory())
+      target->setCategoryFromName(what);
+    break;
+  default:
+    ;
+  }
+}
+
+//////////////////////////////////////////////////////////////////////
+
+
 Filter::Filter() : active(true), matchAny(true)
 {
 }
@@ -61,8 +94,16 @@ SerializationAccessor * Filter::serializationAccessor()
   ac->addScalarAttribute("matchany", &matchAny);
   ac->addScalarAttribute("active", &active);
   ac->addListAttribute("elements", &elements);
+  ac->addListAttribute("actions", &actions);
   return ac;
 
+}
+
+void Filter::finishedSerializationRead()
+{
+  if(! category.isEmpty())
+    actions << FilterAction(category);
+  category = QString();
 }
 
 bool Filter::matches(const Transaction * t) const
@@ -77,13 +118,18 @@ bool Filter::matches(const Transaction * t) const
   return ! matchAny;
 }
 
-void Filter::processList(TransactionList * l)
+void Filter::performActions(Transaction * t) const
+{
+  for(int i = 0; i < actions.size(); i++)
+    actions[i].performAction(t);
+}
+
+void Filter::processList(TransactionList * l) const
 {
   for(int i = 0; i < l->size(); i++) {
-    Transaction * t = &l->operator[](i);
-    if(!t->getCategory() && matches(t)) // Does not set when category
-				        // exists, please override.
-      t->setCategoryFromName(category);
+    Transaction * t = &(*l)[i];
+    if(matches(t))
+      performActions(t);
   }
 }
 

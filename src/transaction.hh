@@ -111,7 +111,10 @@ public:
   /// Sets the given tag
   void setTag(Tag * t) {
     tags.setTag(t);
-  }; 
+  };
+
+  /// Sets the given named tag
+  void setTagFromName(const QString & str, Wallet * wallet = NULL);
 
   /// Whether the taglist contains the the given tag
   bool hasTag(const Tag * t) const {

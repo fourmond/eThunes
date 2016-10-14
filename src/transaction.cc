@@ -103,6 +103,22 @@ void AtomicTransaction::setCategoryFromName(const QString & str, Wallet * w)
   setCategory(w->categories.namedSubCategory(str, true));
 }
 
+void AtomicTransaction::setTagFromName(const QString & str, Wallet * w)
+{
+  if(! w) {
+    Account * account = getAccount();
+    if(! account || ! account->wallet) {
+      QTextStream e(stderr);
+      e <<  "We have serious problems setting a Category from a Name: "
+        << str << endl;
+      return;
+    }
+    w = account->wallet;
+  }
+  Tag * t = w->tags.namedTag(str, true);
+  setTag(t);
+}
+
 
 void AtomicTransaction::setTagListPrivate(const QString & str) 
 {
