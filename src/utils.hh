@@ -125,6 +125,10 @@ namespace Utils {
   /// relative to the directory or
   QString relativePath(const QString & path, const QDir & dir);
 
+  /// Returns the largest string common to all the given strings.
+  /// Brute force approach.
+  QString commonSubstring(const QStringList & lst);
+
 };
 
 

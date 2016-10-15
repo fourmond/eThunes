@@ -97,3 +97,42 @@ QString Utils::relativePath(const QString & path, const QDir & dir)
     return path;
   return rp;
 }
+
+QString Utils::commonSubstring(const QStringList & lst)
+{
+  // Find the shortest string...
+  if(lst.size() < 1)
+    return QString();
+  int idx = 0;
+  int sz = lst[0].size();
+  for(int i = 1; i < lst.size(); i++) {
+    const QString & s = lst[i];
+    if(s.size() < sz) {
+      sz = s.size();
+      idx = i;
+    }
+  }
+
+  QStringList l = lst;
+  QString smaller = l.takeAt(idx);
+
+  int csz = sz;
+  while(sz > 0) {
+    for(int i = 0; i < sz - csz; i++) {
+      QString probe = smaller.mid(i, sz);
+      bool found = true;
+      for(int j = 0; j < l.size(); j++) {
+        if(! l[j].contains(probe)) {
+          found = false;
+          break;
+        }
+      }
+      if(found)
+        return probe;
+    }
+
+    --sz;
+  }
+
+  return QString();
+}
