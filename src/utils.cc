@@ -117,9 +117,9 @@ QString Utils::commonSubstring(const QStringList & lst)
   QString smaller = l.takeAt(idx);
 
   int csz = sz;
-  while(sz > 0) {
+  while(csz > 0) {
     for(int i = 0; i < sz - csz; i++) {
-      QString probe = smaller.mid(i, sz);
+      QString probe = smaller.mid(i, csz);
       bool found = true;
       for(int j = 0; j < l.size(); j++) {
         if(! l[j].contains(probe)) {
@@ -131,7 +131,7 @@ QString Utils::commonSubstring(const QStringList & lst)
         return probe;
     }
 
-    --sz;
+    --csz;
   }
 
   return QString();

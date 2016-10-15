@@ -20,10 +20,12 @@
 #include <account.hh>
 #include <wallet.hh>
 #include <transactionlistwidget.hh>
-#include <ootest.hh>
 
 #include <accountmodel.hh>
 #include <widgetwrapperdialog.hh>
+
+#include <utils.hh>
+#include <filter.hh>
 
 TransactionListWidget::TransactionListWidget(TransactionList *transactions,
 					     QWidget * parent) :
@@ -204,7 +206,15 @@ void TransactionListWidget::fireUpContextMenu(const QPoint & pos)
   action = new QAction(tr("Statistics"), this);
   action->setData(QStringList() << "stats");
   menu.addAction(action);
-  
+
+  action = new QAction(tr("Create filter from names"), this);
+  action->setData(QStringList() << "filter-from-names");
+  menu.addAction(action);
+
+  action = new QAction(tr("Create filter from memos"), this);
+  action->setData(QStringList() << "filter-from-memos");
+  menu.addAction(action);
+
 
   connect(&menu, SIGNAL(triggered(QAction *)),
 	  SLOT(contextMenuActionFired(QAction *)));
@@ -338,6 +348,26 @@ void TransactionListWidget::contextMenuActionFired(QAction * action)
     WidgetWrapperDialog * dlg = 
       new WidgetWrapperDialog(new QLabel(statsString));
     dlg->show();
+  } else if(what == "filter-from-names" || what == "filter-from-memos") {
+    QStringList ls;
+    for(int i = 0; i < selected.size(); i++) {
+      ls << ((what == "filter-from-names") ?
+             selected[i]->getName() : selected[i]->getMemo());
+    }
+    QString cmn = Utils::commonSubstring(ls);
+    QTextStream o(stdout);
+    o << "Creating filter using '" << cmn << "' as base -- from "
+      << ls.join(", ") << endl;
+    if(! cmn.isEmpty()) {
+      wallet()->filters.append(Filter());
+      Filter & f = wallet()->filters.last();
+      f.name = "New filter";
+      f.elements << FilterElement();
+      FilterElement & fe = f.elements.last();
+      fe.match = cmn;
+      fe.transactionAttribute = (what == "filter-from-names") ?
+        FilterElement::Name : FilterElement::Memo;
+    }
   } else {
     /// @todo Log !
   }
