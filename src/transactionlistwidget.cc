@@ -21,6 +21,8 @@
 #include <wallet.hh>
 #include <transactionlistwidget.hh>
 
+#include <transactionlistdialog.hh>
+
 #include <accountmodel.hh>
 #include <widgetwrapperdialog.hh>
 
@@ -182,6 +184,10 @@ void TransactionListWidget::fireUpContextMenu(const QPoint & pos)
     fillMenuWithCategoryHash(subMenu, &wallet()->categories);
   menu.addMenu(subMenu);
 
+  action = new QAction(tr("Show category transactions"), this);
+  action->setData(QStringList() << "show-category");
+  menu.addAction(action);
+
   subMenu = new QMenu(tr("Clear tag"));
   if(wallet()) {
     fillMenuWithTags(subMenu, &wallet()->tags, "clear-tag");
@@ -312,6 +318,10 @@ void TransactionListWidget::contextMenuActionFired(QAction * action)
     for(int i = 0; i < selected.count(); i++)
       selected[i]->setCategoryFromName(category);
     /// @todo handle the signaling here ?
+  } else if(what == "show-category") {
+    Category * cat = selected.first()->getCategory();
+    if(cat)
+      TransactionListDialog::showCategory(cat, wallet());
   } else if(what == "clear-tag") {
     Tag * t = wallet()->namedTag(l.first());
     if(t) {
@@ -365,8 +375,9 @@ void TransactionListWidget::contextMenuActionFired(QAction * action)
       f.elements << FilterElement();
       FilterElement & fe = f.elements.last();
       fe.match = cmn;
-      fe.transactionAttribute = (what == "filter-from-names") ?
-        FilterElement::Name : FilterElement::Memo;
+      fe.transactionAttribute =
+        ((what == "filter-from-names") ?
+         FilterElement::Name : FilterElement::Memo);
     }
   } else {
     /// @todo Log !
