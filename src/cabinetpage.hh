@@ -24,7 +24,6 @@
 #include <navigationpage.hh>
 
 #include <walletdw.hh>
-#include <collectionsdw.hh>
 
 class HTLabel;
 class StatisticsWidget;
@@ -59,8 +58,6 @@ public:
   /// The widget displaying the Wallet. \todo maybe this shouldn't be
   /// a public attribute ?
   WalletDW * walletDW;
-
-  CollectionsDW * collectionsDW;
 
   QString currentFileName() const {
     return cabinet->fullFilePath();

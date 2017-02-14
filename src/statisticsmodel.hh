@@ -63,6 +63,8 @@ public:
 
   enum {
     NameColumn,
+    Running7DaysColumn,
+    Running30DaysColumn,
     CurrentMonthColumn,
     LastMonthColumn,
     MonthBeforeColumn,

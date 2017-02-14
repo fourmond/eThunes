@@ -25,16 +25,13 @@
 
 #include <navigationwidget.hh>
 
-#include <collection.hh>
-#include <collectionpage.hh>
-
 #include <account.hh>
 #include <accountpage.hh>
 
-void Collection::followLink()
-{
-  NavigationWidget::gotoPage(CollectionPage::getCollectionPage(this));
-}
+// void Collection::followLink()
+// {
+//   NavigationWidget::gotoPage(CollectionPage::getCollectionPage(this));
+// }
 
 void Account::followLink()
 {
@@ -56,9 +53,9 @@ void AtomicTransaction::followLink()
   NavigationWidget::gotoPage(acPage);
 }
 
-void Document::followLink()
-{
-  if(! collection)
-    return;
-  NavigationWidget::gotoPage(CollectionPage::getCollectionPage(collection));
-}
+// void Document::followLink()
+// {
+//   if(! collection)
+//     return;
+//   NavigationWidget::gotoPage(CollectionPage::getCollectionPage(collection));
+// }

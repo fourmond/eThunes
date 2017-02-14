@@ -147,9 +147,6 @@
 
 #include <filterdialog.hh>
 
-// temporary ?
-#include <collection.hh>
-
 static const char * translationCopyrightString = 
   QT_TRANSLATE_NOOP("Copyright Notice",
                     "The original English localization of eThunes is\n"
@@ -270,10 +267,10 @@ void MainWin::setupActions()
 		    QKeySequence(tr("Ctrl+W")),
 		    tr("Closes current tab"));
 
-  actions.addAction(this, "test definition", tr("&Test definition"),
-		    this, SLOT(testCollectionDefinitionDocument()),
-		    QKeySequence(tr("Ctrl+Shift+T")),
-		    tr("Test definition"));
+  // actions.addAction(this, "test definition", tr("&Test definition"),
+  //       	    this, SLOT(testCollectionDefinitionDocument()),
+  //       	    QKeySequence(tr("Ctrl+Shift+T")),
+  //       	    tr("Test definition"));
 
 }
 

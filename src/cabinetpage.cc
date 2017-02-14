@@ -39,8 +39,8 @@ CabinetPage::CabinetPage(Cabinet * c) : cabinet(c)
   walletDW = new WalletDW(cabinet);
   hb->addWidget(walletDW);
 
-  collectionsDW = new CollectionsDW(cabinet);
-  hb->addWidget(collectionsDW);
+  // collectionsDW = new CollectionsDW(cabinet);
+  // hb->addWidget(collectionsDW);
 
   plugins = new HTLabel;
   hb->addWidget(plugins);

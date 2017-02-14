@@ -38,7 +38,7 @@ SerializationAccessor * Cabinet::serializationAccessor()
   ac->addAttribute("plugin",
 		   new SerializationPointerQList<Plugin>(&plugins));
   ac->addAttribute("wallet", &wallet);
-  ac->addListAttribute("collection", &collections);
+  //  ac->addListAttribute("collection", &collections);
   return ac;
 }
 
@@ -74,7 +74,7 @@ void Cabinet::loadFromFile(QString name)
   filePath = name;
   readXML(&w);
   emit(filenameChanged(filePath));
-  emit(collectionsPossiblyChanged());
+  //  emit(collectionsPossiblyChanged());
   setDirty(false);
 }
 
@@ -82,7 +82,7 @@ void Cabinet::loadFromFile(QString name)
 void Cabinet::clearContents()
 {
   wallet.clearContents();
-  collections.clear();
+  // collections.clear();
   /// \todo emit signals here ?
 }
 
@@ -98,7 +98,7 @@ void Cabinet::prepareSerializationRead()
 void Cabinet::finishedSerializationRead()
 {
   cabinetBeingSerialized = NULL;
-  rebuildDocumentsHash();
+  // rebuildDocumentsHash();
   /// \todo Idem for transactions one day ?
   Link::finalizePendingLinks(this);
 
@@ -121,92 +121,4 @@ QDir Cabinet::baseDirectory()
 {
   QFileInfo f(filePath);
   return QDir(f.canonicalPath());
-}
-
-Collection * Cabinet::addNewCollection(const QString &name,
-				       CollectionDefinition * def)
-{
-  collections.append(Collection());
-  Collection * c = &collections.last();
-  c->name = name;
-  c->definition = def;
-  c->cabinet = this;
-  /// \todo emit something
-  /// \tdexception Raise on NULL CollectionDefinition.
-  return c;
-}
-
-void Cabinet::registerDocument(Document * doc, bool signal)
-{
-  QString name = doc->canonicalFileName();
-  if(namedDocument(name)) {
-    fprintf(stderr, "We have a document clash !\n");
-    /// \tdexception do something here on documents clash
-  }
-  documentsByName[name] = doc;
-  if(signal) {
-    emit(documentsChanged(doc->collection));
-  }
-}
-
-void Cabinet::rebuildDocumentsHash()
-{
-  documentsByName.clear();
-  for(int i = 0; i < collections.size(); i++)
-    for(int j = 0; j < collections[i].documents.size(); j++)
-      registerDocument(&collections[i].documents[j], false);
-}
-
-QList<Document *> Cabinet::allDocuments()
-{
-  QList<Document *> retval;
-  for(int i = 0; i < collections.size(); i++)
-    retval += collections[i].allDocuments();
-  return retval;
-}
-
-TransactionPtrList Cabinet::transactionMatchingCandidates(Document * document)
-{
-  DocumentDefinition * def = document->definition;
-  QPair<QDate, QDate> range = def->relevantDateRange(document);
-  if(! range.first.isValid())
-    return TransactionPtrList();	// No need to go further
-
-  // TransactionPtrList pt = wallet.transactionsWithinRange(range.first,
-  //                                                        range.second);
-  // QTextStream o(stdout);
-  // o << "Doc: " << range.first.toString() << " -- " << range.second.toString()
-  //   << " -> " <<  pt.size() << endl;
-  return wallet.transactionsWithinRange(range.first,
-                                        range.second);
-}
-
-AtomicTransaction * Cabinet::matchingTransaction(Document * document)
-{
-  TransactionPtrList candidates = transactionMatchingCandidates(document);
-  for(int i = 0; i < candidates.size(); i++) {
-    if(document->collection->
-       definition->scoreForTransaction(document,
-                                       candidates[i]) > 1000)
-      return candidates[i];
-    /// \todo This is very primitive...
-  }
-  return NULL;
-}
-
-
-QList<Document *> Cabinet::documentsByType(const QString & collection, 
-                                           const QString & type) 
-{
-  QList<Document *> retval;
-  for(int i = 0; i < collections.size(); i++) {
-    Collection& col = collections[i];
-    if(col.definition->getName() != collection)
-      continue;
-    QList<Document *> docs = col.allDocuments();
-    for(int j = 0; j < docs.size(); j++)
-      if(docs[j]->definition->getName() == type)
-        retval += docs[j];
-  }
-  return retval;
 }

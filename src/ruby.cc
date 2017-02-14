@@ -113,7 +113,7 @@ ID Ruby::xpathID;
 
 
 
-static VALUE main;
+static VALUE rmain;
 
 static char* argv[]  = { "ethunes-internal", "-e", "true", "-E", "utf-8:utf-8"};
 static const int nbargs = sizeof(argv)/sizeof(argv[0]);
@@ -127,7 +127,7 @@ void Ruby::ensureInitRuby()
 
     untrustedCodeString = rb_eval_string("$__untrusted_code = '(untrusted code)'");
 
-    main = rb_eval_string("self");
+    rmain = rb_eval_string("self");
 
     loadFile("utils");
     rb_eval_string("$__safe_keeping_hash__ = {}");
@@ -161,11 +161,11 @@ void Ruby::ensureInitRuby()
     parseID = rb_intern("parse");
     resumeID = rb_intern("resume");
     
-    Fetcher::initializeRuby();
+    // Fetcher::initializeRuby();
     /// \todo Do not hardwire the list, but rather acquire it somehow
     loadFile("dates");
-    loadFile("net");
-    loadFile("collectiondefinition");
+    // loadFile("net");
+    // loadFile("collectiondefinition");
   }
   /// \todo Here, add a whole bunch of functions to destroy all
   /// functions for IO and process control (including require, for
@@ -230,11 +230,11 @@ VALUE Ruby::safeFuncall(VALUE tg, ID id, int number, ...)
   va_end(args);
 
   VALUE blk = wrappedFuncall(mUtils, getTracerHookID, 0);
-  wrappedFuncall(main, setTraceFuncID, 1, blk);
+  wrappedFuncall(rmain, setTraceFuncID, 1, blk);
   withinSafeCode = true;
   VALUE ret = wrapFuncall(number + 2, tgArgs);
   withinSafeCode = false;
-  wrappedFuncall(main, setTraceFuncID, 1, Qnil);
+  wrappedFuncall(rmain, setTraceFuncID, 1, Qnil);
   return ret;
 }
 
@@ -267,7 +267,7 @@ void Ruby::safeLoadFile(const QString & file)
   VALUE tst = wrappedFuncall(mUtils, checkForGlobalsID, 1, str);
   if(! RTEST(tst))
     throw "failure";
-  safeFuncall(main, evalID, 3, str, Qnil, untrustedCodeString);
+  safeFuncall(rmain, evalID, 3, str, Qnil, untrustedCodeString);
 }
 
 QStringList Ruby::valueToStringList(VALUE value)

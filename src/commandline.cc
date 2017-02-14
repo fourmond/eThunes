@@ -19,9 +19,6 @@
 #include <headers.hh>
 #include <commandline.hh>
 
-// Now, stuff for handlers
-#include <collection.hh>
-
 #include <ruby.hh>
 // Forst listing plugins
 #include <plugin.hh>
@@ -108,123 +105,123 @@ void CommandLineParser::showHelpText(QTextStream & s)
 // First, the handlers
 static void listCollections(const QStringList &)
 {
-  QStringList defs = CollectionDefinition::availableDefinitions();
-  QTextStream o(stdout);
-  o << "Listing available collection definitions\n";
-  for(int i = 0; i < defs.size(); i++) {
-    o << defs[i] << endl;
-  }
+  // QStringList defs = CollectionDefinition::availableDefinitions();
+  // QTextStream o(stdout);
+  // o << "Listing available collection definitions\n";
+  // for(int i = 0; i < defs.size(); i++) {
+  //   o << defs[i] << endl;
+  // }
 }
 
 // First, the handlers
 static void showCollection(const QStringList & s)
 {
-  QTextStream o(stdout);
-  CollectionDefinition * def = 
-    CollectionDefinition::namedDefinition(s.first());
-  if(! def) {
-    o << "Unable to find the collection" << s.first() << endl;
-    return;
-  }
-  o << "Dumping collection " << def->getName() << ":" << endl
-    << "\tpublic name: " << def->getPublicName()  << endl
-    << "\tdescription: " << def->getDescription() << endl;
+  // QTextStream o(stdout);
+  // CollectionDefinition * def = 
+  //   CollectionDefinition::namedDefinition(s.first());
+  // if(! def) {
+  //   o << "Unable to find the collection" << s.first() << endl;
+  //   return;
+  // }
+  // o << "Dumping collection " << def->getName() << ":" << endl
+  //   << "\tpublic name: " << def->getPublicName()  << endl
+  //   << "\tdescription: " << def->getDescription() << endl;
 
-  if(def->canFetch())
-    o <<  "\nCan fetch from the net\n";
+  // if(def->canFetch())
+  //   o <<  "\nCan fetch from the net\n";
 
-  QStringList docs = def->documentTypes.keys();
-  docs.sort();
+  // QStringList docs = def->documentTypes.keys();
+  // docs.sort();
 
-  o << endl << "Available document types: " << endl;
-  for(int i = 0; i < docs.size(); i++)
-    o << " - " << docs[i] << endl;
+  // o << endl << "Available document types: " << endl;
+  // for(int i = 0; i < docs.size(); i++)
+  //   o << " - " << docs[i] << endl;
 }
 
 static void testDocumentLoading(const QStringList & a)
 {
-  QTextStream o(stdout);
-  QStringList args = a;
-  QString name = args.takeFirst();
-  Ruby::ensureInitRuby();
-  CollectionDefinition * def =
-    CollectionDefinition::namedDefinition(name);
-  if(! def) {
-    o << "Unable to find the collection" << name << endl;
-    return;
-  }
-  Collection * c = new Collection();
-  c->definition = def;
-  name = args.takeFirst();
-  DocumentDefinition * ddef = def->documentDefinition(name);
-  if(! ddef) {
-    o << "Unable to find the document " << name << endl;
-    return;
-  }
-  for(int i = 0; i < args.size(); i++) {
-    QString file = args[i];
-    AttributeHash contents = PDFTools::readPDF(file);
-    AttributeHash outAttrs = ddef->parseDocumentMetaData(contents);
-    o << endl << "Parsed attributes for file " 
-      << file << ": " << endl;
-    QStringList missing = 
-      c->missingAttributesForDocument(outAttrs, ddef);
-    outAttrs.dumpContents();
-    if(missing.size() > 0)
-      o << "Missing attributes: " << missing.join(", ") << endl; 
-    else {
-      o << "All required attributes found\nFile name: "
-        << outAttrs.formatString(ddef->getFileNameFormat()) 
-        << "\nDisplay: " 
-        << outAttrs.formatString(ddef->getDisplayFormat()) << endl;
-    }
-  }
-  delete c;
+  // QTextStream o(stdout);
+  // QStringList args = a;
+  // QString name = args.takeFirst();
+  // Ruby::ensureInitRuby();
+  // CollectionDefinition * def =
+  //   CollectionDefinition::namedDefinition(name);
+  // if(! def) {
+  //   o << "Unable to find the collection" << name << endl;
+  //   return;
+  // }
+  // Collection * c = new Collection();
+  // c->definition = def;
+  // name = args.takeFirst();
+  // DocumentDefinition * ddef = def->documentDefinition(name);
+  // if(! ddef) {
+  //   o << "Unable to find the document " << name << endl;
+  //   return;
+  // }
+  // for(int i = 0; i < args.size(); i++) {
+  //   QString file = args[i];
+  //   AttributeHash contents = PDFTools::readPDF(file);
+  //   AttributeHash outAttrs = ddef->parseDocumentMetaData(contents);
+  //   o << endl << "Parsed attributes for file " 
+  //     << file << ": " << endl;
+  //   QStringList missing = 
+  //     c->missingAttributesForDocument(outAttrs, ddef);
+  //   outAttrs.dumpContents();
+  //   if(missing.size() > 0)
+  //     o << "Missing attributes: " << missing.join(", ") << endl; 
+  //   else {
+  //     o << "All required attributes found\nFile name: "
+  //       << outAttrs.formatString(ddef->getFileNameFormat()) 
+  //       << "\nDisplay: " 
+  //       << outAttrs.formatString(ddef->getDisplayFormat()) << endl;
+  //   }
+  // }
+  // delete c;
 }
 
 static void testDocumentParsing(const QStringList & a)
 {
-  QTextStream o(stdout);
-  QStringList args = a;
-  Ruby::ensureInitRuby();
-  for(int i = 0; i < args.size(); i++) {
-    QString file = args[i];
-    AttributeHash contents = PDFTools::readPDF(file);
-    o << "File " << file << "'s raw attributes: " << endl;
-    contents.dumpContents();
-  }
+  // QTextStream o(stdout);
+  // QStringList args = a;
+  // Ruby::ensureInitRuby();
+  // for(int i = 0; i < args.size(); i++) {
+  //   QString file = args[i];
+  //   AttributeHash contents = PDFTools::readPDF(file);
+  //   o << "File " << file << "'s raw attributes: " << endl;
+  //   contents.dumpContents();
+  // }
 }
 
 static void testDownload(const QStringList & a)
 {
-  QTextStream o(stdout);
-  QStringList args = a;
-  QString name = args.takeFirst();
-  Ruby::ensureInitRuby();
-  CollectionDefinition * def =
-    CollectionDefinition::namedDefinition(name);
-  if(! def) {
-    o << "Unable to find the collection" << name << endl;
-    return;
-  }
-  if(! def->canFetch()) {
-    o << "Collection " << name << " does not have download capacities" << endl;
-    return;
-  }
-  // Then, we build the collection:
-  Collection * col = new Collection();
-  col->definition = def;
-  AttributeHash credentials;
-  for(int i = 0; i < args.size(); i++) {
-    QStringList b = args[i].split("=");
-    if(b.size() > 1)
-      credentials[b[0]] = b[1];
-  }
+  // QTextStream o(stdout);
+  // QStringList args = a;
+  // QString name = args.takeFirst();
+  // Ruby::ensureInitRuby();
+  // CollectionDefinition * def =
+  //   CollectionDefinition::namedDefinition(name);
+  // if(! def) {
+  //   o << "Unable to find the collection" << name << endl;
+  //   return;
+  // }
+  // if(! def->canFetch()) {
+  //   o << "Collection " << name << " does not have download capacities" << endl;
+  //   return;
+  // }
+  // // Then, we build the collection:
+  // Collection * col = new Collection();
+  // col->definition = def;
+  // AttributeHash credentials;
+  // for(int i = 0; i < args.size(); i++) {
+  //   QStringList b = args[i].split("=");
+  //   if(b.size() > 1)
+  //     credentials[b[0]] = b[1];
+  // }
 
-  o << "Using credentials: " << endl;
-  credentials.dumpContents();
-  col->fetchNewDocumentsForUser(credentials);
-  QCoreApplication::instance()->exec();
+  // o << "Using credentials: " << endl;
+  // credentials.dumpContents();
+  // col->fetchNewDocumentsForUser(credentials);
+  // QCoreApplication::instance()->exec();
 }
 
 

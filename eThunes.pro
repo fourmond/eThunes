@@ -56,25 +56,22 @@ SOURCES += src/qmain.cc src/account.cc src/mainwin.cc src/actions.cc \
 	src/filter.cc src/filterdialog.cc \
 	src/categorypage.cc src/transactionlists.cc \
 	src/statisticsmodel.cc \
-	src/document.cc src/collection.cc \
 	src/transactionlistdialog.cc \
 	src/attributehash.cc src/ruby.cc \
 	src/pdftools.cc src/cabinet.cc \
-	src/cabinetpage.cc src/collectionsdw.cc \
-	src/collectionpage.cc src/documentsmodel.cc \
-	src/documentspage.cc src/managedfile.cc \
+	src/cabinetpage.cc src/managedfile.cc \
 	src/linkable.cc \
         src/serializable-templates.cc \
 	src/link.cc src/transactionlistwidget.cc \
-	src/fetcher.cc src/result.cc \
+	src/result.cc \
 	src/cookiejar.cc src/log.cc \
 	src/logstream.cc src/filterpage.cc \
 	src/categorycombo.cc src/filterelements.cc \
-	src/documentpage.cc src/logstorage.cc \
+	src/logstorage.cc \
 	src/logviewer.cc src/accountgroup.cc \
 	src/commandline.cc src/tag.cc \
         src/serialization.cc src/statistics.cc src/watchable.cc \
-        src/flowinggridlayout.cc src/documentlistwidget.cc \
+        src/flowinggridlayout.cc  \
         src/plugin.cc src/utils.cc \
         src/widgetwrapperdialog.cc \
         src/httarget.cc src/htlabel.cc src/htlinks.cc \
@@ -84,60 +81,50 @@ SOURCES += src/qmain.cc src/account.cc src/mainwin.cc src/actions.cc \
         src/ootest.cc src/tagpage.cc \
         src/timebasedcurve.cc src/timebasedwidget.cc \
         src/curvesdisplay.cc \
-        src/exceptions.cc \
-        src/identitiessafe.cc \
-        src/collectiondefinition.cc \
-        src/documentdefinition.cc
-
-#        src/testserializepointers.cc \
+        src/exceptions.cc
 
 HEADERS += src/account.hh src/mainwin.hh src/actions.hh \
-	src/ofximport.hh src/accountmodel.hh \
-	src/transaction.hh src/wallet.hh src/dashboardwidget.hh	\
-	src/walletdw.hh src/navigationwidget.hh	\
-	src/navigationpage.hh src/accountpage.hh \
-	src/serializable.hh src/category.hh \
-	src/filter.hh src/filterdialog.hh \
-	src/categorypage.hh src/transactionlists.hh \
-	src/statisticsmodel.hh \
-	src/document.hh src/collection.hh \
-	src/transactionlistdialog.hh \
-	src/attributehash.hh src/ruby.hh \
-	src/pdftools.hh src/cabinet.hh \
-	src/cabinetpage.hh src/collectionsdw.hh \
-	src/collectionpage.hh src/documentsmodel.hh \
-	src/documentspage.hh src/managedfile.hh \
-	src/linkable.hh \
-        src/serializable-templates.hh \
-	src/link.hh src/transactionlistwidget.hh \
-	src/fetcher.hh src/result.hh \
-	src/cookiejar.hh src/log.hh \
-	src/logstream.hh src/filterpage.hh \
-	src/categorycombo.hh src/filterelements.hh \
-	src/documentpage.hh src/logstorage.hh \
-	src/logviewer.hh src/accountgroup.hh \
-	src/commandline.hh src/tag.hh \
-        src/serialization.hh src/statistics.hh src/watchable.hh \
-        src/watchablecontainers.hh  src/flowinggridlayout.hh \
-        src/documentlistwidget.hh src/plugin.hh \
-        src/serializable-pointers.hh \
-        src/testserializepointers.hh \
-        src/widgetwrapperdialog.hh \
-        src/utils.hh src/evolvingitem.hh \
-        src/httarget.hh src/htlabel.hh src/httarget-templates.hh \
-        src/latexoutput.hh src/evolvingitemwidget.hh \
-        src/latextable.hh src/statisticswidget.hh \
-        src/modelitems.hh src/oomodel.hh \
-        src/ootest.hh src/tagpage.hh \
-        src/timebasedcurve.hh src/timebasedwidget.hh \
-        src/curvesdisplay.hh \
-        src/pointersafesort.hh \
-        src/exceptions.hh \
-        src/ruby-templates.hh \
-        src/identitiessafe.hh \
-        src/collectiondefinition.hh \
-        src/documentdefinition.hh
-
+           src/ofximport.hh src/accountmodel.hh \
+	   src/transaction.hh src/wallet.hh src/dashboardwidget.hh	\
+	   src/walletdw.hh src/navigationwidget.hh	\
+	   src/navigationpage.hh src/accountpage.hh \
+	   src/serializable.hh src/category.hh \
+	   src/filter.hh src/filterdialog.hh \
+	   src/categorypage.hh src/transactionlists.hh \
+	   src/statisticsmodel.hh \
+	   src/transactionlistdialog.hh \
+	   src/attributehash.hh src/ruby.hh \
+	   src/pdftools.hh src/cabinet.hh \
+	   src/cabinetpage.hh src/collectionsdw.hh \
+	   src/collectionpage.hh src/documentsmodel.hh \
+	   src/documentspage.hh src/managedfile.hh \
+	   src/linkable.hh \
+           src/serializable-templates.hh \
+	   src/link.hh src/transactionlistwidget.hh \
+	   src/result.hh \
+	   src/cookiejar.hh src/log.hh \
+	   src/logstream.hh src/filterpage.hh \
+	   src/categorycombo.hh src/filterelements.hh \
+	   src/documentpage.hh src/logstorage.hh \
+	   src/logviewer.hh src/accountgroup.hh \
+	   src/commandline.hh src/tag.hh \
+           src/serialization.hh src/statistics.hh src/watchable.hh \
+           src/watchablecontainers.hh  src/flowinggridlayout.hh \
+           src/documentlistwidget.hh src/plugin.hh \
+           src/serializable-pointers.hh \
+           src/testserializepointers.hh \
+           src/widgetwrapperdialog.hh \
+           src/utils.hh src/evolvingitem.hh \
+           src/httarget.hh src/htlabel.hh src/httarget-templates.hh \
+           src/latexoutput.hh src/evolvingitemwidget.hh \
+           src/latextable.hh src/statisticswidget.hh \
+           src/modelitems.hh src/oomodel.hh \
+           src/ootest.hh src/tagpage.hh \
+           src/timebasedcurve.hh src/timebasedwidget.hh \
+           src/curvesdisplay.hh \
+           src/pointersafesort.hh \
+           src/exceptions.hh \
+           src/ruby-templates.hh
 
 # Plugins:
 

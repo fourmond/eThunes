@@ -23,7 +23,6 @@
 
 #include <serializable.hh>
 #include <wallet.hh>
-#include <collection.hh>
 
 class Plugin;
 
@@ -49,40 +48,13 @@ protected:
   QString filePath;
 
 
-  /// A hash that keeps a correspondance between canonicalName and the
-  /// corresponding Document. It is kept up to date by
-  /// registerDocument() and rebuildDocumentsHash
-  QHash<QString,Document *> documentsByName;
-
 public:
-
-  /// Makes sure the hash knows about the given document.
-  void registerDocument(Document * doc, bool signal = true);
-
-  /// Browse over all the collections to update the documentsByName
-  /// hash.
-  void rebuildDocumentsHash();
-
-  Document * namedDocument(const QString & name) const {
-    return documentsByName.value(name, NULL);
-  };
-
-  /// Browses over the whole list of collections, and returns all the
-  /// documents whose collection type name and type name match those
-  /// given.
-  QList<Document*> documentsByType(const QString & collection, 
-                                   const QString & type);
 
 
   Cabinet();
 
   /// The one and only Wallet
   Wallet wallet;
-
-  /// A list of Collection objects
-  ///
-  /// @todo Turn that into a watchable list
-  QList<Collection> collections;
 
   /// All plugins. Please note these are stored as pointers, not
   /// objects...
@@ -121,9 +93,6 @@ public:
   /// directory.
   QDir baseDirectory();
 
-  /// Returns all the Document objects within all the Collection objects.
-  QList<Document *> allDocuments();
-
 
 signals:
 
@@ -135,13 +104,6 @@ signals:
   /// \todo handle changing directory !
   void filenameChanged(const QString & filePath);
 
-  /// Emitted whenever there is a risk (or a certainty) that
-  /// collections have changed.
-  void collectionsPossiblyChanged();
-
-  /// Emitted when documents have changed in the given collection
-  void documentsChanged(Collection * col);
-
 public slots:
   /// Sets the dirty flag
   void setDirty(bool dirty = true);
@@ -149,40 +111,12 @@ public slots:
   /// Clears the contents of the Cabinet (such as before loading ;-)...
   void clearContents();
 
-  /// Creates a new Collection object and adds it to the Cabinet
-  Collection * addNewCollection(const QString & name,
-				CollectionDefinition * def);
-
-  /// Creates a new Collection object and adds it to the Cabinet
-  Collection * addNewCollection(const QString & name, const QString & type) {
-    return addNewCollection(name, CollectionDefinition::namedDefinition(type));
-  };
-
-  /// Collection objects should call this whenever their document list
-  /// has changed. This is a kind of poor man's signal, since QList
-  /// does not like QObject.
-  void signalDocumentsChanged(Collection * col) {
-    emit(documentsChanged(col));
-  };
-
-
 public:
   /// Whether the Cabinet has pending modifications
   bool isDirty() const { return dirty; };
 
   /// The Cabinet currently serialized.
   static Cabinet * cabinetBeingSerialized;
-
-  /// The Transaction objects that are candidates for matching the
-  /// given Document, based uniquely on dates.
-  ///
-  /// \todo I'm unsure whether this is the right position for this
-  /// function (in particular for redifinition fun).
-  TransactionPtrList transactionMatchingCandidates(Document * document);
-
-  /// Finds the Transaction matching to the document. In case of
-  /// ambiguity or if none is found, NULL is returned.
-  AtomicTransaction * matchingTransaction(Document * document);
 
 };
 
