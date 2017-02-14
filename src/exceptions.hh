@@ -46,17 +46,5 @@ public:
   virtual ~InternalError() throw() {;};
 };
 
-class RubyException : public RuntimeError {
-public:
-  /// The original exception
-  VALUE rubyException;
-
-  /// The class of the original exception
-  VALUE exceptionClass;
-
-  RubyException(VALUE exception);
-
-  virtual ~RubyException() throw() {;};
-};
 
 #endif

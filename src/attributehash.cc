@@ -17,14 +17,9 @@
 */
 
 #include <headers.hh>
-// Ruby-specific stuff
-#include <ruby.hh>
-
-#include <ruby-templates.hh>
 #include <attributehash.hh>
-#include <transaction.hh>
 
-using namespace Ruby;
+#include <transaction.hh>
 
 const char * AttributeHash::typeNames[] = {
   "string", "number", "time", 0
@@ -49,81 +44,6 @@ AttributeHash::HandledType AttributeHash::variantType(const QVariant &variant)
   }
 }
 
-
-VALUE AttributeHash::variantToRuby(const QVariant & variant)
-{
-  switch(variantType(variant.type())) {
-  case AttributeHash::Number:
-    return LONG2NUM(variant.toLongLong());
-  case AttributeHash::Time:
-    return rb_time_new(variant.toDateTime().toTime_t(),0 /* microseconds */);
-  default: // use string value
-    return QSTRING2VALUE(variant.toString());
-  }
-}
-
-
-QVariant AttributeHash::rubyToVariant(VALUE value)
-{
-  if(RTEST(rb_obj_is_kind_of(value, rb_cTime))) {
-    // we have a time value !
-    // rb_raise(rb_eRuntimeError, "biniou !!");
-    QDateTime date;
-    date.setTime_t(NUM2LONG(rb_funcall(value, rb_intern("to_i"), 0)));
-    return date;
-  }
-  if(RTEST(rb_obj_is_kind_of(value, rb_cFixnum)) ||
-     RTEST(rb_obj_is_kind_of(value, rb_cBignum))) {
-    // integer
-    return QVariant((qlonglong) NUM2LONG(value));
-  }
-  // default string behavior
-  return VALUE2QSTRING(value);
-}
-
-VALUE AttributeHash::toRuby() const
-{
-  VALUE hash = rb_hash_new();
-  const_iterator i = constBegin();
-  while (i != constEnd()) {
-    VALUE key = QSTRING2VALUE(i.key());
-    VALUE val = variantToRuby(i.value());
-    rb_hash_aset(hash, key, val);
-    ++i;
-  }
-  return hash;
-}
-
-// The syntax of rb_hash_foreach is kinda obscure, but, well, it looks
-// like the function expected is to be called thus:
-//
-// (arg is the last argument to rb_hash_foreach
-int AttributeHash::setFromRubyInternalHelper(VALUE key, VALUE val, void * arg)
-{
-  AttributeHash * target = static_cast<AttributeHash *>(arg);
-  QString k = VALUE2QSTRING(key);
-  target->operator[](k) = AttributeHash::rubyToVariant(val);
-  return ST_CONTINUE;
-}
-
-VALUE AttributeHash::setFromRubyInternal(VALUE hash)
-{
-  rb_hash_foreach(hash, (int (*)(...))AttributeHash::
-		  setFromRubyInternalHelper, (VALUE)this);
-  return Qnil;
-}
-
-void AttributeHash::setFromRuby(VALUE hash, bool clr)
-{
-  // Rescue for potential exceptions.
-  VALUE tst = rb_obj_is_kind_of(hash, rb_cHash);
-  if(! RTEST(tst))
-    throw "Should have been a Hash !";
-  if(clr)
-    clear();
-
-  Ruby::run(this,  &AttributeHash::setFromRubyInternal, hash);
-}
 
 void AttributeHash::dumpContents() const
 {

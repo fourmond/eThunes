@@ -44,14 +44,6 @@
 class AttributeHash : public QHash<QString, QVariant>,
 		      public SerializationAttribute {
 
-  // these two functions are for internal use.
-
-  /// For internal use (exception wrapping);
-  VALUE setFromRubyInternal(VALUE hash);
-
-  /// Internal static wrapper.
-  static int setFromRubyInternalHelper(VALUE key, VALUE val, void * arg);
-
 public:
 
   enum HandledType {
@@ -62,35 +54,6 @@ public:
 
   /// Returns the HandledType for the given QVariant
   static HandledType variantType(const QVariant &v);
-
-  /// Conversion to a Ruby hash
-  ///
-  /// \warning This function assumes that Ruby has been initialized
-  /// before !
-  VALUE toRuby() const;
-
-  /// Loading from a Ruby hash; clears initial content if clear is
-  /// true.
-  ///
-  /// \warning This function assumes that Ruby has been initialized
-  /// before !
-  void setFromRuby(VALUE hash, bool clear);
-
-  /// Same as setFromRuby(VALUE, bool), with the second argument set
-  /// to true.
-  void setFromRuby(VALUE hash) { setFromRuby(hash, true);};
-
-  /// Converts a QVariant to Ruby VALUE, keeping information
-  ///
-  /// \warning This function assumes that Ruby has been initialized
-  /// before !
-  static VALUE variantToRuby(const QVariant & variant);
-
-  /// Converts a Ruby VALUE to QVariant
-  ///
-  /// \warning This function assumes that Ruby has been initialized
-  /// before !
-  static QVariant rubyToVariant(VALUE value);
 
   /// Dump the contents of the hash, for debugging purposes
   void dumpContents() const;
@@ -130,12 +93,6 @@ public:
 
   /// This object, just like Serializable ones, shouldn't be deleted.
   virtual bool shouldBeDeleted() { return false;};
-
-  static inline AttributeHash fromRuby(VALUE v) {
-    AttributeHash a;
-    a.setFromRuby(v);
-    return a;
-  };
 
   /// @name Edition-related static functions
   ///

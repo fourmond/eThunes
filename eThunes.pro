@@ -28,23 +28,6 @@ QMAKE_CXXFLAGS += -Werror=return-type
 # We use poppler
 LIBS += -lpoppler-qt5
 
-# You can specify the full path of ruby on the command-line using:
-# qmake RUBY=/usr/local/ruby1.8/bin/ruby
-isEmpty(RUBY):RUBY = ruby
-
-# Ruby detection/installation
-RUBY_LIB_ARG = $$system($$RUBY ./get-ruby-config.rb libarg)
-RUBY_INCLUDE_DIRS = $$system($$RUBY ./get-ruby-config.rb includedir)
-RUBY_LIB_DIR = $$system($$RUBY ./get-ruby-config.rb libdir)
-
-isEmpty(RUBY_LIB_ARG) {
-  error("Could not find ruby, make sure $$RUBY is in the PATH !")
-}
-
-message("Ruby: using $$RUBY, found library: $$RUBY_LIB_ARG and includes at $$RUBY_INCLUDE_DIRS")
-INCLUDEPATH += $$RUBY_INCLUDE_DIRS
-LIBS += $$RUBY_LIB_ARG
-
 
 # Input files
 SOURCES += src/qmain.cc src/account.cc src/mainwin.cc src/actions.cc \
@@ -57,13 +40,12 @@ SOURCES += src/qmain.cc src/account.cc src/mainwin.cc src/actions.cc \
 	src/categorypage.cc src/transactionlists.cc \
 	src/statisticsmodel.cc \
 	src/transactionlistdialog.cc \
-	src/attributehash.cc src/ruby.cc \
+	src/attributehash.cc  \
 	src/pdftools.cc src/cabinet.cc \
 	src/cabinetpage.cc src/managedfile.cc \
 	src/linkable.cc \
         src/serializable-templates.cc \
 	src/link.cc src/transactionlistwidget.cc \
-	src/result.cc \
 	src/cookiejar.cc src/log.cc \
 	src/logstream.cc src/filterpage.cc \
 	src/categorycombo.cc src/filterelements.cc \
@@ -93,24 +75,22 @@ HEADERS += src/account.hh src/mainwin.hh src/actions.hh \
 	   src/categorypage.hh src/transactionlists.hh \
 	   src/statisticsmodel.hh \
 	   src/transactionlistdialog.hh \
-	   src/attributehash.hh src/ruby.hh \
+	   src/attributehash.hh  \
 	   src/pdftools.hh src/cabinet.hh \
-	   src/cabinetpage.hh src/collectionsdw.hh \
-	   src/collectionpage.hh src/documentsmodel.hh \
-	   src/documentspage.hh src/managedfile.hh \
+	   src/cabinetpage.hh  \
+	   src/managedfile.hh \
 	   src/linkable.hh \
            src/serializable-templates.hh \
 	   src/link.hh src/transactionlistwidget.hh \
-	   src/result.hh \
 	   src/cookiejar.hh src/log.hh \
 	   src/logstream.hh src/filterpage.hh \
 	   src/categorycombo.hh src/filterelements.hh \
-	   src/documentpage.hh src/logstorage.hh \
+	   src/logstorage.hh \
 	   src/logviewer.hh src/accountgroup.hh \
 	   src/commandline.hh src/tag.hh \
            src/serialization.hh src/statistics.hh src/watchable.hh \
            src/watchablecontainers.hh  src/flowinggridlayout.hh \
-           src/documentlistwidget.hh src/plugin.hh \
+           src/plugin.hh \
            src/serializable-pointers.hh \
            src/testserializepointers.hh \
            src/widgetwrapperdialog.hh \
@@ -124,7 +104,6 @@ HEADERS += src/account.hh src/mainwin.hh src/actions.hh \
            src/curvesdisplay.hh \
            src/pointersafesort.hh \
            src/exceptions.hh \
-           src/ruby-templates.hh
 
 # Plugins:
 

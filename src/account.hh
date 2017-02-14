@@ -107,8 +107,10 @@ public:
   };
 
   /// Returns the current balance, in cents
-  int balance() const { if(transactions.size() > 0)
-      return transactions.last().getBalance(); return 0;
+  int balance() const {
+    if(transactions.size() > 0)
+      return transactions.last().getBalance();
+    return 0;
   };
 
 

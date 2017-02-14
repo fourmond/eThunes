@@ -122,10 +122,6 @@
 #include <QTranslator>
 #include <QLibraryInfo>
 
-// Ruby main include, to have the definition of VALUE to be able to
-// use it in classes
-#include <ruby.h>
-
 // Poppler classes
 #include <poppler/qt5/poppler-qt5.h>
 

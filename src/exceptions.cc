@@ -20,8 +20,6 @@
 #include <headers.hh>
 #include <exceptions.hh>
 
-#include <ruby.hh>
-
 Exception::Exception(const QString & m) throw() : 
   msg(m) {
 };
@@ -34,11 +32,4 @@ const char * Exception::what() const throw()
 QString Exception::message() const throw()
 {
   return msg;
-}
-
-RubyException::RubyException(VALUE ex) :
-  RuntimeError(Ruby::inspect(ex)),
-  rubyException(ex)
-{
-  exceptionClass = rb_class_of(ex);
 }

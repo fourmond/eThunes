@@ -19,7 +19,6 @@
 #include <headers.hh>
 #include <commandline.hh>
 
-#include <ruby.hh>
 // Forst listing plugins
 #include <plugin.hh>
 
