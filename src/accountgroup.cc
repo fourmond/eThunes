@@ -51,3 +51,8 @@ int AccountGroup::balance() const
     balance += accounts[i]->balance();
   return balance;
 }
+
+bool AccountGroup::contains(const Account * account) const
+{
+  return accounts.indexOf(const_cast<Account*>(account)) >= 0;
+}

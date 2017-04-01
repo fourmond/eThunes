@@ -147,67 +147,43 @@ void CurvesDisplay::displayAllBalances(const Wallet * w)
 {
   QList< QList<DataPoint> > curves;
   int nb = 0;
+
+  QHash<const AccountGroup *, QList< QList<DataPoint> > > groups;
+
+  for(int i = 0; i < w->accountGroups.size(); i++)
+    groups[&w->accountGroups[i]] = QList< QList<DataPoint> >();
+  
   for(int i = 0; i < w->accounts.size(); i++) {
     TimeBasedCurve * c = 
       balanceForTransactionList(&(w->accounts[i].transactions));
     c->style = CurveStyle(QColor(colors[nb++ % nbColors]));
-    addCurve(c);
+    addCurve(c, w->accounts[i].name());
     curves << c->curveData();
+
+    for(auto it = groups.begin(); it != groups.end(); it ++) {
+      if(it.key()->contains(&w->accounts[i]))
+        it.value() << c->curveData();
+    }
   }
 
   if(curves.size() == 0)
     return;
-  // Now, come up with a last one combining all of them !
-  QList<int> indices;
-  QDate running = curves[0][0].date();
-  for(int i = 0; i < curves.size(); i++) {
-    indices << -1;
-    if(running > curves[i][0].date())
-      running = curves[i][0].date();
+
+
+  for(auto it = groups.begin(); it != groups.end(); it ++) {
+    TimeBasedCurve * c = new TimeBasedCurve();
+    c->style = CurveStyle(QColor(colors[nb++ % nbColors]));
+    c->setToSum(it.value());
+    addCurve(c, it.key()->name);
   }
 
-  for(int i = 0; i < curves.size(); i++)
-    if(curves[i][0].date() == running)
-      indices[i] = 0;
+
 
   TimeBasedCurve * c = new TimeBasedCurve();
   c->style = CurveStyle(QColor(colors[nb++ % nbColors]));
+  c->setToSum(curves);
 
-  // now run over all dates
-  while(1) {
-
-    // First, compute balance
-    int balance = 0;
-    for(int i = 0; i < curves.size(); i++) {
-      if(indices[i] >= 0)
-        balance += curves[i][indices[i]].amount();
-    }
-    (*c) << DataPoint(running, balance);
-
-    // Now, run over all lists and find the first one that isn't
-    // finished
-    QDate next;
-    for(int i = 0; i < curves.size(); i++) {
-      QDate mc;
-      if(curves[i].size() > indices[i] + 1)
-        mc = curves[i][indices[i] + 1].date();
-      else
-        continue;
-      if((! next.isValid()) || mc < next)
-        next = mc;
-    }
-    if(! next.isValid())
-      break;                    // Done !
-    
-    // Now, advance all the indices whose new date match next
-    for(int i = 0; i < curves.size(); i++) {
-      if(curves[i].size() > indices[i] + 1)
-        if(curves[i][indices[i] + 1].date() == next)
-          indices[i] += 1;
-    }
-    running = next;
-  }
-  addCurve(c);
+  addCurve(c, "Total");
 }
 
 

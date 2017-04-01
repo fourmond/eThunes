@@ -53,6 +53,9 @@ public:
 
   /// The total balance of the group
   int balance() const;
+
+  /// Returns true if this group contains the given account.
+  bool contains(const Account * account) const;
 };
 
 #endif

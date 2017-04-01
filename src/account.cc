@@ -25,7 +25,7 @@ Account::Account() : wallet(NULL)
   watchChild(&transactions, "transactions");
 }
 
-QString Account::name()
+QString Account::name() const
 {
   if(publicName.isEmpty())
     return accountID();

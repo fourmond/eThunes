@@ -114,6 +114,11 @@ public:
     return data;
   };
 
+  /// Sets to the sum of the given time traces: at each point, the
+  /// sum of the balance of all the points is computed.
+  ///
+  /// Clears previous data
+  void setToSum(const QList< QList<DataPoint> > & curves);
 
   /// Minimum value
   int minimumValue();

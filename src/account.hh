@@ -98,7 +98,7 @@ public:
 
   /// Returns a name for the account, based on publicName if available
   /// or on accountID if that isn't the case.
-  QString name();
+  QString name() const;
 
   /// Returns true if the given Account object is the same account
   /// as this one.
