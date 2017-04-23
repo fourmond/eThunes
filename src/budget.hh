@@ -45,8 +45,10 @@ public:
   /// THe Budget's name
   QString name;
 
-  /// The periodicity, in months
+  /// The periodicity, in months (rounding at each year ?).
   int periodicity;
+
+  Budget();
 
   /// The list of realizations
   WatchableList<BudgetRealization> realizations;

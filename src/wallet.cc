@@ -55,6 +55,7 @@ SerializationAccessor * Wallet::serializationAccessor()
   ac->addListAttribute("account", &accounts);
   ac->addListAttribute("group", &accountGroups);
   ac->addListAttribute("filter", &filters);
+  ac->addListAttribute("budget", &budgets);
   return ac;
 }
 

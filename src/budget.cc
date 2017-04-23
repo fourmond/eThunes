@@ -19,6 +19,11 @@
 #include <headers.hh>
 #include <budget.hh>
 
+Budget::Budget() : amount(0), periodicity(1)
+{
+  
+}
+
 SerializationAccessor * Budget::serializationAccessor()
 {
   SerializationAccessor * ac = new SerializationAccessor(this);

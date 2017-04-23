@@ -29,6 +29,9 @@
 #include <accountgroup.hh>
 #include <tag.hh>
 #include <watchablecontainers.hh>
+#include <budget.hh>
+
+class Budget;
 
 /// This class represents a collection of accounts. Presumably, there
 /// should be only one Wallet instance in a running program, although
@@ -54,6 +57,9 @@ public:
 
   /// A list of AccountGroup
   WatchableList<AccountGroup> accountGroups;
+
+  /// The list of Budget objects
+  WatchableList<Budget> budgets;
 
   /// Runs the filters on the given transaction list
   void runFilters(TransactionList * list);

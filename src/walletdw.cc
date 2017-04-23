@@ -24,6 +24,7 @@
 #include <filterpage.hh>
 #include <categorypage.hh>
 #include <tagpage.hh>
+#include <budgetpage.hh>
 #include <cabinet.hh>
 
 #include <htlabel.hh>
@@ -63,6 +64,11 @@ void WalletDW::showTagsPage()
   NavigationWidget::gotoPage(TagPage::getTagPage(wallet));
 }
 
+void WalletDW::showBudgetsPage()
+{
+  NavigationWidget::gotoPage(BudgetPage::getBudgetPage(wallet));
+}
+
 void WalletDW::updateSummary()
 {
   QString text = tr("<h2>Wallet</h2>");
@@ -78,6 +84,8 @@ void WalletDW::updateSummary()
     + "\n" + HTTarget::linkToMember(tr("%1 filters").
                                     arg(wallet->filters.count()),
                                     this, &WalletDW::showFiltersPage)
+    + "\n" + HTTarget::linkToMember(tr("budgets"),
+                                    this, &WalletDW::showBudgetsPage)
     + "<p>\n";
 
   /// \todo Maybe the facility for building up tables should end up

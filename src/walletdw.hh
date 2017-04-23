@@ -73,6 +73,7 @@ protected:
   void showFiltersPage();
   void showCategoriesPage();
   void showTagsPage();
+  void showBudgetsPage();
 
 
 };
