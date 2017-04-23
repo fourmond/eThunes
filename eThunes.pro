@@ -15,6 +15,8 @@ QT += xml network
 # QT5:
 QT +=  widgets
 
+QT += qml
+
 PRECOMPILED_HEADER = src/headers.hh
 
 # Use a build/ directory for building
@@ -63,7 +65,8 @@ SOURCES += src/qmain.cc src/account.cc src/mainwin.cc src/actions.cc \
         src/ootest.cc src/tagpage.cc \
         src/timebasedcurve.cc src/timebasedwidget.cc \
         src/curvesdisplay.cc \
-        src/exceptions.cc
+        src/exceptions.cc \
+        src/budget.cc
 
 HEADERS += src/account.hh src/mainwin.hh src/actions.hh \
            src/ofximport.hh src/accountmodel.hh \
@@ -104,6 +107,7 @@ HEADERS += src/account.hh src/mainwin.hh src/actions.hh \
            src/curvesdisplay.hh \
            src/pointersafesort.hh \
            src/exceptions.hh \
+           src/budget.hh
 
 # Plugins:
 
