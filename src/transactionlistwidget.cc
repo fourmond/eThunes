@@ -207,11 +207,20 @@ void TransactionListWidget::fireUpContextMenu(const QPoint & pos)
     menu.addAction(a);
   }
 
+  menu.addSeparator();
+
   
   menu.addSeparator();
   action = new QAction(tr("Statistics"), this);
   action->setData(QStringList() << "stats");
   menu.addAction(action);
+
+  // action = new QAction(tr("Test"), this);
+  // connect(action, &QAction::triggered, [](bool) {
+  //     QTextStream o(stdout);
+  //     o << "..." << endl;
+  //   });
+  // menu.addAction(action);
 
   action = new QAction(tr("Create filter from names"), this);
   action->setData(QStringList() << "filter-from-names");

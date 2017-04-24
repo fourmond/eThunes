@@ -40,6 +40,27 @@ void Budget::finishedSerializationRead()
     realizations[i].budget = this;
 }
 
+BudgetRealization * Budget::realizationForDate(const QDate & date)
+{
+  if(! date.isValid())
+    return NULL;
+  for(int i = 0; i < realizations.size(); i++) {
+    if(realizations[i].contains(date))
+      return &realizations[i];
+  }
+  realizations << BudgetRealization();
+  BudgetRealization & lst = realizations.last();
+  lst.amount = amount;
+  lst.budget = this;
+
+  int year = date.year();
+  int month = date.month() - (date.month() % periodicity) + 1;
+  lst.startDate.setDate(year, month, 1);
+  lst.endDate.setDate(year, month+periodicity, 1);
+  lst.endDate = lst.endDate.addDays(-1);
+  return &lst;
+}
+
 
 
 
@@ -64,3 +85,7 @@ QString BudgetRealization::typeName() const
   return "budget-realization";
 }
 
+bool BudgetRealization::contains(const QDate & date) const
+{
+  return startDate <= date && date <= endDate;
+}

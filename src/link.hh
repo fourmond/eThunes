@@ -82,6 +82,23 @@ public:
   QList<Link *> namedLinks(const QString & name);
   QList<const Link *> namedLinks(const QString & name) const;
 
+  /// Returns the list of links named with the name and of the given type
+  template<class T> QList<T *> typedLinks(const QString & name) const;
+
 };
+
+
+
+template<class T> QList<T *> LinkList::typedLinks(const QString & name) const
+{
+  QList<const Link *> lst = namedLinks(name);
+  QList<T*> rv;
+  for(int i = 0; i < lst.size(); i++) {
+    const T * tgt = dynamic_cast<const T*>(lst[i]);
+    if(tgt)
+      rv << const_cast<T*>(tgt);
+  }
+  return rv;
+}
 
 #endif

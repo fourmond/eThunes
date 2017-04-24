@@ -25,6 +25,7 @@
 #include <linkable.hh>
 
 class BudgetRealization;
+class AtomicTransaction;
 
 /// This class represents a Budget.
 /// Budgets have
@@ -57,7 +58,13 @@ public:
 
   virtual void finishedSerializationRead() override;
 
+  /// Adds the given transaction to the BudgetRealization within the
+  /// given period.
+  void addTransaction(const AtomicTransaction * trans,
+                      const QDate & date = QDate());
 
+  /// Returns the realization for the date, creating one if necessary
+  BudgetRealization * realizationForDate(const QDate & date);
   
 };
 
@@ -93,6 +100,8 @@ public:
   };;
 
   virtual QString typeName() const override;
+
+  bool contains(const QDate & date) const;
 };
 
 
