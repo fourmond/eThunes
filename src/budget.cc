@@ -19,6 +19,8 @@
 #include <headers.hh>
 #include <budget.hh>
 
+#include <transaction.hh>
+
 Budget::Budget() : amount(0), periodicity(1)
 {
   
@@ -40,7 +42,7 @@ void Budget::finishedSerializationRead()
     realizations[i].budget = this;
 }
 
-BudgetRealization * Budget::realizationForDate(const QDate & date)
+BudgetRealization * Budget::realizationForDate(const QDate & date, bool create)
 {
   if(! date.isValid())
     return NULL;
@@ -48,13 +50,15 @@ BudgetRealization * Budget::realizationForDate(const QDate & date)
     if(realizations[i].contains(date))
       return &realizations[i];
   }
+  if(! create)
+    return NULL;
   realizations << BudgetRealization();
   BudgetRealization & lst = realizations.last();
   lst.amount = amount;
   lst.budget = this;
 
   int year = date.year();
-  int month = date.month() - (date.month() % periodicity) + 1;
+  int month = date.month() - ((date.month() - 1) % periodicity);
   lst.startDate.setDate(year, month, 1);
   lst.endDate.setDate(year, month+periodicity, 1);
   lst.endDate = lst.endDate.addDays(-1);
@@ -77,6 +81,7 @@ SerializationAccessor * BudgetRealization::serializationAccessor()
   ac->addScalarAttribute("amount", &amount);
   ac->addScalarAttribute("start", &startDate);
   ac->addScalarAttribute("end", &endDate);
+  addLinkAttributes(ac);
   return ac;
 }
 
@@ -87,5 +92,32 @@ QString BudgetRealization::typeName() const
 
 bool BudgetRealization::contains(const QDate & date) const
 {
-  return startDate <= date && date <= endDate;
+  return (startDate <= date) && (date <= endDate);
+}
+
+void BudgetRealization::addTransaction(AtomicTransaction * transaction)
+{
+  addLink(transaction, "budget-realization");
+}
+
+void BudgetRealization::followLink()
+{
+  /// @todo Everything
+}
+
+int BudgetRealization::amountRealized()
+{
+  int rv = 0;
+  QList<AtomicTransaction*> transactions =
+    links.typedLinks<AtomicTransaction>("budget-realization");
+
+  QTextStream o(stdout);
+  o << "Transactions: " << transactions.size() << " --"
+    << links.namedLinks("budget-realization").size() << endl;
+  for(int i = 0; i < transactions.size(); i++)
+    rv += transactions[i]->getAmount();
+
+  o << " -> " << rv << endl;
+    
+  return rv;
 }

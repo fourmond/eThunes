@@ -94,9 +94,9 @@ template<class T> QList<T *> LinkList::typedLinks(const QString & name) const
   QList<const Link *> lst = namedLinks(name);
   QList<T*> rv;
   for(int i = 0; i < lst.size(); i++) {
-    const T * tgt = dynamic_cast<const T*>(lst[i]);
+    T * tgt = dynamic_cast<T*>(lst[i]->linkTarget());
     if(tgt)
-      rv << const_cast<T*>(tgt);
+      rv << tgt;
   }
   return rv;
 }

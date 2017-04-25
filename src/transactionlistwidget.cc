@@ -29,6 +29,8 @@
 #include <utils.hh>
 #include <filter.hh>
 
+#include <budget.hh>
+
 TransactionListWidget::TransactionListWidget(TransactionList *transactions,
 					     QWidget * parent) :
   QWidget(parent), model(NULL) {
@@ -200,6 +202,11 @@ void TransactionListWidget::fireUpContextMenu(const QPoint & pos)
   }
   menu.addMenu(subMenu);
 
+  subMenu = new QMenu(tr("Budget"));
+  if(wallet())
+    fillMenuWithBudgets(subMenu, &wallet()->budgets);
+  menu.addMenu(subMenu);
+
   if(true) { /// @todo add a readonly attribute ?
     /// @todo add only for real transactions ?
     QAction * a = new QAction(tr("Add subtransaction"), this);
@@ -243,6 +250,23 @@ void TransactionListWidget::fillMenuWithCategoryHash(QMenu * menu,
   subCategories.sort(); // Will be much easier to read !
   for(int i = 0; i < subCategories.count(); i++)
     fillMenuWithCategory(menu, &ch->operator[](subCategories[i]));
+}
+
+void TransactionListWidget::fillMenuWithBudgets(QMenu * menu, WatchableList<Budget> * budgets)
+{
+  for(int i = 0; i < budgets->size(); i++) {
+    Budget * budget = &(*budgets)[i];
+    QAction * action = new QAction(budget->name, this);
+    connect(action, &QAction::triggered, [this, budget](bool) {
+        TransactionPtrList selected = selectedTransactions();
+        for(int j = 0; j < selected.size(); j++) {
+          BudgetRealization * rel = budget->realizationForDate(selected[j]->getDate());
+          rel->addTransaction(selected[j]);
+        }
+      });
+    menu->addAction(action);
+  }
+
 }
 
 void TransactionListWidget::fillMenuWithTags(QMenu * menu, TagHash * tags, 
@@ -314,6 +338,8 @@ AtomicTransaction * TransactionListWidget::currentTransaction() const
 void TransactionListWidget::contextMenuActionFired(QAction * action)
 {
   QStringList l = action->data().toStringList();
+  if(l.size() == 0)
+    return;
   QString what = l.takeFirst();
   TransactionPtrList selected = selectedTransactions();
   if(what == "set-category") {

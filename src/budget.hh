@@ -64,7 +64,7 @@ public:
                       const QDate & date = QDate());
 
   /// Returns the realization for the date, creating one if necessary
-  BudgetRealization * realizationForDate(const QDate & date);
+  BudgetRealization * realizationForDate(const QDate & date, bool create = true);
   
 };
 
@@ -95,13 +95,18 @@ public:
 
   virtual SerializationAccessor * serializationAccessor() override;
 
-  virtual void followLink() override {
-    /// @todo Everything
-  };;
+  virtual void followLink() override;
 
   virtual QString typeName() const override;
 
   bool contains(const QDate & date) const;
+
+  /// Just adds the given transaction to the appropriately-named links
+  void addTransaction(AtomicTransaction * transaction);
+
+  /// Returns the amount realized in the transactions connected to
+  /// this realization.
+  int amountRealized();
 };
 
 

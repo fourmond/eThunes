@@ -71,11 +71,24 @@ void BudgetPage::updateSummary()
   text += tr("<h3>Balance</h3><table>\n"
              "<tr><td>Income</td><td>%1</td></tr>\n"
              "<tr><td>Expense</td><td>%2</td></tr>\n"
-             "<tr><td>Balance</td><td>%3</td></tr>\n").
+             "<tr><td>Balance</td><td>%3</td></tr></table>\n").
     arg(Transaction::formatAmount(totalPositive)).
     arg(Transaction::formatAmount(totalNegative)).
     arg(Transaction::formatAmount(totalPositive + totalNegative));
 
+  // Now, a summary of the realizations, just for the current month for now
+  text += tr("<h3>Realizations</h3><table>\n");
+  QDate cur = QDate::currentDate();
+  for(int i = 0; i < wallet->budgets.size(); i++) {
+    Budget * budget = & wallet->budgets[i];
+    BudgetRealization * rel = budget->realizationForDate(cur, false);
+    int amount = rel ? rel->amountRealized() : 0;
+    text += QString("<tr><td>%1</td><td>%2/%3</td></tr>").
+      arg(budget->name).arg(Transaction::formatAmount(amount)).
+      arg(Transaction::formatAmount(budget->amount));
+  }
+  text += "</table>\n";
+  
   
   summary->setText(text);
 }

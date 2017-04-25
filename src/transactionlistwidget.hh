@@ -24,9 +24,12 @@
 #include <accountmodel.hh>
 
 class BaseTransactionListItem;
+class Budget;
 
 /// This Widget is a thin wrapper around a QTreeView with an
 /// AccoutModel as model.
+///
+/// @todo Choice of columns and of their order ?
 class TransactionListWidget : public QWidget {
 
   Q_OBJECT;
@@ -38,6 +41,10 @@ protected:
 
   /// Fills the menu with the given Category and its children.
   void fillMenuWithCategory(QMenu * menu, Category * category);
+
+  /// Makes the Budget-related submenus
+  void fillMenuWithBudgets(QMenu * menu,
+                           WatchableList<Budget> * budgets);
 
   /// Fills the menu with the given CategoryHash
   void fillMenuWithCategoryHash(QMenu * menu, CategoryHash * ch);
