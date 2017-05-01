@@ -67,7 +67,8 @@ SOURCES += src/qmain.cc src/account.cc src/mainwin.cc src/actions.cc \
         src/curvesdisplay.cc \
         src/exceptions.cc \
         src/budget.cc \
-        src/budgetpage.cc
+        src/budgetpage.cc \
+        src/settings.cc
 
 HEADERS += src/account.hh src/mainwin.hh src/actions.hh \
            src/ofximport.hh src/accountmodel.hh \
@@ -109,7 +110,9 @@ HEADERS += src/account.hh src/mainwin.hh src/actions.hh \
            src/pointersafesort.hh \
            src/exceptions.hh \
            src/budget.hh \
-           src/budgetpage.hh
+           src/budgetpage.hh \
+           src/settings.hh \
+           src/settings-templates.hh
 
 # Plugins:
 
