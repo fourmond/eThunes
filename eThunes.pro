@@ -68,7 +68,8 @@ SOURCES += src/qmain.cc src/account.cc src/mainwin.cc src/actions.cc \
         src/exceptions.cc \
         src/budget.cc \
         src/budgetpage.cc \
-        src/settings.cc
+        src/settings.cc \
+        src/periodic.cc
 
 HEADERS += src/account.hh src/mainwin.hh src/actions.hh \
            src/ofximport.hh src/accountmodel.hh \
@@ -112,7 +113,8 @@ HEADERS += src/account.hh src/mainwin.hh src/actions.hh \
            src/budget.hh \
            src/budgetpage.hh \
            src/settings.hh \
-           src/settings-templates.hh
+           src/settings-templates.hh \
+           src/periodic.hh
 
 # Plugins:
 
