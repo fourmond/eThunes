@@ -42,10 +42,6 @@ class MainWin : public QMainWindow {
   void setupMenus();
   void setupFrame();
 
-  // yet unimplemented...
-  void loadSettings();
-  void saveSettings();
-
   /// A hash storing all actions, with reasonable code-like
   /// names.
   ActionsHash actions;

@@ -23,6 +23,11 @@
 #include <log.hh>
 #include <commandline.hh>
 
+#include <settings.hh>
+#include <settings-templates.hh>
+
+static SettingsValue<int> fontSize("global/font-size", -1);
+
 void loadTranslations(const QString & locale, QCoreApplication * app)
 {
   QTranslator * translator = new QTranslator;
@@ -64,6 +69,16 @@ int main(int argc, char ** argv)
   log.open(stdout, QIODevice::WriteOnly);
   Log::logger()->spy = &log;
 
+  main.setApplicationName("eThunes");
+
+  Settings::loadSettings("tanyaivinco.homelinux.org", "eThunes");
+  if(fontSize > 0) {
+    QFont fnt = main.font();
+    fnt.setPixelSize(fontSize);
+    main.setFont(fnt);
+  }
+
+
   loadTranslations(QLocale::system().name(), &main);
 
   // The search path for Ruby code (general-purpose modules)
@@ -79,6 +94,8 @@ int main(int argc, char ** argv)
   main.setApplicationName("eThunes");
   win.show();
 
-  return main.exec();
+  int ret =  main.exec();
+  Settings::saveSettings("tanyaivinco.homelinux.org", "eThunes");
+  return ret;
 }
 

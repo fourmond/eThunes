@@ -143,6 +143,8 @@
 
 #include <ootest.hh>
 
+#include <settings.hh>
+#include <settings-templates.hh>
 #include <logviewer.hh>
 
 #include <filterdialog.hh>
@@ -159,6 +161,10 @@ static const char * translationCopyrightString =
              "General Public License, as the source code.\n"
              );
 
+
+static SettingsValue<QSize> mainWinSize("mainwin/size", QSize(700,500));
+static SettingsValue<QString> lastFile("mainwin/lastfile", QString());
+
 MainWin::MainWin()
 {
   storage = new LogStorage();
@@ -166,17 +172,22 @@ MainWin::MainWin()
   connect(cabinet, SIGNAL(dirtyChanged(bool)), SLOT(dirtyChanged(bool)));
   fileNameChanged(QString());
 
+
   setupFrame();
   setupActions();
   setupMenus();
 
-  loadSettings();
+  resize(::mainWinSize);
+  QString lf = ::lastFile;
+  if(! lf.isEmpty())
+    dashboard->load(lf);
 }
 
 MainWin::~MainWin()
 {
-  // We save the settings
-  saveSettings();
+  ::mainWinSize = size();
+  ::lastFile = dashboard->currentFileName();
+
   if(cabinet)
     delete cabinet;
 }
@@ -296,30 +307,6 @@ void MainWin::setupMenus()
   testMenu->addAction(actions["test definition"]);
 }
 
-// This sounds ridiculous, but I'll have to use a macro, as the copy
-// constructor for QSettings is *private*.
-
-#define ownSettings QSettings settings("tanyaivinco.homelinux.org",	\
-				       "eThunes");			\
-  settings.beginGroup("mainwin");
-
-void MainWin::saveSettings()
-{
-  ownSettings;
-  settings.setValue("size", size());
-  if(! dashboard->currentFileName().isEmpty())
-    settings.setValue("lastfile", dashboard->currentFileName());
-}
-
-
-void MainWin::loadSettings()
-{
-  ownSettings;
-  if(settings.contains("size"))
-    resize(settings.value("size").toSize());
-  if(settings.contains("lastfile"))
-    dashboard->load(settings.value("lastfile").toString());
-}
 
 void MainWin::dirtyChanged(bool dirty)
 {
