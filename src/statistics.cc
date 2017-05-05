@@ -50,123 +50,59 @@ QList<CategorizedStatistics::Item> CategorizedStatistics::categorize() const
 //////////////////////////////////////////////////////////////////////
 
 
-PeriodicCategorizedStatistics::PeriodicCategorizedStatistics(const QList<Account *>& ac) :
-  accounts(ac)
+PeriodicCategorizedStatistics::PeriodicCategorizedStatistics(const QList<Account *>& ac, const Periodic & periodic) :
+  accounts(ac), periodicity(periodic)
 {
   wallet = (accounts.size() > 0 && accounts.first() ? accounts.first()->wallet : NULL);
 }
 
-QDate PeriodicCategorizedStatistics::dateOfBucket(int id) const
+/// Adds a Transaction to the statistics.
+void PeriodicCategorizedStatistics::addTransaction(const AtomicTransaction * t, 
+                                                   bool topLevel)
 {
-  return Transaction::dateFromID(id);
+  Period p = periodicity.periodForDate(t->getDate());
+  (*this)[p].addTransaction(t, topLevel);
 }
+
+
 
 /// @todo Using TransactionList for that really isn't the right thing
 /// to do !
 QHash<QString, TransactionList> PeriodicCategorizedStatistics::listsForDisplay() const
 {
   QHash<QString, TransactionList> ret;
-  QList<int> ks = keys();
-  qSort(ks);
+  // QList<int> ks = keys();
+  // qSort(ks);
 
-  for(int i = 0; i < ks.size(); i++) {
-    QList<CategorizedStatistics::Item> lst = value(ks[i]).categorize();
-    for(int j = 0; j < lst.size(); j++) {
-      ret[lst[j].category].
-        append(Transaction(dateOfBucket(ks[i]), lst[j].amount));
-    }
-  }
+  // for(int i = 0; i < ks.size(); i++) {
+  //   QList<CategorizedStatistics::Item> lst = value(ks[i]).categorize();
+  //   for(int j = 0; j < lst.size(); j++) {
+  //     ret[lst[j].category].
+  //       append(Transaction(dateOfBucket(ks[i]), lst[j].amount));
+  //   }
+  // }
   return ret;
 }
 
-
-
-//////////////////////////////////////////////////////////////////////
-
-void CategorizedMonthlyStatistics::addTransaction(const AtomicTransaction * t, 
-                                                  bool tl)
+QString PeriodicCategorizedStatistics::elementName(const Period & period) const
 {
-  (*this)[t->monthID()].addTransaction(t, tl);
+  return periodicity.periodName(period);
+  // return HTTarget::
+  //   linkToFunction(Utils::monthName(Transaction::dateFromID(id), false),
+  //                  &TransactionListDialog::showMonthlyTransactions,
+  //                  accounts, id, 1);
 }
 
-
-QString CategorizedMonthlyStatistics::elementName(int id) const
+QString PeriodicCategorizedStatistics::categoryName(const Period & period,
+                                                    const QString & name,
+                                                    const QString & disp) const
 {
-  return HTTarget::
-    linkToFunction(Utils::monthName(Transaction::dateFromID(id), false),
-                   &TransactionListDialog::showMonthlyTransactions,
-                   accounts, id, 1);
-}
-
-QString CategorizedMonthlyStatistics::categoryName(int id,
-                                                   const QString & name,
-                                                   const QString & disp) const
-{
-  return HTTarget::
-    linkToFunction(disp.isEmpty() ? name : disp,
-                   &TransactionListDialog::showMonthlyCategoryTransactions,
-                   wallet->namedCategory(name),
-                   accounts, id, 1);
-}
-
-//////////////////////////////////////////////////////////////////////
-
-void CategorizedTrimesterStatistics::addTransaction(const AtomicTransaction * t, 
-                                                    bool tl)
-{
-  /// @bug This assumes that the monthID % 3 is 0 for the beginning of
-  /// the year.
-  (*this)[t->monthID() - (t->monthID() % 3)].addTransaction(t, tl);
-}
-
-QString CategorizedTrimesterStatistics::elementName(int id) const
-{
-
-  return HTTarget::
-    linkToFunction(Utils::monthName(Transaction::dateFromID(id), false) + 
-                   " - " +
-                   Utils::monthName(Transaction::dateFromID(id + 2), false),
-                   &TransactionListDialog::showMonthlyTransactions,
-                   accounts, id, 3);
-}
-
-QString CategorizedTrimesterStatistics::categoryName(int id,
-                                                     const QString & name,
-                                                     const QString & disp) const
-{
-  return HTTarget::
-    linkToFunction(disp.isEmpty() ? name : disp,
-                   &TransactionListDialog::showMonthlyCategoryTransactions,
-                   wallet->namedCategory(name),
-                   accounts, id, 3);
-}
-
-//////////////////////////////////////////////////////////////////////
-
-void CategorizedYearlyStatistics::addTransaction(const AtomicTransaction * t, 
-                                                    bool tl)
-{
-  (*this)[t->getDate().year()].addTransaction(t, tl);
-}
-
-QString CategorizedYearlyStatistics::elementName(int id) const
-{
-  /// @bug This assumes that the monthID = 12 * year
-  return HTTarget::
-    linkToFunction(QString::number(id),
-                   &TransactionListDialog::showMonthlyTransactions,
-                   accounts, id*12, 12);
-}
-
-QString CategorizedYearlyStatistics::categoryName(int id,
-                                                  const QString & name,
-                                                  const QString & disp) const
-{
-  return HTTarget::
-    linkToFunction(disp.isEmpty() ? name : disp,
-                   &TransactionListDialog::showMonthlyCategoryTransactions,
-                   wallet->namedCategory(name),
-                   accounts, id*12, 12);
+  return disp.isEmpty() ? name : disp;
+  // return HTTarget::
+  //   linkToFunction(disp.isEmpty() ? name : disp,
+  //                  &TransactionListDialog::showMonthlyCategoryTransactions,
+  //                  wallet->namedCategory(name),
+  //                  accounts, id, 1);
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -180,19 +116,26 @@ Statistics::Statistics(const TransactionPtrList & lst, bool topLevel)
       acs << ac;
   }
         
-  stats << new CategorizedMonthlyStatistics(acs.toList()); 
-  stats << new CategorizedTrimesterStatistics(acs.toList());
-  stats << new CategorizedYearlyStatistics(acs.toList());
+  stats["monthly"] =
+    new PeriodicCategorizedStatistics(acs.toList(), Periodic::monthly); 
+  stats["trimester"] =
+    new PeriodicCategorizedStatistics(acs.toList(), Periodic::trimester); 
+  stats["yearly"] =
+    new PeriodicCategorizedStatistics(acs.toList(), Periodic::yearly); 
+  stats["schoolyear"] =
+    new PeriodicCategorizedStatistics(acs.toList(), Periodic::schoolYear); 
 
-  for(int i = 0; i < lst.size(); i++)
-    for(int j = 0; j < stats.size(); j++)
-      stats[j]->addTransaction(lst[i], topLevel);
+  for(int i = 0; i < lst.size(); i++) {
+    for(auto j = stats.begin() ; j != stats.end(); j++) {
+      (*j)->addTransaction(lst[i], topLevel);
+    }
+  }
 }
 
 Statistics::~Statistics()
 {
-  for(int i = 0; i < stats.size(); i++)
-    delete stats[i];
+  for(auto i = stats.begin(); i != stats.end(); i++)
+    delete *i;
 }
 
 
@@ -203,23 +146,19 @@ QString Statistics::htmlStatistics(PeriodicCategorizedStatistics * which,
                                    bool monthlyAverage) const
 {
   QList<QStringList> columns;
-  QList<int> values = which->keys();
-  qSort(values);
-  int target = (number > 0 ? values.last() - number : 
-                values.first() - 1);
-  int div = (monthlyAverage ? which->monthNumber() : 1);
-  for(int i = values.last(); i > target; i--) {
-    if((*which)[i].size() == 0)
-      continue;
-    
+  QList<Period> periods = which->keys();
+  qSort(periods);
+  // int div = (monthlyAverage ? which->monthNumber() : 1);
+  int div = 1;
+  for(auto i = periods.rbegin(); i != periods.rend(); i++) {
     QStringList c1, c2;
-    c1 << QString("<b>%1</b>").arg(which->elementName(i));
+    c1 << QString("<b>%1</b>").arg(which->elementName(*i));
     c2 << "";
     QList<CategorizedStatistics::Item> items = 
-      (*which)[i].categorize();
+      (*which)[*i].categorize();
 
 
-    c1 << which->categoryName(i, items.last().category, "Revenues");
+    c1 << which->categoryName(*i, items.last().category, "Revenues");
     c2 << Transaction::formatAmount(items.last().amount/div);
 
     int rest = 0;
@@ -237,7 +176,7 @@ QString Statistics::htmlStatistics(PeriodicCategorizedStatistics * which,
     c2 << Transaction::formatAmount(rest/div);
 
     for(int j = 0; j < std::min(items.size(), maxDisplay); j++) {
-      c1 << which->categoryName(i, items[j].category);
+      c1 << which->categoryName(*i, items[j].category);
       c2 << Transaction::formatAmount(items[j].amount/div);
     }
     columns << c1 << c2;
@@ -268,9 +207,9 @@ QString Statistics::htmlStatistics(PeriodicCategorizedStatistics * which,
 /// @li it should provide graphics display (possibly by alternance)
 /// where each data point would be very visible, with a neat tooltip
 /// and a context menu for showing transactions ?
-QString Statistics::htmlStatistics(Period per, int months, 
+QString Statistics::htmlStatistics(const QString & which, int months, 
                                    int maxDisplay, bool monthlyAverage) const
 {
-  return htmlStatistics(stats[per], months, maxDisplay, monthlyAverage);
+  return htmlStatistics(stats[which], months, maxDisplay, monthlyAverage);
 }
 

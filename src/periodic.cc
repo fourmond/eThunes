@@ -34,6 +34,22 @@ bool Period::isValid() const
   return startDate <= endDate;
 }
 
+uint qHash(const Period & p, uint seed)
+{
+  return qHash(p.startDate) ^ qHash(p.endDate) ^ seed;
+}
+
+bool Period::operator<(const Period & other) const
+{
+  return startDate < other.startDate;
+}
+
+bool Period::operator==(const Period & other) const
+{
+  return startDate == other.startDate &&
+    endDate == other.endDate;
+}
+
 /// @relates Period
 template <> void 
 SerializationAccessor::addScalarAttribute(const QString & name,
@@ -89,3 +105,9 @@ QString Periodic::periodName(const Period & period, bool lg) const
     arg(Utils::monthName(period.startDate, lg)).
     arg(Utils::monthName(period.endDate, lg));
 }
+
+
+const Periodic Periodic::monthly(1, 1);
+const Periodic Periodic::trimester(3, 1);
+const Periodic Periodic::yearly(12, 1);
+const Periodic Periodic::schoolYear(12, 9);

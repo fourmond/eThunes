@@ -51,9 +51,10 @@ StatisticsWidget::StatisticsWidget(Cabinet * c) :
 
   horiz->addWidget(new QLabel(tr("Period")));
   timeFrame = new QComboBox();
-  timeFrame->addItem(tr("Month"), Statistics::Monthly);
-  timeFrame->addItem(tr("Trimester"), Statistics::Trimester);
-  timeFrame->addItem(tr("Year"), Statistics::Yearly);
+  timeFrame->addItem(tr("Month"), "monthly");
+  timeFrame->addItem(tr("Trimester"), "trimester");
+  timeFrame->addItem(tr("Year"), "yearly");
+  timeFrame->addItem(tr("School Year"), "schoolyear");
   timeFrame->setEditable(false);
 
   connect(timeFrame, SIGNAL(currentIndexChanged(int)),
@@ -81,9 +82,8 @@ void StatisticsWidget::update()
       lst.append(cabinet->wallet.accounts[i].transactions.toPtrList());
 
     Statistics s(lst, topLevel->isChecked());
-    int l = timeFrame->itemData(timeFrame->currentIndex()).toInt();
-    display->setText(s.htmlStatistics(static_cast<Statistics::Period>(l), -1, 
-                                      maxDisplayed, 
+    QString p = timeFrame->itemData(timeFrame->currentIndex()).toString();
+    display->setText(s.htmlStatistics(p, -1, maxDisplayed, 
                                       monthlyAverage->isChecked()));
   } 
   else
@@ -103,25 +103,25 @@ void StatisticsWidget::setPeriod(int /*nb*/)
 
 void StatisticsWidget::showCurves()
 {
-  if(cabinet->wallet.accounts.size() > 0) {
-    // We pick the one with the most transactions:
-    Account * account = NULL;
-    for(int i = 0; i < cabinet->wallet.accounts.size(); i++) {
-      if( ( ! account) ||
-          account->transactions.size() < 
-          cabinet->wallet.accounts[i].transactions.size())
-        account = &cabinet->wallet.accounts[i];
-    }
-    CurvesDisplay * dlg = new CurvesDisplay();
-    Statistics s(account->transactions.toPtrList(),
-                 topLevel->isChecked());
-    int l = timeFrame->itemData(timeFrame->currentIndex()).toInt();
-    QHash<QString, TransactionList> all = s.stats[l]->listsForDisplay();
+  // if(cabinet->wallet.accounts.size() > 0) {
+  //   // We pick the one with the most transactions:
+  //   Account * account = NULL;
+  //   for(int i = 0; i < cabinet->wallet.accounts.size(); i++) {
+  //     if( ( ! account) ||
+  //         account->transactions.size() < 
+  //         cabinet->wallet.accounts[i].transactions.size())
+  //       account = &cabinet->wallet.accounts[i];
+  //   }
+  //   CurvesDisplay * dlg = new CurvesDisplay();
+  //   Statistics s(account->transactions.toPtrList(),
+  //                topLevel->isChecked());
+  //   int l = timeFrame->itemData(timeFrame->currentIndex()).toInt();
+  //   QHash<QString, TransactionList> all = s.stats[l]->listsForDisplay();
 
-    for(QHash<QString, TransactionList>::iterator i = all.begin();
-        i != all.end(); i++) {
-      dlg->displayBalance(&i.value(), i.key());
-    }
-    dlg->show();
-  }
+  //   for(QHash<QString, TransactionList>::iterator i = all.begin();
+  //       i != all.end(); i++) {
+  //     dlg->displayBalance(&i.value(), i.key());
+  //   }
+  //   dlg->show();
+  // }
 }

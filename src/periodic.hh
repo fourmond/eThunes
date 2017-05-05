@@ -38,8 +38,17 @@ public:
   /// Whether the period is valid, i.e. both dates are valid and the
   /// endDate is after the beginning
   bool isValid() const;
-  
+
+  /// Whether this period @b starts @b before @a other
+  bool operator<(const Period & other) const;
+
+  /// Whether two periods are equal
+  bool operator==(const Period & other) const;
 };
+
+/// The hash function, so that a Period can be used as the element of
+/// a Hash. @relates Period
+uint qHash(const Period & p, uint seed = 0);
 
 /// This class represents a periodic event, i.e. a way to generate
 /// Period objects that repeat.
@@ -63,7 +72,26 @@ public:
   Period nextPeriod(const Period & period) const;
 
   /// Name the given period.
-  QString periodName(const Period & period, bool longName) const;
+  QString periodName(const Period & period, bool longName = false) const;
+
+
+  /// @name Predefined periodicities
+  ///
+  /// @{
+  
+  /// Monthly
+  static const Periodic monthly;
+
+  /// By trimester
+  static const Periodic trimester;
+
+  /// Yearly
+  static const Periodic yearly;
+
+  /// Schoolyear (starts in September, ends in August)
+  static const Periodic schoolYear;
+
+  /// @}
 };
 
 
