@@ -53,3 +53,24 @@ QString HTTarget::linkTo(const QString & str, HTTarget * pointer)
     arg(encodePointer(pointer)).
     arg(str);
 }
+
+class HTFunction : public HTTarget {
+  std::function<void ()> callback;
+  
+  bool disposable;
+
+public:
+  virtual bool isDisposable() const { return disposable; };
+  virtual void followLink() {
+    callback();
+  };
+
+  HTFunction(std::function<void ()> function, bool d = true) : 
+    callback(function), disposable(d) {;};
+};
+
+QString HTTarget::linkToFunction(const QString & id,
+                                 std::function<void ()> function)
+{
+  return linkTo(id, new HTFunction(function));
+}
