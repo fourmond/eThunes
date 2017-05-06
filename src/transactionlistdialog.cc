@@ -72,39 +72,26 @@ void TransactionListDialog::displayTag(Tag * tag,
 	      tr("Tag: %1").arg(tag->name));
 }
 
-void TransactionListDialog::displayMonthlyTransactions(Account * account, 
-                                                       int monthID, 
-                                                       int number)
+void TransactionListDialog::displayTransactionsForPeriod(const QList<Account *>& accounts,
+                                                         const Period & period)
 {
-  QList<Account *> acs;
-  acs << account;
-  displayMonthlyTransactions(acs, monthID, number);
-}
-
-void TransactionListDialog::displayMonthlyTransactions(const QList<Account *> accounts,
-                                                       int monthID, 
-                                                       int number)
-{
-  QDate d = Transaction::dateFromID(monthID);
-  
   TransactionPtrList list;
 
   QStringList names;
   for(int j = 0; j < accounts.size(); j++) {
     Account * account = accounts[j];
     names << account->name();
-    for(int i = 0; i < number; i++)
-      list.append(account->monthlyTransactions(monthID + i));
+    TransactionPtrList 	trs = account->allTransactions();
+    for(int i = 0; i < trs.size(); i++) {
+      AtomicTransaction * t = trs[i];
+      if(period.contains(t->getDate()))
+        list << t;
+    }
   }
   list.sortByDate();
 
-  QString label;
-  if(number == 1)
-    label = d.toString("MMMM yyyy");
-  else {
-    label = tr("%1 to %2").arg(d.toString("MMMM yyyy")).
-      arg(d.addMonths(number-1).toString("MMMM yyyy"));
-  }
+  QString label= tr("%1 to %2").arg(period.startDate.toString("dd MMMM yyyy")).
+    arg(period.endDate.toString("dd MMMM yyyy"));
 
   QString lbl;
   if(accounts.size() > 1)
@@ -118,39 +105,23 @@ void TransactionListDialog::displayMonthlyTransactions(const QList<Account *> ac
 }
 
 
-void TransactionListDialog::
-displayMonthlyCategoryTransactions(Category * category,
-                                   Account * account, 
-                                   int monthID, int number)
-{
-  QList<Account *> acs;
-  acs << account;
-  displayMonthlyCategoryTransactions(category, acs, monthID, number);
-}
 
-void TransactionListDialog::
-displayMonthlyCategoryTransactions(Category * category,
-                                   const QList<Account *>& accounts, 
-                                   int monthID, int number)
+void TransactionListDialog::displayCategoryTransactionsForPeriod(Category * category,
+                                                                 const QList<Account *>& accounts,
+                                                                 const Period & period)
 {
-  QDate d = Transaction::dateFromID(monthID);
   TransactionPtrList l;
   for(int i = 0; i < accounts.size(); i++) {
     Account * account = accounts[i];
     l.append(account->categoryTransactions(category));
   }
   TransactionPtrList l2;
-  for(int i = 0; i < l.size(); i++)
-    if(l[i]->monthID() >= monthID && l[i]->monthID() < monthID + number)
+  for(int i = 0; i < l.size(); i++) {
+    if(period.contains(l[i]->getDate()))
       l2.append(l[i]);
-  QString label;
-  if(number == 1)
-    label = d.toString("MMMM yyyy");
-  else {
-    label = tr("%1 to %2").arg(d.toString("MMMM yyyy")).
-      arg(d.addMonths(number-1).toString("MMMM yyyy"));
   }
-
+  QString label= tr("%1 to %2").arg(period.startDate.toString("dd MMMM yyyy")).
+    arg(period.endDate.toString("dd MMMM yyyy"));
   l2.sortByDate();
 
   displayList(l2,
@@ -173,51 +144,19 @@ void TransactionListDialog::showCategory(Category * category, Wallet * wallet)
   dlg->show();
 }
 
-void TransactionListDialog::showMonthlyTransactions(Account * account, 
-                                                    int monthID)
-{
-  showMonthlyTransactions(account, monthID, 1);
-}
-
-void TransactionListDialog::showMonthlyTransactions(Account * account, 
-                                                    int monthID, int number)
+void TransactionListDialog::showTransactionsForPeriod(const QList<Account *> & accounts,
+                                                      const Period & period)
 {
   TransactionListDialog * dlg = new TransactionListDialog();
-  dlg->displayMonthlyTransactions(account, monthID, number);
+  dlg->displayTransactionsForPeriod(accounts, period);
   dlg->show();
 }
 
-void TransactionListDialog::showMonthlyTransactions(const QList<Account *> accounts, 
-                                                    int monthID, int number)
+void TransactionListDialog::showCategoryTransactionsForPeriod(Category * category,
+                                                              const QList<Account *> &accounts,
+                                                              const Period & period)
 {
   TransactionListDialog * dlg = new TransactionListDialog();
-  dlg->displayMonthlyTransactions(accounts, monthID, number);
-  dlg->show();
-}
-
-void TransactionListDialog::showMonthlyCategoryTransactions(Category * category,
-                                                            Account * account, 
-                                                            int monthID)
-{
-  showMonthlyCategoryTransactions(category, account, monthID, 1);
-}
-
-void TransactionListDialog::showMonthlyCategoryTransactions(Category * category,
-                                                            Account * account, 
-                                                            int monthID, 
-                                                            int number)
-{
-  TransactionListDialog * dlg = new TransactionListDialog();
-  dlg->displayMonthlyCategoryTransactions(category, account, monthID, number);
-  dlg->show();
-}
-
-void TransactionListDialog::showMonthlyCategoryTransactions(Category * category,
-                                                            QList<Account *> accounts, 
-                                                            int monthID, 
-                                                            int number)
-{
-  TransactionListDialog * dlg = new TransactionListDialog();
-  dlg->displayMonthlyCategoryTransactions(category, accounts, monthID, number);
+  dlg->displayCategoryTransactionsForPeriod(category, accounts, period);
   dlg->show();
 }

@@ -86,23 +86,26 @@ QHash<QString, TransactionList> PeriodicCategorizedStatistics::listsForDisplay()
 
 QString PeriodicCategorizedStatistics::elementName(const Period & period) const
 {
-  return periodicity.periodName(period);
-  // return HTTarget::
-  //   linkToFunction(Utils::monthName(Transaction::dateFromID(id), false),
-  //                  &TransactionListDialog::showMonthlyTransactions,
-  //                  accounts, id, 1);
+  QList<Account * > acs = accounts;
+  return HTTarget::
+    linkToFunction(periodicity.periodName(period),
+                   [acs, period] () {
+                     TransactionListDialog::showTransactionsForPeriod(acs, period);
+                   });
 }
 
 QString PeriodicCategorizedStatistics::categoryName(const Period & period,
                                                     const QString & name,
                                                     const QString & disp) const
 {
-  return disp.isEmpty() ? name : disp;
-  // return HTTarget::
-  //   linkToFunction(disp.isEmpty() ? name : disp,
-  //                  &TransactionListDialog::showMonthlyCategoryTransactions,
-  //                  wallet->namedCategory(name),
-  //                  accounts, id, 1);
+  QList<Account * > acs = accounts;
+  Category * cat = wallet->namedCategory(name);
+  return HTTarget::
+    linkToFunction(disp.isEmpty() ? name : disp,
+                   [acs, period, cat] () {
+                     TransactionListDialog::showCategoryTransactionsForPeriod(cat, acs, period);
+                   }
+                   );
 }
 
 //////////////////////////////////////////////////////////////////////

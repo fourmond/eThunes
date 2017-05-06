@@ -22,7 +22,7 @@
 #include <serialization.hh>
 #include <utils.hh>
 
-bool Period::isInside(const QDate & date) const
+bool Period::contains(const QDate & date) const
 {
   return (startDate <= date) && (date <= endDate);
 }

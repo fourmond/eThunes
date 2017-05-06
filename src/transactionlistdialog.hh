@@ -26,6 +26,7 @@
 #include <category.hh>
 #include <accountmodel.hh>
 #include <transactionlistwidget.hh>
+#include <periodic.hh>
 
 /// Dialog box to display transaction lists
 ///
@@ -75,25 +76,14 @@ public slots:
 
   /// Displays the transactions for the given Month and the given
   /// account.
-  void displayMonthlyTransactions(Account * account, int monthID, 
-                                  int number = 1);
-
-  void displayMonthlyTransactions(const QList<Account *> accounts,
-                                  int monthID, 
-                                  int number = 1);
+  void displayTransactionsForPeriod(const QList<Account *>& accounts,
+                                    const Period & period);
 
   /// Displays the transactions for the given Month and the given
   /// account.
-  void displayMonthlyCategoryTransactions(Category * category,
-                                          Account * account, 
-                                          int monthID, 
-                                          int number = 1);
-
-  void displayMonthlyCategoryTransactions(Category * category,
-                                          const QList<Account *> & account, 
-                                          int monthID, 
-                                          int number = 1);
-
+  void displayCategoryTransactionsForPeriod(Category * category,
+                                            const QList<Account *>& accounts,
+                                            const Period & period);
 public:
 
   /// Displays the checks of the given account.
@@ -102,32 +92,15 @@ public:
   /// Displays the transactions of the given Category
   static void showCategory(Category * category, Wallet * wallet);
 
-  /// Displays the transactions for the given Month and the given
-  /// account.
-  static void showMonthlyTransactions(Account * account, int monthID);
-
-  /// same as above, but displays the given number of months
-  static void showMonthlyTransactions(Account * account, int monthID, 
-                                      int number = 1);
-
   /// same as above, but displays all the given accounts...
-  static void showMonthlyTransactions(QList<Account *> accounts,
-                                      int monthID, 
-                                      int number = 1);
+  static void showTransactionsForPeriod(const QList<Account *> & accounts,
+                                        const Period & period);
 
   /// Displays the transactions for the given Month and the given
   /// account.
-  static void showMonthlyCategoryTransactions(Category * category,
-                                              Account * account, 
-                                              int monthID);
-
-  static void showMonthlyCategoryTransactions(Category * category,
-                                              Account * account, 
-                                              int monthID, int number);
-
-  static void showMonthlyCategoryTransactions(Category * category,
-                                              QList<Account *> accounts, 
-                                              int monthID, int number);
+  static void showCategoryTransactionsForPeriod(Category * category,
+                                                const QList<Account *> &accounts,
+                                                const Period & period);
 
 
 };

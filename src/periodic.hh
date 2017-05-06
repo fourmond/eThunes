@@ -33,7 +33,7 @@ public:
   QDate endDate;
 
   /// Returns true if the given date is within the period
-  bool isInside(const QDate & date) const;
+  bool contains(const QDate & date) const;
 
   /// Whether the period is valid, i.e. both dates are valid and the
   /// endDate is after the beginning
