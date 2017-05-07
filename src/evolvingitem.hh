@@ -138,13 +138,6 @@ public:
     return retval;
   };
 
-  /// Convenience conversion operator, to be dropped whenever
-  /// possible.
-  ///
-  /// @deprecated.
-  operator T () const __attribute__((deprecated)) {
-    return firstValue;
-  }
 };
 
 #endif
