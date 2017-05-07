@@ -27,8 +27,8 @@ QHash<QString, QByteArray> WidgetWrapperDialog::savedGeometries;
 /// - and whether delete occurs on close
 WidgetWrapperDialog::WidgetWrapperDialog(QWidget * widget,
                                          const QString & top,
-                                         const QString & close,
-                                         const QString & name, 
+                                         QDialogButtonBox::StandardButtons bts,
+                                         const QString & name,
                                          bool wrap)
   : internalName(name)
 {
@@ -44,14 +44,12 @@ WidgetWrapperDialog::WidgetWrapperDialog(QWidget * widget,
   else 
     l1->addWidget(widget);
 
-  QString str;
-  if(close.isEmpty())
-    str = tr("Close");
-  else
-    str = close;
-  closeButton = new QPushButton(str);
-  connect(closeButton, SIGNAL(clicked()), SLOT(close()));
-  l1->addWidget(closeButton);
+
+  buttons = new QDialogButtonBox(bts);
+  l1->addWidget(buttons);
+
+  connect(buttons, &QDialogButtonBox::accepted, this, &QDialog::accept);
+  connect(buttons, &QDialogButtonBox::rejected, this, &QDialog::reject);
 
   // Force the deletion on close
   setAttribute(Qt::WA_DeleteOnClose);

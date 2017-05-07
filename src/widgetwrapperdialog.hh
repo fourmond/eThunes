@@ -37,18 +37,17 @@ protected:
 
   virtual void resizeEvent(QResizeEvent * event);
 
+  QDialogButtonBox * buttons;
+
 public:
 
   /// The label at the top of the dialog box
   QLabel * topLabel;
 
-  /// The close button at the bottom of the dialog box
-  QPushButton * closeButton;
-
   /// Constructs
   WidgetWrapperDialog(QWidget * widget,
                       const QString & top = "",
-                      const QString & close = "",
+                      QDialogButtonBox::StandardButtons buttons = QDialogButtonBox::Ok,
                       const QString & name = "",
                       bool wrap = false);
 

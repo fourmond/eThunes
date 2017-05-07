@@ -63,6 +63,7 @@
 #include <QInputDialog>
 #include <QColorDialog>
 #include <QMessageBox>
+#include <QDialogButtonBox>
 
 #include <QSpinBox>
 
