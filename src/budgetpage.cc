@@ -22,6 +22,8 @@
 #include <transactionlistdialog.hh>
 #include <htlabel.hh>
 #include <httarget-templates.hh>
+#include <widgetwrapperdialog.hh>
+#include <evolvingitemwidget.hh>
 
 BudgetPage::BudgetPage(Wallet * w) : wallet(w)
 {
@@ -45,12 +47,16 @@ QString BudgetPage::pageTitle()
 void BudgetPage::updateSummary()
 {
   QString text = tr("<h2>Budgets</h2>");
-  text += HTTarget::linkToMember(tr("(new budget)"),
-                                 this, &BudgetPage::addBudget)
+  text +=
+    HTTarget::linkToMember(tr("(update)"),
+                           this, &BudgetPage::updateSummary) +
+    HTTarget::linkToMember(tr("(new budget)"),
+                           this, &BudgetPage::addBudget)
     + "<p>\n";
 
   int totalPositive = 0;
   int totalNegative = 0;
+  QDate today = QDate::currentDate();
   for(int i = 0; i < wallet->budgets.size(); i++) {
     Budget * budget = & wallet->budgets[i];
     text += tr("<h3>%1 %2</h3>").
@@ -58,10 +64,10 @@ void BudgetPage::updateSummary()
       arg(HTTarget::linkToMember(tr("(change name)"),
                                  this, &BudgetPage::promptNewName, budget));
     text += tr("Amount: %1 %2<br>").
-      arg(Transaction::formatAmount(budget->amount)).
+      arg(budget->amount.toString(&Transaction::formatAmount)).
       arg(HTTarget::linkToMember(tr("(change amount)"),
                                  this, &BudgetPage::promptNewAmount, budget));
-    int ma = budget->amount / budget->periodicity.getMonths();
+    int ma = budget->amount[today] / budget->periodicity.getMonths();
     if(ma > 0)
       totalPositive += ma;
     else
@@ -76,18 +82,18 @@ void BudgetPage::updateSummary()
     arg(Transaction::formatAmount(totalNegative)).
     arg(Transaction::formatAmount(totalPositive + totalNegative));
 
-  // Now, a summary of the realizations, just for the current month for now
-  text += tr("<h3>Realizations</h3><table>\n");
-  QDate cur = QDate::currentDate();
-  for(int i = 0; i < wallet->budgets.size(); i++) {
-    Budget * budget = & wallet->budgets[i];
-    BudgetRealization * rel = budget->realizationForDate(cur, false);
-    int amount = rel ? rel->amountRealized() : 0;
-    text += QString("<tr><td>%1</td><td>%2/%3</td></tr>").
-      arg(budget->name).arg(Transaction::formatAmount(amount)).
-      arg(Transaction::formatAmount(budget->amount));
-  }
-  text += "</table>\n";
+  // // Now, a summary of the realizations, just for the current month for now
+  // text += tr("<h3>Realizations</h3><table>\n");
+  // QDate cur = QDate::currentDate();
+  // for(int i = 0; i < wallet->budgets.size(); i++) {
+  //   Budget * budget = & wallet->budgets[i];
+  //   BudgetRealization * rel = budget->realizationForDate(cur, false);
+  //   int amount = rel ? rel->amountRealized() : 0;
+  //   text += QString("<tr><td>%1</td><td>%2/%3</td></tr>").
+  //     arg(budget->name).arg(Transaction::formatAmount(amount)).
+  //     arg(Transaction::formatAmount(budget->amount));
+  // }
+  // text += "</table>\n";
   
   
   summary->setText(text);
@@ -125,13 +131,13 @@ void BudgetPage::promptNewName(Budget * budget)
 
 void BudgetPage::promptNewAmount(Budget * budget)
 {
-  bool ok = false;
-  int newAmount =
-    QInputDialog::getInt(this, tr("New budget value"),
-                          tr("Give a new value for the budget (in cents)"),
-                         budget->amount, -2147483647, 2147483647,
-                         1, &ok);
-  if(ok) {
+  EvolvingItem<int> newAmount = budget->amount;
+  WidgetWrapperDialog dlg(new EvolvingIntWidget(&newAmount),
+                          tr("New budget value for budget %1").arg(budget->name),
+                          QDialogButtonBox::Ok|QDialogButtonBox::Cancel);
+  dlg.setAttribute(Qt::WA_DeleteOnClose, false);
+
+  if(dlg.exec() == QDialog::Accepted) {
     budget->amount = newAmount;
     updateSummary();
   }

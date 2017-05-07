@@ -20,6 +20,7 @@
 #include <budget.hh>
 
 #include <transaction.hh>
+#include <evolvingitemwidget.hh>
 
 Budget::Budget() : amount(0), periodicity(1)
 {
@@ -30,7 +31,7 @@ SerializationAccessor * Budget::serializationAccessor()
 {
   SerializationAccessor * ac = new SerializationAccessor(this);
   ac->addScalarAttribute("name", &name);
-  ac->addScalarAttribute("amount", &amount);
+  ac->addAttribute("amount", &amount);
   ac->addScalarAttribute("periodicity", &periodicity);
   ac->addListAttribute("realization", &realizations);
   return ac;
@@ -54,9 +55,9 @@ BudgetRealization * Budget::realizationForDate(const QDate & date, bool create)
     return NULL;
   realizations << BudgetRealization();
   BudgetRealization & lst = realizations.last();
-  lst.amount = amount;
   lst.budget = this;
   lst.period = periodicity.periodForDate(date);
+  lst.amount = amount[lst.period.startDate];
   return &lst;
 }
 

@@ -24,6 +24,7 @@
 #include <serializable.hh>
 #include <linkable.hh>
 #include <periodic.hh>
+#include <evolvingitem.hh>
 
 class BudgetRealization;
 class AtomicTransaction;
@@ -42,7 +43,7 @@ class Budget : public Serializable {
 public:
 
   /// The provisional amount for the given period
-  int amount;
+  EvolvingItem<int> amount;
 
   /// THe Budget's name
   QString name;
