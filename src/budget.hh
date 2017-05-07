@@ -23,6 +23,7 @@
 
 #include <serializable.hh>
 #include <linkable.hh>
+#include <periodic.hh>
 
 class BudgetRealization;
 class AtomicTransaction;
@@ -46,8 +47,8 @@ public:
   /// THe Budget's name
   QString name;
 
-  /// The periodicity, in months (rounding at each year ?).
-  int periodicity;
+  /// The periodicity, a Periodic object
+  Periodic periodicity;
 
   Budget();
 
@@ -80,12 +81,10 @@ class BudgetRealization : public Linkable {
 public:
 
   BudgetRealization();
-    
-  /// Beginning of the period
-  QDate startDate;
 
-  /// End of the period
-  QDate endDate;
+  /// Period
+  Period period;
+    
 
   /// Amount
   int amount;
@@ -108,6 +107,7 @@ public:
   /// this realization.
   int amountRealized();
 };
+
 
 
 #endif

@@ -50,7 +50,6 @@ bool Period::operator==(const Period & other) const
     endDate == other.endDate;
 }
 
-/// @relates Period
 template <> void 
 SerializationAccessor::addScalarAttribute(const QString & name,
                                           Period * target,
@@ -111,3 +110,12 @@ const Periodic Periodic::monthly(1, 1);
 const Periodic Periodic::trimester(3, 1);
 const Periodic Periodic::yearly(12, 1);
 const Periodic Periodic::schoolYear(12, 9);
+
+template <> void 
+SerializationAccessor::addScalarAttribute(const QString & name,
+                                          Periodic * target,
+                                          bool isXMLAttribute)
+{
+  addScalarAttribute(name + "-months", &(target->months), isXMLAttribute);
+  addScalarAttribute(name + "-first", &(target->firstMonth), isXMLAttribute);
+}

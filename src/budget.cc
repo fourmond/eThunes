@@ -56,12 +56,7 @@ BudgetRealization * Budget::realizationForDate(const QDate & date, bool create)
   BudgetRealization & lst = realizations.last();
   lst.amount = amount;
   lst.budget = this;
-
-  int year = date.year();
-  int month = date.month() - ((date.month() - 1) % periodicity);
-  lst.startDate.setDate(year, month, 1);
-  lst.endDate.setDate(year, month+periodicity, 1);
-  lst.endDate = lst.endDate.addDays(-1);
+  lst.period = periodicity.periodForDate(date);
   return &lst;
 }
 
@@ -79,8 +74,7 @@ SerializationAccessor * BudgetRealization::serializationAccessor()
 {
   SerializationAccessor * ac = new SerializationAccessor(this);
   ac->addScalarAttribute("amount", &amount);
-  ac->addScalarAttribute("start", &startDate);
-  ac->addScalarAttribute("end", &endDate);
+  ac->addScalarAttribute("period", &period);
   addLinkAttributes(ac);
   return ac;
 }
@@ -92,7 +86,7 @@ QString BudgetRealization::typeName() const
 
 bool BudgetRealization::contains(const QDate & date) const
 {
-  return (startDate <= date) && (date <= endDate);
+  return period.contains(date);
 }
 
 void BudgetRealization::addTransaction(AtomicTransaction * transaction)

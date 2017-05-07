@@ -61,7 +61,7 @@ void BudgetPage::updateSummary()
       arg(Transaction::formatAmount(budget->amount)).
       arg(HTTarget::linkToMember(tr("(change amount)"),
                                  this, &BudgetPage::promptNewAmount, budget));
-    int ma = budget->amount / budget->periodicity;
+    int ma = budget->amount / budget->periodicity.getMonths();
     if(ma > 0)
       totalPositive += ma;
     else

@@ -21,6 +21,7 @@
 #ifndef __PERIODIC_HH
 #define __PERIODIC_HH
 
+#include <serializable.hh>
 
 /// A period is just two dates: a beginning and an end. The range is
 /// inclusive.
@@ -50,6 +51,12 @@ public:
 /// a Hash. @relates Period
 uint qHash(const Period & p, uint seed = 0);
 
+/// @relates Period
+template <> void 
+SerializationAccessor::addScalarAttribute(const QString & name,
+                                          Period * target,
+                                          bool isXMLAttribute);
+
 /// This class represents a periodic event, i.e. a way to generate
 /// Period objects that repeat.
 ///
@@ -60,6 +67,12 @@ class Periodic {
 
   /// First month of the first period in the year (1 for January)
   int firstMonth;
+
+  template <class T> friend void 
+  SerializationAccessor::addScalarAttribute(const QString & name,
+                                            T * target,
+                                            bool isXMLAttribute);
+
 
 public:
   Periodic(int m = 1, int fm = 1);
@@ -74,6 +87,11 @@ public:
   /// Name the given period.
   QString periodName(const Period & period, bool longName = false) const;
 
+  /// @name Accessors
+  ///
+  int getMonths() const {
+    return months;
+  };
 
   /// @name Predefined periodicities
   ///
@@ -93,6 +111,12 @@ public:
 
   /// @}
 };
+
+/// @relates Periodic
+template <> void 
+SerializationAccessor::addScalarAttribute(const QString & name,
+                                          Periodic * target,
+                                          bool isXMLAttribute);
 
 
 
