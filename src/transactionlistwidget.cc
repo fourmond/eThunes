@@ -254,6 +254,8 @@ void TransactionListWidget::fillMenuWithCategoryHash(QMenu * menu,
 
 void TransactionListWidget::fillMenuWithBudgets(QMenu * menu, WatchableList<Budget> * budgets)
 {
+  AtomicTransaction * trs = currentTransaction();
+  QDate curDate = trs->getDate();
   for(int i = 0; i < budgets->size(); i++) {
     Budget * budget = &(*budgets)[i];
     QAction * action = new QAction(budget->name, this);
@@ -265,6 +267,27 @@ void TransactionListWidget::fillMenuWithBudgets(QMenu * menu, WatchableList<Budg
         }
       });
     menu->addAction(action);
+    QMenu * subMenu = new QMenu(tr("%1 at...").arg(budget->name));
+    menu->addMenu(subMenu);
+    QList<Period> periods;
+    periods << budget->periodicity.periodForDate(curDate);
+    for(int i = 0; i < 2; i++) {
+      periods.insert(0, budget->periodicity.previousPeriod(periods[0]));
+      periods.append(budget->periodicity.previousPeriod(periods.last()));
+    }
+    for(int i = 0; i < periods.size(); i++) {
+      Period p = periods[i];
+      QAction * action = new QAction(budget->periodicity.periodName(p), this);
+      connect(action, &QAction::triggered, [this, budget, p](bool) {
+          TransactionPtrList selected = selectedTransactions();
+          for(int j = 0; j < selected.size(); j++) {
+            BudgetRealization * rel = budget->realizationForDate(p.startDate);
+            rel->addTransaction(selected[j]);
+          }
+        });
+      subMenu->addAction(action);
+    }
+    
   }
 
 }

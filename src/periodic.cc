@@ -125,6 +125,16 @@ Period Periodic::nextPeriod(const Period & period) const
   return rv;
 }
 
+Period Periodic::previousPeriod(const Period & period) const
+{
+  Period rv;
+  if(! period.isValid())
+    return rv;
+  rv.endDate = period.startDate.addDays(-1);
+  rv.startDate = period.startDate.addMonths(-months);
+  return rv;
+}
+
 QString Periodic::periodName(const Period & period, bool lg) const
 {
   if(months == 1)

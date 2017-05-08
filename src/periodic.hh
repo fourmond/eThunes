@@ -102,6 +102,10 @@ public:
   /// given by a call to periodForDate() or nextPeriod().
   Period nextPeriod(const Period & period) const;
 
+  /// Return the previous period. Assumes the given Period was either
+  /// given by a call to periodForDate() or nextPeriod().
+  Period previousPeriod(const Period & period) const;
+
   /// Name the given period.
   QString periodName(const Period & period, bool longName = false) const;
 
