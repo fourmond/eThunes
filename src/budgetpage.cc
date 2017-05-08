@@ -186,7 +186,8 @@ void BudgetPage::updateSummary()
         "<b><font color='red'>%1</font></b>";
       cur = cur.arg(Transaction::formatAmount(sts.totalAmount));
       text += QString("<td align='center' style='padding: 1px 3px;'>%1</td>").
-        arg(cur);
+        arg(HTTarget::linkToTransactionDisplay(cur, tr("Unbudgeted transactions for ..."),
+                                               [list]{ return list;}));
     }
 
   text += tr("<tr><th>Total</th>");
