@@ -207,9 +207,7 @@ public:
     return "transaction";
   };
 
-  virtual QString publicTypeName() const {
-    return QObject::tr("Transaction");
-  };
+  virtual QString publicLinkName() const override;
 
   virtual void followLink();
 

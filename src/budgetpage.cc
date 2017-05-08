@@ -57,9 +57,10 @@ void BudgetPage::updateSummary()
   int totalPositive = 0;
   int totalNegative = 0;
   QDate today = QDate::currentDate();
+  text += "<table><tr><td>";
   for(int i = 0; i < wallet->budgets.size(); i++) {
     Budget * budget = & wallet->budgets[i];
-    text += tr("<h3>%1 %2</h3>").
+    text += tr("<h4>%1 %2</h4>").
       arg(budget->name).
       arg(HTTarget::linkToMember(tr("(change name)"),
                                  this, &BudgetPage::promptNewName, budget));
@@ -77,7 +78,10 @@ void BudgetPage::updateSummary()
       totalPositive += ma;
     else
       totalNegative += ma;
+    if(i == wallet->budgets.size() / 2)
+      text += "</td><td>";
   }
+  text += "</td></tr></table>\n";
 
   text += tr("<h3>Balance</h3><table>\n"
              "<tr><td>Income</td><td>%1</td></tr>\n"

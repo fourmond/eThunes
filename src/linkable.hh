@@ -128,8 +128,8 @@ public:
   /// one that LinksHandler recognizes.
   virtual QString typeName() const = 0;
 
-  /// A 'public type name'
-  virtual QString publicTypeName() const {
+  /// The description of a link to the object.
+  virtual QString publicLinkName() const {
     return typeName();
   };
 

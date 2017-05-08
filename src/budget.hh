@@ -105,6 +105,8 @@ public:
 
   virtual QString typeName() const override;
 
+  virtual QString publicLinkName() const override;
+
   bool contains(const QDate & date) const;
 
   /// Just adds the given transaction to the appropriately-named links

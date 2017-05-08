@@ -161,6 +161,14 @@ int AtomicTransaction::monthID() const
   return monthID(getDate());
 }
 
+QString AtomicTransaction::publicLinkName() const
+{
+  QString rv = QObject::tr("T: %1 %2").
+    arg(Transaction::formatAmount(getAmount())).
+    arg(getDate().toString("dd/MM/yy"));
+  return rv;
+}
+
 
 //////////////////////////////////////////////////////////////////////
 

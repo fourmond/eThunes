@@ -126,7 +126,7 @@ QStringList LinkList::htmlLinkList() const
   for(int i=0; i < size(); i++) {
     Linkable * target = value(i).linkTarget();
     if(target)                  // Can be NULL at times
-      ret << HTTarget::linkTo(target->publicTypeName(),
+      ret << HTTarget::linkTo(target->publicLinkName(),
                               target);
   }
   return ret;

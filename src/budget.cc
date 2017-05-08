@@ -23,6 +23,10 @@
 #include <transactionlists.hh>
 #include <evolvingitemwidget.hh>
 
+#include <navigationwidget.hh>
+#include <budgetpage.hh>
+#include <account.hh>
+
 Budget::Budget() : amount(0), periodicity(1)
 {
   
@@ -98,6 +102,14 @@ QString BudgetRealization::typeName() const
   return "budget-realization";
 }
 
+QString BudgetRealization::publicLinkName() const
+{
+  QString rv = QObject::tr("B: %1 %2").
+    arg(budget->name).
+    arg(budget->periodicity.periodName(period));
+  return rv;
+}
+
 bool BudgetRealization::contains(const QDate & date) const
 {
   return period.contains(date);
@@ -110,8 +122,14 @@ void BudgetRealization::addTransaction(AtomicTransaction * transaction)
 
 void BudgetRealization::followLink()
 {
-  /// @todo Everything
+  QList<AtomicTransaction*> transactions =
+    links.typedLinks<AtomicTransaction>("budget-realization");
+  if(transactions.size() > 0) {
+    Wallet * w = transactions[0]->getAccount()->wallet;
+    NavigationWidget::gotoPage(BudgetPage::getBudgetPage(w));
+  }
 }
+
 
 int BudgetRealization::amountRealized()
 {
