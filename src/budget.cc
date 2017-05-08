@@ -20,6 +20,7 @@
 #include <budget.hh>
 
 #include <transaction.hh>
+#include <transactionlists.hh>
 #include <evolvingitemwidget.hh>
 
 Budget::Budget() : amount(0), periodicity(1)
@@ -59,6 +60,18 @@ BudgetRealization * Budget::realizationForDate(const QDate & date, bool create)
   lst.period = periodicity.periodForDate(date);
   lst.amount = amount[lst.period.startDate];
   return &lst;
+}
+
+QHash<Period, BudgetRealization *> Budget::realizationsForPeriod(const Period & period,
+                                                                 bool create)
+{
+  QHash<Period, BudgetRealization *> rv;
+  Period cur = periodicity.periodForDate(period.startDate);
+  do {
+    rv[cur] = realizationForDate(cur.startDate, create);
+    cur = periodicity.nextPeriod(cur);
+  } while(cur.startDate <= period.endDate);
+  return rv;
 }
 
 
@@ -116,3 +129,17 @@ int BudgetRealization::amountRealized()
     
   return rv;
 }
+
+TransactionPtrList BudgetRealization::realizationLessTransactions(const TransactionPtrList & lst)
+{
+  TransactionPtrList rv;
+  for(int i = 0; i < lst.size(); i++) {
+    AtomicTransaction * t = lst[i];
+    QList<BudgetRealization*> rl =
+      t->links.typedLinks<BudgetRealization>("budget-realization");
+    if(rl.size() == 0)
+      rv << t;
+  }
+  return rv;    
+}
+  

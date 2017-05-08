@@ -28,6 +28,7 @@
 
 class BudgetRealization;
 class AtomicTransaction;
+class TransactionPtrList;
 
 /// This class represents a Budget.
 /// Budgets have
@@ -67,6 +68,11 @@ public:
 
   /// Returns the realization for the date, creating one if necessary
   BudgetRealization * realizationForDate(const QDate & date, bool create = true);
+
+  /// Returns all the realizations for the given period, indexed by
+  /// their period. Creates them if @a create is set to true.
+  QHash<Period, BudgetRealization *> realizationsForPeriod(const Period & period,
+                                                           bool create = false);
   
 };
 
@@ -107,6 +113,9 @@ public:
   /// Returns the amount realized in the transactions connected to
   /// this realization.
   int amountRealized();
+
+  static TransactionPtrList realizationLessTransactions(const TransactionPtrList & lst);
+
 };
 
 

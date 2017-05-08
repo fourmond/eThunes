@@ -50,6 +50,37 @@ bool Period::operator==(const Period & other) const
     endDate == other.endDate;
 }
 
+int Period::months() const
+{
+  return endDate.month() - startDate.month() + 1 +
+    12 * (endDate.year() - startDate.year());
+}
+
+Period Period::intersect(const Period & other) const
+{
+  Period rv;
+  rv.startDate = std::max(other.startDate, startDate);
+  rv.endDate = std::min(other.endDate, endDate);
+  return rv;
+}
+
+Period Period::currentYear()
+{
+  Period rv;
+  QDate cur = QDate::currentDate();
+  rv.startDate.setDate(cur.year(), 1, 1);
+  rv.endDate.setDate(cur.year(), 12, 31);
+  return rv;
+}
+
+Period Period::month(int year, int month)
+{
+  Period rv;
+  rv.startDate.setDate(year, month, 1);
+  rv.endDate = rv.startDate.addMonths(1).addDays(-1);
+  return rv;
+}
+
 template <> void 
 SerializationAccessor::addScalarAttribute(const QString & name,
                                           Period * target,
@@ -90,7 +121,7 @@ Period Periodic::nextPeriod(const Period & period) const
   if(! period.isValid())
     return rv;
   rv.startDate = period.endDate.addDays(1);
-  rv.endDate = period.endDate.addDays(months);
+  rv.endDate = rv.startDate.addMonths(months).addDays(-1);
   return rv;
 }
 

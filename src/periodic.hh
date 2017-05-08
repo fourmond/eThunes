@@ -45,6 +45,24 @@ public:
 
   /// Whether two periods are equal
   bool operator==(const Period & other) const;
+
+  /// Returns the number of months in the period
+  int months() const;
+
+  /// Returns a new period that is contained by both periods.
+  Period intersect(const Period & period) const;
+
+  /// @name Commonly used periods
+  ///
+  /// @{
+  
+  /// Returns the period corresponding to the current year.
+  static Period currentYear();
+
+  /// Returns the given month of the given year
+  static Period month(int year, int month);
+
+  /// @}
 };
 
 /// The hash function, so that a Period can be used as the element of

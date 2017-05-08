@@ -82,18 +82,112 @@ void BudgetPage::updateSummary()
     arg(Transaction::formatAmount(totalNegative)).
     arg(Transaction::formatAmount(totalPositive + totalNegative));
 
-  // // Now, a summary of the realizations, just for the current month for now
-  // text += tr("<h3>Realizations</h3><table>\n");
-  // QDate cur = QDate::currentDate();
-  // for(int i = 0; i < wallet->budgets.size(); i++) {
-  //   Budget * budget = & wallet->budgets[i];
-  //   BudgetRealization * rel = budget->realizationForDate(cur, false);
-  //   int amount = rel ? rel->amountRealized() : 0;
-  //   text += QString("<tr><td>%1</td><td>%2/%3</td></tr>").
-  //     arg(budget->name).arg(Transaction::formatAmount(amount)).
-  //     arg(Transaction::formatAmount(budget->amount));
-  // }
-  // text += "</table>\n";
+  QDate cd = QDate::currentDate();
+
+  int amounts[13];
+  
+  for(int i = 0; i < sizeof(amounts)/sizeof(int); i++)
+    amounts[i] = 0;
+
+  // Now, a summary of the realizations, for the current year
+  text += tr("<h3>Realizations</h3><table><tr><td></td>\n");
+  Period cy = Period::currentYear();
+
+  for(int i = 1; i <= 12; i++)
+    text += tr("<th>%1 %2</th>").
+      arg(QDate::shortMonthName(i)).arg(cd.year());
+
+  text += tr("<th>Total</th></tr>\n");
+  
+  for(int i = 0; i < wallet->budgets.size(); i++) {
+    Budget * budget = & wallet->budgets[i];
+    QHash<Period, BudgetRealization *> rs = budget->realizationsForPeriod(cy);
+    QList<Period> periods = rs.keys();
+    // QTextStream o(stdout);
+    qSort(periods);
+    text += "<tr><td>" + budget->name + "</td>";
+    int tp = 0, te = 0;
+    for(int i = 0; i < periods.size(); i++) {
+      const Period & p = periods[i];
+      BudgetRealization * r = rs[p];
+      int planned, realized, effective;
+      // o << "Period: " << p.startDate.toString()
+      //   << " -> " << p.endDate.toString() << endl;
+      if(r) {
+        planned = r->amount;
+        realized = r->amountRealized();
+      }
+      else {
+        planned = budget->amount[p.startDate];
+        realized = 0;
+      }
+      if(p.startDate > cd) {
+        // planification
+        effective = planned;
+      }
+      else if(p.endDate < cd) {
+        // past
+        effective = realized;
+      }
+      else {
+        // current
+        effective = planned > 0 ? std::max(realized, planned) :
+          std::min(realized, planned);
+      }
+
+      amounts[0] += effective;
+      for(int i = p.startDate.month(); i <= p.endDate.month(); i++)
+        amounts[i] += effective/p.months();
+
+      QString cur = effective >= planned ?
+        "<font color='green'>%1</font>" : 
+        "<b><font color='red'>%1</font></b>";
+      cur = cur.arg(Transaction::formatAmount(effective));
+
+
+      text += QString("<td colspan=%1 style='padding: 1px 3px;'>%2/%3</td>").
+        arg(p.months()).
+        arg(cur).arg(Transaction::formatAmount(planned));
+      te += effective;
+      tp += planned;
+    }
+    QString cur =  te >= tp ?
+      "<font color='green'>%1</font>" : 
+      "<b><font color='red'>%1</font></b>";
+    cur = cur.arg(Transaction::formatAmount(te));
+    text += QString("<td style='padding: 1px 3px;'>%1/%2</td>").
+      arg(cur).arg(Transaction::formatAmount(tp));
+    text += "</tr>\n";
+  }
+
+  text += tr("<tr><td>(unbudgeted)</td>");
+
+    for(int i = 1; i <= 12; i++) {
+      Period mo = Period::month(cd.year(), i);
+      TransactionPtrList list = wallet->transactionsWithinRange(mo.startDate, mo.endDate);
+      list = BudgetRealization::realizationLessTransactions(list);
+      TransactionListStatistics sts = list.statistics();
+      amounts[i] += sts.totalAmount;
+      amounts[0] += sts.totalAmount;
+      QString cur =  sts.totalAmount >= 0 ?
+        "<font color='green'>%1</font>" : 
+        "<b><font color='red'>%1</font></b>";
+      cur = cur.arg(Transaction::formatAmount(sts.totalAmount));
+      text += QString("<td style='padding: 1px 3px;'>%1</td>").
+        arg(cur);
+    }
+
+  text += tr("<tr><th>Total</th>");
+  for(int i = 0; i <= 12; i++) {
+    int am = amounts[(i + 1) % 13]; // so that last is amounts[0]
+    QString cur =  am >= 0 ?
+      "<font color='green'>%1</font>" : 
+      "<b><font color='red'>%1</font></b>";
+    cur = cur.arg(Transaction::formatAmount(am));
+    text += QString("<td style='padding: 1px 3px;'>%1</td>").
+      arg(cur);
+  }
+  text += "</tr>\n</table>\n";
   
   
   summary->setText(text);
