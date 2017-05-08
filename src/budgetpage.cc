@@ -59,8 +59,14 @@ void BudgetPage::updateSummary()
   QDate today = QDate::currentDate();
   text += "<table><tr>";
   int nbcols = 3;
-  for(int i = 0; i < wallet->budgets.size(); i++) {
-    Budget * budget = & wallet->budgets[i];
+
+  QList<Budget *> budgets = wallet->budgets.pointerList();
+  std::sort(budgets.begin(), budgets.end(), [](Budget * a, Budget * b) -> bool {
+      return a->name < b->name;
+    });
+  
+  for(int i = 0; i < budgets.size(); i++) {
+    Budget * budget = budgets[i];
     text += "<td>";
     text += tr("<h4>%1 %2</h4>").
       arg(budget->name).
@@ -111,8 +117,8 @@ void BudgetPage::updateSummary()
 
   text += tr("<th>Total</th></tr>\n");
   
-  for(int i = 0; i < wallet->budgets.size(); i++) {
-    Budget * budget = & wallet->budgets[i];
+  for(int i = 0; i < budgets.size(); i++) {
+    Budget * budget = budgets[i];
     QHash<Period, BudgetRealization *> rs = budget->realizationsForPeriod(cy);
     QList<Period> periods = rs.keys();
     // QTextStream o(stdout);

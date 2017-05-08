@@ -44,7 +44,7 @@ protected:
 
   /// Makes the Budget-related submenus
   void fillMenuWithBudgets(QMenu * menu,
-                           WatchableList<Budget> * budgets);
+                           QList<Budget*> budgets);
 
   /// Fills the menu with the given CategoryHash
   void fillMenuWithCategoryHash(QMenu * menu, CategoryHash * ch);

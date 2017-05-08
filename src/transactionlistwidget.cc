@@ -204,7 +204,7 @@ void TransactionListWidget::fireUpContextMenu(const QPoint & pos)
 
   subMenu = new QMenu(tr("Budget"));
   if(wallet())
-    fillMenuWithBudgets(subMenu, &wallet()->budgets);
+    fillMenuWithBudgets(subMenu, wallet()->budgets.pointerList());
   menu.addMenu(subMenu);
 
   if(true) { /// @todo add a readonly attribute ?
@@ -252,12 +252,15 @@ void TransactionListWidget::fillMenuWithCategoryHash(QMenu * menu,
     fillMenuWithCategory(menu, &ch->operator[](subCategories[i]));
 }
 
-void TransactionListWidget::fillMenuWithBudgets(QMenu * menu, WatchableList<Budget> * budgets)
+void TransactionListWidget::fillMenuWithBudgets(QMenu * menu, QList<Budget *> budgets)
 {
   AtomicTransaction * trs = currentTransaction();
   QDate curDate = trs->getDate();
-  for(int i = 0; i < budgets->size(); i++) {
-    Budget * budget = &(*budgets)[i];
+  std::sort(budgets.begin(), budgets.end(), [](Budget * a, Budget * b) -> bool {
+      return a->name < b->name;
+    });
+  for(int i = 0; i < budgets.size(); i++) {
+    Budget * budget = budgets[i];
     QAction * action = new QAction(budget->name, this);
     connect(action, &QAction::triggered, [this, budget](bool) {
         TransactionPtrList selected = selectedTransactions();

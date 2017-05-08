@@ -181,6 +181,13 @@ public:
       this->watchChild(&this->unwatchedValue(i), "members");
   };
 
+  QList<T *> pointerList() {
+    QList<T *> rv;
+    for(int i = 0; i < this->size(); i++)
+      rv << &((*this)[i]);
+    return rv;
+  };
+
 };
 
 
