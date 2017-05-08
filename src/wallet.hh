@@ -32,6 +32,7 @@
 #include <budget.hh>
 
 class Budget;
+class Period;
 
 /// This class represents a collection of accounts. Presumably, there
 /// should be only one Wallet instance in a running program, although
@@ -136,8 +137,7 @@ public:
 public:
 
   /// Returns all the transactions within the given date range.
-  TransactionPtrList transactionsWithinRange(const QDate & before,
-					     const QDate & after);
+  TransactionPtrList transactionsForPeriod(const Period & period);
 
   /// Returns the overall balance for all the accounts
   int balance(const QDate & date) const;

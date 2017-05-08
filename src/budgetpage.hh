@@ -66,7 +66,10 @@ public slots:
 
   /// Prompts for a new amount
   void promptNewAmount(Budget * budget);
-  
+
+  /// Prompts for a new month
+  void promptNewMonths(Budget * budget);
+
 };
 
 #endif

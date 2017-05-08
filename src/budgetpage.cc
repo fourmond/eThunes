@@ -67,6 +67,11 @@ void BudgetPage::updateSummary()
       arg(budget->amount.toString(&Transaction::formatAmount)).
       arg(HTTarget::linkToMember(tr("(change amount)"),
                                  this, &BudgetPage::promptNewAmount, budget));
+
+    text += tr("Periodicity: %1 months %2<br>").
+      arg(budget->periodicity.months).
+      arg(HTTarget::linkToMember(tr("(change)"),
+                                 this, &BudgetPage::promptNewMonths, budget));
     int ma = budget->amount[today] / budget->periodicity.getMonths();
     if(ma > 0)
       totalPositive += ma;
@@ -110,7 +115,7 @@ void BudgetPage::updateSummary()
     for(int i = 0; i < periods.size(); i++) {
       const Period & p = periods[i];
       BudgetRealization * r = rs[p];
-      int planned, realized, effective;
+      int planned, realized, effective, display;
       // o << "Period: " << p.startDate.toString()
       //   << " -> " << p.endDate.toString() << endl;
       if(r) {
@@ -124,28 +129,31 @@ void BudgetPage::updateSummary()
       if(p.startDate > cd) {
         // planification
         effective = planned;
+        display = effective;
       }
       else if(p.endDate < cd) {
         // past
         effective = realized;
+        display = effective;
       }
       else {
         // current
         effective = planned > 0 ? std::max(realized, planned) :
           std::min(realized, planned);
+        display = realized;
       }
 
       amounts[0] += effective;
       for(int i = p.startDate.month(); i <= p.endDate.month(); i++)
         amounts[i] += effective/p.months();
 
-      QString cur = effective >= planned ?
+      QString cur = display >= planned ?
         "<font color='green'>%1</font>" : 
         "<b><font color='red'>%1</font></b>";
-      cur = cur.arg(Transaction::formatAmount(effective));
+      cur = cur.arg(Transaction::formatAmount(display));
 
 
-      text += QString("<td colspan=%1 style='padding: 1px 3px;'>%2/%3</td>").
+      text += QString("<td colspan=%1 align='center' style='padding: 1px 3px;'>%2/%3</td>").
         arg(p.months()).
         arg(cur).arg(Transaction::formatAmount(planned));
       te += effective;
@@ -155,7 +163,7 @@ void BudgetPage::updateSummary()
       "<font color='green'>%1</font>" : 
       "<b><font color='red'>%1</font></b>";
     cur = cur.arg(Transaction::formatAmount(te));
-    text += QString("<td style='padding: 1px 3px;'>%1/%2</td>").
+    text += QString("<td align='center' style='padding: 1px 3px;'>%1/%2</td>").
       arg(cur).arg(Transaction::formatAmount(tp));
     text += "</tr>\n";
   }
@@ -164,7 +172,7 @@ void BudgetPage::updateSummary()
 
     for(int i = 1; i <= 12; i++) {
       Period mo = Period::month(cd.year(), i);
-      TransactionPtrList list = wallet->transactionsWithinRange(mo.startDate, mo.endDate);
+      TransactionPtrList list = wallet->transactionsForPeriod(mo);
       list = BudgetRealization::realizationLessTransactions(list);
       TransactionListStatistics sts = list.statistics();
       amounts[i] += sts.totalAmount;
@@ -173,7 +181,7 @@ void BudgetPage::updateSummary()
         "<font color='green'>%1</font>" : 
         "<b><font color='red'>%1</font></b>";
       cur = cur.arg(Transaction::formatAmount(sts.totalAmount));
-      text += QString("<td style='padding: 1px 3px;'>%1</td>").
+      text += QString("<td align='center' style='padding: 1px 3px;'>%1</td>").
         arg(cur);
     }
 
@@ -184,7 +192,7 @@ void BudgetPage::updateSummary()
       "<font color='green'>%1</font>" : 
       "<b><font color='red'>%1</font></b>";
     cur = cur.arg(Transaction::formatAmount(am));
-    text += QString("<td style='padding: 1px 3px;'>%1</td>").
+    text += QString("<td align='center' style='padding: 1px 3px;'>%1</td>").
       arg(cur);
   }
   text += "</tr>\n</table>\n";
@@ -236,3 +244,18 @@ void BudgetPage::promptNewAmount(Budget * budget)
     updateSummary();
   }
 }
+
+void BudgetPage::promptNewMonths(Budget * budget)
+{
+  bool ok = false;
+  int nm =
+    QInputDialog::getInt(this, tr("New budget periodicity"),
+                         tr("Periodicity for the butget in months"),
+                         budget->periodicity.months,
+                         -2147483647, 2147483647, 1, &ok);
+  if(ok) {
+    budget->periodicity.months = nm;
+    updateSummary();
+  }
+}
+

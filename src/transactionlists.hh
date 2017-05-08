@@ -191,13 +191,13 @@ public:
   /// AtomicTransaction is returned for all subtransactions too
   TransactionPtrList toPtrList(bool subtransactions = true);
 
-  /// Returns a list of Transaction pointers for Transaction within
-  /// the date range. The list is assume to be sorted, at least with
-  /// respect to dates. Both dates are inclusive.
-  ///
-  /// \todo this one should also be part of TransactionPtrList.
-  TransactionPtrList transactionsWithinRange(const QDate & before,
-					     const QDate & after);
+  // /// Returns a list of Transaction pointers for Transaction within
+  // /// the date range. The list is assume to be sorted, at least with
+  // /// respect to dates. Both dates are inclusive.
+  // ///
+  // /// \todo this one should also be part of TransactionPtrList.
+  // TransactionPtrList transactionsWithinRange(const QDate & before,
+  //       				     const QDate & after);
 
 
   /// Returns a pointer to the numbered element

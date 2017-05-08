@@ -37,6 +37,7 @@
 #include <QtCore/qmath.h>
 #include <math.h>
 
+#include <periodic.hh>
 
 static Plugin * loanCreator(const QString &)
 {
@@ -239,10 +240,12 @@ void Loan::promptForDate()
 
 void Loan::findMatchingTransactions()
 {
-  QDate end = QDate::currentDate();
+  Period p;
+  p.endDate = QDate::currentDate();
+  p.startDate = dateContracted.addMonths(1);
   TransactionPtrList transactions = 
     targetPlugin->cabinet->wallet.
-    transactionsWithinRange(dateContracted.addMonths(1), end);
+    transactionsForPeriod(p);
 
   for(int j = 0; j < transactions.size(); j++) {
     AtomicTransaction * t = transactions[j];

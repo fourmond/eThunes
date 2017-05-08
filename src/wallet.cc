@@ -18,6 +18,7 @@
 
 #include <headers.hh>
 #include <wallet.hh>
+#include <periodic.hh>
 
 
 Wallet::Wallet()
@@ -147,12 +148,18 @@ TransactionPtrList Wallet::taggedTransactions(const Tag * tag)
   return vals;
 }
 
-TransactionPtrList Wallet::transactionsWithinRange(const QDate & before, const QDate & after)
-
+TransactionPtrList Wallet::transactionsForPeriod(const Period & period)
 {
   TransactionPtrList list;
-  for(int i = 0; i < accounts.size(); i++)
-    list.append(accounts[i].transactions.transactionsWithinRange(before,after));
+  for(int j = 0; j < accounts.size(); j++) {
+    Account & account = accounts[j];
+    TransactionPtrList trs = account.allTransactions();
+    for(int i = 0; i < trs.size(); i++) {
+      AtomicTransaction * t = trs[i];
+      if(period.contains(t->getDate()))
+        list << t;
+    }
+  }
   return list;
 }
 

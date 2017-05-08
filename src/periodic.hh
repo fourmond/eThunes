@@ -80,19 +80,19 @@ SerializationAccessor::addScalarAttribute(const QString & name,
 ///
 /// For now, only monthly granularity.
 class Periodic {
+public:
   /// The number of months
   int months;
 
   /// First month of the first period in the year (1 for January)
   int firstMonth;
 
-  template <class T> friend void 
-  SerializationAccessor::addScalarAttribute(const QString & name,
-                                            T * target,
-                                            bool isXMLAttribute);
+  // template <class T> friend void 
+  // SerializationAccessor::addScalarAttribute(const QString & name,
+  //                                           T * target,
+  //                                           bool isXMLAttribute);
 
 
-public:
   Periodic(int m = 1, int fm = 1);
 
   /// Returns the period that contains the given date
