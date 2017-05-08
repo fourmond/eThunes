@@ -19,6 +19,7 @@
 #include <headers.hh>
 #include <httarget.hh>
 
+#include <transactionlistdialog.hh>
 
 void HTTarget::hoverLink()
 {
@@ -73,4 +74,18 @@ QString HTTarget::linkToFunction(const QString & id,
                                  std::function<void ()> function)
 {
   return linkTo(id, new HTFunction(function));
+}
+
+
+QString HTTarget::linkToTransactionDisplay(const QString & id,
+                                          const QString & label,
+                                          std::function<TransactionPtrList ()> generator)
+{
+  return
+    linkToFunction(id,
+                   [label, generator]() {
+                     TransactionListDialog::showList(generator(), label);
+                   }
+                   );
+    
 }

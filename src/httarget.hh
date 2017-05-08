@@ -21,6 +21,8 @@
 #ifndef __HTTARGET_HH
 #define __HTTARGET_HH
 
+class TransactionPtrList;
+
 /// This class is the base class for all objects that can be embedded
 /// as links in a QLabel (or, more likely, in an appropriate derived
 /// class), such as:
@@ -60,6 +62,16 @@ public:
   /// Returns a link to the given HTTarget
   static QString linkTo(const QString & id, HTTarget * t);
 
+  /// Links to the given function
+  static QString linkToFunction(const QString & id,
+                                std::function<void ()> function);
+
+  /// A helper to display a series of transactions based on a generator
+  static QString linkToTransactionDisplay(const QString & id,
+                                         const QString & label,
+                                         std::function<TransactionPtrList ()> generator);
+  
+
 
   /// These helper function are defined in httarget-templates.hh
   template<class T> 
@@ -95,8 +107,6 @@ public:
                                 void (*f)(A1, A2, A3, A4), 
                                 A1 a1, A2 a2, A3 a3, A4 a4);
 
-  static QString linkToFunction(const QString & id,
-                                std::function<void ()> function);
 
 };
 

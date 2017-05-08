@@ -160,3 +160,11 @@ void TransactionListDialog::showCategoryTransactionsForPeriod(Category * categor
   dlg->displayCategoryTransactionsForPeriod(category, accounts, period);
   dlg->show();
 }
+
+void TransactionListDialog::showList(const TransactionPtrList & list,
+                                     const QString & label, bool multiAccounts)
+{
+  TransactionListDialog * dlg = new TransactionListDialog();
+  dlg->displayList(list, label, multiAccounts);
+  dlg->show();
+}

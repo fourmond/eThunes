@@ -103,6 +103,10 @@ public:
                                                 const Period & period);
 
 
+  /// Shows a list of transactions.
+  static void showList(const TransactionPtrList & list,
+                       const QString & label, bool multiAccounts = true);
+
 };
 
 #endif
