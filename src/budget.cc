@@ -62,7 +62,6 @@ BudgetRealization * Budget::realizationForDate(const QDate & date, bool create)
   BudgetRealization & lst = realizations.last();
   lst.budget = this;
   lst.period = periodicity.periodForDate(date);
-  lst.amount = amount[lst.period.startDate];
   return &lst;
 }
 
@@ -91,7 +90,6 @@ BudgetRealization::BudgetRealization() : budget(NULL)
 SerializationAccessor * BudgetRealization::serializationAccessor()
 {
   SerializationAccessor * ac = new SerializationAccessor(this);
-  ac->addScalarAttribute("amount", &amount);
   ac->addScalarAttribute("period", &period);
   addLinkAttributes(ac);
   return ac;
@@ -128,6 +126,11 @@ void BudgetRealization::followLink()
     Wallet * w = transactions[0]->getAccount()->wallet;
     NavigationWidget::gotoPage(BudgetPage::getBudgetPage(w));
   }
+}
+
+int BudgetRealization::amountPlanned()
+{
+  return budget->amount[period.startDate];
 }
 
 

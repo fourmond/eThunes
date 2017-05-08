@@ -91,10 +91,7 @@ public:
 
   /// Period
   Period period;
-    
 
-  /// Amount
-  int amount;
 
   /// The budget this BudgetRealization belongs to.
   Budget * budget;
@@ -111,6 +108,9 @@ public:
 
   /// Just adds the given transaction to the appropriately-named links
   void addTransaction(AtomicTransaction * transaction);
+
+  /// Returns the planned amount corresponding to the period.
+  int amountPlanned();
 
   /// Returns the amount realized in the transactions connected to
   /// this realization.
