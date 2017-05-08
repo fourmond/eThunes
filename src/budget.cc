@@ -77,6 +77,14 @@ QHash<Period, BudgetRealization *> Budget::realizationsForPeriod(const Period & 
   return rv;
 }
 
+TransactionPtrList Budget::allTransactions() const
+{
+  TransactionPtrList lst;
+  for(int i = 0; i < realizations.size(); i++)
+    lst.append(realizations[i].transactions());
+  return lst;
+}
+
 
 
 
@@ -126,6 +134,15 @@ void BudgetRealization::followLink()
     Wallet * w = transactions[0]->getAccount()->wallet;
     NavigationWidget::gotoPage(BudgetPage::getBudgetPage(w));
   }
+}
+
+TransactionPtrList BudgetRealization::transactions() const
+{
+  QList<AtomicTransaction*> transactions =
+    links.typedLinks<AtomicTransaction>("budget-realization");
+  TransactionPtrList lst;
+  lst.append(transactions);
+  return lst;
 }
 
 int BudgetRealization::amountPlanned()

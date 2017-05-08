@@ -73,7 +73,9 @@ public:
   /// their period. Creates them if @a create is set to true.
   QHash<Period, BudgetRealization *> realizationsForPeriod(const Period & period,
                                                            bool create = false);
-  
+
+  /// Returns all the transactions for all the budget's realizations.
+  TransactionPtrList allTransactions() const;
 };
 
 /// This class represents the realization of a budget, i.e. all the
@@ -115,6 +117,9 @@ public:
   /// Returns the amount realized in the transactions connected to
   /// this realization.
   int amountRealized();
+
+  /// Returns the transactions.
+  TransactionPtrList transactions() const;
 
   static TransactionPtrList realizationLessTransactions(const TransactionPtrList & lst);
 

@@ -23,6 +23,7 @@
 
 #include <logstream.hh>
 #include <pointersafesort.hh>
+#include <periodic.hh>
 
 BasicStatistics::BasicStatistics() :
   number(0), numberCredit(0), numberDebit(0), 
@@ -229,6 +230,17 @@ AtomicTransaction * TransactionPtrList::pointerTo(int i)
 void TransactionPtrList::append(AtomicTransaction * tr)
 {
   WatchablePtrList<AtomicTransaction>::append(tr);
+}
+
+TransactionPtrList TransactionPtrList::transactionsForPeriod(const Period & period) const
+{
+  TransactionPtrList rv;
+  for(int i = 0; i < size(); i++) {
+    AtomicTransaction * t = (*this)[i];
+    if(period.contains(t->getDate()))
+      rv << t;
+  }
+  return rv;
 }
 
 

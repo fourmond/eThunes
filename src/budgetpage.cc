@@ -123,7 +123,15 @@ void BudgetPage::updateSummary()
     QList<Period> periods = rs.keys();
     // QTextStream o(stdout);
     qSort(periods);
-    text += "<tr><td>" + budget->name + "</td>";
+    text += "<tr><td>" +
+      HTTarget::linkToTransactionDisplay(budget->name,
+                                         tr("Transactions for %1").arg(budget->name),
+                                         [budget, cy]{
+                                           TransactionPtrList trs = budget->allTransactions().transactionsForPeriod(cy);
+                                           trs.sortByDate();
+                                           return trs;
+                                         })
+      + "</td>";
     int tp = 0, te = 0;
     for(int i = 0; i < periods.size(); i++) {
       const Period & p = periods[i];

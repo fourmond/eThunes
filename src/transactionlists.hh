@@ -92,6 +92,7 @@ public:
   int monthlyAverageAmount();
 };
 
+class Period;
 
 /// This class represents a list of Transaction objects, that can
 /// potentially be modified, but not stored unlike TransactionList. It
@@ -142,6 +143,9 @@ public:
   ///
   /// This function is necessary to play well in template things
   AtomicTransaction * pointerTo(int nb);
+
+  /// Returns the transactions in the given period
+  TransactionPtrList transactionsForPeriod(const Period & period) const;
 
 };
 
