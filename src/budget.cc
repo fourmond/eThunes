@@ -157,13 +157,8 @@ int BudgetRealization::amountRealized()
   QList<AtomicTransaction*> transactions =
     links.typedLinks<AtomicTransaction>("budget-realization");
 
-  QTextStream o(stdout);
-  o << "Transactions: " << transactions.size() << " --"
-    << links.namedLinks("budget-realization").size() << endl;
   for(int i = 0; i < transactions.size(); i++)
     rv += transactions[i]->getAmount();
-
-  o << " -> " << rv << endl;
     
   return rv;
 }

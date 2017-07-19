@@ -45,7 +45,7 @@ protected:
   Cabinet * cabinet;
 
 
-  QLabel * summary;
+  HTLabel * summary;
 
   /// Very basic plugin list display
   HTLabel * plugins;
@@ -93,6 +93,8 @@ public slots:
 
   /// Loads a file
   void load(const QString & file);
+
+  void showDocumentsPage();
 
 protected:
 

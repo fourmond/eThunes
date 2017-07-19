@@ -23,6 +23,7 @@
 #include <statistics.hh>
 // #include <linkshandler.hh>
 #include <navigationwidget.hh>
+#include <documentspage.hh>
 
 #include <statisticswidget.hh>
 
@@ -32,7 +33,7 @@
 CabinetPage::CabinetPage(Cabinet * c) : cabinet(c)
 {
   QVBoxLayout * layout = new QVBoxLayout(this);
-  summary = new QLabel();
+  summary = new HTLabel;
   layout->addWidget(summary);
 
   QHBoxLayout * hb = new QHBoxLayout();
@@ -71,8 +72,14 @@ QString CabinetPage::pageTitle()
 
 void CabinetPage::updateContents()
 {
-  summary->setText(tr("<b>Cabinet : </b>%1<p>").
-		   arg(cabinet->fileName()));
+  summary->setText(tr("<b>Cabinet : </b>%1<p>%2").
+                   arg(cabinet->fileName()).
+                   arg(HTTarget::linkToMember("(docs)", 
+                                              this, &CabinetPage::showDocumentsPage)));
+
+                 
+
+
   // We list the plugins
   {
     QString str;
@@ -125,6 +132,11 @@ void CabinetPage::load()
 void CabinetPage::load(const QString & file)
 {
   cabinet->loadFromFile(file);
+}
+
+void CabinetPage::showDocumentsPage()
+{
+  NavigationWidget::gotoPage(DocumentsPage::getDocumentsPage(cabinet));
 }
 
 void CabinetPage::promptAddPlugin()

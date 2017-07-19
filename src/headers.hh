@@ -67,6 +67,8 @@
 
 #include <QSpinBox>
 
+#include <QFileSystemModel>
+
 
 // A rich text viewer (and editor?).
 // (not used)
