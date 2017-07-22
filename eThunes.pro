@@ -15,7 +15,7 @@ QT += xml network
 # QT5:
 QT +=  widgets
 
-QT += qml
+QT += qml 
 
 PRECOMPILED_HEADER = src/headers.hh
 
@@ -70,7 +70,8 @@ SOURCES += src/qmain.cc src/account.cc src/mainwin.cc src/actions.cc \
         src/budgetpage.cc \
         src/settings.cc \
         src/periodic.cc \
-        src/documentspage.cc
+        src/documentspage.cc \
+        src/doctype.cc
 
 HEADERS += src/account.hh src/mainwin.hh src/actions.hh \
            src/ofximport.hh src/accountmodel.hh \
@@ -116,7 +117,8 @@ HEADERS += src/account.hh src/mainwin.hh src/actions.hh \
            src/settings.hh \
            src/settings-templates.hh \
            src/periodic.hh \
-           src/documentspage.hh
+           src/documentspage.hh \
+           src/doctype.hh
 
 
 # Plugins:

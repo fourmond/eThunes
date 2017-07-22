@@ -113,6 +113,13 @@
 #include <QMutexLocker>
 
 
+// QML-related classes
+#include <QQmlEngine>
+#include <QQmlComponent>
+
+#include <QMetaProperty>
+
+
 // Item-model stuff
 #include <QAbstractItemModel>
 #include <QTreeView>

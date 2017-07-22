@@ -29,6 +29,8 @@
 
 #include <transaction.hh>
 
+#include <doctype.hh>
+
 // for readPDF
 #include <pdftools.hh>
 
@@ -110,6 +112,12 @@ static void listCollections(const QStringList &)
   // for(int i = 0; i < defs.size(); i++) {
   //   o << defs[i] << endl;
   // }
+}
+
+static void parseQML(const QStringList & lst)
+{
+  DocType::registerQMLTypes();
+  DocType::parseQMLFile(lst[0]);
 }
 
 // First, the handlers
@@ -306,6 +314,8 @@ static CommandLineParser * myParser()
   *parser 
     << new CommandLineOption("--list-collections", listCollections,
 			     0, "List collections")
+    << new CommandLineOption("--parse-qml", parseQML,
+			     1, "parse qml")
     << new CommandLineOption("--list-plugins", showPlugins,
 			     0, "List available plugins")
     << new CommandLineOption("--help", showHelp,
