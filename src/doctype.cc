@@ -24,6 +24,8 @@
 // types is only going to happen once the 
 QHash<QString, DocType*> DocType::namedTypes;
 
+QQmlEngine DocType::engine;
+
 DocType::DocType(QObject * parent) : QObject(parent)
 {
 }
@@ -57,6 +59,27 @@ void DocType::setName(const QString & n)
   namedTypes[m_Name] = this;
 }
 
+QString DocType::description() const
+{
+  return m_Description;
+}
+
+void DocType::setDescription(const QString & n)
+{
+  m_Description = n;
+}
+
+QString DocType::infoFormat() const
+{
+  return m_InfoFormat;
+}
+
+void DocType::setInfoFormat(const QString & n)
+{
+  m_InfoFormat = n;
+}
+
+
 QString DocType::parentName() const
 {
   if(parent)
@@ -79,6 +102,16 @@ void DocType::setDateFields(const QStringList & n)
   m_Dates = n;
 }
 
+QStringList DocType::stringFields() const
+{
+  return m_Strings;
+}
+
+void DocType::setStringFields(const QStringList & n)
+{
+  m_Strings = n;
+}
+
 QStringList DocType::amountFields() const
 {
   return m_Amounts;
@@ -90,49 +123,9 @@ void DocType::setAmountFields(const QStringList & n)
 }
 
 
-#include <QDebug>
-#include <vector>
-#include <utility>
-#include <algorithm>
-
-static void dump_props(QObject *o)
-{
-  const QMetaObject * mo = o->metaObject();
-  qDebug() << "## Properties of" << o << "##";
-  do {
-    qDebug() << "### Class" << mo->className() << "###";
-    std::vector<std::pair<QString, QVariant> > v;
-    v.reserve(mo->propertyCount() - mo->propertyOffset());
-    for (int i = mo->propertyOffset(); i < mo->propertyCount();
-          ++i)
-      v.emplace_back(mo->property(i).name(),
-                     mo->property(i).read(o));
-    std::sort(v.begin(), v.end());
-    for (auto &i : v)
-      qDebug() << i.first << "=>" << i.second;
-  } while ((mo = mo->superClass()));
-
-  mo = o->metaObject();
-  qDebug() << "## Methods of" << o << "##";
-  do {
-    qDebug() << "### Class" << mo->className() << "###";
-    std::vector<std::pair<QString, QVariant> > v;
-    v.reserve(mo->methodCount() - mo->methodOffset());
-    for (int i = mo->methodOffset(); i < mo->methodCount();
-          ++i)
-      v.emplace_back(mo->method(i).name(),
-                     mo->method(i).methodSignature());
-    std::sort(v.begin(), v.end());
-    for (auto &i : v)
-      qDebug() << i.first << "=>" << i.second;
-  } while ((mo = mo->superClass()));
-}
-
-
 void DocType::parseQMLFile(const QString & file)
 {
-  QQmlEngine *engine = new QQmlEngine;
-  QQmlComponent component(engine, QUrl::fromLocalFile(file));
+  QQmlComponent component(&engine, QUrl::fromLocalFile(file));
   if(component.isError()) {
     QList<QQmlError> errs = component.errors();
     QTextStream o(stdout);
@@ -140,8 +133,23 @@ void DocType::parseQMLFile(const QString & file)
       o << errs[i].toString() << endl;
   }
   else {
-    QObject *myObject = component.create();
-    dump_props(myObject);
+    // QObject *myObject =
+    component.create();
+    // dump_props(myObject);
+  }
+}
+
+DocType * DocType::namedType(const QString & name)
+{
+  return namedTypes.value(name, NULL);
+}
+
+void DocType::crosslinkTypes()
+{
+  for(auto i : namedTypes) {
+    if(! i->m_ParentName.isEmpty()) {
+      i->parent = namedType(i->m_ParentName);
+    }
   }
 }
 
@@ -168,4 +176,14 @@ QQmlListProperty<DocType> Collection::getDocTypes()
 void Collection::setName(const QString & n)
 {
   m_Name = n;
+}
+
+QString Collection::description() const
+{
+  return m_Description;
+}
+
+void Collection::setDescription(const QString & n)
+{
+  m_Description = n;
 }

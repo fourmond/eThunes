@@ -31,10 +31,25 @@ class DocType : public QObject {
   /// inheritance purposes.
   static QHash<QString, DocType*> namedTypes;
 
+  static QQmlEngine engine;
+
   Q_PROPERTY(QString name READ name WRITE setName)
 
   /// The name of the type 
   QString m_Name;
+
+
+  Q_PROPERTY(QString description READ description WRITE setDescription)
+  
+  /// A string describing the nature of the document type
+  QString m_Description;
+
+
+  Q_PROPERTY(QString infoFormat READ infoFormat WRITE setInfoFormat)
+  
+  /// A string giving a AttributeHash format for displaying a small
+  /// informative text about a document of this type.
+  QString m_InfoFormat;
 
   Q_PROPERTY(QStringList dates READ dateFields WRITE setDateFields)
 
@@ -45,6 +60,11 @@ class DocType : public QObject {
 
   /// The fields that should be taken as amounts
   QStringList m_Amounts;
+
+  Q_PROPERTY(QStringList strings READ stringFields WRITE setStringFields)
+
+  /// The fields that should be taken as pure strings
+  QStringList m_Strings;
 
 
   Q_PROPERTY(QString parent READ parentName WRITE setParentName)
@@ -68,8 +88,17 @@ public:
   QString name() const;
   void setName(const QString & name);
 
+  QString description() const;
+  void setDescription(const QString & name);
+
+  QString infoFormat() const;
+  void setInfoFormat(const QString & name);
+
   QStringList dateFields() const;
   void setDateFields(const QStringList & df);
+
+  QStringList stringFields() const;
+  void setStringFields(const QStringList & df);
 
   QStringList amountFields() const;
   void setAmountFields(const QStringList & df);
@@ -79,6 +108,12 @@ public:
 
   static void registerQMLTypes();
   static void parseQMLFile(const QString & file);
+
+  /// Loops through all the types and make sure they all have a
+  /// parent.
+  static void crosslinkTypes();
+
+  static DocType * namedType(const QString & name);
 };
 
 /// This class collects a series of DocType. It has no real purpose,
@@ -92,8 +127,17 @@ class Collection : public QObject {
   /// The name of the type 
   QString m_Name;
 
+
+  Q_PROPERTY(QString description READ description WRITE setDescription)
+  
+  /// A string describing the nature of the document type
+  QString m_Description;
+
+
+
   Q_PROPERTY(QQmlListProperty<DocType> docTypes READ getDocTypes)
 
+  /// The document types held by this collection
   QList<DocType*> docTypes;
 
   Q_CLASSINFO("DefaultProperty", "docTypes")
@@ -110,6 +154,9 @@ public:
 
   QString name() const;
   void setName(const QString & name);
+
+  QString description() const;
+  void setDescription(const QString & name);
 
 };
 
