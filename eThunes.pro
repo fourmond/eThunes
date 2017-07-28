@@ -71,7 +71,8 @@ SOURCES += src/qmain.cc src/account.cc src/mainwin.cc src/actions.cc \
         src/settings.cc \
         src/periodic.cc \
         src/documentspage.cc \
-        src/doctype.cc
+        src/doctype.cc \
+        src/debug.cc
 
 HEADERS += src/account.hh src/mainwin.hh src/actions.hh \
            src/ofximport.hh src/accountmodel.hh \
@@ -118,7 +119,8 @@ HEADERS += src/account.hh src/mainwin.hh src/actions.hh \
            src/settings-templates.hh \
            src/periodic.hh \
            src/documentspage.hh \
-           src/doctype.hh
+           src/doctype.hh \
+           src/debug.hh
 
 
 # Plugins:
