@@ -94,6 +94,10 @@ int main(int argc, char ** argv)
   main.setApplicationName("eThunes");
   win.show();
 
+  // QTextStream o(stdout);
+  // o << QIcon::themeName() << endl;
+  // o << QIcon::themeSearchPaths().join(", ") << endl;
+
   int ret =  main.exec();
   Settings::saveSettings("tanyaivinco.homelinux.org", "eThunes");
   return ret;
