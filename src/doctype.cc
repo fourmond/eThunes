@@ -24,7 +24,7 @@
 // types is only going to happen once the 
 QHash<QString, DocType*> DocType::namedTypes;
 
-QQmlEngine DocType::engine;
+QQmlEngine * DocType::engine;
 
 DocType::DocType(QObject * parent) : QObject(parent)
 {
@@ -125,7 +125,9 @@ void DocType::setAmountFields(const QStringList & n)
 
 void DocType::parseQMLFile(const QString & file)
 {
-  QQmlComponent component(&engine, QUrl::fromLocalFile(file));
+  if(! engine)
+    engine = new QQmlEngine;
+  QQmlComponent component(engine, QUrl::fromLocalFile(file));
   if(component.isError()) {
     QList<QQmlError> errs = component.errors();
     QTextStream o(stdout);

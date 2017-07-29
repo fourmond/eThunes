@@ -31,7 +31,7 @@ class DocType : public QObject {
   /// inheritance purposes.
   static QHash<QString, DocType*> namedTypes;
 
-  static QQmlEngine engine;
+  static QQmlEngine * engine;
 
   Q_PROPERTY(QString name READ name WRITE setName)
 
