@@ -19,18 +19,19 @@
 #include <headers.hh>
 #include <documentspage.hh>
 #include <cabinet.hh>
+#include <documentsmodel.hh>
 
 DocumentsPage::DocumentsPage(Cabinet * c) : cabinet(c)
 {
   QVBoxLayout * layout = new QVBoxLayout(this);
 
-  model = new QFileSystemModel;
+  model = new DocumentsModel(cabinet);
   // listView = new QListView();
   treeView = new QTreeView;
   layout->addWidget(treeView);
 
   treeView->setModel(model);
-  treeView->setRootIndex(model->setRootPath(cabinet->baseDirectory().canonicalPath()));
+  treeView->setRootIndex(model->root());
 }
 
 

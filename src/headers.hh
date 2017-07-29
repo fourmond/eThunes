@@ -68,6 +68,8 @@
 #include <QSpinBox>
 
 #include <QFileSystemModel>
+#include <QMimeType>
+#include <QMimeDatabase>
 
 
 // A rich text viewer (and editor?).

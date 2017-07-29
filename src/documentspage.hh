@@ -24,6 +24,7 @@
 #include <navigationpage.hh>
 
 class Cabinet;
+class DocumentsModel;
 
 /// This NavigationPage displays the informations about documentss
 class DocumentsPage : public NavigationPage {
@@ -37,7 +38,7 @@ protected:
 
   Cabinet * cabinet;
 
-  QFileSystemModel * model;
+  DocumentsModel * model;
 
   // QListView * listView;
   QTreeView * treeView;
