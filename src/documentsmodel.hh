@@ -37,17 +37,27 @@ protected:
 
   QMimeDatabase mimeDB;
 
+  /// The number of columns in the 
+  int nativeColumns;
+
 public:
 
   DocumentsModel(Cabinet * cabinet);
 
   QModelIndex root() const;
 
+  /// Returns the file path, <b>relative to the Cabinet base directory</b>.
+  QString filePath(const QModelIndex & index) const;
+
 
   enum AdditionalColumns {
-    A,
-    B,
-    Last
+    TypeColumn,
+    CategoryColumn,
+    TagsColumn,
+    LinksColumn,
+    DateColumn,
+    AmountColumn,
+    LastColumn
   };
 
 

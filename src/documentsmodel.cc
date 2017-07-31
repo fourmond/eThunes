@@ -18,6 +18,7 @@
 
 #include <headers.hh>
 #include <documentsmodel.hh>
+#include <document.hh>
 #include <cabinet.hh>
 
 
@@ -25,6 +26,7 @@ DocumentsModel::DocumentsModel(Cabinet * c) :
   cabinet(c)
 {
   m_Root = setRootPath(cabinet->baseDirectory().canonicalPath());
+  nativeColumns = QFileSystemModel::columnCount(m_Root);
 }
 
 QModelIndex DocumentsModel::root() const
@@ -32,19 +34,48 @@ QModelIndex DocumentsModel::root() const
   return m_Root;
 }
 
+
+QString DocumentsModel::filePath(const QModelIndex & index) const
+{
+  QString path = QFileSystemModel::filePath(index);
+  return cabinet->baseDirectory().relativeFilePath(path);
+}
+
 int DocumentsModel::columnCount(const QModelIndex &parent) const
 {
-  return QFileSystemModel::columnCount(parent) + Last;
+  return QFileSystemModel::columnCount(parent) + LastColumn;
 }
 
 QVariant DocumentsModel::data(const QModelIndex &index, int role) const
 {
   int col = index.column();
-  int cc = QFileSystemModel::columnCount(index);
   if(role == Qt::DecorationRole && col == 0 && ! isDir(index)) {
-    QString fn = filePath(index);
+    QString fn = QFileSystemModel::filePath(index);
     QMimeType m = mimeDB.mimeTypeForFile(fn);
     return QIcon::fromTheme(m.iconName());
+  }
+  if(col >= nativeColumns) {
+    if(isDir(index))
+      return QVariant();        // nothing to do here
+    QString fn = filePath(index);
+    const Document * doc = cabinet->documents.document(fn);
+    switch(col - nativeColumns) {
+    case TypeColumn: {
+      if(! doc ) {
+        if(role == Qt::ForegroundRole)
+          return QColor(Qt::gray);
+        if(role == Qt::DisplayRole)
+          return "(no type)";
+        return QVariant();
+      }
+      if(role == Qt::DisplayRole)
+        return doc->docTypeName();
+      return QVariant();
+    }
+
+    default:
+      return QVariant();
+    }
   }
   return QFileSystemModel::data(index, role);
 }

@@ -176,7 +176,7 @@ SerializationAccessor::addScalarListAttribute(const QString & name,
 }
 
 
-/// This template class deals with the specific case of QList of
+/// This template class deals with the specific case of QHash of
 /// children of Serializable (but not pointers).
 template <class T>
 class SerializationQHash : public SerializationHash {
