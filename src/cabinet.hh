@@ -23,18 +23,12 @@
 
 #include <serializable.hh>
 #include <wallet.hh>
+#include <documentlist.hh>
 
 class Plugin;
 
 /// The main container. This class is the main container for all data
 /// eThunes (which should change name some time soon)
-///
-/// \todo Add the possibility to add "free" documents, ie Document
-/// objects that do not belong to any real Collection and that would
-/// be handled manually.
-/// The easiest way would be to systematically create a "miscellaneous"
-/// Collection and prompt the user for two fields: a public name, and
-/// a file name.
 class Cabinet : public QObject, public Serializable {
   Q_OBJECT;
 
@@ -55,6 +49,9 @@ public:
 
   /// The one and only Wallet
   Wallet wallet;
+
+  /// The list of Documents
+  DocumentList documents;
 
   /// All plugins. Please note these are stored as pointers, not
   /// objects...

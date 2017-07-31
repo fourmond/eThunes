@@ -19,7 +19,28 @@
 #include <headers.hh>
 #include <documentlist.hh>
 
+#include <document.hh>
+
 
 DocumentList::DocumentList()
 {
 }
+
+DocumentList::~DocumentList()
+{
+  for(Document * doc : documents)       // hell, I love C++11
+    delete doc;
+}
+
+SerializationAccessor * DocumentList::serializationAccessor()
+{
+  SerializationAccessor * ac = new SerializationAccessor(this);
+
+  return ac;
+}
+
+const Document * DocumentList::document(const QString & file) const
+{
+  return documents.value(file, NULL);
+}
+

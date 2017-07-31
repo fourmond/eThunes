@@ -21,24 +21,51 @@
 #ifndef __DOCUMENTLIST_HH
 #define __DOCUMENTLIST_HH
 
-#include <document.hh>
+#include <serializable.hh>
 
+class Document;
 
 /// This class collects a series of documents (in general all of them).
 ///
 /// It provides facilities for:
 /// @li finding a document by file name
-/// @li rename files and directories
+/// @li renaming files and directories
+///
+/// @todo Make non-owning copies. Or use std::unique ?
 class DocumentList : public Serializable {
 protected:
 
-  
+  /// The storage of the documents
+  QHash<QString, Document *> documents;
+
 public:
 
   DocumentList();
+  virtual ~DocumentList();
+
+  /// Returns a pointer to the given document.  If @a create is true,
+  /// a new document is created.
+  Document * modifiableDocument(const QString & file, bool create = false);
+
+  /// Returns a pointer to the document for the named file, or NULL if
+  /// there is no document.
+  const Document * document(const QString & file) const;
+
+  /// Adds the given Document to the list. Takes ownership of the
+  /// Document.
+  void addDocument(Document * document);
+
+  void renameDocument(Document * doc, const QString & newName);
+
+  /// Renames the given path. Makes the right thing about directories.
+  void renamePath(const QString & oldPath, const QString & newPath);
 
 
+protected:
 
+  virtual SerializationAccessor * serializationAccessor() override;
+
+  
 };
 
 

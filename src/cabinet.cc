@@ -38,7 +38,7 @@ SerializationAccessor * Cabinet::serializationAccessor()
   ac->addAttribute("plugin",
 		   new SerializationPointerQList<Plugin>(&plugins));
   ac->addAttribute("wallet", &wallet);
-  //  ac->addListAttribute("collection", &collections);
+  ac->addAttribute("documents", &documents);
   return ac;
 }
 

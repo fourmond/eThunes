@@ -25,9 +25,9 @@
 #include <attributehash.hh>
 #include <linkable.hh>
 #include <tag.hh>
-#include <watchablecontainers.hh>
 
 class Category;
+class DocType;
 
 /// This class represents a single document.
 class Document : public Linkable {
@@ -45,6 +45,17 @@ protected:
   /// A user-set comment
   QString comment;
 
+  /// The underlying DocType, optional. Saved as a plain string.
+  DocType * m_DocType;
+
+  /// For serialization purposes, and also for saving the document
+  /// type name if it is missing (could happen ?)
+  QString m_DocTypeName;
+
+  /// The attributes of the document. Can be set manually, or through
+  /// automatic detection.
+  AttributeHash attributes;
+
 public:
 
   Document();
@@ -57,6 +68,9 @@ public:
   virtual QString publicLinkName() const override;
 
   virtual void followLink();
+
+  /// Returns the name of the document type (or nothing)
+  QString docTypeName() const;
 
 };
 

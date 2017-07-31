@@ -18,6 +18,7 @@
 
 #include <headers.hh>
 #include <document.hh>
+#include <doctype.hh>
 
 
 Document::Document()
@@ -32,5 +33,12 @@ QString Document::publicLinkName() const
 void Document::followLink()
 {
   ///
+}
+
+QString Document::docTypeName() const
+{
+  if(m_DocType)
+    return m_DocType->name();
+  return m_DocTypeName;
 }
 
