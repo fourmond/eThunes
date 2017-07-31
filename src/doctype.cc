@@ -135,9 +135,7 @@ void DocType::parseQMLFile(const QString & file)
       o << errs[i].toString() << endl;
   }
   else {
-    // QObject *myObject =
     component.create();
-    // dump_props(myObject);
   }
 }
 
@@ -154,6 +152,23 @@ void DocType::crosslinkTypes()
     }
   }
 }
+
+
+/// @todo This should be a little better, though it'll be OK for now !
+/// Could be QDir::addSeachPath ?
+static QStringList loadPaths("/home/vincent/Prog/eThunes/collections");
+
+void DocType::loadTypes()
+{
+  for(const QString & dir : ::loadPaths) {
+    QDir d(dir);
+    for(auto f : d.entryList(QStringList("*.doctype.qml")))
+      parseQMLFile(d.absoluteFilePath(f));
+  }
+  crosslinkTypes();
+}
+
+
 
 //////////////////////////////////////////////////////////////////////
 

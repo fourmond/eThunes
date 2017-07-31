@@ -109,6 +109,10 @@ public:
   static void registerQMLTypes();
   static void parseQMLFile(const QString & file);
 
+  /// Goes through all the type definition files found on the system
+  /// and load them up !
+  static void loadTypes();
+
   /// Loops through all the types and make sure they all have a
   /// parent.
   static void crosslinkTypes();

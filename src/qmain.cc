@@ -22,6 +22,7 @@
 #include <mainwin.hh>
 #include <log.hh>
 #include <commandline.hh>
+#include <doctype.hh>
 
 #include <settings.hh>
 #include <settings-templates.hh>
@@ -70,6 +71,9 @@ int main(int argc, char ** argv)
   Log::logger()->spy = &log;
 
   main.setApplicationName("eThunes");
+
+  DocType::registerQMLTypes();
+  DocType::loadTypes();
 
   Settings::loadSettings("tanyaivinco.homelinux.org", "eThunes");
   if(fontSize > 0) {
