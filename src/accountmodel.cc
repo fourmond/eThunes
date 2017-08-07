@@ -34,6 +34,8 @@ static QVariant transactionData(AtomicTransaction * t,
 {
   if(! t)
     return QVariant();
+  if(column == AccountModel::LinksColumn)
+    return Linkable::linksData(t, role);
   if(role == Qt::DisplayRole) {
     switch(column) {
     case AccountModel::DateColumn: return QVariant(t->getDate());
@@ -67,9 +69,6 @@ static QVariant transactionData(AtomicTransaction * t,
     switch(column) {
     case AccountModel::CategoryColumn: return QVariant(t->categoryName());
     case AccountModel::TagsColumn: return QVariant(t->tagString());
-    case AccountModel::LinksColumn: if(t->links.size())
-        return t->links.htmlLinkList().join(", ");
-      return QVariant();
     case AccountModel::CommentColumn: return t->getComment();
     default:
       return QVariant();

@@ -49,7 +49,7 @@ public:
 
   /// Returns a pointer to the document for the named file, or NULL if
   /// there is no document.
-  const Document * document(const QString & file) const;
+  Document * document(const QString & file) const;
 
   /// Adds the given Document to the list. Takes ownership of the
   /// Document.

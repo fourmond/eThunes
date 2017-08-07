@@ -58,7 +58,7 @@ QVariant DocumentsModel::data(const QModelIndex &index, int role) const
     if(isDir(index))
       return QVariant();        // nothing to do here
     QString fn = filePath(index);
-    const Document * doc = cabinet->documents.document(fn);
+    Document * doc = cabinet->documents.document(fn);
     switch(col - nativeColumns) {
     case TypeColumn: {
       if(! doc ) {
@@ -72,7 +72,9 @@ QVariant DocumentsModel::data(const QModelIndex &index, int role) const
         return doc->docTypeName();
       return QVariant();
     }
-
+    case LinksColumn:
+      if(doc)
+        return Linkable::linksData(doc, role);
     default:
       return QVariant();
     }

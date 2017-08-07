@@ -39,7 +39,7 @@ SerializationAccessor * DocumentList::serializationAccessor()
   return ac;
 }
 
-const Document * DocumentList::document(const QString & file) const
+Document * DocumentList::document(const QString & file) const
 {
   return documents.value(file, NULL);
 }
