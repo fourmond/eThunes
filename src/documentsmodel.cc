@@ -79,4 +79,34 @@ QVariant DocumentsModel::data(const QModelIndex &index, int role) const
   }
   return QFileSystemModel::data(index, role);
 }
- 
+
+QVariant DocumentsModel::headerData(int section, Qt::Orientation orientation, int role) const
+{
+  if(orientation == Qt::Horizontal) {
+    if(section < nativeColumns)
+      return QFileSystemModel::headerData(section, orientation, role);
+    if(role == Qt::DisplayRole) {
+      switch(section - nativeColumns) {
+      case TypeColumn:
+        return tr("Document Type");
+      case CategoryColumn:
+        return tr("Category");
+      case TagsColumn:
+        return tr("Tags");
+      case LinksColumn:
+        return tr("Links");
+      case DateColumn:
+        return tr("Date");
+      case AmountColumn:
+        return "Amount";
+      default:
+        return QVariant();
+      }
+    }
+
+    return QVariant();
+  }
+  else
+    return QFileSystemModel::headerData(section, orientation, role);
+}
+
