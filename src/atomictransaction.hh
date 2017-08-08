@@ -22,11 +22,9 @@
 #define __ATOMICTRANSACTION_HH
 
 #include <serializable.hh>
-#include <category.hh>
-#include <tag.hh>
 #include <attributehash.hh>
 #include <linkable.hh>
-#include <watchablecontainers.hh>
+#include <categorizable.hh>
 
 // Necessary classes
 class Wallet;
@@ -36,16 +34,10 @@ class Transaction;
 
 /// This reprensents an atomic transaction, ie what is left after you
 /// split a Transaction into several sub-transactions. 
-class AtomicTransaction : public Linkable {
+class AtomicTransaction : public Linkable, public Categorizable {
 protected:
   /// The amount of the transation, in cents
   int amount;
-
-  /// The category
-  Category * category;
-
-  /// The list of tags.
-  TagList tags;
 
   /// A user-set comment
   QString comment;
@@ -93,51 +85,6 @@ public:
   ///
   /// @{
 
-
-  /// Returns the list of tags, formatted as in TagList::toString.
-  QString tagString() const {
-    return tags.toString();
-  };
-
-  /// Sets the tag list, from a comma-separated string. The wallet is
-  /// necessary.
-  void setTagList(const QString & str, Wallet * wallet = NULL);
-
-  /// Clears the given tag
-  void clearTag(Tag * t) {
-    tags.clearTag(t);
-  }; 
-
-  /// Sets the given tag
-  void setTag(Tag * t) {
-    tags.setTag(t);
-  };
-
-  /// Sets the given named tag
-  void setTagFromName(const QString & str, Wallet * wallet = NULL);
-
-  /// Whether the taglist contains the the given tag
-  bool hasTag(const Tag * t) const {
-    return tags.hasTag(const_cast<Tag*>(t));
-  }; 
-
-  /// Sets the category from the given String. If wallet is NULL, it
-  /// is taken to be account->wallet, which shouldn't be NULL.
-  void setCategoryFromName(const QString & str, Wallet * wallet = NULL);
-
-  /// Returns the full name of the Category, suitable for saving, or
-  /// an empty string when there isn't a category.
-  QString categoryName() const ;
-
-  /// Returns the category.
-  Category * getCategory() const {
-    return category;
-  };
-
-  /// sets the category.
-  void setCategory(Category * c) {
-    setAttribute(category, c, "category");
-  };
 
   /// Returns the amount of the transaction. To be more precise, it is
   /// the amount that matches the Category and the Tag. For splitted
@@ -210,15 +157,6 @@ public:
   virtual QString publicLinkName() const override;
 
   virtual void followLink();
-
-private:
-
-  /// Same as setTagList, but using the currently serialized wallet.
-  void setTagListPrivate(const QString & str);
-
-  /// Same as setCategoryFromName, but using the currently serialized
-  /// wallet.
-  void setCategoryFromNamePrivate(const QString & str);
 
 };
 

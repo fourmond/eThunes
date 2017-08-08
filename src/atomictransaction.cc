@@ -23,9 +23,8 @@
 
 
 AtomicTransaction::AtomicTransaction(int am, Transaction * bt) :
-  amount(am), category(NULL), baseTransaction(bt)
+  amount(am), baseTransaction(bt)
 {
-  watchChild(&tags, "tags");
 }
 
 SerializationAccessor * AtomicTransaction::serializationAccessor()
@@ -33,13 +32,8 @@ SerializationAccessor * AtomicTransaction::serializationAccessor()
   SerializationAccessor * ac = new SerializationAccessor(this);
   ac->addScalarAttribute("amount", &amount);
   ac->addScalarAttribute("comment", &comment);
-  ac->addAccessorsAttribute("category",this, 
-                            &Transaction::setCategoryFromNamePrivate, 
-                            &Transaction::categoryName);
-  ac->addAccessorsAttribute("tags",this, 
-                            &Transaction::setTagListPrivate, 
-                            &Transaction::tagString);
   addLinkAttributes(ac);
+  addCategoriesSerialization(ac);
   return ac;
 }
 
@@ -80,70 +74,6 @@ QString AtomicTransaction::getCheckNumber() const
   return QString();
 }
 
-QString AtomicTransaction::categoryName() const
-{
-  if(category)
-    return category->fullName();
-  return QString();
-}
-
-void AtomicTransaction::setCategoryFromName(const QString & str, Wallet * w)
-{
-  if(! w) {
-    Account * account = getAccount();
-    if(! account || ! account->wallet) {
-      QTextStream e(stderr);
-      e <<  "We have serious problems setting a Category from a Name: "
-        << str << endl;
-      return;
-    }
-    w = account->wallet;
-  }
-  // We create by default ?
-  setCategory(w->categories.namedSubCategory(str, true));
-}
-
-void AtomicTransaction::setTagFromName(const QString & str, Wallet * w)
-{
-  if(! w) {
-    Account * account = getAccount();
-    if(! account || ! account->wallet) {
-      QTextStream e(stderr);
-      e <<  "We have serious problems setting a Category from a Name: "
-        << str << endl;
-      return;
-    }
-    w = account->wallet;
-  }
-  Tag * t = w->tags.namedTag(str, true);
-  setTag(t);
-}
-
-
-void AtomicTransaction::setTagListPrivate(const QString & str) 
-{
-  setTagList(str, Wallet::walletCurrentlyRead);
-}
-
-void AtomicTransaction::setCategoryFromNamePrivate(const QString & str) 
-{
-  setCategoryFromName(str, Wallet::walletCurrentlyRead);
-}
-
-void AtomicTransaction::setTagList(const QString & str, Wallet * w)
-{
-  if(! w) {
-    Account * account = getAccount();
-    if(! account || ! account->wallet) {
-      fprintf(stderr, "We have serious problems setting a "
-	      "TagList from a Name\n");
-      return;
-    }
-    w = account->wallet;
-  }
-
-  tags.fromString(str, w);
-}
 
 AttributeHash AtomicTransaction::toHash() const
 {

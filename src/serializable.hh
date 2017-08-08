@@ -33,7 +33,8 @@
 ///
 /// It is a child of SerializationAttribute in order to make it
 /// dreadfull easy to embed complex objects in attributes ;-)...
-class Serializable : public SerializationAttribute, public Watchable {
+class Serializable : public SerializationAttribute,
+                     public virtual Watchable {
 
 
 public:
