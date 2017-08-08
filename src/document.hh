@@ -72,6 +72,8 @@ public:
   /// Returns the name of the document type (or nothing)
   QString docTypeName() const;
 
+  virtual SerializationAccessor * serializationAccessor() override;
+
 };
 
 

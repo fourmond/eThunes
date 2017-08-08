@@ -42,3 +42,11 @@ QString Document::docTypeName() const
   return m_DocTypeName;
 }
 
+ 
+SerializationAccessor * Document::serializationAccessor()
+{
+  SerializationAccessor * ac = new SerializationAccessor(this);
+  ac->addScalarAttribute("name", &fileName);
+
+  return ac;
+}

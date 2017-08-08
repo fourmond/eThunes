@@ -35,6 +35,7 @@ DocumentList::~DocumentList()
 SerializationAccessor * DocumentList::serializationAccessor()
 {
   SerializationAccessor * ac = new SerializationAccessor(this);
+  ac->addHashAttribute("document", &documents);
 
   return ac;
 }

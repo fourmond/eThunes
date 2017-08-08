@@ -211,5 +211,40 @@ SerializationAccessor::addHashAttribute(const QString & name,
                new SerializationQHash<T>(target, keyName));
 }
 
+/// This template class deals with the specific case of QHash of
+/// pointers of children of Serializable
+template <class T>
+class SerializationQHashPtr : public SerializationHash {
+  QHash<QString, T *> * target;
+public:
+  SerializationQHashPtr(QHash<QString, T *> * t, const QString & kn = "name") {
+    target = t;
+    keyName = kn;
+  };
+
+  virtual QStringList keys() { return target->keys();};
+
+  virtual Serializable * value(const QString &key) {
+    return (*target)[key];
+  };
+
+  virtual void insert(const QString & key, Serializable * el) {
+    ///
+  };
+
+  virtual void newElement(const QString & key) {
+    (*target)[key] = new T();
+  };
+};
+
+template <class T> void 
+SerializationAccessor::addHashAttribute(const QString & name,
+                        QHash<QString, T *> * target, 
+                        const QString & keyName)
+{
+  addAttribute(name, 
+               new SerializationQHashPtr<T>(target, keyName));
+}
+
 
 #endif

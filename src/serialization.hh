@@ -311,6 +311,11 @@ public:
                         QHash<QString, T> * target, 
                         const QString & keyName = "name");
 
+  template <class T> 
+  void addHashAttribute(const QString & name,
+                        QHash<QString, T*> * target, 
+                        const QString & keyName = "name");
+
 
   /// Creates a SerizalizationAccessor object for the given target.
   ///
