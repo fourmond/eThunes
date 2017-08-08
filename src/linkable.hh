@@ -135,7 +135,7 @@ public:
 
   /// This returns the data suitable to represent this object's links
   /// in an itemmodel
-  static QVariant linksData(Linkable * links, int role);
+  QVariant linksData(int role);
 
 };
 

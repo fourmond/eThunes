@@ -77,3 +77,15 @@ void Categorizable::setTagList(const QString & str, Wallet * w)
     w = &Cabinet::globalCabinet()->wallet;
   tags.fromString(str, w);
 }
+
+QVariant Categorizable::categoryData(int role)
+{
+  switch(role) {
+  case Qt::DisplayRole:
+  case Qt::EditRole:
+    return categoryName();
+  default:
+    break;
+  }
+  return QVariant();
+}

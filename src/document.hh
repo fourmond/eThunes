@@ -24,13 +24,12 @@
 #include <serializable.hh>
 #include <attributehash.hh>
 #include <linkable.hh>
-#include <tag.hh>
+#include <categorizable.hh>
 
-class Category;
 class DocType;
 
 /// This class represents a single document.
-class Document : public Linkable {
+class Document : public Linkable, public Categorizable {
 protected:
 
   /// The name of the file, referenced from Cabinet::baseDirectory

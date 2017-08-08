@@ -163,12 +163,12 @@ Linkable * Linkable::objectFromID(int id)
   return *(s.begin());
 }
 
-QVariant Linkable::linksData(Linkable * lnk, int role)
+QVariant Linkable::linksData(int role)
 {
   switch(role) {
   case Qt::EditRole:
-    if(lnk->links.size())
-      return lnk->links.htmlLinkList().join(", ");
+    if(links.size())
+      return links.htmlLinkList().join(", ");
   default:
     break;
   }

@@ -74,7 +74,10 @@ QVariant DocumentsModel::data(const QModelIndex &index, int role) const
     }
     case LinksColumn:
       if(doc)
-        return Linkable::linksData(doc, role);
+        return doc->linksData(role);
+    case CategoryColumn:
+      if(doc)
+        return doc->categoryData(role);
     default:
       return QVariant();
     }

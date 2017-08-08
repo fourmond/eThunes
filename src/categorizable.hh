@@ -97,6 +97,9 @@ public:
     setAttribute(category, c, "category");
   };
 
+  /// Returns the data to represent the category in a model item
+  QVariant categoryData(int role);
+
 };
 
 #endif
