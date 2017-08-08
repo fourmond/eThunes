@@ -21,13 +21,17 @@
 #include <doctype.hh>
 
 
-Document::Document()
+Document::Document() : m_DocType(NULL)
+{
+}
+
+Document::Document(const QString & fn) : m_FileName(fn), m_DocType(NULL)
 {
 }
 
 QString Document::publicLinkName() const
 {
-  return QString("Doc: %1").arg(fileName);
+  return QString("Doc: %1").arg(fileName());
 }
 
 void Document::followLink()
@@ -42,11 +46,16 @@ QString Document::docTypeName() const
   return m_DocTypeName;
 }
 
+QString Document::fileName() const
+{
+  return m_FileName;
+}
+
  
 SerializationAccessor * Document::serializationAccessor()
 {
   SerializationAccessor * ac = new SerializationAccessor(this);
-  ac->addScalarAttribute("name", &fileName);
+  ac->addScalarAttribute("name", &m_FileName);
   addLinkAttributes(ac);
   addCategoriesSerialization(ac);
 

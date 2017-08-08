@@ -25,6 +25,7 @@
 
 class Cabinet;
 class DocumentsModel;
+class Document;
 
 /// This NavigationPage displays the informations about documentss
 class DocumentsPage : public NavigationPage {
@@ -43,6 +44,8 @@ protected:
   // QListView * listView;
   QTreeView * treeView;
 
+  QList<Document*> selectedDocuments();
+
 public:
 
   DocumentsPage(Cabinet * cab);
@@ -57,7 +60,8 @@ public:
 
 public slots:
 
-
+  /// Show the context menu...
+  void treeViewContextMenu(const QPoint & pos);
 };
 
 #endif

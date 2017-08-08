@@ -60,6 +60,8 @@ public:
     LastColumn
   };
 
+  Document * modifiableDocument(const QModelIndex & index) const;
+
 
   // Reimplementation of superclass functions
   virtual int columnCount(const QModelIndex &parent = QModelIndex()) const override;

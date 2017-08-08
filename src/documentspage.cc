@@ -17,6 +17,7 @@
 */
 
 #include <headers.hh>
+#include <document.hh>
 #include <documentspage.hh>
 #include <cabinet.hh>
 #include <documentsmodel.hh>
@@ -32,6 +33,13 @@ DocumentsPage::DocumentsPage(Cabinet * c) : cabinet(c)
 
   treeView->setModel(model);
   treeView->setRootIndex(model->root());
+
+  connect(treeView, SIGNAL(customContextMenuRequested(const QPoint &)),
+	  SLOT(treeViewContextMenu(const QPoint &)));
+  treeView->setContextMenuPolicy(Qt::CustomContextMenu);
+
+  treeView->setSelectionMode(QAbstractItemView::ExtendedSelection);
+
 }
 
 
@@ -51,4 +59,35 @@ DocumentsPage * DocumentsPage::getDocumentsPage(Cabinet * cab)
   if(! documentsPages.contains(cab))
     documentsPages[cab] = new DocumentsPage(cab);
   return documentsPages[cab];
+}
+
+QList<Document*> DocumentsPage::selectedDocuments()
+{
+  QList<Document *> sels;
+  QModelIndexList lst = treeView->selectionModel()->selectedIndexes();
+  for(QModelIndex idx : lst) {
+    if(! model->isDir(idx))
+      sels << model->modifiableDocument(idx);
+  }
+  // QTextStream o(stdout);
+  // for(auto a : sels)
+  //   o << "Sel: " << a << ": " << (a ? a->fileName() : "(null)" ) << endl;
+  // o << "-> done" << endl;
+  return sels;
+}
+
+void DocumentsPage::treeViewContextMenu(const QPoint & pos)
+{
+  QMenu menu;
+
+  QList<Categorizable *> targets;
+  QList<Document *> docs = selectedDocuments();
+  // QTextStream o(stdout);
+  for(auto a : docs) {
+    // o << "doc: " << a << endl;
+    targets << a;
+  }
+  Categorizable::fillMenuWithCategorizableActions(&menu, targets);
+  // o << " -> end" << endl;
+  menu.exec(treeView->viewport()->mapToGlobal(pos));
 }

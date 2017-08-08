@@ -33,14 +33,8 @@ class Document : public Linkable, public Categorizable {
 protected:
 
   /// The name of the file, referenced from Cabinet::baseDirectory
-  QString fileName;
+  QString m_FileName;
   
-  /// The category
-  Category * category;
-
-  /// The list of tags.
-  TagList tags;
-
   /// A user-set comment
   QString comment;
 
@@ -58,6 +52,11 @@ protected:
 public:
 
   Document();
+
+  Document(const QString & fileName);
+
+  /// Returns the file name
+  QString fileName() const;
 
 
   virtual QString typeName() const {

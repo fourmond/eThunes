@@ -31,7 +31,7 @@ class Document;
 /// @li finding a document by file name
 /// @li renaming files and directories
 ///
-/// @todo Make non-owning copies. Or use std::unique ?
+/// @todo Make non-owning version. Or use std::unique ?
 class DocumentList : public Serializable {
 protected:
 
@@ -43,9 +43,9 @@ public:
   DocumentList();
   virtual ~DocumentList();
 
-  /// Returns a pointer to the given document.  If @a create is true,
-  /// a new document is created.
-  Document * modifiableDocument(const QString & file, bool create = false);
+  /// Returns a pointer to the given document, and create one if
+  /// necessary.
+  Document * modifiableDocument(const QString & file);
 
   /// Returns a pointer to the document for the named file, or NULL if
   /// there is no document.

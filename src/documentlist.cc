@@ -45,3 +45,22 @@ Document * DocumentList::document(const QString & file) const
   return documents.value(file, NULL);
 }
 
+Document * DocumentList::modifiableDocument(const QString & file)
+{
+  Document * doc = documents.value(file, NULL);
+  if(! doc) {
+    doc = new Document(file);
+    addDocument(doc);
+  }
+  return doc;
+}
+
+void DocumentList::addDocument(Document * doc)
+{
+  QString fn = doc->fileName();
+  if(fn.isEmpty())
+    throw "Empty";
+  if(documents.contains(fn))
+    throw "Not replacing";
+  documents[fn] = doc;
+}

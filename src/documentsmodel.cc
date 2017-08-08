@@ -46,6 +46,14 @@ int DocumentsModel::columnCount(const QModelIndex &parent) const
   return QFileSystemModel::columnCount(parent) + LastColumn;
 }
 
+Document * DocumentsModel::modifiableDocument(const QModelIndex & index) const
+{
+  if(isDir(index))
+    return NULL;        // nothing to do here
+  QString fn = filePath(index);
+  return cabinet->documents.modifiableDocument(fn);
+}
+
 QVariant DocumentsModel::data(const QModelIndex &index, int role) const
 {
   int col = index.column();
@@ -61,7 +69,10 @@ QVariant DocumentsModel::data(const QModelIndex &index, int role) const
     Document * doc = cabinet->documents.document(fn);
     switch(col - nativeColumns) {
     case TypeColumn: {
-      if(! doc ) {
+      QString n;
+      if(doc)
+        n = doc->docTypeName();
+      if(n.isEmpty()) {
         if(role == Qt::ForegroundRole)
           return QColor(Qt::gray);
         if(role == Qt::DisplayRole)
@@ -69,7 +80,7 @@ QVariant DocumentsModel::data(const QModelIndex &index, int role) const
         return QVariant();
       }
       if(role == Qt::DisplayRole)
-        return doc->docTypeName();
+        return n;
       return QVariant();
     }
     case LinksColumn:
