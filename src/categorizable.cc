@@ -22,6 +22,8 @@
 #include <wallet.hh>
 #include <serializable-templates.hh>
 
+#include <transactionlistdialog.hh>
+
 Categorizable::Categorizable() :
   category(NULL)
 {
@@ -88,4 +90,124 @@ QVariant Categorizable::categoryData(int role)
     break;
   }
   return QVariant();
+}
+
+QVariant Categorizable::tagsData(int role)
+{
+  switch(role) {
+  case Qt::DisplayRole:
+  case Qt::EditRole:
+    return tagString();
+  default:
+    break;
+  }
+  return QVariant();
+}
+
+static void fillOneCategory(QMenu * menu,
+                     QList<Categorizable *> targets,
+                     Category * category);
+
+static void fillCategoryHash(QMenu * menu,
+                             QList<Categorizable *> targets,
+                             CategoryHash * ch)
+{
+  QStringList subCategories = ch->keys();
+  subCategories.sort(); // Will be much easier to read !
+  for(int i = 0; i < subCategories.count(); i++)
+    fillOneCategory(menu, targets, &(*ch)[subCategories[i]]);
+}
+
+static void fillOneCategory(QMenu * menu,
+                            QList<Categorizable *> targets,
+                            Category * category)
+{
+  QAction * a = new QAction();
+  QObject::connect(a, &QAction::triggered, [targets, category](bool) {
+      for(auto t : targets)
+        t->setCategory(category);
+    }
+    );
+
+  if(category->subCategories.size()) {
+    // Complex case:
+    QMenu * subMenu = new QMenu(category->name);
+    a->setText(QObject::tr("This category"));
+    subMenu->addAction(a);
+    subMenu->addSeparator();
+    fillCategoryHash(subMenu, targets, &category->subCategories);
+    menu->addMenu(subMenu);
+  }
+  else {
+    a->setText(category->name);
+    menu->addAction(a);
+  }
+}
+
+static void fillTags(QMenu * menu, 
+                     QList<Categorizable *> targets,
+                     TagHash * tags, 
+                     std::function< void(Tag * tag, Categorizable * c)> action)
+{
+  QStringList t = tags->tagNames();
+  t.sort();
+  for(int i = 0; i < t.count(); i++) {
+    QAction * a = new QAction(t[i]);
+    Tag * tag = &(*tags)[t[i]];
+    QObject::connect(a, &QAction::triggered, [targets, action, tag](bool) {
+        for(auto t : targets)
+          action(tag, t);
+      }
+      );
+    menu->addAction(a);
+  }
+  
+}
+
+void Categorizable::fillMenuWithCategorizableActions(QMenu * menu,
+                                                     QList<Categorizable *> targets)
+{
+  QMenu * subMenu = new QMenu(QObject::tr("Set category"));
+
+  Wallet * wallet = &(Cabinet::globalCabinet()->wallet);
+
+  QAction * action = new QAction(QObject::tr("Clear"));
+  QObject::connect(action, &QAction::triggered, [targets](bool) {
+      for(auto t : targets)
+        t->setCategory(NULL);
+    }
+    );
+  subMenu->addAction(action);
+  subMenu->addSeparator();
+  fillCategoryHash(subMenu, targets, &wallet->categories);
+  menu->addMenu(subMenu);
+
+  action = new QAction(QObject::tr("Show category transactions"));
+  QObject::connect(action, &QAction::triggered, [targets, wallet](bool) {
+      if(targets.size() > 0) {
+        Category * cat = targets.first()->getCategory();
+        if(cat)
+          TransactionListDialog::showCategory(cat, wallet);
+      }
+    });
+  menu->addAction(action);
+
+
+      
+  if(wallet) {
+    subMenu = new QMenu(QObject::tr("Clear tag"));
+    fillTags(subMenu, targets, &wallet->tags, [](Tag * tag, Categorizable * c) {
+        c->clearTag(tag);
+      }
+      );
+    menu->addMenu(subMenu);
+
+    subMenu = new QMenu(QObject::tr("Add tag"));
+    fillTags(subMenu, targets, &wallet->tags, [](Tag * tag, Categorizable * c) {
+        c->setTag(tag);
+      }
+      );
+    menu->addMenu(subMenu);
+  }
+
 }

@@ -169,28 +169,31 @@ QSize TransactionListWidget::sizeHint() const
 
 void TransactionListWidget::fireUpContextMenu(const QPoint & pos)
 {
-  /// @todo This function should disappear to be handled by the
-  /// objects themselves.
-  ///
-  /// However, handling a full selection won't come in too easy
-
   // We fire up a neat menu to select categories, for instance.
   QMenu menu;
 
-  QMenu * subMenu = new QMenu(tr("Set category"));
-  QAction * action = new QAction(tr("Clear"), this);
-  action->setData(QStringList() << "set-category" << "");
-  subMenu->addAction(action);
-  subMenu->addSeparator();
-  if(wallet())
-    fillMenuWithCategoryHash(subMenu, &wallet()->categories);
-  menu.addMenu(subMenu);
+  QList<Categorizable *> targets;
+  TransactionPtrList selected = selectedTransactions();
 
-  action = new QAction(tr("Show category transactions"), this);
+  for(auto a : selected.rawData())
+    targets << a;
+
+  Categorizable::fillMenuWithCategorizableActions(&menu, targets);
+
+  // QMenu * subMenu = new QMenu(tr("Set category"));
+  // QAction * action = new QAction(tr("Clear"), this);
+  // action->setData(QStringList() << "set-category" << "");
+  // subMenu->addAction(action);
+  // subMenu->addSeparator();
+  // if(wallet())
+  //   fillMenuWithCategoryHash(subMenu, &wallet()->categories);
+  // menu.addMenu(subMenu);
+
+  QAction * action = new QAction(tr("Show category transactions"), this);
   action->setData(QStringList() << "show-category");
   menu.addAction(action);
 
-  subMenu = new QMenu(tr("Clear tag"));
+  QMenu * subMenu = new QMenu(tr("Clear tag"));
   if(wallet()) {
     fillMenuWithTags(subMenu, &wallet()->tags, "clear-tag");
   }
@@ -368,35 +371,7 @@ void TransactionListWidget::contextMenuActionFired(QAction * action)
     return;
   QString what = l.takeFirst();
   TransactionPtrList selected = selectedTransactions();
-  if(what == "set-category") {
-    QString category;
-    if(l.size() > 0) {
-      category = l.first();
-    }
-    else {
-      /// @todo implement a dialog box for new categories.
-    }
-    for(int i = 0; i < selected.count(); i++)
-      selected[i]->setCategoryFromName(category);
-    /// @todo handle the signaling here ?
-  } else if(what == "show-category") {
-    Category * cat = selected.first()->getCategory();
-    if(cat)
-      TransactionListDialog::showCategory(cat, wallet());
-  } else if(what == "clear-tag") {
-    Tag * t = wallet()->namedTag(l.first());
-    if(t) {
-      for(int i = 0; i < selected.count(); i++)
-	selected[i]->clearTag(t);
-      
-    }
-  } else if(what == "add-tag") { 
-    Tag * t = wallet()->namedTag(l.first());
-    if(t) {
-      for(int i = 0; i < selected.count(); i++)
-	selected[i]->setTag(t);
-    }
-  } else if(what == "add-sub") { 
+  if(what == "add-sub") { 
     // Add a subtransaction to the current transaction
     Transaction * t = dynamic_cast<Transaction*>(currentTransaction());
     if(! t)

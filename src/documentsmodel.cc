@@ -78,6 +78,9 @@ QVariant DocumentsModel::data(const QModelIndex &index, int role) const
     case CategoryColumn:
       if(doc)
         return doc->categoryData(role);
+    case TagsColumn:
+      if(doc)
+        return doc->tagsData(role);
     default:
       return QVariant();
     }

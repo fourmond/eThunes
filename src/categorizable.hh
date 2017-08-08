@@ -97,8 +97,26 @@ public:
     setAttribute(category, c, "category");
   };
 
+
+  /// @name Functions linked to model items
+  ///
+  /// @{
+  
   /// Returns the data to represent the category in a model item
   QVariant categoryData(int role);
+
+  /// Returns the data to represent the tags in a model item
+  QVariant tagsData(int role);
+
+
+  /// Fill a menu with items related to tags and categories.
+  ///
+  /// It just adds submenus in the menu
+  static void fillMenuWithCategorizableActions(QMenu * menu, QList<Categorizable *> targets);
+
+  
+
+  /// @}
 
 };
 

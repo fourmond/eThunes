@@ -38,6 +38,8 @@ static QVariant transactionData(AtomicTransaction * t,
     return t->linksData(role);
   if(column == AccountModel::CategoryColumn)
     return t->categoryData(role);
+  if(column == AccountModel::TagsColumn)
+    return t->tagsData(role);
   if(role == Qt::DisplayRole) {
     switch(column) {
     case AccountModel::DateColumn: return QVariant(t->getDate());
@@ -59,7 +61,6 @@ static QVariant transactionData(AtomicTransaction * t,
         return QVariant();
     }
     case AccountModel::NameColumn: return QVariant(t->getName());
-    case AccountModel::TagsColumn: return QVariant(t->tagString());
     case AccountModel::MemoColumn: return t->getDescription();
     case AccountModel::CommentColumn: return t->getComment();
     default:
@@ -68,7 +69,6 @@ static QVariant transactionData(AtomicTransaction * t,
   }
   if(role == Qt::EditRole) {
     switch(column) {
-    case AccountModel::TagsColumn: return QVariant(t->tagString());
     case AccountModel::CommentColumn: return t->getComment();
     default:
       return QVariant();
