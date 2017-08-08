@@ -21,6 +21,8 @@
 #include <plugin.hh>
 #include <serializable-pointers.hh>
 
+Cabinet * Cabinet::theCabinet = NULL;
+
 
 Cabinet::Cabinet() : dirty(false)
 {
@@ -29,6 +31,19 @@ Cabinet::Cabinet() : dirty(false)
   connect(*this, SIGNAL(changed(const Watchdog *)), SLOT(setDirty()));
   connect(this, SIGNAL(collectionsPossiblyChanged()), SLOT(setDirty()));
   connect(this, SIGNAL(documentsChanged(Collection *)), SLOT(setDirty()));
+  if(theCabinet)
+    throw "Problem";
+  theCabinet = this;
+}
+
+Cabinet::~Cabinet()
+{
+  theCabinet = NULL;
+}
+
+Cabinet * Cabinet::globalCabinet()
+{
+  return theCabinet;
 }
 
 

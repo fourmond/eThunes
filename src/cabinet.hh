@@ -42,10 +42,13 @@ protected:
   QString filePath;
 
 
+  /// Pointer to the unique Cabinet object ?
+  static Cabinet * theCabinet;
 public:
 
 
   Cabinet();
+  ~Cabinet();
 
   /// The one and only Wallet
   Wallet wallet;
@@ -114,6 +117,9 @@ public:
 
   /// The Cabinet currently serialized.
   static Cabinet * cabinetBeingSerialized;
+
+  /// Returns the only instance of the Cabinet.
+  static Cabinet * globalCabinet();
 
 };
 
