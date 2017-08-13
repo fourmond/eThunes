@@ -118,6 +118,10 @@ public:
   static void crosslinkTypes();
 
   static DocType * namedType(const QString & name);
+
+  /// Return all the documents types, categorized by their Collection
+  static QHash<Collection *, QList<DocType *> > docTypesByCollection();
+  
 };
 
 /// This class collects a series of DocType. It has no real purpose,
@@ -128,7 +132,7 @@ class Collection : public QObject {
 
   Q_PROPERTY(QString name READ name WRITE setName)
 
-  /// The name of the type 
+  /// The name of the collection
   QString m_Name;
 
 

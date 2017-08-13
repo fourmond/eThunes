@@ -168,6 +168,14 @@ void DocType::loadTypes()
   crosslinkTypes();
 }
 
+QHash<Collection *, QList<DocType *> > DocType::docTypesByCollection()
+{
+  QHash<Collection *, QList<DocType *> > rv;
+  for(DocType * dt : namedTypes.values())
+    rv[dt->collection] << dt;
+  return rv;
+}
+
 
 
 //////////////////////////////////////////////////////////////////////

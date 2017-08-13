@@ -21,6 +21,7 @@
 #include <documentspage.hh>
 #include <cabinet.hh>
 #include <documentsmodel.hh>
+#include <doctype.hh>
 
 DocumentsPage::DocumentsPage(Cabinet * c) : cabinet(c)
 {
@@ -76,18 +77,50 @@ QList<Document*> DocumentsPage::selectedDocuments()
   return sels;
 }
 
+static void fillWithDocTypes(QMenu * menu,   QList<Document *> docs) {
+  QMenu * subMenu = new QMenu(QObject::tr("Document type"));
+  QAction * a = new QAction(QObject::tr("Autodetect"));
+  QObject::connect(a, &QAction::triggered, [docs](bool) {
+      ;
+    }
+    );
+  subMenu->addAction(a);
+  subMenu->addSeparator();
+
+  /// @todo Add common document types directly here !
+
+  QHash<Collection *, QList<DocType *> > dts =
+    DocType::docTypesByCollection();
+  for(Collection * c : dts.keys()) {
+    QMenu * s2 = new QMenu(c ? c->name() : "Uncategorized");
+    for(DocType * dt : dts[c]) {
+      a = new QAction(dt->name());
+      QObject::connect(a, &QAction::triggered, [docs, dt](bool) {
+          for(Document * doc : docs)
+            doc->setDocType(dt);
+        }
+        );
+      s2->addAction(a);
+    }
+    subMenu->addMenu(s2);
+  }
+  menu->addMenu(subMenu);
+}
+
+
 void DocumentsPage::treeViewContextMenu(const QPoint & pos)
 {
   QMenu menu;
 
   QList<Categorizable *> targets;
   QList<Document *> docs = selectedDocuments();
-  // QTextStream o(stdout);
   for(auto a : docs) {
-    // o << "doc: " << a << endl;
     targets << a;
   }
   Categorizable::fillMenuWithCategorizableActions(&menu, targets);
-  // o << " -> end" << endl;
+
+  // Now fill with types !
+  fillWithDocTypes(&menu, docs);
+  
   menu.exec(treeView->viewport()->mapToGlobal(pos));
 }

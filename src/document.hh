@@ -58,6 +58,9 @@ public:
   /// Returns the file name
   QString fileName() const;
 
+  /// Sets the document type
+  void setDocType(DocType * docType);
+
 
   virtual QString typeName() const {
     return "document";

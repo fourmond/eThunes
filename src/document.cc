@@ -51,6 +51,11 @@ QString Document::fileName() const
   return m_FileName;
 }
 
+void Document::setDocType(DocType * docType)
+{
+  m_DocType = docType;
+}
+
  
 SerializationAccessor * Document::serializationAccessor()
 {
