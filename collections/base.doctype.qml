@@ -10,4 +10,10 @@ Collection {
         name: "dated-doc"
         dates: [ "date" ]
     }
+
+    DocType {
+        name: "bill"
+        parent: "dated-doc"
+        amounts: [ "amount" ]
+    }
 }
