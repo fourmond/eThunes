@@ -99,6 +99,45 @@ QVariant DocumentsModel::data(const QModelIndex &index, int role) const
   return QFileSystemModel::data(index, role);
 }
 
+bool DocumentsModel::setData(const QModelIndex &index, const QVariant &value, int role)
+{
+  int col = index.column();
+  if(col >= nativeColumns) {
+    if(isDir(index))
+      return false;
+    QString fn = filePath(index);
+    Document * doc = cabinet->documents.modifiableDocument(fn);
+    switch(col - nativeColumns) {
+    case CategoryColumn:
+      return doc->setCategoryData(value, role);
+    case TagsColumn:
+      return doc->setTagsData(value, role);
+    default:
+      return false;
+    }
+  }
+  return QFileSystemModel::setData(index, value, role);
+}
+
+Qt::ItemFlags DocumentsModel::flags(const QModelIndex &index) const
+{
+  int col = index.column();
+  if(col >= nativeColumns) {
+    if(isDir(index))
+      return 0;
+    switch(col - nativeColumns) {
+    case CategoryColumn:
+    case TagsColumn:
+      return Qt::ItemIsSelectable|Qt::ItemIsEditable|Qt::ItemIsEnabled;
+    default:
+      return Qt::ItemIsSelectable|Qt::ItemIsEnabled;
+    }
+  }
+  return QFileSystemModel::flags(index);
+}
+
+
+
 QVariant DocumentsModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
   if(orientation == Qt::Horizontal) {

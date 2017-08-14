@@ -105,8 +105,14 @@ public:
   /// Returns the data to represent the category in a model item
   QVariant categoryData(int role);
 
+  /// Sets the category data
+  bool setCategoryData(const QVariant & val, int role);
+
   /// Returns the data to represent the tags in a model item
   QVariant tagsData(int role);
+
+  /// Sets the tag data
+  bool setTagsData(const QVariant & val, int role);
 
 
   /// Fill a menu with items related to tags and categories.

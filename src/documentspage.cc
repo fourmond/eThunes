@@ -23,6 +23,8 @@
 #include <documentsmodel.hh>
 #include <doctype.hh>
 
+#include <accountmodel.hh>
+
 DocumentsPage::DocumentsPage(Cabinet * c) : cabinet(c)
 {
   QVBoxLayout * layout = new QVBoxLayout(this);
@@ -34,6 +36,13 @@ DocumentsPage::DocumentsPage(Cabinet * c) : cabinet(c)
 
   treeView->setModel(model);
   treeView->setRootIndex(model->root());
+
+  treeView->setItemDelegateForColumn(model->nativeColumns +
+                                     DocumentsModel::CategoryColumn,
+                                     new AccountItemDelegate(&cabinet->wallet));
+
+  
+  treeView->setAlternatingRowColors(true);
 
   connect(treeView, SIGNAL(customContextMenuRequested(const QPoint &)),
 	  SLOT(treeViewContextMenu(const QPoint &)));

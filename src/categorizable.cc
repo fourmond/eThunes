@@ -92,6 +92,15 @@ QVariant Categorizable::categoryData(int role)
   return QVariant();
 }
 
+bool Categorizable::setCategoryData(const QVariant & value, int role)
+{
+  if(role == Qt::EditRole) {
+    setCategoryFromName(value.toString());
+    return true;
+  }
+  return false;
+}
+
 QVariant Categorizable::tagsData(int role)
 {
   switch(role) {
@@ -102,6 +111,15 @@ QVariant Categorizable::tagsData(int role)
     break;
   }
   return QVariant();
+}
+
+bool Categorizable::setTagsData(const QVariant & value, int role)
+{
+  if(role == Qt::EditRole) {
+    setTagList(value.toString());
+    return true;
+  }
+  return false;
 }
 
 static void fillOneCategory(QMenu * menu,

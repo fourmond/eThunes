@@ -202,23 +202,25 @@ bool LeafTransactionItem::setData(int column, const QVariant & value,
                                   int role) 
 {
   AtomicTransaction * t = transaction;
-  if(role == Qt::EditRole) {
-    switch(column) {
-    case AccountModel::CategoryColumn:
-      t->setCategoryFromName(value.toString());
+  switch(column) {
+  case AccountModel::CategoryColumn:
+    if(t->setCategoryData(value, role)) {
       emit(itemChanged(this, column, column));
       return true;
-    case AccountModel::TagsColumn:
-      t->setTagList(value.toString());
+    }
+  case AccountModel::TagsColumn:
+    if(t->setTagsData(value, role)) {
       emit(itemChanged(this, column, column));
       return true;
-    case AccountModel::CommentColumn:
+    }
+  case AccountModel::CommentColumn:
+    if(role == Qt::EditRole) {
       t->setComment(value.toString());
       emit(itemChanged(this, column, column));
       return true;
-    default:
-      return false;
     }
+  default:
+    return false;
   }
   return false;
 }
@@ -292,23 +294,25 @@ bool FullTransactionItem::setData(int column, const QVariant & value,
                                   int role) 
 {
   AtomicTransaction * t = transaction;
-  if(role == Qt::EditRole) {
-    switch(column) {
-    case AccountModel::CategoryColumn:
-      t->setCategoryFromName(value.toString());
+  switch(column) {
+  case AccountModel::CategoryColumn:
+    if(t->setCategoryData(value, role)) {
       emit(itemChanged(this, column, column));
       return true;
-    case AccountModel::TagsColumn:
-      t->setTagList(value.toString());
+    }
+  case AccountModel::TagsColumn:
+    if(t->setTagsData(value, role)) {
       emit(itemChanged(this, column, column));
       return true;
-    case AccountModel::CommentColumn:
+    }
+  case AccountModel::CommentColumn:
+    if(role == Qt::EditRole) {
       t->setComment(value.toString());
       emit(itemChanged(this, column, column));
       return true;
-    default:
-      return false;
     }
+  default:
+    return false;
   }
   return false;
 }
