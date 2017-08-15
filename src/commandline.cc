@@ -33,7 +33,7 @@
 
 // for readPDF
 #include <pdftools.hh>
-
+#include <debug.hh>
 
 
 void CommandLineOption::handle(QStringList & args)
@@ -117,7 +117,19 @@ static void listCollections(const QStringList &)
 static void parseQML(const QStringList & lst)
 {
   DocType::registerQMLTypes();
-  DocType::parseQMLFile(lst[0]);
+  QQmlEngine engine;
+  for(const QString & file : lst) {
+    QQmlComponent component(&engine, QUrl::fromLocalFile(file));
+    if(component.isError()) {
+      QList<QQmlError> errs = component.errors();
+      QTextStream o(stdout);
+      for(int i = 0; i < errs.size();i++)
+        o << errs[i].toString() << endl;
+    }
+    else {
+      Debug::dumpObjectProperties(component.create());
+    }
+  }
 }
 
 // First, the handlers
