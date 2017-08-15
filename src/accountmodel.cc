@@ -34,12 +34,12 @@ static QVariant transactionData(AtomicTransaction * t,
 {
   if(! t)
     return QVariant();
+
   if(column == AccountModel::LinksColumn)
     return t->linksData(role);
-  if(column == AccountModel::CategoryColumn)
-    return t->categoryData(role);
-  if(column == AccountModel::TagsColumn)
-    return t->tagsData(role);
+
+  if(AccountModel::categorizableColumns.contains(column))
+    return t->columnData(AccountModel::categorizableColumns[column], role);
   if(role == Qt::DisplayRole) {
     switch(column) {
     case AccountModel::DateColumn: return QVariant(t->getDate());
@@ -202,17 +202,14 @@ bool LeafTransactionItem::setData(int column, const QVariant & value,
                                   int role) 
 {
   AtomicTransaction * t = transaction;
+  if(AccountModel::categorizableColumns.contains(column)) {
+    if(t->setColumnData(AccountModel::categorizableColumns[column], value, role)) {
+      emit(itemChanged(this, column, column));
+      return true;
+    }
+  }
+
   switch(column) {
-  case AccountModel::CategoryColumn:
-    if(t->setCategoryData(value, role)) {
-      emit(itemChanged(this, column, column));
-      return true;
-    }
-  case AccountModel::TagsColumn:
-    if(t->setTagsData(value, role)) {
-      emit(itemChanged(this, column, column));
-      return true;
-    }
   case AccountModel::CommentColumn:
     if(role == Qt::EditRole) {
       t->setComment(value.toString());
@@ -294,17 +291,14 @@ bool FullTransactionItem::setData(int column, const QVariant & value,
                                   int role) 
 {
   AtomicTransaction * t = transaction;
+  if(AccountModel::categorizableColumns.contains(column)) {
+    if(t->setColumnData(AccountModel::categorizableColumns[column], value, role)) {
+      emit(itemChanged(this, column, column));
+      return true;
+    }
+  }
+
   switch(column) {
-  case AccountModel::CategoryColumn:
-    if(t->setCategoryData(value, role)) {
-      emit(itemChanged(this, column, column));
-      return true;
-    }
-  case AccountModel::TagsColumn:
-    if(t->setTagsData(value, role)) {
-      emit(itemChanged(this, column, column));
-      return true;
-    }
   case AccountModel::CommentColumn:
     if(role == Qt::EditRole) {
       t->setComment(value.toString());
@@ -569,6 +563,13 @@ ModelItem * TransactionListItem<Type, Item, Holder>::findTransaction(const Trans
 }
 
 //////////////////////////////////////////////////////////////////////
+
+
+QHash<int, Categorizable::CategorizableColumn> AccountModel::categorizableColumns{
+  {AccountModel::CategoryColumn, Categorizable::CategoryColumn}, 
+  {AccountModel::TagsColumn, Categorizable::TagsColumn}
+};
+
 
 const QIcon & AccountModel::statusIcon(const QString & status)
 {

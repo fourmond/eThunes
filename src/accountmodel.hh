@@ -197,6 +197,8 @@ public:
 
   /// Returns the QModelIndex corresponding to the given transaction
   QModelIndex index(Transaction * transaction);
+
+  static QHash<int, Categorizable::CategorizableColumn> categorizableColumns;
 };
 
 /// A specific delegate to handle in particular the edition of

@@ -80,44 +80,38 @@ void Categorizable::setTagList(const QString & str, Wallet * w)
   tags.fromString(str, w);
 }
 
-QVariant Categorizable::categoryData(int role)
+
+
+
+QVariant Categorizable::columnData(Categorizable::CategorizableColumn column, int role) const
 {
   switch(role) {
   case Qt::DisplayRole:
   case Qt::EditRole:
-    return categoryName();
+    switch(column) {
+    case CategoryColumn:
+      return categoryName();
+    case TagsColumn:
+      return tagString();
+    }
   default:
     break;
   }
   return QVariant();
 }
 
-bool Categorizable::setCategoryData(const QVariant & value, int role)
+bool Categorizable::setColumnData(Categorizable::CategorizableColumn column,
+                                  const QVariant & value, int role)
 {
   if(role == Qt::EditRole) {
-    setCategoryFromName(value.toString());
-    return true;
-  }
-  return false;
-}
-
-QVariant Categorizable::tagsData(int role)
-{
-  switch(role) {
-  case Qt::DisplayRole:
-  case Qt::EditRole:
-    return tagString();
-  default:
-    break;
-  }
-  return QVariant();
-}
-
-bool Categorizable::setTagsData(const QVariant & value, int role)
-{
-  if(role == Qt::EditRole) {
-    setTagList(value.toString());
-    return true;
+    switch(column) {
+    case CategoryColumn:
+      setCategoryFromName(value.toString());
+      return true;
+    case TagsColumn:
+      setTagList(value.toString());
+      return true;
+    }
   }
   return false;
 }

@@ -27,6 +27,10 @@ DocumentsModel::DocumentsModel(Cabinet * c) :
 {
   m_Root = setRootPath(cabinet->baseDirectory().canonicalPath());
   nativeColumns = QFileSystemModel::columnCount(m_Root);
+  categorizableColumns[nativeColumns + CategoryColumn] =
+    Categorizable::CategoryColumn;
+  categorizableColumns[nativeColumns + TagsColumn] =
+    Categorizable::TagsColumn;
 }
 
 QModelIndex DocumentsModel::root() const
@@ -67,6 +71,8 @@ QVariant DocumentsModel::data(const QModelIndex &index, int role) const
       return QVariant();        // nothing to do here
     QString fn = filePath(index);
     Document * doc = cabinet->documents.document(fn);
+    if(categorizableColumns.contains(col) && doc)
+      return doc->columnData(categorizableColumns[col], role);
     switch(col - nativeColumns) {
     case TypeColumn: {
       QString n;
@@ -86,12 +92,6 @@ QVariant DocumentsModel::data(const QModelIndex &index, int role) const
     case LinksColumn:
       if(doc)
         return doc->linksData(role);
-    case CategoryColumn:
-      if(doc)
-        return doc->categoryData(role);
-    case TagsColumn:
-      if(doc)
-        return doc->tagsData(role);
     default:
       return QVariant();
     }
@@ -105,13 +105,16 @@ bool DocumentsModel::setData(const QModelIndex &index, const QVariant &value, in
   if(col >= nativeColumns) {
     if(isDir(index))
       return false;
+
     QString fn = filePath(index);
     Document * doc = cabinet->documents.modifiableDocument(fn);
+    if(categorizableColumns.contains(col)) {
+      if(doc->setColumnData(categorizableColumns[col], value, role)) {
+        return true;
+      }
+    }
+
     switch(col - nativeColumns) {
-    case CategoryColumn:
-      return doc->setCategoryData(value, role);
-    case TagsColumn:
-      return doc->setTagsData(value, role);
     default:
       return false;
     }

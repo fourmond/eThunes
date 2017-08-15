@@ -21,6 +21,8 @@
 #ifndef __DOCUMENTSMODEL_HH
 #define __DOCUMENTSMODEL_HH
 
+#include <categorizable.hh>
+
 class Document;
 class Cabinet;
 
@@ -37,6 +39,7 @@ protected:
 
   QMimeDatabase mimeDB;
 
+  QHash<int, Categorizable::CategorizableColumn> categorizableColumns;
 
 public:
 

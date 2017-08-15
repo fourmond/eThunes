@@ -97,23 +97,24 @@ public:
     setAttribute(category, c, "category");
   };
 
+  enum CategorizableColumn {
+    CategoryColumn,
+    TagsColumn
+  };
+
 
   /// @name Functions linked to model items
   ///
   /// @{
+
+  /// Retrieve the column data
+  QVariant columnData(CategorizableColumn column, int role) const;
   
-  /// Returns the data to represent the category in a model item
-  QVariant categoryData(int role);
+  /// Sets the column data
+  bool setColumnData(CategorizableColumn column, const QVariant & val, int role);
 
-  /// Sets the category data
-  bool setCategoryData(const QVariant & val, int role);
-
-  /// Returns the data to represent the tags in a model item
-  QVariant tagsData(int role);
-
-  /// Sets the tag data
-  bool setTagsData(const QVariant & val, int role);
-
+  /// Retrieve the column flags
+  Qt::ItemFlags columnFlags(CategorizableColumn column) const;
 
   /// Fill a menu with items related to tags and categories.
   ///
