@@ -22,6 +22,7 @@
 #define __DOCTYPE_HH
 
 class Collection;
+class AttributeHash;
 
 /// This class defines the type of a document.
 class DocType : public QObject {
@@ -121,7 +122,37 @@ public:
 
   /// Return all the documents types, categorized by their Collection
   static QHash<Collection *, QList<DocType *> > docTypesByCollection();
+
+  /// @name Access to script functions
+  ///
+  /// The document types can optionally provide ways to automatically
+  /// detect whether a document matches its type, and to automatically
+  /// read the documents meta-data.
+  ///
+  /// @{
   
+  /// Returns true if the DocType has a isMine function declaration.
+  bool hasIsMine() const;
+
+  /// Returns a certain number indicating whether the given document
+  /// attributes (provided by PDFTools::readPDF, or any other source)
+  /// could be the given type. The highest bid gets the type.
+  ///
+  /// Returns 0 if the document does not support detection.
+  int isMine(const AttributeHash & contents);
+
+  /// Returns true if the DocType has a parseMetaData function declaration.
+  bool hasParseMetaData() const;
+
+  /// Returns a certain number indicating whether the given document
+  /// attributes (provided by PDFTools::readPDF, or any other source)
+  /// could be the given type. The highest bid gets the type.
+  ///
+  /// Returns 0 if the document does not support detection.
+  AttributeHash hasParseMetaData(const AttributeHash & contents);
+
+
+  /// @}
 };
 
 /// This class collects a series of DocType. It has no real purpose,

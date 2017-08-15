@@ -19,6 +19,8 @@
 #include <headers.hh>
 #include <doctype.hh>
 
+#include <attributehash.hh>
+
 
 // For once, I use a static type, and not a pointer, since loading of
 // types is only going to happen once the 
@@ -26,7 +28,7 @@ QHash<QString, DocType*> DocType::namedTypes;
 
 QQmlEngine * DocType::engine;
 
-DocType::DocType(QObject * parent) : QObject(parent)
+DocType::DocType(QObject * parent) : QObject(parent), parent(0)
 {
 }
 
@@ -175,6 +177,33 @@ QHash<Collection *, QList<DocType *> > DocType::docTypesByCollection()
     rv[dt->collection] << dt;
   return rv;
 }
+
+bool DocType::hasIsMine() const
+{
+  return metaObject()->indexOfMethod("isMine(QVariant)") >= 0;
+}
+
+int DocType::isMine(const AttributeHash & attrs)
+{
+  const QMetaObject * mo = metaObject();
+  int idx = mo->indexOfMethod("isMine(QVariant)");
+  if(idx < 0)
+    return 0;
+  QMetaMethod met = mo->method(idx);
+  int rv;
+  QVariant v = attrs;
+  met.invoke(this,
+             Qt::DirectConnection,
+             Q_RETURN_ARG(int, rv),
+             Q_ARG(QVariant, v));
+  return rv;
+}
+
+bool DocType::hasParseMetaData() const
+{
+  return metaObject()->indexOfMethod("parseMetaData(QVariant)") >= 0;
+}
+
 
 
 
