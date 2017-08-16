@@ -200,15 +200,14 @@ static void testDocumentLoading(const QStringList & a)
 
 static void testDocumentParsing(const QStringList & a)
 {
-  // QTextStream o(stdout);
-  // QStringList args = a;
-  // Ruby::ensureInitRuby();
-  // for(int i = 0; i < args.size(); i++) {
-  //   QString file = args[i];
-  //   AttributeHash contents = PDFTools::readPDF(file);
-  //   o << "File " << file << "'s raw attributes: " << endl;
-  //   contents.dumpContents();
-  // }
+  QTextStream o(stdout);
+  QStringList args = a;
+  for(int i = 0; i < args.size(); i++) {
+    QString file = args[i];
+    AttributeHash contents = PDFTools::readPDF(file);
+    o << "File " << file << "'s raw attributes: " << endl;
+    contents.dumpContents();
+  }
 }
 
 static void testDownload(const QStringList & a)
