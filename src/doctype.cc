@@ -28,7 +28,8 @@ QHash<QString, DocType*> DocType::namedTypes;
 
 QQmlEngine * DocType::engine;
 
-DocType::DocType(QObject * parent) : QObject(parent), parent(0)
+DocType::DocType(QObject * parent) : QObject(parent),
+                                     parent(NULL), collection(NULL)
 {
 }
 
@@ -40,6 +41,12 @@ void DocType::registerQMLTypes()
 {
   qmlRegisterType<DocType>("DocTypes", 1, 0, "DocType");
   qmlRegisterType<Collection>("DocTypes", 1, 0, "Collection");
+}
+
+void DocType::print(const QString & str)
+{
+  QTextStream o(stdout);
+  o << "[doc type: " << this << "]: " << str << endl;
 }
 
 QString DocType::name() const
@@ -186,22 +193,47 @@ bool DocType::hasIsMine() const
 int DocType::isMine(const AttributeHash & attrs)
 {
   const QMetaObject * mo = metaObject();
+  QTextStream o(stdout);
   int idx = mo->indexOfMethod("isMine(QVariant)");
+  o << name() << ", idx -> " << idx << endl;
   if(idx < 0)
     return 0;
   QMetaMethod met = mo->method(idx);
-  int rv;
-  QVariant v = attrs;
-  met.invoke(this,
+  QVariant rv = 0;
+  QVariantMap m;
+  for(const QString & n : attrs.keys())
+    m.insert(n, attrs[n]);
+  QVariant v = QVariant::fromValue(m);
+  bool r = met.invoke(this,
              Qt::DirectConnection,
-             Q_RETURN_ARG(int, rv),
+             Q_RETURN_ARG(QVariant, rv),
              Q_ARG(QVariant, v));
-  return rv;
+  o << name() << ", rv -> " << r << ", " << rv.toInt() << endl;
+  return rv.toInt();
 }
 
 bool DocType::hasParseMetaData() const
 {
   return metaObject()->indexOfMethod("parseMetaData(QVariant)") >= 0;
+}
+
+DocType * DocType::autoDetectType(const AttributeHash & contents)
+{
+  int max = 0;
+  DocType * cur = NULL;
+  QTextStream o(stdout);
+  for(DocType * dt : namedTypes.values()) {
+    o << "DocType: " << dt->m_Name << endl;
+    if(dt->hasIsMine()) {
+      int nb = dt->isMine(contents);
+      if(nb > max) {
+        max = nb;
+        cur = dt;
+      }
+      o << " -> isMine: " << nb << endl;
+    }
+  }
+  return cur;
 }
 
 
@@ -222,9 +254,38 @@ QString Collection::name() const
   return m_Name;
 }
 
+void Collection::appendDocType(QQmlListProperty<DocType> *property, DocType *value)
+{
+  Collection * c = reinterpret_cast<Collection *>(property->data);
+  c->docTypes << value;
+  value->collection = c;
+}
+
+DocType * Collection::atDocType(QQmlListProperty<DocType> *property, int index)
+{
+  Collection * c = reinterpret_cast<Collection *>(property->data);
+  return c->docTypes[index];
+}
+
+void Collection::clearDocType(QQmlListProperty<DocType> *property)
+{
+  Collection * c = reinterpret_cast<Collection *>(property->data);
+  c->docTypes.clear();
+}
+
+int Collection::countDocType(QQmlListProperty<DocType> *property)
+{
+  Collection * c = reinterpret_cast<Collection *>(property->data);
+  return c->docTypes.size();
+}
+
 QQmlListProperty<DocType> Collection::getDocTypes()
 {
-  return QQmlListProperty<DocType>(this, docTypes);
+  return QQmlListProperty<DocType>(this, this,
+                                   &Collection::appendDocType,
+                                   &Collection::countDocType,
+                                   &Collection::atDocType,
+                                   &Collection::clearDocType);
 }
 
 void Collection::setName(const QString & n)

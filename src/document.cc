@@ -20,6 +20,9 @@
 #include <document.hh>
 #include <doctype.hh>
 
+#include <cabinet.hh>
+#include <pdftools.hh>
+
 
 Document::Document() : m_DocType(NULL)
 {
@@ -65,4 +68,16 @@ SerializationAccessor * Document::serializationAccessor()
   addCategoriesSerialization(ac);
 
   return ac;
+}
+
+QString Document::filePath() const
+{
+  return Cabinet::globalCabinet()->baseDirectory().
+    absoluteFilePath(m_FileName);
+}
+
+AttributeHash Document::readContents() const
+{
+  QString fn = filePath();
+  return PDFTools::readPDF(fn);
 }

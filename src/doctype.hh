@@ -81,6 +81,11 @@ class DocType : public QObject {
   /// The underlying collection.
   Collection * collection;
 
+
+  /// A helper function to print stuff to the terminal
+  // Q_INVOKABLE
+  void print(const QString & str);
+
 public:
   DocType(QObject * parent = NULL);
   virtual ~DocType();
@@ -153,6 +158,12 @@ public:
 
 
   /// @}
+
+  /// Attempts autodetection of the document type, by passing @a
+  /// contents to isMine() of all the document types that have them.
+  ///
+  /// Returns the DocType found, or NULL if none was found.
+  static DocType * autoDetectType(const AttributeHash & contents);
 };
 
 /// This class collects a series of DocType. It has no real purpose,
@@ -183,7 +194,15 @@ class Collection : public QObject {
   
 protected:
   QQmlListProperty<DocType> getDocTypes();
-  
+
+  /// @name Functions to deal with property list
+  ///
+  /// @{
+  static void appendDocType(QQmlListProperty<DocType> *property, DocType *value);
+  static DocType * atDocType(QQmlListProperty<DocType> *property, int index);
+  static void clearDocType(QQmlListProperty<DocType> *property);
+  static int countDocType(QQmlListProperty<DocType> *property);
+  /// @}
   
 public:
 

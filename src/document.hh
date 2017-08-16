@@ -58,9 +58,17 @@ public:
   /// Returns the file name
   QString fileName() const;
 
+  /// Returns the file absolute path
+  QString filePath() const;
+  
+
   /// Sets the document type
   void setDocType(DocType * docType);
 
+  /// Reads the contents of the document, like the contents of the PDF
+  /// file, using PDFTools::readPDF, for instance, and returns it as
+  /// an AttributeHash. 
+  AttributeHash readContents() const;
 
   virtual QString typeName() const {
     return "document";
@@ -74,6 +82,8 @@ public:
   QString docTypeName() const;
 
   virtual SerializationAccessor * serializationAccessor() override;
+
+  
 
 };
 
