@@ -26,6 +26,7 @@
 class Cabinet;
 class DocumentsModel;
 class Document;
+class DocumentWidget;
 
 /// This NavigationPage displays the informations about documentss
 class DocumentsPage : public NavigationPage {
@@ -41,8 +42,14 @@ protected:
 
   DocumentsModel * model;
 
-  // QListView * listView;
+  /// The vertical splitted
+  QSplitter * splitter;
+
+  /// The tree view to display documents
   QTreeView * treeView;
+
+  /// The bottom document view
+  DocumentWidget * documentWidget;
 
   QList<Document*> selectedDocuments();
 
@@ -62,6 +69,11 @@ public slots:
 
   /// Show the context menu...
   void treeViewContextMenu(const QPoint & pos);
+
+protected slots:
+
+  void onCurrentDocumentChanged(const QModelIndex &current,
+                                const QModelIndex &previous);
 };
 
 #endif

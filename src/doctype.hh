@@ -123,7 +123,11 @@ public:
   /// parent.
   static void crosslinkTypes();
 
+  /// Returns the DocType corresponding to the (unique) name
   static DocType * namedType(const QString & name);
+
+  /// Returns all the named types.
+  static QStringList documentNames();
 
   /// Return all the documents types, categorized by their Collection
   static QHash<Collection *, QList<DocType *> > docTypesByCollection();

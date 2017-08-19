@@ -41,6 +41,8 @@
 #include <QListWidget>
 #include <QComboBox>
 
+#include <QSplitter>
+
 #include <QCheckBox>
 #include <QDateTimeEdit>
 #include <QDateEdit>

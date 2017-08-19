@@ -23,16 +23,19 @@
 #include <documentsmodel.hh>
 #include <doctype.hh>
 
+#include <documentwidget.hh>
 #include <accountmodel.hh>
 
 DocumentsPage::DocumentsPage(Cabinet * c) : cabinet(c)
 {
   QVBoxLayout * layout = new QVBoxLayout(this);
+  splitter = new QSplitter(Qt::Vertical, this);
+  layout->addWidget(splitter);
 
   model = new DocumentsModel(cabinet);
   // listView = new QListView();
   treeView = new QTreeView;
-  layout->addWidget(treeView);
+  splitter->addWidget(treeView);
 
   treeView->setModel(model);
   treeView->setRootIndex(model->root());
@@ -49,6 +52,15 @@ DocumentsPage::DocumentsPage(Cabinet * c) : cabinet(c)
   treeView->setContextMenuPolicy(Qt::CustomContextMenu);
 
   treeView->setSelectionMode(QAbstractItemView::ExtendedSelection);
+
+  connect(treeView->selectionModel(),
+          SIGNAL(currentChanged(const QModelIndex &, const QModelIndex &)),
+          SLOT(onCurrentDocumentChanged(const QModelIndex &,const QModelIndex &)));
+  
+
+  documentWidget = new DocumentWidget(cabinet);
+  
+  splitter->addWidget(documentWidget);
 
 }
 
@@ -137,4 +149,11 @@ void DocumentsPage::treeViewContextMenu(const QPoint & pos)
   fillWithDocTypes(&menu, docs);
   
   menu.exec(treeView->viewport()->mapToGlobal(pos));
+}
+
+
+void DocumentsPage::onCurrentDocumentChanged(const QModelIndex &current,
+                                             const QModelIndex &)
+{
+  documentWidget->showDocument(model->filePath(current));
 }

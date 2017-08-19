@@ -43,6 +43,11 @@ void DocType::registerQMLTypes()
   qmlRegisterType<Collection>("DocTypes", 1, 0, "Collection");
 }
 
+QStringList DocType::documentNames()
+{
+  return namedTypes.keys();
+}
+
 void DocType::print(const QString & str)
 {
   QTextStream o(stdout);
