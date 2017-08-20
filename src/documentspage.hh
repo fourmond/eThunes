@@ -74,6 +74,8 @@ protected slots:
 
   void onCurrentDocumentChanged(const QModelIndex &current,
                                 const QModelIndex &previous);
+
+  void onDocumentActivated(const QModelIndex & index);
 };
 
 #endif

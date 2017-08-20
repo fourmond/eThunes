@@ -47,6 +47,9 @@ class DocumentWidget : public QWidget {
   /// Combobox for changing types
   QComboBox * documentTypeCombo;
 
+  /// The underlying Cabinet
+  Cabinet * cabinet;
+
   /// Sets up the frame
   void setupFrame();
 

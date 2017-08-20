@@ -49,9 +49,14 @@ DocumentsPage::DocumentsPage(Cabinet * c) : cabinet(c)
 
   connect(treeView, SIGNAL(customContextMenuRequested(const QPoint &)),
 	  SLOT(treeViewContextMenu(const QPoint &)));
+
+  
   treeView->setContextMenuPolicy(Qt::CustomContextMenu);
 
   treeView->setSelectionMode(QAbstractItemView::ExtendedSelection);
+
+  connect(treeView, SIGNAL(activated(const QModelIndex &)),
+	  SLOT(onDocumentActivated(const QModelIndex &)));
 
   connect(treeView->selectionModel(),
           SIGNAL(currentChanged(const QModelIndex &, const QModelIndex &)),
@@ -156,4 +161,15 @@ void DocumentsPage::onCurrentDocumentChanged(const QModelIndex &current,
                                              const QModelIndex &)
 {
   documentWidget->showDocument(model->filePath(current));
+}
+
+void DocumentsPage::onDocumentActivated(const QModelIndex & index)
+{
+  QString s = model->absoluteFilePath(index);
+  if(s.isEmpty())
+    return;
+  QFileInfo info(s);
+  if(info.isDir())
+    return;
+  QDesktopServices::openUrl(QUrl::fromLocalFile(s));
 }

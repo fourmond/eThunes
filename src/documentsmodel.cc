@@ -45,6 +45,12 @@ QString DocumentsModel::filePath(const QModelIndex & index) const
   return cabinet->baseDirectory().relativeFilePath(path);
 }
 
+QString DocumentsModel::absoluteFilePath(const QModelIndex & index) const
+{
+  QString path = filePath(index);
+  return cabinet->baseDirectory().absoluteFilePath(path);
+}
+
 int DocumentsModel::columnCount(const QModelIndex &parent) const
 {
   return QFileSystemModel::columnCount(parent) + LastColumn;

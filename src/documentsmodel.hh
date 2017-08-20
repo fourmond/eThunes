@@ -50,6 +50,9 @@ public:
   /// Returns the file path, <b>relative to the Cabinet base directory</b>.
   QString filePath(const QModelIndex & index) const;
 
+  /// Returns the absolute file path
+  QString absoluteFilePath(const QModelIndex & index) const;
+
 
   enum AdditionalColumns {
     TypeColumn,

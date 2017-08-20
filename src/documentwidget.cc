@@ -24,7 +24,7 @@
 #include <cabinet.hh>
 
 DocumentWidget::DocumentWidget(Cabinet * c, QWidget * parent) :
-  QWidget(parent), document(NULL)
+  QWidget(parent), document(NULL), cabinet(c)
 {
   setupFrame();
   showDocument(QString());
@@ -56,5 +56,17 @@ void DocumentWidget::setupFrame()
 
 void DocumentWidget::showDocument(const QString & str)
 {
-  firstLine->setText(tr("<b>Document: </b>%1").arg(str));
+  fileName = str;
+  firstLine->setText(tr("<b>Document: </b>%1").arg(fileName));
+  document = cabinet->documents.document(fileName);
+  if(document) {
+    QString dtn = document->docTypeName();
+    if(dtn.isEmpty())
+      documentTypeCombo->setCurrentText("(none)");
+    else
+      documentTypeCombo->setCurrentText(dtn);
+  }
+  else {
+    documentTypeCombo->setCurrentText("(none)");
+  }
 }
