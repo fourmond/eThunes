@@ -266,3 +266,26 @@ QVariant AttributeHash::getEditorValue(AttributeHash::HandledType type,
   }
   return QVariant();
 }
+
+void AttributeHash::connectEditorChanged(HandledType type, QWidget * editor,
+                                         QObject * target, const char * slot)
+{
+  switch(type) {
+  case String:
+  case Number:  {
+    QLineEdit * le = dynamic_cast<QLineEdit *>(editor);
+    if(! le)
+      throw "Invalid editor...";
+    QObject::connect(le, SIGNAL(textEdited(const QString)), target, slot);
+    return;
+  }
+  case Time: {
+    QDateTimeEdit * de = dynamic_cast<QDateTimeEdit *>(editor);
+    if(! de)
+      throw "Invalid editor...";
+    QObject::connect(de, SIGNAL(dateTimeChanged(const QDateTime &)),
+                     target, slot);
+    return;
+  }
+  }
+}

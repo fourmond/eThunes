@@ -49,7 +49,8 @@ public:
   enum HandledType {
     String,
     Number,
-    Time
+    Time,
+    LastType
   };
 
   /// Returns the HandledType for the given QVariant
@@ -110,6 +111,10 @@ public:
 
   /// Get the value back from the editor
   static QVariant getEditorValue(HandledType type, QWidget * editor);
+
+  /// Connects an "editor changed" signal to the target's slot.
+  static void connectEditorChanged(HandledType type, QWidget * editor,
+                                   QObject * target, const char * slot);
 
   /// @}
 
