@@ -110,7 +110,8 @@ public:
 
   /// Get the value back from the editor
   static QVariant getEditorValue(HandledType type, QWidget * editor);
-  
+
+  /// @}
 
 };
 #endif

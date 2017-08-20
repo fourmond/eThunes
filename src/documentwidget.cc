@@ -40,7 +40,8 @@ void DocumentWidget::setupFrame()
   QVBoxLayout * layout = new QVBoxLayout(this);
   QHBoxLayout * hb = new QHBoxLayout;
   firstLine = new QLabel();
-  hb->addWidget(firstLine);
+  hb->addWidget(firstLine, 1);
+
   documentTypeCombo = new QComboBox;
   documentTypeCombo->setEditable(false);
   documentTypeCombo->addItem("(none)");
@@ -49,6 +50,20 @@ void DocumentWidget::setupFrame()
   for(const QString & n : doctypes)
     documentTypeCombo->addItem(n);
   hb->addWidget(documentTypeCombo);
+
+  connect(documentTypeCombo, SIGNAL(currentTextChanged(const QString &)),
+          SLOT(onTypeChanged(const QString &)));
+
+  QPushButton * button = new QPushButton(tr("Autodetect"));
+  QObject::connect(button, &QAbstractButton::clicked, [this](bool) {
+      if(! document)
+        document = cabinet->documents.modifiableDocument(fileName);
+      document->autoDetectDocType();
+      showDocument(fileName);
+    }
+    );
+  hb->addWidget(button);
+
   layout->addLayout(hb);
   description = new QLabel();
   layout->addWidget(description);
@@ -63,10 +78,28 @@ void DocumentWidget::showDocument(const QString & str)
     QString dtn = document->docTypeName();
     if(dtn.isEmpty())
       documentTypeCombo->setCurrentText("(none)");
-    else
+    else {
       documentTypeCombo->setCurrentText(dtn);
+    }
+    description->setText(document->infoText());
   }
   else {
     documentTypeCombo->setCurrentText("(none)");
+    description->setText("");
   }
+}
+
+void DocumentWidget::onTypeChanged(const QString & newType)
+{
+  if(! document)
+    document = cabinet->documents.modifiableDocument(fileName);
+  if(newType == "(none)") {
+    document->setDocType(NULL);
+  }
+  else {
+    if(document->docTypeName() == newType)
+      return;
+    document->setDocType(DocType::namedType(newType));
+  }
+  showDocument(fileName);
 }

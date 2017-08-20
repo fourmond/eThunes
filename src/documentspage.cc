@@ -107,12 +107,8 @@ static void fillWithDocTypes(QMenu * menu,   QList<Document *> docs) {
   QMenu * subMenu = new QMenu(QObject::tr("Document type"));
   QAction * a = new QAction(QObject::tr("Autodetect"));
   QObject::connect(a, &QAction::triggered, [docs](bool) {
-      for(Document * doc : docs) {
-        DocType * dt = DocType::autoDetectType(doc->readContents());
-        if(dt)
-          doc->setDocType(dt);
-      }
-      ;
+      for(Document * doc : docs)
+        doc->autoDetectDocType();
     }
     );
   subMenu->addAction(a);

@@ -62,6 +62,10 @@ public slots:
 
   /// Shows the given document.
   void showDocument(const QString & doc);
+
+protected slots:
+  /// Called on changing type
+  void onTypeChanged(const QString & newType);
 };
 
 

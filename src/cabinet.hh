@@ -69,7 +69,7 @@ public:
   void saveToFile(QString filePath);
 
   /// Loads a Cabinet from the given file
-  void loadFromFile(QString filePath);
+  void loadFromFile(const QString & filePath);
 
   virtual SerializationAccessor * serializationAccessor();
 

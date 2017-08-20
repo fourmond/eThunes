@@ -81,3 +81,17 @@ AttributeHash Document::readContents() const
   QString fn = filePath();
   return PDFTools::readPDF(fn);
 }
+
+void Document::autoDetectDocType()
+{
+  DocType * dt = DocType::autoDetectType(readContents());
+  if(dt)
+    setDocType(dt);
+}
+
+QString Document::infoText()
+{
+  if(! m_DocType)
+    return QString();
+  return attributes.formatString(m_DocType->infoFormat());
+}

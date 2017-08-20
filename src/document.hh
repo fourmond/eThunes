@@ -65,6 +65,14 @@ public:
   /// Sets the document type
   void setDocType(DocType * docType);
 
+  /// Automatically detects the document type.
+  void autoDetectDocType();
+
+
+  /// This small text is provided by the document type, based on the
+  /// attributes. Empty when no DocType is available
+  QString infoText(); 
+
   /// Reads the contents of the document, like the contents of the PDF
   /// file, using PDFTools::readPDF, for instance, and returns it as
   /// an AttributeHash. 
@@ -83,6 +91,7 @@ public:
 
   virtual SerializationAccessor * serializationAccessor() override;
 
+  
   
 
 };

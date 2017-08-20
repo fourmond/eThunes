@@ -28,9 +28,8 @@ Cabinet::Cabinet() : dirty(false)
 {
   /// @todo Use watchChild rather, and 
   watchChild(&wallet, "wallet");
+  watchChild(&documents, "documents");
   connect(*this, SIGNAL(changed(const Watchdog *)), SLOT(setDirty()));
-  connect(this, SIGNAL(collectionsPossiblyChanged()), SLOT(setDirty()));
-  connect(this, SIGNAL(documentsChanged(Collection *)), SLOT(setDirty()));
   if(theCabinet)
     throw "Problem";
   theCabinet = this;
@@ -75,7 +74,7 @@ void Cabinet::saveToFile(QString name)
 }
 
 
-void Cabinet::loadFromFile(QString name)
+void Cabinet::loadFromFile(const QString &name)
 {
   QFile file(name);
   QTextStream o(stdout);
@@ -89,7 +88,6 @@ void Cabinet::loadFromFile(QString name)
   filePath = name;
   readXML(&w);
   emit(filenameChanged(filePath));
-  //  emit(collectionsPossiblyChanged());
   setDirty(false);
 }
 
