@@ -42,6 +42,7 @@
 #include <QComboBox>
 
 #include <QSplitter>
+#include <QSignalMapper>
 
 #include <QCheckBox>
 #include <QDateTimeEdit>

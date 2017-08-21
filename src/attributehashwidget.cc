@@ -97,3 +97,53 @@ void AttributeHashElementWidget::onTypeChanged(const QString & ne)
 {
   setType(AttributeHash::namedType(ne));
 }
+
+
+//////////////////////////////////////////////////////////////////////
+
+AttributeHashWidget::AttributeHashWidget(QWidget * parent)
+{
+  deleteMapper = new QSignalMapper;
+  layout = new QVBoxLayout(this);
+}
+
+AttributeHashWidget::~AttributeHashWidget()
+{
+  delete deleteMapper;
+}
+
+void AttributeHashWidget::clear()
+{
+  for(AttributeHashElementWidget * ed : editors)
+    delete ed;
+  editors.clear();
+}
+                                
+
+void AttributeHashWidget::editHash(AttributeHash * t,
+                                   QHash<QString, AttributeHash::HandledType> fa)
+{
+  target = t;
+  clear();
+  fixedAttributes = fa;
+  QSet<QString> keys = QSet<QString>::fromList(target->keys());
+  for(const QString & n : fa.keys()) {
+    AttributeHash::HandledType t = fa[n];
+    AttributeHashElementWidget * ed =
+      new AttributeHashElementWidget(target, n, t);
+    ed->setLocked(true);
+    deleteMapper->setMapping(ed, editors.size());
+    editors << ed;
+    keys.remove(n);
+    layout->addWidget(ed);
+  }
+
+  for(const QString & n : keys) {
+    AttributeHash::HandledType t = AttributeHash::variantType((*target)[n]);
+    AttributeHashElementWidget * ed =
+      new AttributeHashElementWidget(target, n, t);
+    deleteMapper->setMapping(ed, editors.size());
+    editors << ed;
+    layout->addWidget(ed);
+  }
+}

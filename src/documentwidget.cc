@@ -22,6 +22,7 @@
 #include <document.hh>
 #include <doctype.hh>
 #include <cabinet.hh>
+#include <attributehashwidget.hh>
 
 DocumentWidget::DocumentWidget(Cabinet * c, QWidget * parent) :
   QWidget(parent), document(NULL), cabinet(c)
@@ -63,10 +64,15 @@ void DocumentWidget::setupFrame()
     }
     );
   hb->addWidget(button);
-
   layout->addLayout(hb);
+  
   description = new QLabel();
   layout->addWidget(description);
+
+  attributesEditor = new AttributeHashWidget;
+  layout->addWidget(attributesEditor);
+
+  layout->addStretch(1);
 }
 
 void DocumentWidget::showDocument(const QString & str)
@@ -74,6 +80,7 @@ void DocumentWidget::showDocument(const QString & str)
   fileName = str;
   firstLine->setText(tr("<b>Document: </b>%1").arg(fileName));
   document = cabinet->documents.document(fileName);
+  attributesEditor->clear();
   if(document) {
     QString dtn = document->docTypeName();
     if(dtn.isEmpty())
@@ -82,6 +89,11 @@ void DocumentWidget::showDocument(const QString & str)
       documentTypeCombo->setCurrentText(dtn);
     }
     description->setText(document->infoText());
+    DocType * dt = document->docType();
+    QHash<QString, AttributeHash::HandledType> reqs;
+    if(dt)
+      reqs = dt->requiredAttributes();
+    attributesEditor->editHash(&document->attributes, reqs);
   }
   else {
     documentTypeCombo->setCurrentText("(none)");

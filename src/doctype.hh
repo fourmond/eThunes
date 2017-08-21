@@ -21,8 +21,9 @@
 #ifndef __DOCTYPE_HH
 #define __DOCTYPE_HH
 
+#include <attributehash.hh>
+
 class Collection;
-class AttributeHash;
 
 /// This class defines the type of a document.
 class DocType : public QObject {
@@ -111,6 +112,10 @@ public:
 
   QString parentName() const;
   void setParentName(const QString & name);
+
+
+  /// Returns the attributes required by the DocType
+  QHash<QString, AttributeHash::HandledType> requiredAttributes();
 
   static void registerQMLTypes();
   static void parseQMLFile(const QString & file);

@@ -167,6 +167,20 @@ void DocType::crosslinkTypes()
   }
 }
 
+QHash<QString, AttributeHash::HandledType> DocType::requiredAttributes()
+{
+  QHash<QString, AttributeHash::HandledType> rv;
+  if(parent)
+    rv = parent->requiredAttributes();
+  for(const QString & n : m_Dates)
+    rv[n] = AttributeHash::Time;
+  for(const QString & n : m_Amounts)
+    rv[n] = AttributeHash::Number;
+  for(const QString & n : m_Strings)
+    rv[n] = AttributeHash::String;
+  return rv;
+}
+
 
 /// @todo This should be a little better, though it'll be OK for now !
 /// Could be QDir::addSeachPath ?

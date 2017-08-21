@@ -49,6 +49,11 @@ QString Document::docTypeName() const
   return m_DocTypeName;
 }
 
+DocType * Document::docType() const
+{
+  return m_DocType;
+}
+
 QString Document::fileName() const
 {
   return m_FileName;

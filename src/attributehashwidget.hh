@@ -90,8 +90,8 @@ protected slots:
 class AttributeHashWidget : public QWidget {
   Q_OBJECT;
 
-  /// AttributeHash being displayed.
-  AttributeHash * attributehash;
+  /// AttributeHash being edited
+  AttributeHash * target;
 
   /// Sets up the frame
   void setupFrame();
@@ -99,9 +99,22 @@ class AttributeHashWidget : public QWidget {
   /// These are the attributes that are required, and have a fixed type.
   QHash<QString, AttributeHash::HandledType> fixedAttributes;
 
+  QList<AttributeHashElementWidget *> editors;
+
+  QSignalMapper * deleteMapper;
+
+
+  QVBoxLayout * layout;
+
 public:
 
+  void clear();
+
   AttributeHashWidget(QWidget * parent = NULL);
+  ~AttributeHashWidget();
+
+  void editHash(AttributeHash * target,
+                QHash<QString, AttributeHash::HandledType> fixedAttributes);
 };
 
 

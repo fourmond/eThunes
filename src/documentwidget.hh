@@ -25,6 +25,7 @@
 
 class Cabinet;
 class Document;
+class AttributeHashWidget;
 
 /// A widget displaying the contents of a document, possibly offering
 /// edition of the document type
@@ -49,6 +50,9 @@ class DocumentWidget : public QWidget {
 
   /// The underlying Cabinet
   Cabinet * cabinet;
+
+  /// Facilities for editing the attributes
+  AttributeHashWidget * attributesEditor;
 
   /// Sets up the frame
   void setupFrame();

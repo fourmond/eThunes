@@ -45,11 +45,11 @@ protected:
   /// type name if it is missing (could happen ?)
   QString m_DocTypeName;
 
+public:
+
   /// The attributes of the document. Can be set manually, or through
   /// automatic detection.
   AttributeHash attributes;
-
-public:
 
   Document();
 
@@ -64,6 +64,9 @@ public:
 
   /// Sets the document type
   void setDocType(DocType * docType);
+
+  /// Returns the current document type
+  DocType * docType() const;
 
   /// Automatically detects the document type.
   void autoDetectDocType();
