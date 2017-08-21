@@ -49,6 +49,7 @@ public:
   enum HandledType {
     String,
     Number,
+    Date,
     Time,
     LastType
   };

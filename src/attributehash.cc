@@ -36,6 +36,7 @@ AttributeHash::HandledType AttributeHash::variantType(const QVariant &variant)
     /// (over 2 billions)
     return AttributeHash::Number;
   case QVariant::Date:
+    return AttributeHash::Date;
   case QVariant::DateTime:
   case QVariant::Time: // time values
     return AttributeHash::Time;
@@ -209,6 +210,11 @@ QWidget * AttributeHash::createEditor(AttributeHash::HandledType type,
     return new QLineEdit(parent);
   case Number:
     return new QLineEdit(parent);
+  case Date: {
+    QDateEdit * de = new QDateEdit(parent);
+    de->setCalendarPopup(true);
+    return de;
+  }
   case Time: {
     QDateTimeEdit * de = new QDateTimeEdit(parent);
     de->setCalendarPopup(true);
@@ -229,6 +235,13 @@ void AttributeHash::setEditorValue(AttributeHash::HandledType type,
     if(! le)
       throw "Invalid editor...";
     le->setText(value.toString());
+    return;
+  }
+  case Date: {
+    QDateEdit * de = dynamic_cast<QDateEdit *>(editor);
+    if(! de)
+      throw "Invalid editor...";
+    de->setDate(value.toDate());
     return;
   }
   case Time: {
@@ -256,6 +269,12 @@ QVariant AttributeHash::getEditorValue(AttributeHash::HandledType type,
     else
       return QVariant(le->text().toInt());
   }
+  case Date: {
+    QDateEdit * de = dynamic_cast<QDateEdit *>(editor);
+    if(! de)
+      throw "Invalid editor...";
+    return de->date();
+  }
   case Time: {
     QDateTimeEdit * de = dynamic_cast<QDateTimeEdit *>(editor);
     if(! de)
@@ -277,6 +296,13 @@ void AttributeHash::connectEditorChanged(HandledType type, QWidget * editor,
       throw "Invalid editor...";
     QObject::connect(le, SIGNAL(textEdited(const QString)), target, slot);
     return;
+  }
+  case Date: {
+    QDateEdit * de = dynamic_cast<QDateEdit *>(editor);
+    if(! de)
+      throw "Invalid editor...";
+    QObject::connect(de, SIGNAL(dateChanged(const QDateTime &)),
+                     target, slot);
   }
   case Time: {
     QDateTimeEdit * de = dynamic_cast<QDateTimeEdit *>(editor);

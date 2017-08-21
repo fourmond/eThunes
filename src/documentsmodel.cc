@@ -98,6 +98,20 @@ QVariant DocumentsModel::data(const QModelIndex &index, int role) const
     case LinksColumn:
       if(doc)
         return doc->linksData(role);
+    case DateColumn:
+      if(doc) {
+        if(role == Qt::DisplayRole || role == Qt::EditRole)
+          return doc->attributes["date"];
+      }
+    case AmountColumn:
+      if(doc) {
+        if(role == Qt::DisplayRole) {
+          if(doc->attributes.contains("amount")) {
+            int amount = doc->attributes["amount"].toInt();
+            return Transaction::formatAmount(amount);
+          }
+        }
+      }
     default:
       return QVariant();
     }

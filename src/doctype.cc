@@ -173,7 +173,7 @@ QHash<QString, AttributeHash::HandledType> DocType::requiredAttributes()
   if(parent)
     rv = parent->requiredAttributes();
   for(const QString & n : m_Dates)
-    rv[n] = AttributeHash::Time;
+    rv[n] = AttributeHash::Date;
   for(const QString & n : m_Amounts)
     rv[n] = AttributeHash::Number;
   for(const QString & n : m_Strings)
