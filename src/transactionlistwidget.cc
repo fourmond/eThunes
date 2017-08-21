@@ -279,7 +279,7 @@ void TransactionListWidget::fillMenuWithBudgets(QMenu * menu, QList<Budget *> bu
     periods << budget->periodicity.periodForDate(curDate);
     for(int i = 0; i < 2; i++) {
       periods.insert(0, budget->periodicity.previousPeriod(periods[0]));
-      periods.append(budget->periodicity.previousPeriod(periods.last()));
+      periods.append(budget->periodicity.nextPeriod(periods.last()));
     }
     for(int i = 0; i < periods.size(); i++) {
       Period p = periods[i];
