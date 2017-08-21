@@ -159,43 +159,18 @@ static void showCollection(const QStringList & s)
 
 static void testDocumentLoading(const QStringList & a)
 {
-  // QTextStream o(stdout);
-  // QStringList args = a;
-  // QString name = args.takeFirst();
-  // Ruby::ensureInitRuby();
-  // CollectionDefinition * def =
-  //   CollectionDefinition::namedDefinition(name);
-  // if(! def) {
-  //   o << "Unable to find the collection" << name << endl;
-  //   return;
-  // }
-  // Collection * c = new Collection();
-  // c->definition = def;
-  // name = args.takeFirst();
-  // DocumentDefinition * ddef = def->documentDefinition(name);
-  // if(! ddef) {
-  //   o << "Unable to find the document " << name << endl;
-  //   return;
-  // }
-  // for(int i = 0; i < args.size(); i++) {
-  //   QString file = args[i];
-  //   AttributeHash contents = PDFTools::readPDF(file);
-  //   AttributeHash outAttrs = ddef->parseDocumentMetaData(contents);
-  //   o << endl << "Parsed attributes for file " 
-  //     << file << ": " << endl;
-  //   QStringList missing = 
-  //     c->missingAttributesForDocument(outAttrs, ddef);
-  //   outAttrs.dumpContents();
-  //   if(missing.size() > 0)
-  //     o << "Missing attributes: " << missing.join(", ") << endl; 
-  //   else {
-  //     o << "All required attributes found\nFile name: "
-  //       << outAttrs.formatString(ddef->getFileNameFormat()) 
-  //       << "\nDisplay: " 
-  //       << outAttrs.formatString(ddef->getDisplayFormat()) << endl;
-  //   }
-  // }
-  // delete c;
+  QTextStream o(stdout);
+  for(const QString & file : a) {
+    AttributeHash contents = PDFTools::readPDF(file);
+    DocType * dt = DocType::autoDetectType(contents);
+    o << "Dealing with " << file << endl;
+    if(dt) {
+      o << " -> found doc type: " << dt->name() << endl;
+      AttributeHash attrs = dt->parseMetaData(contents);
+      o << " -> attributes: " <<  endl;
+      attrs.dumpContents(o);
+    }
+  }
 }
 
 static void testDocumentParsing(const QStringList & a)
@@ -206,7 +181,7 @@ static void testDocumentParsing(const QStringList & a)
     QString file = args[i];
     AttributeHash contents = PDFTools::readPDF(file);
     o << "File " << file << "'s raw attributes: " << endl;
-    contents.dumpContents();
+    contents.dumpContents(o);
   }
 }
 
@@ -332,7 +307,7 @@ static CommandLineParser * myParser()
     << new CommandLineOption("--help", showHelp,
 			     0, "Shows this help")
     << new CommandLineOption("--test-document-load", testDocumentLoading,
-			     -2, "Tries to load the given document")
+			     -1, "Tries to load the given document")
     << new CommandLineOption("--test-document-parse", testDocumentParsing,
 			     -1, "Parses the PDF, do not load as document")
     << new CommandLineOption("--test-download", testDownload,

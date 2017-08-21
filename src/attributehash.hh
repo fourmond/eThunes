@@ -57,7 +57,7 @@ public:
   static HandledType variantType(const QVariant &v);
 
   /// Dump the contents of the hash, for debugging purposes
-  void dumpContents() const;
+  void dumpContents(QTextStream & out) const;
 
   // serialization stuff
   virtual void writeXML(const QString& name, QXmlStreamWriter* writer);

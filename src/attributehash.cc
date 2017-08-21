@@ -45,14 +45,13 @@ AttributeHash::HandledType AttributeHash::variantType(const QVariant &variant)
 }
 
 
-void AttributeHash::dumpContents() const
+void AttributeHash::dumpContents(QTextStream & out) const
 {
-  QTextStream o(stdout);
   const_iterator i = constBegin();
   while (i != constEnd()) {
-    o << "Key: " << i.key() << ": (type "
-      << typeNames[variantType(i.value())] << ") "
-      << i.value().toString() << endl;
+    out << "Key: " << i.key() << ": (type "
+        << typeNames[variantType(i.value())] << ") "
+        << i.value().toString() << endl;
     i++;
   }
 
