@@ -26,6 +26,7 @@
 class Wallet;
 class HTLabel;
 class Budget;
+class FlowingGridLayout;
 
 /// This NavigationPage displays the informations about budgets
 class BudgetPage : public NavigationPage {
@@ -37,10 +38,25 @@ protected:
   /// A correspondance Wallet* -> BudgetPage
   static QHash<Wallet *, BudgetPage *> budgetPages;
 
+  HTLabel * newBudgetSummary();
+
   Wallet * wallet;
+
+  /// Layout for the individual budgets
+  // FlowingGridLayout * topLayout;
+  QGridLayout * topLayout;
+  
+  /// The HTLabels displaying the budgets
+  QList<HTLabel *> budgetSummaries;
+  
+
+  /// The QLabel object displaying the rich text.
+  HTLabel * top;
 
   /// The QLabel object displaying the rich text.
   HTLabel * summary;
+
+  
 
   void updateSummary();
 

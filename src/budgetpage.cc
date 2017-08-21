@@ -23,14 +23,24 @@
 #include <htlabel.hh>
 #include <httarget-templates.hh>
 #include <widgetwrapperdialog.hh>
+#include <flowinggridlayout.hh>
 #include <evolvingitemwidget.hh>
 
 BudgetPage::BudgetPage(Wallet * w) : wallet(w)
 {
 
   QVBoxLayout * layout = new QVBoxLayout(this);
+
+  top = new HTLabel();
+  layout->addWidget(top);
+  
+  topLayout = new QGridLayout();
+  layout->addLayout(topLayout);
+
   summary = new HTLabel;
   layout->addWidget(summary);
+
+  layout->addStretch(1);
   updateSummary();
 }
 
@@ -44,6 +54,16 @@ QString BudgetPage::pageTitle()
   return tr("Budgets");
 }
 
+HTLabel * BudgetPage::newBudgetSummary()
+{
+  HTLabel * rv = new HTLabel();
+  int idx = budgetSummaries.size();
+  int nbcols = 5;
+  topLayout->addWidget(rv, idx / nbcols, idx % nbcols);
+  budgetSummaries << rv;
+  return rv;
+}
+
 void BudgetPage::updateSummary()
 {
   QString text = tr("<h2>Budgets</h2>");
@@ -53,12 +73,11 @@ void BudgetPage::updateSummary()
     HTTarget::linkToMember(tr("(new budget)"),
                            this, &BudgetPage::addBudget)
     + "<p>\n";
+  top->setText(text);
 
   int totalPositive = 0;
   int totalNegative = 0;
   QDate today = QDate::currentDate();
-  text += "<table><tr>";
-  int nbcols = 3;
 
   QList<Budget *> budgets = wallet->budgets.pointerList();
   std::sort(budgets.begin(), budgets.end(), [](Budget * a, Budget * b) -> bool {
@@ -67,8 +86,7 @@ void BudgetPage::updateSummary()
   
   for(int i = 0; i < budgets.size(); i++) {
     Budget * budget = budgets[i];
-    text += "<td>";
-    text += tr("<h4>%1 %2</h4>").
+    text = tr("<h4>%1 %2</h4>").
       arg(budget->name).
       arg(HTTarget::linkToMember(tr("(change name)"),
                                  this, &BudgetPage::promptNewName, budget));
@@ -86,13 +104,14 @@ void BudgetPage::updateSummary()
       totalPositive += ma;
     else
       totalNegative += ma;
-    text += "</td>";
-    if((i+1) % nbcols == 0)
-      text += "</tr>\n<tr>";
+    if(budgetSummaries.size() == i)
+      newBudgetSummary();
+    budgetSummaries[i]->setText(text);
   }
-  text += "</tr></table>\n";
-
-  text += tr("<h3>Balance</h3><table>\n"
+  for(int i = budgets.size(); i < budgetSummaries.size(); i++)
+    budgetSummaries[i]->setText("");
+  
+  text = tr("<h3>Balance</h3><table>\n"
              "<tr><td>Income</td><td>%1</td></tr>\n"
              "<tr><td>Expense</td><td>%2</td></tr>\n"
              "<tr><td>Balance</td><td>%3</td></tr></table>\n").
