@@ -16,4 +16,10 @@ Collection {
         parent: "dated-doc"
         amounts: [ "amount" ]
     }
+
+    DocType {
+        name: "payslip"
+        parent: "dated-doc"
+        amounts: [ "amount" ]
+    }
 }
