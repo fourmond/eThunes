@@ -28,10 +28,20 @@ Collection {
                 var mnth = parseFrenchMonth(m[2]);
                 val["date"] = new Date(m[3], mnth, m[1]);
             }
+            else if(m = pdf["text"].match(/facture du\s+(\d+)\/(\d+)\/(\d+)/i)) {
+                val["date"] = new Date(m[3], parseInt(m[2])-1, m[1]);
+            }
             if(m = pdf["text-layout"].match(/montant\s+(non\s+)?pr..?lev..?\s+(-?)(\d+),(\d+)/i)) {
                 // print(m);
                 var v = parseInt(m[3])*100 + parseInt(m[4]);
                 if(m[2] == "-") {
+                    v = -v;
+                }
+                val["amount"] = v;
+            }
+            else if(m = pdf["text"].match(/Total TTC\s*(-)?(\d+),(\d+)/m)) {
+                var v = parseInt(m[2])*100 + parseInt(m[3]);
+                if(m[1] == "-") {
                     v = -v;
                 }
                 val["amount"] = v;
