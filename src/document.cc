@@ -90,9 +90,13 @@ AttributeHash Document::readContents() const
 
 void Document::autoDetectDocType()
 {
-  DocType * dt = DocType::autoDetectType(readContents());
-  if(dt)
+  AttributeHash contents = readContents();
+  DocType * dt = DocType::autoDetectType(contents);
+  if(dt) {
     setDocType(dt);
+    if(dt->hasParseMetaData())
+      attributes.unite(dt->parseMetaData(contents));
+  }
 }
 
 QString Document::infoText()

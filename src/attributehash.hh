@@ -118,5 +118,20 @@ public:
 
   /// @}
 
+
+  /// @name Interaction with scripts
+  ///
+  /// @{
+
+  /// Returns a QVariant suitable to represent the attributes in a
+  /// script.
+  QVariant toScript() const;
+
+  /// Creates a AttributeHash object from a JS value, presumably a
+  /// map.
+  static AttributeHash fromScript(const QVariant & value);
+
+  /// @}
+
 };
 #endif

@@ -289,3 +289,21 @@ void AttributeHash::connectEditorChanged(HandledType type, QWidget * editor,
   }
   }
 }
+
+QVariant AttributeHash::toScript() const
+{
+  QVariantMap m;
+  for(const QString & n : keys())
+    m.insert(n, (*this)[n]);
+  return QVariant::fromValue(m);
+}
+
+AttributeHash AttributeHash::fromScript(const QVariant & value)
+{
+  QVariantMap m = value.toMap();
+  AttributeHash rv;
+  for(const QString & n : m.keys())
+    rv[n] = m[n];
+  return rv;
+}
+

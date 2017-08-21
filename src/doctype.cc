@@ -48,11 +48,11 @@ QStringList DocType::documentNames()
   return namedTypes.keys();
 }
 
-void DocType::print(const QString & str)
-{
-  QTextStream o(stdout);
-  o << "[doc type: " << this << "]: " << str << endl;
-}
+// void DocType::print(const QString & str)
+// {
+//   QTextStream o(stdout);
+//   o << "[doc type: " << this << "]: " << str << endl;
+// }
 
 QString DocType::name() const
 {
@@ -212,22 +212,16 @@ bool DocType::hasIsMine() const
 int DocType::isMine(const AttributeHash & attrs)
 {
   const QMetaObject * mo = metaObject();
-  QTextStream o(stdout);
   int idx = mo->indexOfMethod("isMine(QVariant)");
-  o << name() << ", idx -> " << idx << endl;
   if(idx < 0)
     return 0;
   QMetaMethod met = mo->method(idx);
   QVariant rv = 0;
-  QVariantMap m;
-  for(const QString & n : attrs.keys())
-    m.insert(n, attrs[n]);
-  QVariant v = QVariant::fromValue(m);
+  QVariant v = attrs.toScript();
   bool r = met.invoke(this,
              Qt::DirectConnection,
              Q_RETURN_ARG(QVariant, rv),
              Q_ARG(QVariant, v));
-  o << name() << ", rv -> " << r << ", " << rv.toInt() << endl;
   return rv.toInt();
 }
 
@@ -255,7 +249,54 @@ DocType * DocType::autoDetectType(const AttributeHash & contents)
   return cur;
 }
 
+AttributeHash DocType::parseMetaData(const AttributeHash & contents)
+{
+  const QMetaObject * mo = metaObject();
+  int idx = mo->indexOfMethod("parseMetaData(QVariant)");
+  if(idx < 0)
+    return AttributeHash();
+  QMetaMethod met = mo->method(idx);
+  QVariant rv = 0;
+  QVariant v = contents.toScript();
+  bool r = met.invoke(this,
+             Qt::DirectConnection,
+             Q_RETURN_ARG(QVariant, rv),
+             Q_ARG(QVariant, v));
+  return AttributeHash::fromScript(rv);
+}
 
+
+
+static QStringList
+frenchMonths(QStringList()
+             << "janvier"
+             << "f..?vrier"
+             << "mars"
+             << "avril"
+             << "mai"
+             << "juin"
+             << "juillet"
+             << "ao..?t"
+             << "septembre"
+             << "octobre"
+             << "novembre"
+             << "d..?cembre"
+             );
+
+QString DocType::getFrenchMonthRE() const
+{
+  return frenchMonths.join("|");
+}
+
+int DocType::parseFrenchMonth(const QString & t)
+{
+  for(int i = 0; i < frenchMonths.size(); i++) {
+    QRegExp re(frenchMonths[i]);
+    if(re.indexIn(t) >= 0)
+      return i;
+  }
+  return -1;
+}
 
 
 //////////////////////////////////////////////////////////////////////

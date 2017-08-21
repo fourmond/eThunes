@@ -83,9 +83,6 @@ class DocType : public QObject {
   Collection * collection;
 
 
-  /// A helper function to print stuff to the terminal
-  // Q_INVOKABLE
-  void print(const QString & str);
 
 public:
   DocType(QObject * parent = NULL);
@@ -163,7 +160,7 @@ public:
   /// could be the given type. The highest bid gets the type.
   ///
   /// Returns 0 if the document does not support detection.
-  AttributeHash hasParseMetaData(const AttributeHash & contents);
+  AttributeHash parseMetaData(const AttributeHash & contents);
 
 
   /// @}
@@ -173,6 +170,24 @@ public:
   ///
   /// Returns the DocType found, or NULL if none was found.
   static DocType * autoDetectType(const AttributeHash & contents);
+
+  /// @name Helper for DocType JS code
+  ///
+  /// A series of helper functions to parse documents in JS code.
+  ///
+  /// @{
+
+  Q_PROPERTY(QString frenchMonthsRE READ getFrenchMonthRE)
+
+  /// Returns a RE suitable to match french months
+  QString getFrenchMonthRE() const;
+
+
+  /// Parse a french month. Returns 0 for January, etc.
+  Q_INVOKABLE int parseFrenchMonth(const QString & text);
+
+  /// @}
+
 };
 
 /// This class collects a series of DocType. It has no real purpose,
