@@ -103,8 +103,9 @@ class AttributeHashWidget : public QWidget {
 
   QSignalMapper * deleteMapper;
 
-
   QVBoxLayout * layout;
+
+  void addWidget(AttributeHashElementWidget * nw);
 
 public:
 
@@ -115,6 +116,11 @@ public:
 
   void editHash(AttributeHash * target,
                 QHash<QString, AttributeHash::HandledType> fixedAttributes);
+
+public slots:
+  void addElement();
+
+  void deleteElement(int idx);
 };
 
 

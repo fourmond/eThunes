@@ -183,7 +183,7 @@ QHash<QString, AttributeHash::HandledType> DocType::requiredAttributes()
 
 
 /// @todo This should be a little better, though it'll be OK for now !
-/// Could be QDir::addSeachPath ?
+/// Could be QDir::addSearchPath ?
 static QStringList loadPaths("/home/vincent/Prog/eThunes/collections");
 
 void DocType::loadTypes()

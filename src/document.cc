@@ -69,6 +69,7 @@ SerializationAccessor * Document::serializationAccessor()
 {
   SerializationAccessor * ac = new SerializationAccessor(this);
   ac->addScalarAttribute("name", &m_FileName);
+  ac->addAttribute("attributes", &attributes);
   addLinkAttributes(ac);
   addCategoriesSerialization(ac);
 

@@ -24,7 +24,7 @@ AttributeHashElementWidget::
 AttributeHashElementWidget(AttributeHash * tg,
                            const QString & element,
                            AttributeHash::HandledType initialType,
-                           QWidget * parent) : QWidget(parent), target(tg), valueEditor(NULL)
+                           QWidget * parent) : QWidget(parent),  valueEditor(NULL), target(tg)
 {
   currentType = AttributeHash::LastType;
   layout = new QHBoxLayout(this);
@@ -101,9 +101,11 @@ void AttributeHashElementWidget::onTypeChanged(const QString & ne)
 
 //////////////////////////////////////////////////////////////////////
 
-AttributeHashWidget::AttributeHashWidget(QWidget * parent)
+AttributeHashWidget::AttributeHashWidget(QWidget * parent) :
+  QWidget(parent)
 {
   deleteMapper = new QSignalMapper;
+  connect(deleteMapper, SIGNAL(mapped(int)), SLOT(deleteElement(int)));
   layout = new QVBoxLayout(this);
 }
 
@@ -118,7 +120,16 @@ void AttributeHashWidget::clear()
     delete ed;
   editors.clear();
 }
-                                
+
+void AttributeHashWidget::addWidget(AttributeHashElementWidget * ed)
+{
+  deleteMapper->setMapping(ed, editors.size());
+  connect(ed, SIGNAL(deletePressed()), deleteMapper, SLOT(map()));
+  connect(ed, SIGNAL(addPressed()), SLOT(addElement()));
+  editors << ed;
+  layout->addWidget(ed);
+}
+
 
 void AttributeHashWidget::editHash(AttributeHash * t,
                                    QHash<QString, AttributeHash::HandledType> fa)
@@ -132,18 +143,25 @@ void AttributeHashWidget::editHash(AttributeHash * t,
     AttributeHashElementWidget * ed =
       new AttributeHashElementWidget(target, n, t);
     ed->setLocked(true);
-    deleteMapper->setMapping(ed, editors.size());
-    editors << ed;
+    addWidget(ed);
     keys.remove(n);
-    layout->addWidget(ed);
   }
 
   for(const QString & n : keys) {
     AttributeHash::HandledType t = AttributeHash::variantType((*target)[n]);
-    AttributeHashElementWidget * ed =
-      new AttributeHashElementWidget(target, n, t);
-    deleteMapper->setMapping(ed, editors.size());
-    editors << ed;
-    layout->addWidget(ed);
+    addWidget(new AttributeHashElementWidget(target, n, t));
   }
+  if(editors.size() == 0)
+    addElement();
+}
+
+void AttributeHashWidget::deleteElement(int idx)
+{
+  delete editors[idx];
+  editors[idx] = NULL;
+}
+
+void AttributeHashWidget::addElement()
+{
+  addWidget(new AttributeHashElementWidget(target, "(new)", AttributeHash::String));
 }
