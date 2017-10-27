@@ -247,6 +247,12 @@ public:
   /// transactions.
   QList<AtomicTransaction*> allSubTransactions();
 
+  /// Remove the given subtransaction.
+  ///
+  /// Cannot be used to remove the "main" subtransaction, ie the one
+  /// == to this. (is a no-op)
+  void removeSubTransaction(AtomicTransaction * subTransaction);
+
 
   /// @name Iterators
   ///

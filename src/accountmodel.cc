@@ -314,6 +314,7 @@ bool FullTransactionItem::setData(int column, const QVariant & value,
 
 void FullTransactionItem::ensureHasChildren()
 {
+  emit(rowsChanged(this));
   if(transaction->subTransactions.size() > 0) {
     int idx = 0;
     for(Transaction::iterator i = transaction->begin();
@@ -345,6 +346,8 @@ void FullTransactionItem::onObjectInserted(const Watchdog * wd, int at, int nb)
 
 void FullTransactionItem::onObjectRemoved(const Watchdog * wd, int at, int nb)
 {
+  QTextStream o(stdout);
+  o << "object removed: " << at << " -- " << nb << endl;
   ensureHasChildren();
 }
 

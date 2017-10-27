@@ -119,7 +119,13 @@ public:
   /// Adds a link to the given Target (and add this as a link to the
   /// target too, ie the link is bidirectionnal). It is a no-op when
   /// target is NULL.
+  /// There can be only one link with the same name and same target.
   void addLink(Linkable * target, const QString & name = "");
+
+  /// Removes the given link
+  void removeLink(const Link & link);
+
+  void removeLink(Linkable * target, const QString & name = "");
 
   /// The number of named links:
   int hasNamedLinks(const QString & name) const;

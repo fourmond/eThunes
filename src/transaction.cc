@@ -149,3 +149,14 @@ QList<AtomicTransaction*> Transaction::allSubTransactions()
   return ret;
 }
 
+void Transaction::removeSubTransaction(AtomicTransaction * subTransaction)
+{
+  for(int i = 0; i < subTransactions.size(); i++) {
+    if(subTransaction == &(subTransactions[i])) {
+      subTransactions.removeAt(i);
+      break;
+    }
+  }
+}
+
+

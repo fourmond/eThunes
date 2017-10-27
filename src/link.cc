@@ -114,9 +114,11 @@ int Link::finalizePendingLinks(Cabinet * cabinet)
 
 void LinkList::addLink(Linkable * target, const QString & name)
 {
-  for(int i = 0; i < size(); i++)
-    if(value(i).linkTarget() == target)
-      return;
+  for(int i = 0; i < size(); i++) {
+    const Link & link = value(i);
+    if(link.linkTarget() == target && link.linkName == name)
+      return;                   // already done
+  }
   append(Link(target, name));
 }
 

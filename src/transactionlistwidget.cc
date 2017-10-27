@@ -180,44 +180,45 @@ void TransactionListWidget::fireUpContextMenu(const QPoint & pos)
 
   Categorizable::fillMenuWithCategorizableActions(&menu, targets);
 
-  // QMenu * subMenu = new QMenu(tr("Set category"));
-  // QAction * action = new QAction(tr("Clear"), this);
-  // action->setData(QStringList() << "set-category" << "");
-  // subMenu->addAction(action);
-  // subMenu->addSeparator();
-  // if(wallet())
-  //   fillMenuWithCategoryHash(subMenu, &wallet()->categories);
-  // menu.addMenu(subMenu);
-
-  QAction * action = new QAction(tr("Show category transactions"), this);
-  action->setData(QStringList() << "show-category");
-  menu.addAction(action);
-
-  QMenu * subMenu = new QMenu(tr("Clear tag"));
-  if(wallet()) {
-    fillMenuWithTags(subMenu, &wallet()->tags, "clear-tag");
-  }
-  menu.addMenu(subMenu);
-
-  subMenu = new QMenu(tr("Add tag"));
-  if(wallet()) {
-    fillMenuWithTags(subMenu, &wallet()->tags, "add-tag");
-  }
-  menu.addMenu(subMenu);
-
-  subMenu = new QMenu(tr("Budget"));
+  QMenu * subMenu = new QMenu(tr("Budget"));
   if(wallet())
     fillMenuWithBudgets(subMenu, wallet()->budgets.pointerList());
   menu.addMenu(subMenu);
 
-  if(true) { /// @todo add a readonly attribute ?
-    /// @todo add only for real transactions ?
-    QAction * a = new QAction(tr("Add subtransaction"), this);
-    a->setData(QStringList() << "add-sub");
-    menu.addAction(a);
+
+  // Now, we move to the "current transaction stuff"
+  
+  menu.addSeparator();
+
+  QModelIndex idx = view->indexAt(pos);
+  QModelIndex pidx = model->parent(idx);
+
+  AtomicTransaction * trs = model->indexedTransaction(idx);
+  Transaction * t = dynamic_cast<Transaction*>(trs);
+
+  QAction * action = NULL;
+
+  if(trs) { /// @todo add a readonly attribute ?
+    if(trs->baseTransaction) {
+      action = new QAction(QObject::tr("Remove subtransaction"));
+        QObject::connect(action, &QAction::triggered, [trs](bool) {
+            // trs->baseTransaction->removeSubTransaction(trs);
+            
+          }
+          );
+    }
+    else {
+      action = new QAction(QObject::tr("Add subtransaction"));
+      QObject::connect(action, &QAction::triggered, [t](bool) {
+          t->subTransactions.append(AtomicTransaction(0, t));
+        }
+        );
+    }
+    menu.addAction(action);
   }
 
   menu.addSeparator();
+
 
   
   menu.addSeparator();

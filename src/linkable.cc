@@ -34,6 +34,19 @@ void Linkable::addLink(Linkable * target, const QString & name)
   target->links.addLink(this, name);
 }
 
+void Linkable::removeLink(const Link & link)
+{
+  int idx = links.indexOf(link);
+  if(idx >= 0)
+    links.takeAt(idx);
+  if(link.linkTarget())
+    link.linkTarget()->removeLink(this, link.linkName);
+}
+
+void Linkable::removeLink(Linkable * target, const QString & name)
+{
+  removeLink(Link(target, name));
+}
 
 int Linkable::hasNamedLinks(const QString & name) const
 {
