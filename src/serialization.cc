@@ -20,7 +20,9 @@
 #include <serializable.hh>
 #include <linkable.hh>
 
-void Serialization::readNextToken(QXmlStreamReader * reader)
+#include <xmlreader.hh>
+
+void Serialization::readNextToken(XmlReader * reader)
 {
   do {
     reader->readNext();
@@ -56,7 +58,7 @@ void SerializationItem::writeXML(const QString & name,
   }
 }
 
-void SerializationItem::readXML(QXmlStreamReader * reader)
+void SerializationItem::readXML(XmlReader * reader)
 {
   readNextToken(reader);
   if(reader->isCharacters()) {
@@ -78,7 +80,7 @@ void SerializationItem::readXML(QXmlStreamReader * reader)
   }
 }
 
-void SerializationList::readXML(QXmlStreamReader * reader)
+void SerializationList::readXML(XmlReader * reader)
 {
   augment();
   readXMLElement(listSize() - 1, reader);
@@ -99,7 +101,7 @@ void SerializationList::writeXMLElement(int n, const QString & name,
   delete a;
 }
 
-void SerializationList::readXMLElement(int n, QXmlStreamReader * reader)
+void SerializationList::readXMLElement(int n, XmlReader * reader)
 {
   SerializationAccessor * a = accessorAt(n);
   a->readXML(reader);
@@ -172,7 +174,7 @@ void SerializationAccessor::writeXML(const QString & name,
 
 
 // Implementation of the XML reading
-void SerializationAccessor::readXML(QXmlStreamReader * reader)
+void SerializationAccessor::readXML(XmlReader * reader)
 {
   /// \tdexception Make it throw appropriate exceptions later on.
   if(target)
@@ -228,7 +230,7 @@ void SerializationAccessor::readXML(QXmlStreamReader * reader)
 
 
 /// A small reminder: this function is called at the start element
-void SerializationHash::readXML(QXmlStreamReader * reader)
+void SerializationHash::readXML(XmlReader * reader)
 {
   const QXmlStreamAttributes & attr = reader->attributes();
   if(! attr.hasAttribute(keyName)) {

@@ -62,7 +62,7 @@ public:
 
   // serialization stuff
   virtual void writeXML(const QString& name, QXmlStreamWriter* writer);
-  virtual void readXML(QXmlStreamReader* reader);
+  virtual void readXML(XmlReader * reader);
 
 
   /// Returns a string based on format within which the constructs

@@ -49,7 +49,7 @@ public:
     return false;
   };
 
-  virtual void readXML(QXmlStreamReader *reader) {
+  virtual void readXML(XmlReader *reader) {
     // We are at the startElement, so we read the type = attribute,
     // then we proceed !
 
@@ -124,7 +124,7 @@ public:
     it.writeXML(name, writer);
   };
 
-  virtual void readXMLElement(int n, QXmlStreamReader * reader) {
+  virtual void readXMLElement(int n, XmlReader * reader) {
     SerializationItemPointer<T> it(&target->operator[](n));
     it.readXML(reader);
   }

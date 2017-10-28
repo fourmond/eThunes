@@ -79,7 +79,8 @@ SOURCES += src/qmain.cc src/account.cc src/mainwin.cc src/actions.cc \
         src/atomictransaction.cc \
         src/categorizable.cc \
         src/documentwidget.cc \
-        src/attributehashwidget.cc
+        src/attributehashwidget.cc \
+        src/xmlreader.cc
 
 HEADERS += src/account.hh src/mainwin.hh src/actions.hh \
            src/ofximport.hh src/accountmodel.hh \
@@ -134,7 +135,8 @@ HEADERS += src/account.hh src/mainwin.hh src/actions.hh \
            src/atomictransaction.hh \
            src/categorizable.hh \
            src/documentwidget.hh \
-           src/attributehashwidget.hh
+           src/attributehashwidget.hh \
+           src/xmlreader.hh
 
 
 

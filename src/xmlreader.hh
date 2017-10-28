@@ -1,6 +1,7 @@
-/*
-    serializable.cc: Infrastructure for data serialization
-    Copyright 2010, 2012 by Vincent Fourmond
+/**
+    \file link.hh
+    Thin wrapper around QXmlReader for purposes of progress report
+    Copyright 2017 by Vincent Fourmond
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -16,34 +17,21 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <serializable.hh>
-#include <exceptions.hh>
 
-Serializable::Serializable()
-{
-}
+#ifndef __XMLREADER_HH
+#define __XMLREADER_HH
 
-SerializationAccessor * Serializable::serializationAccessor()
-{
-  return new SerializationAccessor(this);
-}
+/// This class is a thin wrapper around QXmlStreamReader that allows
+/// running hooks every given fraction of the total stream.
+class XmlReader : public QXmlStreamReader {
+public:
 
-void Serializable::writeXML(const QString & name, QXmlStreamWriter * writer)
-{
-  SerializationAccessor * ac = serializationAccessor();
-  ac->writeXML(name, writer);
-  delete ac;
-}
+  XmlReader(const QString & str);
+  XmlReader(QIODevice *device);
 
-void Serializable::readXML(XmlReader * reader)
-{
-  SerializationAccessor * ac = serializationAccessor();
-  ac->readXML(reader);
-  delete ac;
-}
-
-Serializable::~Serializable()
-{
-}
+  QXmlStreamReader::TokenType readNext();
+  
+};
 
 
+#endif

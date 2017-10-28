@@ -22,6 +22,7 @@
 #define __SERIALIZATION_HH
 
 class Serializable;
+class XmlReader;
 template <class T> class WatchableList;
 
 namespace Serialization {
@@ -31,7 +32,7 @@ namespace Serialization {
   /// \todo The downside of this approach is that we can't save pure
   /// whitespace, unless it is written as CDATA. (then make writeXML
   /// write CDATA if non-empty whitespace and here check for CDATA...)
-  void readNextToken(QXmlStreamReader * reader);
+  void readNextToken(XmlReader * reader);
 };
 
 /// This class handles the very basic thing which we expect from a
@@ -53,7 +54,7 @@ public:
 
   /// Reads from the given XML stream into the attributes. It assumes
   /// that the reader is at the startElement stuff.
-  virtual void readXML(QXmlStreamReader * reader) = 0;
+  virtual void readXML(XmlReader * reader) = 0;
 
   /// Whether the given attribute could be written as XML attribute
   ///
@@ -107,7 +108,7 @@ public:
 
   /// Reads from the given XML stream into the attributes. It assumes
   /// that the reader is at the startElement stuff.
-  virtual void readXML(QXmlStreamReader * reader);
+  virtual void readXML(XmlReader * reader);
 
   virtual bool isXMLAttribute() { return isAttribute;};
 
@@ -161,14 +162,14 @@ public:
   /// that the reader is at the startElement stuff. It only reads
   /// *one* element of the list, but that doesn't matter, as it can be
   /// called hundreds of times ;-)...
-  virtual void readXML(QXmlStreamReader * reader);
+  virtual void readXML(XmlReader * reader);
 
   /// Write the numbered element to the stream
   virtual void writeXMLElement(int n, const QString & name, 
                                QXmlStreamWriter * writer);
 
   /// Reads the numbered element from stream
-  virtual void readXMLElement(int n, QXmlStreamReader * reader);
+  virtual void readXMLElement(int n, XmlReader * reader);
 };
 
 /// This abstract class describes a QString-based hash of objects:
@@ -219,7 +220,7 @@ public:
   /// Reads from the given XML stream into the attributes. It assumes
   /// that the reader is at the startElement stuff. It only reads
   /// *one* element of the hash.
-  virtual void readXML(QXmlStreamReader * reader);
+  virtual void readXML(XmlReader * reader);
 
 };
 
@@ -339,13 +340,13 @@ public:
   /// \todo XML attributes for certain tags.
   void writeXML(const QString & name, QXmlStreamWriter * writer);
 
-  /// Read from a QXmlStreamReader and sets the target. This function
+  /// Read from a XmlReader and sets the target. This function
   /// assumes that the current token is the StartElement token whose
   /// name is the one given as second argument to writeXML.
   ///
   /// It is expected that the final state of the reader is the element
   /// *just after* the EndElement
-  void readXML(QXmlStreamReader * reader);
+  void readXML(XmlReader * reader);
 };
 
 

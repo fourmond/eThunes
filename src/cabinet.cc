@@ -19,7 +19,10 @@
 #include <headers.hh>
 #include <cabinet.hh>
 #include <plugin.hh>
+#include <xmlreader.hh>
+
 #include <serializable-pointers.hh>
+
 
 Cabinet * Cabinet::theCabinet = NULL;
 
@@ -79,7 +82,7 @@ void Cabinet::loadFromFile(const QString &name)
   QFile file(name);
   QTextStream o(stdout);
   file.open(QIODevice::ReadOnly);
-  QXmlStreamReader w(&file);
+  XmlReader w(&file);
 
   /// @todo This should move either to Utils or as a static
   /// Serialization function.

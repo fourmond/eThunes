@@ -20,6 +20,7 @@
 #include <attributehash.hh>
 
 #include <transaction.hh>
+#include <xmlreader.hh>
 
 const char * AttributeHash::typeNames[] = {
   "string", "number", "time", 0
@@ -74,7 +75,7 @@ void AttributeHash::writeXML(const QString& name,
   }
 }
 
-void AttributeHash::readXML(QXmlStreamReader* reader)
+void AttributeHash::readXML(XmlReader * reader)
 {
   // Once again, this function only reads one element; assumes to be
   // just at the beginning of the element.

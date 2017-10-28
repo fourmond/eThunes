@@ -1,6 +1,6 @@
 /*
-    serializable.cc: Infrastructure for data serialization
-    Copyright 2010, 2012 by Vincent Fourmond
+    xmlreader.cc: implementation of XmlReader
+    Copyright 2017 by Vincent Fourmond
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -16,34 +16,22 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <serializable.hh>
-#include <exceptions.hh>
+#include <headers.hh>
+#include <xmlreader.hh>
 
-Serializable::Serializable()
+XmlReader::XmlReader(const QString & str) :
+  QXmlStreamReader(str)
 {
 }
 
-SerializationAccessor * Serializable::serializationAccessor()
+XmlReader::XmlReader(QIODevice * device) :
+  QXmlStreamReader(device)
 {
-  return new SerializationAccessor(this);
 }
 
-void Serializable::writeXML(const QString & name, QXmlStreamWriter * writer)
+QXmlStreamReader::TokenType XmlReader::readNext()
 {
-  SerializationAccessor * ac = serializationAccessor();
-  ac->writeXML(name, writer);
-  delete ac;
-}
-
-void Serializable::readXML(XmlReader * reader)
-{
-  SerializationAccessor * ac = serializationAccessor();
-  ac->readXML(reader);
-  delete ac;
-}
-
-Serializable::~Serializable()
-{
+  return QXmlStreamReader::readNext();
 }
 
 

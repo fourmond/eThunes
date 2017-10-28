@@ -23,6 +23,7 @@
 #include <serialization.hh>
 #include <watchable.hh>
 
+class XmlReader;
 
 /// All classes that should be serialized at some point should include
 /// this class in their ancestry (but not necessarily as first
@@ -87,7 +88,7 @@ public:
 
 
   /// Reads the Serializable object from the reader.
-  virtual void readXML(QXmlStreamReader * reader);
+  virtual void readXML(XmlReader * reader);
 
   /// @}
 

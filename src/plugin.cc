@@ -20,6 +20,7 @@
 #include <plugin.hh>
 #include <navigationwidget.hh>
 
+#include <xmlreader.hh>
 
 PluginDefinition::PluginDefinition(Creator c,
                                    const QString & pub, const QString & desc,
@@ -186,7 +187,9 @@ QString Plugin::writeAsString()
 
 void Plugin::readFromString(const QString & str)
 {
-  QXmlStreamReader xIn(str);
+  /// @todo This should be done using QXmlStreamReader::skipElement,
+  /// rather than the cumbersome CDATA hack.
+  XmlReader xIn(str);
   Serialization::readNextToken(&xIn);
   while(! ((xIn.isStartElement() && xIn.name() == "data") || 
            xIn.atEnd()))
