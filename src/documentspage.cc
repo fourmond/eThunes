@@ -146,9 +146,20 @@ void DocumentsPage::treeViewContextMenu(const QPoint & pos)
   }
   Categorizable::fillMenuWithCategorizableActions(&menu, targets);
 
+  
+
+  menu.addSeparator();
   // Now fill with types !
   fillWithDocTypes(&menu, docs);
-  
+
+  menu.addSeparator();
+
+  QModelIndex idx = treeView->indexAt(pos);
+  if(! model->isDir(idx)) {
+    Document * doc = model->modifiableDocument(idx);
+    doc->fillMenuWithLinkableActions(&menu);
+  }
+
   menu.exec(treeView->viewport()->mapToGlobal(pos));
 }
 

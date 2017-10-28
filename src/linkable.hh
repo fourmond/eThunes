@@ -125,7 +125,7 @@ public:
   /// Remove the given named linked to the target, or, if the name
   /// is empty, then all links to the given target.
   ///
-  /// Returns the number of links removed;
+  /// Returns the number of links removed.
   int removeLink(Linkable * target, const QString & name = "");
 
   /// The number of named links:
