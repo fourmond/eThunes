@@ -20,7 +20,6 @@
 #include <wallet.hh>
 #include <periodic.hh>
 
-
 Wallet::Wallet()
 {
   watchChild(&accounts, "accounts");
@@ -58,29 +57,6 @@ SerializationAccessor * Wallet::serializationAccessor()
   ac->addListAttribute("filter", &filters);
   ac->addListAttribute("budget", &budgets);
   return ac;
-}
-
-void Wallet::saveToFile(QString fileName)
-{
-  QFile file(fileName);
-  file.open(QIODevice::WriteOnly);
-  QXmlStreamWriter w(&file);
-  w.setAutoFormatting(true);
-  w.setAutoFormattingIndent(2);
-  w.writeStartDocument();
-  writeXML("wallet", &w);
-  w.writeEndDocument();
-}
-
-
-void Wallet::loadFromFile(QString fileName)
-{
-  QFile file(fileName);
-  file.open(QIODevice::ReadOnly);
-  QXmlStreamReader w(&file);
-  while(! w.isStartElement() && ! w.atEnd())
-    w.readNext();
-  readXML(&w);
 }
 
 void Wallet::clearContents()

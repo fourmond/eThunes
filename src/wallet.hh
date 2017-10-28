@@ -100,12 +100,6 @@ public:
 
   virtual SerializationAccessor * serializationAccessor();
 
-  /// Saves the Wallet into the named file.
-  void saveToFile(QString fileName);
-
-  /// Loads a Wallet from the given file
-  void loadFromFile(QString fileName);
-
   /// Clears the contents of the Wallet (such as before loading ;-)...
   void clearContents();
 
