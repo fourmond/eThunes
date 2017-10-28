@@ -94,6 +94,10 @@ public:
     return amount;
   };
 
+  void setAmount(int amnt) {
+    setAttribute(amount, amnt, "amount");
+  }
+
   virtual int getTotalAmount() const {
     return amount;
   };

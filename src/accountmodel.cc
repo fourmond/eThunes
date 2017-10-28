@@ -70,6 +70,8 @@ static QVariant transactionData(AtomicTransaction * t,
   if(role == Qt::EditRole) {
     switch(column) {
     case AccountModel::CommentColumn: return t->getComment();
+    case AccountModel::AmountColumn: 
+      return t->getAmount();
     default:
       return QVariant();
     }
@@ -158,7 +160,12 @@ static Qt::ItemFlags transactionFlags(AtomicTransaction * t,
   case AccountModel::CommentColumn:
     return Qt::ItemIsSelectable|
       Qt::ItemIsEnabled|Qt::ItemIsEditable;
-  default: return Qt::ItemIsSelectable|
+  case AccountModel::AmountColumn:
+    if(t->baseTransaction)
+      return Qt::ItemIsSelectable|
+        Qt::ItemIsEnabled|Qt::ItemIsEditable;
+  default:
+    return Qt::ItemIsSelectable|
       Qt::ItemIsEnabled;
   }
   return 0;
@@ -213,6 +220,12 @@ bool LeafTransactionItem::setData(int column, const QVariant & value,
   case AccountModel::CommentColumn:
     if(role == Qt::EditRole) {
       t->setComment(value.toString());
+      emit(itemChanged(this, column, column));
+      return true;
+    }
+  case AccountModel::AmountColumn:
+    if(role == Qt::EditRole) {
+      t->setAmount(value.toInt());
       emit(itemChanged(this, column, column));
       return true;
     }
