@@ -122,10 +122,11 @@ public:
   /// There can be only one link with the same name and same target.
   void addLink(Linkable * target, const QString & name = "");
 
-  /// Removes the given link
-  void removeLink(const Link & link);
-
-  void removeLink(Linkable * target, const QString & name = "");
+  /// Remove the given named linked to the target, or, if the name
+  /// is empty, then all links to the given target.
+  ///
+  /// Returns the number of links removed;
+  int removeLink(Linkable * target, const QString & name = "");
 
   /// The number of named links:
   int hasNamedLinks(const QString & name) const;
@@ -143,6 +144,12 @@ public:
   /// in an itemmodel
   QVariant linksData(int role);
 
+  /// Fills a menu with link-related actions concerning the object.
+  ///
+  /// Note that, unlike
+  /// Categorizable::fillMenuWithCategorizableActions, it is not a
+  /// static function, because there is only one target.
+  void fillMenuWithLinkableActions(QMenu *menu);
 };
 
 #endif

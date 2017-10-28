@@ -215,6 +215,8 @@ void TransactionListWidget::fireUpContextMenu(const QPoint & pos)
         );
     }
     menu.addAction(action);
+
+    trs->fillMenuWithLinkableActions(&menu);
   }
 
   menu.addSeparator();

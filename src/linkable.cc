@@ -34,18 +34,21 @@ void Linkable::addLink(Linkable * target, const QString & name)
   target->links.addLink(this, name);
 }
 
-void Linkable::removeLink(const Link & link)
+int Linkable::removeLink(Linkable * target, const QString & name)
 {
-  int idx = links.indexOf(link);
-  if(idx >= 0)
-    links.takeAt(idx);
-  if(link.linkTarget())
-    link.linkTarget()->removeLink(this, link.linkName);
-}
-
-void Linkable::removeLink(Linkable * target, const QString & name)
-{
-  removeLink(Link(target, name));
+  int nb = 0;
+  for(int i = 0; i < links.size(); i++) {
+    const Link & lnk = links[i];
+    if(lnk.linkTarget() == target) {
+      if(name.isEmpty() || name == lnk.linkName) {
+        QString name = lnk.linkName;
+        links.takeAt(i--);
+        nb++;
+        lnk.linkTarget()->removeLink(this, name);
+      }
+    }
+  }
+  return nb;
 }
 
 int Linkable::hasNamedLinks(const QString & name) const
@@ -186,4 +189,18 @@ QVariant Linkable::linksData(int role)
     break;
   }
   return QVariant();
+}
+
+void Linkable::fillMenuWithLinkableActions(QMenu *menu)
+{
+  QMenu * sub = new QMenu(QObject::tr("Remove links"));
+  for(Link lnk : links) {
+    QAction * a = new QAction(lnk.linkTarget()->publicLinkName());
+    QObject::connect(a, &QAction::triggered, [lnk, this](bool) {
+        removeLink(lnk.linkTarget(), lnk.linkName);
+      }
+      );
+    sub->addAction(a);
+  }
+  menu->addMenu(sub);
 }
