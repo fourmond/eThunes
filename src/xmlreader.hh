@@ -24,13 +24,22 @@
 /// This class is a thin wrapper around QXmlStreamReader that allows
 /// running hooks every given fraction of the total stream.
 class XmlReader : public QXmlStreamReader {
+
+  qint64 totalSize;
+
+  qint64 last;
+  qint64 delta;
+
+  
 public:
 
   XmlReader(const QString & str);
   XmlReader(QIODevice *device);
 
   QXmlStreamReader::TokenType readNext();
-  
+
+  std::function <void (double frac) > hook;
+
 };
 
 

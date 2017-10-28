@@ -20,18 +20,27 @@
 #include <xmlreader.hh>
 
 XmlReader::XmlReader(const QString & str) :
-  QXmlStreamReader(str)
+  QXmlStreamReader(str), last(0)
 {
+  totalSize = str.size();
+  delta = totalSize / 100 + 1;
 }
 
 XmlReader::XmlReader(QIODevice * device) :
-  QXmlStreamReader(device)
+  QXmlStreamReader(device), last(0)
 {
+  totalSize = device->size();
+  delta = totalSize / 100 + 1;
 }
 
 QXmlStreamReader::TokenType XmlReader::readNext()
 {
-  return QXmlStreamReader::readNext();
+  QXmlStreamReader::TokenType t = QXmlStreamReader::readNext();
+  qint64 cur = characterOffset();
+  if(hook && last/delta < cur/delta)
+    hook(cur*1.0/totalSize);
+  last = cur;
+  return t;
 }
 
 

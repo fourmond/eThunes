@@ -89,6 +89,15 @@ void Cabinet::loadFromFile(const QString &name)
   while(! w.isStartElement() && ! w.atEnd())
     w.readNext();
   filePath = name;
+
+  QProgressDialog p(tr("Opening %1").arg(name), "Cancel", 0, 100);
+  p.setMinimumDuration(1000);
+  w.hook = [&o, &p, name](double frac) {
+    p.setValue(frac*100);
+    QCoreApplication::processEvents(QEventLoop::AllEvents, 10);
+  };
+  p.setValue(100);
+  
   readXML(&w);
   emit(filenameChanged(filePath));
   setDirty(false);

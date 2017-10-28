@@ -67,6 +67,7 @@
 #include <QColorDialog>
 #include <QMessageBox>
 #include <QDialogButtonBox>
+#include <QProgressDialog>
 
 #include <QSpinBox>
 
