@@ -327,7 +327,9 @@ bool FullTransactionItem::setData(int column, const QVariant & value,
 
 void FullTransactionItem::ensureHasChildren()
 {
-  emit(rowsChanged(this));
+  int size = children.size();
+  int ns = transaction->subTransactions.size() + 1;
+  emit(rowsWillChange(this, 0, ns-size));
   if(transaction->subTransactions.size() > 0) {
     int idx = 0;
     for(Transaction::iterator i = transaction->begin();
@@ -343,6 +345,7 @@ void FullTransactionItem::ensureHasChildren()
       ++idx;
     }
   }
+  emit(rowsChanged(this));
 }
 
 void FullTransactionItem::onAttributeChanged(const Watchdog * wd, const QString &name)
