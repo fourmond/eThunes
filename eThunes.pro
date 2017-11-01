@@ -23,6 +23,16 @@ PRECOMPILED_HEADER = src/headers.hh
 MOC_DIR = build
 OBJECTS_DIR = build
 
+# Activate the gcc address sanitizer by passing a CONFIG+=sanitizer
+# argument to qmake
+sanitizer {
+  OBJECTS_DIR = build-snt
+  QMAKE_CXXFLAGS += -fno-omit-frame-pointer -fsanitize=address
+  LIBS += -lasan
+  TARGET = $$join(TARGET,,,-snt)
+}
+
+
 # Really, this should be the default, since it means segfault in the
 # best case
 QMAKE_CXXFLAGS += -Werror=return-type 
