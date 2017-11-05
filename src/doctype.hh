@@ -24,6 +24,9 @@
 #include <attributehash.hh>
 
 class Collection;
+class Period;
+class AtomicTransaction;
+class Document;
 
 /// This class defines the type of a document.
 class DocType : public QObject {
@@ -170,6 +173,33 @@ public:
   ///
   /// Returns the DocType found, or NULL if none was found.
   static DocType * autoDetectType(const AttributeHash & contents);
+
+
+
+  /// @name Transaction-matching capacities
+  ///
+  /// These functions can be used to find an AtomicTransaction that
+  /// matches a Document whose type is the DocType.
+  ///
+  /// @todo These could be implemented in JS, instead of using the
+  /// default implementation.
+  ///
+  /// @{
+
+  /// Returns the score for the match between the given transaction
+  /// and the given document.
+  ///
+  /// The higher the score, the more likely the document corresponds.
+  ///
+  /// By default, the score will be non-zero only if the amount is
+  /// right (in absolute value), and will decrease with the dinstance
+  /// in time.
+  int scoreForTransaction(Document * doc, AtomicTransaction * tr) const;
+
+  /// Returns the date range in which a matching transaction could be
+  /// found.
+  Period relevantDateRange(Document * doc) const;
+  /// @}
 
   /// @name Helper for DocType JS code
   ///
