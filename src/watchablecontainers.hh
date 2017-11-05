@@ -101,6 +101,20 @@ public:
     objectRemoved(i, 1);
   };
 
+  virtual T takeAt(int i) {
+    T rv = at(i);
+    removeAt(i);
+    return rv;
+  }
+
+  typename QList<T>::iterator begin() {
+    return data.begin();
+  };
+
+  typename QList<T>::iterator end() {
+    return data.end();
+  };
+
   /// Appends. We make it a virtual function
   virtual void append(const T& d) {
     data.append(d);

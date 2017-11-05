@@ -38,8 +38,15 @@ void Watchdog::catchChange(const Watchdog * source)
 {
   QHash<const Watchdog*, QString>::const_iterator i = 
     watchedChildren.find(source);
-  if(i != watchedChildren.end())
+  // QTextStream o(stdout);
+  // o << "catchChange for " << this
+  //   << "(" << typeid(this).name() << ") from " << source
+  //   << "(" << typeid(source).name() << ")"
+  //   << endl;
+  if(i != watchedChildren.end()) {
     emit(attributeChanged(this, i.value()));
+    // o << " -> " << i.value() << endl;
+  }
 }
 
 void Watchdog::watchChild(const Watchable* child, 

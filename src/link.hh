@@ -22,6 +22,7 @@
 #define __LINK_HH
 
 #include <serializable.hh>
+#include <watchablecontainers.hh>
 
 class Linkable;
 class Cabinet;
@@ -68,7 +69,7 @@ protected:
 
 
 /// A list of links.
-class LinkList : public QList<Link> {
+class LinkList : public WatchedList<Link> {
 public:
   /// Adds a link to the given target, making sure there are no
   /// duplicates.

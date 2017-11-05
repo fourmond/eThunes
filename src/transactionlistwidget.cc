@@ -203,7 +203,6 @@ void TransactionListWidget::fireUpContextMenu(const QPoint & pos)
       action = new QAction(QObject::tr("Remove subtransaction"));
         QObject::connect(action, &QAction::triggered, [trs](bool) {
             // trs->baseTransaction->removeSubTransaction(trs);
-            
           }
           );
     }

@@ -23,6 +23,7 @@
 
 class Serializable;
 class XmlReader;
+template <class T> class WatchedList;
 template <class T> class WatchableList;
 
 namespace Serialization {
@@ -293,6 +294,10 @@ public:
   template <class T> 
   void addListAttribute(const QString & name,
                         QList<T> * target);
+
+  template <class T> 
+  void addListAttribute(const QString & name,
+                        WatchedList<T> * target);
 
   template <class T> 
   void addListAttribute(const QString & name,

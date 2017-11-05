@@ -65,6 +65,7 @@ QHash<int, QSet<Linkable * > > * Linkable::targets = NULL;
 Linkable::Linkable() : objectID(-1)
 {
   // No need to register
+  watchChild(&links, "links");
 }
 
 Linkable::~Linkable()
@@ -75,6 +76,7 @@ Linkable::~Linkable()
 Linkable::Linkable(const Linkable & o) : 
   objectID(o.objectID), links(o.links)
 {
+  watchChild(&links, "links");
   registerSelf();
 }
 

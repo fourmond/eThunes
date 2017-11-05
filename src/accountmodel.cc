@@ -350,20 +350,22 @@ void FullTransactionItem::ensureHasChildren()
 
 void FullTransactionItem::onAttributeChanged(const Watchdog * wd, const QString &name)
 {
+  // QTextStream o(stdout);
+  // o << "attribute change: " << this << " -- " << name << endl;
   // What to do here ?
 }
 
 void FullTransactionItem::onObjectInserted(const Watchdog * wd, int at, int nb)
 {
-  QTextStream o(stdout);
-  o << "object inserted: " << at << " -- " << nb << endl;
+  // QTextStream o(stdout);
+  // o << "object inserted: " << at << " -- " << nb << endl;
   ensureHasChildren();
 }
 
 void FullTransactionItem::onObjectRemoved(const Watchdog * wd, int at, int nb)
 {
-  QTextStream o(stdout);
-  o << "object removed: " << at << " -- " << nb << endl;
+  // QTextStream o(stdout);
+  // o << "object removed: " << at << " -- " << nb << endl;
   ensureHasChildren();
 }
 

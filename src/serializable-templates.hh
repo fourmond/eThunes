@@ -131,6 +131,15 @@ SerializationAccessor::addListAttribute(const QString & name,
 
 template <class T> void 
 SerializationAccessor::addListAttribute(const QString & name,
+                                        WatchedList<T> * target)
+{
+  addAttribute(name, 
+               new SerializationTemplateList<T, WatchedList<T> >(target));
+}
+
+
+template <class T> void 
+SerializationAccessor::addListAttribute(const QString & name,
                                         WatchableList<T> * target)
 {
   addAttribute(name, 
