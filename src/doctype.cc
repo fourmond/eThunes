@@ -115,6 +115,14 @@ QStringList DocType::dateFields() const
   return m_Dates;
 }
 
+QStringList DocType::allDateFields() const
+{
+  QStringList p;
+  if(parent)
+    p = parent->allDateFields();
+  return p + m_Dates;
+}
+
 void DocType::setDateFields(const QStringList & n)
 {
   m_Dates = n;
@@ -133,6 +141,15 @@ void DocType::setStringFields(const QStringList & n)
 QStringList DocType::amountFields() const
 {
   return m_Amounts;
+}
+
+
+QStringList DocType::allAmountFields() const
+{
+  QStringList p;
+  if(parent)
+    p = parent->allAmountFields();
+  return p + m_Amounts;
 }
 
 void DocType::setAmountFields(const QStringList & n)
@@ -311,7 +328,7 @@ int DocType::scoreForTransaction(const Document * doc,
   if(! p.isValid())
     return 0;
 
-  for(const QString & n : m_Amounts) {
+  for(const QString & n : allAmountFields()) {
     if(doc->attributes.contains(n) &&
        doc->attributes[n].canConvert(QMetaType::Int)) {
       int amount = doc->attributes[n].toInt();
@@ -327,7 +344,7 @@ Period DocType::relevantDateRange(const Document * doc) const
   /// @todo Delegate that to the type if the correct function exists.
   
   // We look for the first date available date in dateFields)
-  for(const QString & n : m_Dates) {
+  for(const QString & n : allDateFields()) {
     if(doc->attributes.contains(n) &&
        doc->attributes[n].canConvert(QMetaType::QDate))
       return Period(doc->attributes[n].toDate(), daysBefore, daysAfter);

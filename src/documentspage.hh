@@ -27,6 +27,7 @@ class Cabinet;
 class DocumentsModel;
 class Document;
 class DocumentWidget;
+class AtomicTransaction;
 
 /// This NavigationPage displays the informations about documentss
 class DocumentsPage : public NavigationPage {
@@ -52,6 +53,10 @@ protected:
   DocumentWidget * documentWidget;
 
   QList<Document*> selectedDocuments();
+
+protected:
+  /// Looks for a transaction matching the given document.
+  AtomicTransaction * findMatchingTransaction(const Document * doc);
 
 public:
 

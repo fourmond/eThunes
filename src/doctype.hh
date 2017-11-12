@@ -108,12 +108,14 @@ public:
   void setInfoFormat(const QString & name);
 
   QStringList dateFields() const;
+  QStringList allDateFields() const;
   void setDateFields(const QStringList & df);
 
   QStringList stringFields() const;
   void setStringFields(const QStringList & df);
 
   QStringList amountFields() const;
+  QStringList allAmountFields() const;
   void setAmountFields(const QStringList & df);
 
   QString parentName() const;

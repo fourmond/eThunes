@@ -23,6 +23,7 @@
 #include <documentsmodel.hh>
 #include <doctype.hh>
 
+#include <atomictransaction.hh>
 #include <documentwidget.hh>
 #include <accountmodel.hh>
 
@@ -74,6 +75,30 @@ DocumentsPage::~DocumentsPage()
 {
 }
 
+AtomicTransaction * DocumentsPage::findMatchingTransaction(const Document * doc)
+{
+  QTextStream o(stdout);
+  Period p = doc->relevantDateRange();
+  o << "Looking for transactions for " << doc 
+    << "\n -> " << p.startDate.toString()
+    << " -> " << p.endDate.toString()
+    << "\n ---- " << doc->docType() <<  endl;
+  
+  if(! p.isValid())
+    return NULL;
+  TransactionPtrList trs = cabinet->wallet.transactionsForPeriod(p);
+  AtomicTransaction * rv = NULL;
+  int score = 0;
+  for(AtomicTransaction * t : trs) {
+    int s = doc->scoreForTransaction(t);
+    if(s > score) {
+      score = s;
+      rv = t;
+    }
+  }
+  return rv;
+}
+
 QString DocumentsPage::pageTitle()
 {
   return tr("Documents");
@@ -92,9 +117,15 @@ QList<Document*> DocumentsPage::selectedDocuments()
 {
   QList<Document *> sels;
   QModelIndexList lst = treeView->selectionModel()->selectedIndexes();
+  QSet<Document*> alreadyIn;
   for(QModelIndex idx : lst) {
-    if(! model->isDir(idx))
-      sels << model->modifiableDocument(idx);
+    if(! model->isDir(idx)) {
+      Document * doc = model->modifiableDocument(idx);
+      if(! alreadyIn.contains(doc)) {
+        alreadyIn.insert(doc);
+        sels << doc;
+      }
+    }
   }
   // QTextStream o(stdout);
   // for(auto a : sels)
@@ -160,7 +191,23 @@ void DocumentsPage::treeViewContextMenu(const QPoint & pos)
     doc->fillMenuWithLinkableActions(&menu);
   }
 
+
+  menu.addSeparator();
+
+  QAction * a = new QAction(tr("Find matching transactions"));
+  QObject::connect(a, &QAction::triggered, [this, docs](bool) {
+      for(Document * d : docs) {
+        AtomicTransaction * t = findMatchingTransaction(d);
+        if(t)
+          t->addLink(d, "document");
+      }
+    }
+    );
+
+  menu.addAction(a);
+
   menu.exec(treeView->viewport()->mapToGlobal(pos));
+
 }
 
 
