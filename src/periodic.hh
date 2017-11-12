@@ -33,6 +33,9 @@ public:
   /// End of the period
   QDate endDate;
 
+  Period();
+  Period(const QDate & date, int daysBefore, int daysAfter); 
+
   /// Returns true if the given date is within the period
   bool contains(const QDate & date) const;
 

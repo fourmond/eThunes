@@ -19,6 +19,9 @@
 #include <headers.hh>
 #include <doctype.hh>
 
+#include <document.hh>
+#include <periodic.hh>
+#include <atomictransaction.hh>
 #include <attributehash.hh>
 
 
@@ -29,7 +32,8 @@ QHash<QString, DocType*> DocType::namedTypes;
 QQmlEngine * DocType::engine;
 
 DocType::DocType(QObject * parent) : QObject(parent),
-                                     parent(NULL), collection(NULL)
+                                     parent(NULL), collection(NULL),
+                                     daysBefore(10), daysAfter(20)
 {
 }
 
@@ -297,6 +301,40 @@ int DocType::parseFrenchMonth(const QString & t)
   }
   return -1;
 }
+
+
+// Very basic transaction matching
+int DocType::scoreForTransaction(const Document * doc,
+                                 AtomicTransaction * tr) const
+{
+  Period p = relevantDateRange(doc);
+  if(! p.isValid())
+    return 0;
+
+  for(const QString & n : m_Amounts) {
+    if(doc->attributes.contains(n) &&
+       doc->attributes[n].canConvert(QMetaType::Int)) {
+      int amount = doc->attributes[n].toInt();
+      if(amount == tr->getAmount() || amount + tr->getAmount() == 0)
+        return 100;
+    }
+  }
+  return 0;
+}
+ 
+Period DocType::relevantDateRange(const Document * doc) const
+{
+  /// @todo Delegate that to the type if the correct function exists.
+  
+  // We look for the first date available date in dateFields)
+  for(const QString & n : m_Dates) {
+    if(doc->attributes.contains(n) &&
+       doc->attributes[n].canConvert(QMetaType::QDate))
+      return Period(doc->attributes[n].toDate(), daysBefore, daysAfter);
+  }
+  return Period();
+}
+
 
 
 //////////////////////////////////////////////////////////////////////

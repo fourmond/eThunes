@@ -86,6 +86,12 @@ class DocType : public QObject {
   Collection * collection;
 
 
+  /// Attributes for date matching.
+  /// @todo Should be settable from the QML source
+  int daysBefore;
+  int daysAfter;
+
+
 
 public:
   DocType(QObject * parent = NULL);
@@ -194,11 +200,11 @@ public:
   /// By default, the score will be non-zero only if the amount is
   /// right (in absolute value), and will decrease with the dinstance
   /// in time.
-  int scoreForTransaction(Document * doc, AtomicTransaction * tr) const;
+  int scoreForTransaction(const Document * doc, AtomicTransaction * tr) const;
 
   /// Returns the date range in which a matching transaction could be
   /// found.
-  Period relevantDateRange(Document * doc) const;
+  Period relevantDateRange(const Document * doc) const;
   /// @}
 
   /// @name Helper for DocType JS code

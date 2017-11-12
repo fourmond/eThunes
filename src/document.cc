@@ -21,6 +21,7 @@
 #include <doctype.hh>
 
 #include <cabinet.hh>
+#include <periodic.hh>
 #include <pdftools.hh>
 
 
@@ -104,4 +105,18 @@ QString Document::infoText()
   if(! m_DocType)
     return QString();
   return attributes.formatString(m_DocType->infoFormat());
+}
+
+int Document::scoreForTransaction(AtomicTransaction * tr) const
+{
+  if(! m_DocType)
+    return 0;
+  return m_DocType->scoreForTransaction(this, tr);
+}
+
+Period Document::relevantDateRange() const
+{
+  if(! m_DocType)
+    return Period();
+  return m_DocType->relevantDateRange(this);
 }

@@ -22,6 +22,15 @@
 #include <serialization.hh>
 #include <utils.hh>
 
+Period::Period()
+{
+}
+
+Period::Period(const QDate & date, int daysBefore, int daysAfter) :
+  startDate(date.addDays(-daysBefore)), endDate(date.addDays(daysAfter))
+{
+}
+
 bool Period::contains(const QDate & date) const
 {
   return (startDate <= date) && (date <= endDate);

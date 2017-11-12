@@ -27,6 +27,8 @@
 #include <categorizable.hh>
 
 class DocType;
+class AtomicTransaction;
+class Period;
 
 /// This class represents a single document.
 class Document : public Linkable, public Categorizable {
@@ -93,6 +95,14 @@ public:
   QString docTypeName() const;
 
   virtual SerializationAccessor * serializationAccessor() override;
+
+  /// @Name Transaction-matching capacities
+  ///
+  /// Delegate to the underlying DocType
+  /// @{
+  int scoreForTransaction(AtomicTransaction * tr) const;
+  Period relevantDateRange() const;
+  /// @}
 
   
   
