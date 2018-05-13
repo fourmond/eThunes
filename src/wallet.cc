@@ -66,6 +66,20 @@ void Wallet::clearContents()
   categories.clear();
 }
 
+int Wallet::firstMonthID() const
+{
+  int fm = -1;
+  for(int i = 0; i < accounts.size(); i++) {
+    int nm = accounts[i].firstMonthID();
+    if(fm < 0)
+      fm = nm;
+    else {
+      if(nm > 0 && fm > nm)
+        fm = nm;
+    }
+  }
+  return fm;
+}
 
 Wallet * Wallet::walletCurrentlyRead = NULL;
 

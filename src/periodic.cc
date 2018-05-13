@@ -73,12 +73,25 @@ Period Period::intersect(const Period & other) const
   return rv;
 }
 
-Period Period::currentYear()
+Period Period::unite(const Period & other) const
 {
   Period rv;
+  rv.startDate = std::min(other.startDate, startDate);
+  rv.endDate = std::max(other.endDate, endDate);
+  return rv;
+}
+
+Period Period::currentYear()
+{
   QDate cur = QDate::currentDate();
-  rv.startDate.setDate(cur.year(), 1, 1);
-  rv.endDate.setDate(cur.year(), 12, 31);
+  return year(cur.year());
+}
+
+Period Period::year(int y)
+{
+  Period rv;
+  rv.startDate.setDate(y, 1, 1);
+  rv.endDate.setDate(y, 12, 31);
   return rv;
 }
 

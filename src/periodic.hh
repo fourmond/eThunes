@@ -52,8 +52,12 @@ public:
   /// Returns the number of months in the period
   int months() const;
 
-  /// Returns a new period that is contained by both periods.
+  /// Returns the longest period that is contained by both periods.
   Period intersect(const Period & period) const;
+
+  /// Returns the shortest period containing this and the given
+  /// period.
+  Period unite(const Period & period) const;
 
   /// @name Commonly used periods
   ///
@@ -61,6 +65,9 @@ public:
   
   /// Returns the period corresponding to the current year.
   static Period currentYear();
+  
+  /// Returns the period corresponding to the given year.
+  static Period year(int year);
 
   /// Returns the given month of the given year
   static Period month(int year, int month);

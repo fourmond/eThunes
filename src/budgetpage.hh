@@ -48,6 +48,8 @@ protected:
   
   /// The HTLabels displaying the budgets
   QList<HTLabel *> budgetSummaries;
+
+  QComboBox * summaryTableYear;
   
 
   /// The QLabel object displaying the rich text.
@@ -72,6 +74,9 @@ public:
   /// it doesn't exist yet.
   static BudgetPage * getBudgetPage(Wallet * wallet);
 
+  /// Returns the summary table for the given year
+  QString summaryTableForYear(int year);
+
 public slots:
 
   /// Creates a new budget with dummy name
@@ -85,6 +90,9 @@ public slots:
 
   /// Prompts for a new month
   void promptNewMonths(Budget * budget);
+
+  /// Shows the summary for the given year
+  void showYear(const QString & year);
 
 };
 

@@ -37,6 +37,26 @@ BudgetPage::BudgetPage(Wallet * w) : wallet(w)
   topLayout = new QGridLayout();
   layout->addLayout(topLayout);
 
+  QHBoxLayout * hz = new QHBoxLayout;
+
+  hz->addWidget(new QLabel("<h2>Realizations for:</h2>"));
+
+  summaryTableYear = new QComboBox;
+  int firstYear = AtomicTransaction::dateFromID(wallet->firstMonthID()).year();
+  int lastYear = QDate::currentDate().year() + 2;
+  for(int y = firstYear; y <= lastYear; y++)
+    summaryTableYear->addItem(QString::number(y));
+  summaryTableYear->setEditable(false);
+
+  connect(summaryTableYear,
+          SIGNAL(activated(const QString &)),
+          SLOT(showYear(const QString &)));
+
+  hz->addWidget(summaryTableYear);
+  hz->addStretch(1);
+
+  layout->addLayout(hz);
+
   summary = new HTLabel;
   layout->addWidget(summary);
 
@@ -64,75 +84,72 @@ HTLabel * BudgetPage::newBudgetSummary()
   return rv;
 }
 
-void BudgetPage::updateSummary()
-{
-  QString text = tr("<h2>Budgets</h2>");
-  text +=
-    HTTarget::linkToMember(tr("(update)"),
-                           this, &BudgetPage::updateSummary) +
-    HTTarget::linkToMember(tr("(new budget)"),
-                           this, &BudgetPage::addBudget)
-    + "<p>\n";
-  top->setText(text);
 
-  int totalPositive = 0;
-  int totalNegative = 0;
-  QDate today = QDate::currentDate();
+/// A helper class to compute the
+class BudgetBalance {
+public:
+  /// Planned budget
+  int planned;
+
+  /// Effectively realized budget
+  int realized;
+
+  /// The effective budgetprojected budget for the period
+  int effective;
+
+  Period period;
+
+  BudgetBalance(int pl, int re, Period p) :
+    planned(pl), realized(re), period(p)
+  {
+    QDate cd = QDate::currentDate();
+    if(p.contains(cd)) {
+      // status = Current;
+      effective = planned > 0 ? std::max(realized, planned) :
+        std::min(realized, planned);
+    }
+    else {
+      if(p.startDate > cd) {
+        // status = Future;
+        effective = planned;
+      }
+      else {
+        // status = Past;
+        effective = realized;
+      }
+    }
+  }
+
+  void add(const BudgetBalance & o) {
+    period = period.unite(o.period);
+    effective += o.effective;
+    realized += o.realized;
+  };
+
+  
+};
+
+QString BudgetPage::summaryTableForYear(int year)
+{
+  QDate cd = QDate::currentDate();
+  int amounts[13];
+  QString text;
 
   QList<Budget *> budgets = wallet->budgets.pointerList();
   std::sort(budgets.begin(), budgets.end(), [](Budget * a, Budget * b) -> bool {
       return a->name < b->name;
     });
-  
-  for(int i = 0; i < budgets.size(); i++) {
-    Budget * budget = budgets[i];
-    text = tr("<h4>%1 %2</h4>").
-      arg(budget->name).
-      arg(HTTarget::linkToMember(tr("(change name)"),
-                                 this, &BudgetPage::promptNewName, budget));
-    text += tr("Amount: %1 %2<br>").
-      arg(budget->amount.toString(&Transaction::formatAmount)).
-      arg(HTTarget::linkToMember(tr("(change amount)"),
-                                 this, &BudgetPage::promptNewAmount, budget));
 
-    text += tr("Periodicity: %1 months %2<br>").
-      arg(budget->periodicity.months).
-      arg(HTTarget::linkToMember(tr("(change)"),
-                                 this, &BudgetPage::promptNewMonths, budget));
-    int ma = budget->amount[today] / budget->periodicity.getMonths();
-    if(ma > 0)
-      totalPositive += ma;
-    else
-      totalNegative += ma;
-    if(budgetSummaries.size() == i)
-      newBudgetSummary();
-    budgetSummaries[i]->setText(text);
-  }
-  for(int i = budgets.size(); i < budgetSummaries.size(); i++)
-    budgetSummaries[i]->setText("");
-  
-  text = tr("<h3>Balance</h3><table>\n"
-             "<tr><td>Income</td><td>%1</td></tr>\n"
-             "<tr><td>Expense</td><td>%2</td></tr>\n"
-             "<tr><td>Balance</td><td>%3</td></tr></table>\n").
-    arg(Transaction::formatAmount(totalPositive)).
-    arg(Transaction::formatAmount(totalNegative)).
-    arg(Transaction::formatAmount(totalPositive + totalNegative));
-
-  QDate cd = QDate::currentDate();
-
-  int amounts[13];
-  
   for(int i = 0; i < sizeof(amounts)/sizeof(int); i++)
     amounts[i] = 0;
 
   // Now, a summary of the realizations, for the current year
-  text += tr("<h3>Realizations</h3><table><tr><td></td>\n");
-  Period cy = Period::currentYear();
+  text += tr("<table><tr><td></td>\n");
+  Period cy = Period::year(year);
 
   for(int i = 1; i <= 12; i++)
     text += tr("<th>%1 %2</th>").
-      arg(QDate::shortMonthName(i)).arg(cd.year());
+      arg(QDate::shortMonthName(i)).arg(year);
 
   text += tr("<th>Total</th></tr>\n");
   
@@ -211,7 +228,7 @@ void BudgetPage::updateSummary()
   text += tr("<tr><td>(unbudgeted)</td>");
 
     for(int i = 1; i <= 12; i++) {
-      Period mo = Period::month(cd.year(), i);
+      Period mo = Period::month(year, i);
       TransactionPtrList list = wallet->transactionsForPeriod(mo);
       list = BudgetRealization::realizationLessTransactions(list);
       TransactionListStatistics sts = list.statistics();
@@ -237,9 +254,70 @@ void BudgetPage::updateSummary()
       arg(cur);
   }
   text += "</tr>\n</table>\n";
+
+  return text;
+}
+
+void BudgetPage::updateSummary()
+{
+  QString text = tr("<h2>Budgets</h2>");
+  text +=
+    HTTarget::linkToMember(tr("(update)"),
+                           this, &BudgetPage::updateSummary) +
+    HTTarget::linkToMember(tr("(new budget)"),
+                           this, &BudgetPage::addBudget)
+    + "<p>\n";
+  top->setText(text);
+
+  int totalPositive = 0;
+  int totalNegative = 0;
+  QDate today = QDate::currentDate();
+
+  QList<Budget *> budgets = wallet->budgets.pointerList();
+  std::sort(budgets.begin(), budgets.end(), [](Budget * a, Budget * b) -> bool {
+      return a->name < b->name;
+    });
   
+  for(int i = 0; i < budgets.size(); i++) {
+    Budget * budget = budgets[i];
+    text = tr("<h4>%1 %2</h4>").
+      arg(budget->name).
+      arg(HTTarget::linkToMember(tr("(change name)"),
+                                 this, &BudgetPage::promptNewName, budget));
+    text += tr("Amount: %1 %2<br>").
+      arg(budget->amount.toString(&Transaction::formatAmount)).
+      arg(HTTarget::linkToMember(tr("(change amount)"),
+                                 this, &BudgetPage::promptNewAmount, budget));
+
+    text += tr("Periodicity: %1 months %2<br>").
+      arg(budget->periodicity.months).
+      arg(HTTarget::linkToMember(tr("(change)"),
+                                 this, &BudgetPage::promptNewMonths, budget));
+    int ma = budget->amount[today] / budget->periodicity.getMonths();
+    if(ma > 0)
+      totalPositive += ma;
+    else
+      totalNegative += ma;
+    if(budgetSummaries.size() == i)
+      newBudgetSummary();
+    budgetSummaries[i]->setText(text);
+  }
+  for(int i = budgets.size(); i < budgetSummaries.size(); i++)
+    budgetSummaries[i]->setText("");
   
-  summary->setText(text);
+  text = tr("<h3>Balance</h3><table>\n"
+             "<tr><td>Income</td><td>%1</td></tr>\n"
+             "<tr><td>Expense</td><td>%2</td></tr>\n"
+             "<tr><td>Balance</td><td>%3</td></tr></table>\n").
+    arg(Transaction::formatAmount(totalPositive)).
+    arg(Transaction::formatAmount(totalNegative)).
+    arg(Transaction::formatAmount(totalPositive + totalNegative));
+
+  // QDate cd = QDate::currentDate();
+
+  // int y = cd.year();
+
+  // summary->setText(summaryTableForYear(y));
 }
 
 QHash<Wallet *, BudgetPage *> BudgetPage::budgetPages;
@@ -300,3 +378,9 @@ void BudgetPage::promptNewMonths(Budget * budget)
   }
 }
 
+
+void BudgetPage::showYear(const QString & year)
+{
+  int y = year.toInt();
+  summary->setText(summaryTableForYear(y));
+}

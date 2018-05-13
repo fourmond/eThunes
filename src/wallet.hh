@@ -45,6 +45,9 @@ public:
   /// The accounts held within the wallet.
   WatchableList<Account> accounts;
 
+  /// The month id of the first month
+  int firstMonthID() const;
+
   /// The top-level categories of the wallet
   /// 
   /// @todo This and tags have to be made watchable
