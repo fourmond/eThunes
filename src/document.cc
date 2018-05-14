@@ -65,6 +65,15 @@ void Document::setDocType(DocType * docType)
   m_DocType = docType;
 }
 
+bool Document::rename(const QString & newName)
+{
+  QDir dir = Cabinet::globalCabinet()->baseDirectory();
+  bool rn = dir.rename(m_FileName, newName);
+  if(! rn)
+    return false;
+  m_FileName = newName;
+  return true;
+}
  
 SerializationAccessor * Document::serializationAccessor()
 {

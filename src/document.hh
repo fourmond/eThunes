@@ -47,6 +47,16 @@ protected:
   /// type name if it is missing (could happen ?)
   QString m_DocTypeName;
 
+  friend class DocumentList;
+  
+  /// Renames (moves) the file. The new name, like the old one, is
+  /// referenced from Cabinet::baseDirectory.
+  ///
+  /// Returns false if the move could not be performed for some
+  /// reason.
+  bool rename(const QString & newName);
+
+
 public:
 
   /// The attributes of the document. Can be set manually, or through
@@ -72,6 +82,7 @@ public:
 
   /// Automatically detects the document type.
   void autoDetectDocType();
+
 
 
   /// This small text is provided by the document type, based on the

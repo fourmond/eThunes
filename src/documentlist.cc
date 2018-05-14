@@ -55,6 +55,19 @@ Document * DocumentList::modifiableDocument(const QString & file)
   return doc;
 }
 
+bool DocumentList::renameDocument(Document * doc, const QString & newName)
+{
+  QString on = doc->fileName();
+  if(documents.value(on, NULL) != doc)
+    return false;               /// @todo Throw
+  if(doc->rename(newName)) {
+    documents.remove(on);
+    documents[doc->fileName()] = doc;
+    return true;
+  }
+  return false;
+}
+
 void DocumentList::addDocument(Document * doc)
 {
   QString fn = doc->fileName();

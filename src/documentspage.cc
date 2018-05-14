@@ -96,6 +96,8 @@ AtomicTransaction * DocumentsPage::findMatchingTransaction(const Document * doc)
       rv = t;
     }
   }
+
+  o << " -> found: " << rv << endl;
   return rv;
 }
 
@@ -203,7 +205,20 @@ void DocumentsPage::treeViewContextMenu(const QPoint & pos)
       }
     }
     );
+  menu.addAction(a);
 
+  a = new QAction(tr("Rename"));
+  QObject::connect(a, &QAction::triggered, [this, docs](bool) {
+      for(Document * d : docs) {
+        QString nn =
+          QInputDialog::getText(this, tr("Rename file"),
+                                tr("New name"), QLineEdit::Normal,
+                                d->fileName());
+        if(! nn.isEmpty() && nn != d->fileName())
+          cabinet->documents.renameDocument(d,nn);
+      }
+    }
+    );
   menu.addAction(a);
 
   menu.exec(treeView->viewport()->mapToGlobal(pos));

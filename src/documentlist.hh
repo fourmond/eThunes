@@ -55,7 +55,8 @@ public:
   /// Document.
   void addDocument(Document * document);
 
-  void renameDocument(Document * doc, const QString & newName);
+  /// Renames the given document.
+  bool renameDocument(Document * doc, const QString & newName);
 
   /// Renames the given path. Makes the right thing about directories.
   void renamePath(const QString & oldPath, const QString & newPath);
