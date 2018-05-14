@@ -68,6 +68,9 @@ void Document::setDocType(DocType * docType)
 bool Document::rename(const QString & newName)
 {
   QDir dir = Cabinet::globalCabinet()->baseDirectory();
+  QFileInfo info(newName);
+  QString d = info.dir().path();
+  dir.mkpath(d);
   bool rn = dir.rename(m_FileName, newName);
   if(! rn)
     return false;

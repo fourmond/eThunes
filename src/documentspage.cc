@@ -236,9 +236,13 @@ void DocumentsPage::treeViewContextMenu(const QPoint & pos)
           nn + "</td></tr>";
       }
       if(QMessageBox::question(this, tr("Rename all"),
-                               rep) == QMessageBox::Ok) {
-        for(Document * d : docs)
+                               rep) == QMessageBox::Yes) {
+        QTextStream o(stdout);
+        for(Document * d : docs) {
+          o << "Renaming " << d << " (" << d->fileName() << ") -> "
+            << renames[d] << endl;
           cabinet->documents.renameDocument(d, renames[d]);
+        }
       }
     }
     );
