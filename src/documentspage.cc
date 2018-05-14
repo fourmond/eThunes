@@ -221,6 +221,29 @@ void DocumentsPage::treeViewContextMenu(const QPoint & pos)
     );
   menu.addAction(a);
 
+  a = new QAction(tr("Rename using pattern"));
+  QObject::connect(a, &QAction::triggered, [this, docs](bool) {
+      QString pattern =
+        QInputDialog::getText(this, tr("Rename pattern"),
+                              tr("Pattern"));
+
+      QHash<Document *, QString> renames;
+      QString rep = "<table>\n";
+      for(Document * d : docs) {
+        QString nn = d->attributes.formatString(pattern);
+        renames[d] = nn;
+        rep += "<tr><td>" + d->fileName() + "</td><td>" +
+          nn + "</td></tr>";
+      }
+      if(QMessageBox::question(this, tr("Rename all"),
+                               rep) == QMessageBox::Ok) {
+        for(Document * d : docs)
+          cabinet->documents.renameDocument(d, renames[d]);
+      }
+    }
+    );
+  menu.addAction(a);
+
   menu.exec(treeView->viewport()->mapToGlobal(pos));
 
 }
