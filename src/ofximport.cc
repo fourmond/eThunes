@@ -108,7 +108,7 @@ OFXImport OFXImport::importFromFile(QIODevice * stream)
       else if(tagRE.cap(1).compare("TRNAMT", Qt::CaseInsensitive) == 0) {
 	// The date of the transaction
 	if(currentTransaction) {
-	  QStringList a = tagRE.cap(2).split(".");
+	  QStringList a = tagRE.cap(2).split(QRegExp("[.,]"));
 	  bool negative = a[0].contains("-");
 	  int amount = a[0].toInt() * 100;
 	  if(negative)
