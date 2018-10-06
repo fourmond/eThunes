@@ -203,7 +203,7 @@ QString BudgetPage::summaryTableForYear(int year)
           effective = std::max(realized, planned);
         }
         else if(planned < 0) {
-          std::min(realized, planned);
+          effective = std::min(realized, planned);
         }
         else
           effective = realized;
