@@ -27,7 +27,7 @@
 #include <budgetpage.hh>
 #include <account.hh>
 
-Budget::Budget() : amount(0), periodicity(1)
+Budget::Budget() : amount(0), periodicity(1), exceptional(false)
 {
   
 }
@@ -38,6 +38,7 @@ SerializationAccessor * Budget::serializationAccessor()
   ac->addScalarAttribute("name", &name);
   ac->addAttribute("amount", &amount);
   ac->addScalarAttribute("periodicity", &periodicity);
+  ac->addScalarAttribute("exceptional", &exceptional);
   ac->addListAttribute("realization", &realizations);
   return ac;
 }

@@ -52,6 +52,9 @@ public:
   /// The periodicity, a Periodic object
   Periodic periodicity;
 
+  /// Whether the budget corresponds to something exceptionnal or not
+  bool exceptional;
+
   Budget();
 
   /// The list of realizations

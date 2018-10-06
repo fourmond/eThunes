@@ -94,6 +94,8 @@ public slots:
   /// Shows the summary for the given year
   void showYear(const QString & year);
 
+  /// Toggles the "exceptional" flag
+  void toggleExceptional(Budget * budget);
 };
 
 #endif

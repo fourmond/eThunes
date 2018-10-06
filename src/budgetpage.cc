@@ -132,7 +132,9 @@ public:
 QString BudgetPage::summaryTableForYear(int year)
 {
   QDate cd = QDate::currentDate();
-  int amounts[13];
+  int amounts[13];              // leaving out the "exceptional stuff"
+  int budgeted[13];             // the purely budgeted thing
+  int overallAmounts[13];       // not leaving them out
   QString text;
 
   QList<Budget *> budgets = wallet->budgets.pointerList();
@@ -140,8 +142,11 @@ QString BudgetPage::summaryTableForYear(int year)
       return a->name < b->name;
     });
 
-  for(int i = 0; i < sizeof(amounts)/sizeof(int); i++)
+  for(int i = 0; i < sizeof(amounts)/sizeof(int); i++) {
     amounts[i] = 0;
+    overallAmounts[i] = 0;
+    budgeted[i] = 0;
+  }
 
   // Now, a summary of the realizations, for the current year
   text += tr("<table><tr><td></td>\n");
@@ -200,10 +205,20 @@ QString BudgetPage::summaryTableForYear(int year)
         display = realized;
       }
 
-      amounts[0] += effective;
+      // counting it if not exceptional
+      if(! budget->exceptional) {
+        amounts[0] += effective;
+        for(int i = p.startDate.month(); i <= p.endDate.month(); i++)
+          amounts[i] += effective/p.months();
+      }
+      overallAmounts[0] += effective;
       for(int i = p.startDate.month(); i <= p.endDate.month(); i++)
-        amounts[i] += effective/p.months();
-
+        overallAmounts[i] += effective/p.months();
+      
+      budgeted[0] += planned;
+      for(int i = p.startDate.month(); i <= p.endDate.month(); i++)
+        budgeted[i] += planned/p.months();
+      
       QString cur = display >= planned ?
         "<font color='green'>%1</font>" : 
         "<b><font color='red'>%1</font></b>";
@@ -227,25 +242,51 @@ QString BudgetPage::summaryTableForYear(int year)
 
   text += tr("<tr><td>(unbudgeted)</td>");
 
-    for(int i = 1; i <= 12; i++) {
-      Period mo = Period::month(year, i);
-      TransactionPtrList list = wallet->transactionsForPeriod(mo);
-      list = BudgetRealization::realizationLessTransactions(list);
-      TransactionListStatistics sts = list.statistics();
-      amounts[i] += sts.totalAmount;
-      amounts[0] += sts.totalAmount;
-      QString cur =  sts.totalAmount >= 0 ?
-        "<font color='green'>%1</font>" : 
-        "<b><font color='red'>%1</font></b>";
-      cur = cur.arg(Transaction::formatAmount(sts.totalAmount));
-      text += QString("<td align='center' style='padding: 1px 3px;'>%1</td>").
-        arg(HTTarget::linkToTransactionDisplay(cur, tr("Unbudgeted transactions for ..."),
-                                               [list]{ return list;}));
-    }
+  for(int i = 1; i <= 12; i++) {
+    Period mo = Period::month(year, i);
+    TransactionPtrList list = wallet->transactionsForPeriod(mo);
+    list = BudgetRealization::realizationLessTransactions(list);
+    TransactionListStatistics sts = list.statistics();
+    amounts[i] += sts.totalAmount;
+    amounts[0] += sts.totalAmount;
+    overallAmounts[i] += sts.totalAmount;
+    overallAmounts[0] += sts.totalAmount;
+    QString cur =  sts.totalAmount >= 0 ?
+      "<font color='green'>%1</font>" : 
+      "<b><font color='red'>%1</font></b>";
+    cur = cur.arg(Transaction::formatAmount(sts.totalAmount));
+    text += QString("<td align='center' style='padding: 1px 3px;'>%1</td>").
+      arg(HTTarget::linkToTransactionDisplay(cur, tr("Unbudgeted transactions for ..."),
+                                             [list]{ return list;}));
+  }
 
-  text += tr("<tr><th>Total</th>");
+  text += "<tr></tr>";
+
+  text += tr("<tr><th>Budget</th>");
+  for(int i = 0; i <= 12; i++) {
+    int am = budgeted[(i + 1) % 13]; // so that last is amounts[0]
+    QString cur =  am >= 0 ?
+      "<font color='green'>%1</font>" : 
+      "<b><font color='red'>%1</font></b>";
+    cur = cur.arg(Transaction::formatAmount(am));
+    text += QString("<td align='center' style='padding: 1px 3px;'>%1</td>").
+      arg(cur);
+  }
+
+  text += tr("</tr><tr><th>Total</th>");
   for(int i = 0; i <= 12; i++) {
     int am = amounts[(i + 1) % 13]; // so that last is amounts[0]
+    QString cur =  am >= 0 ?
+      "<font color='green'>%1</font>" : 
+      "<b><font color='red'>%1</font></b>";
+    cur = cur.arg(Transaction::formatAmount(am));
+    text += QString("<td align='center' style='padding: 1px 3px;'>%1</td>").
+      arg(cur);
+  }
+
+  text += tr("</tr><tr><th>(all-inclusive) Total</th>");
+  for(int i = 0; i <= 12; i++) {
+    int am = overallAmounts[(i + 1) % 13]; // so that last is amounts[0]
     QString cur =  am >= 0 ?
       "<font color='green'>%1</font>" : 
       "<b><font color='red'>%1</font></b>";
@@ -293,6 +334,13 @@ void BudgetPage::updateSummary()
       arg(budget->periodicity.months).
       arg(HTTarget::linkToMember(tr("(change)"),
                                  this, &BudgetPage::promptNewMonths, budget));
+
+    text += tr("Exceptional: %1 %2").
+      arg(budget->exceptional ? "yes" : "no").
+      arg(HTTarget::linkToMember(tr("(change)"),
+                                 this, &BudgetPage::toggleExceptional, budget));
+
+    
     int ma = budget->amount[today] / budget->periodicity.getMonths();
     if(ma > 0)
       totalPositive += ma;
@@ -334,6 +382,12 @@ void BudgetPage::addBudget()
   wallet->budgets << Budget();
   Budget & bg = wallet->budgets.last();
   bg.name = "New budget";
+  updateSummary();
+}
+
+void BudgetPage::toggleExceptional(Budget * budget)
+{
+  budget->exceptional = ! budget->exceptional;
   updateSummary();
 }
 
