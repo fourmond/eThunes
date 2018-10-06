@@ -57,10 +57,9 @@ BudgetPage::BudgetPage(Wallet * w) : wallet(w)
 
   layout->addLayout(hz);
 
-  summary = new HTLabel;
-  layout->addWidget(summary);
+  summary = new HTDisplay;
+  layout->addWidget(summary, 1);
 
-  layout->addStretch(1);
   updateSummary();
 }
 
@@ -200,8 +199,14 @@ QString BudgetPage::summaryTableForYear(int year)
       }
       else {
         // current
-        effective = planned > 0 ? std::max(realized, planned) :
+        if(planned > 0) {
+          effective = std::max(realized, planned);
+        }
+        else if(planned < 0) {
           std::min(realized, planned);
+        }
+        else
+          effective = realized;
         display = realized;
       }
 
@@ -321,24 +326,23 @@ void BudgetPage::updateSummary()
   
   for(int i = 0; i < budgets.size(); i++) {
     Budget * budget = budgets[i];
-    text = tr("<h4>%1 %2</h4>").
+    text = tr("<h4>%1 %2 (ex: %3)</h4>").
       arg(budget->name).
       arg(HTTarget::linkToMember(tr("(change name)"),
-                                 this, &BudgetPage::promptNewName, budget));
+                                 this, &BudgetPage::promptNewName, budget)).
+      arg(HTTarget::linkToMember(budget->exceptional ? "yes" : "no",
+                                 this, &BudgetPage::toggleExceptional, budget));
+
     text += tr("Amount: %1 %2<br>").
       arg(budget->amount.toString(&Transaction::formatAmount)).
       arg(HTTarget::linkToMember(tr("(change amount)"),
                                  this, &BudgetPage::promptNewAmount, budget));
 
-    text += tr("Periodicity: %1 months %2<br>").
+    text += tr("Periodicity: %1 months %2").
       arg(budget->periodicity.months).
       arg(HTTarget::linkToMember(tr("(change)"),
                                  this, &BudgetPage::promptNewMonths, budget));
 
-    text += tr("Exceptional: %1 %2").
-      arg(budget->exceptional ? "yes" : "no").
-      arg(HTTarget::linkToMember(tr("(change)"),
-                                 this, &BudgetPage::toggleExceptional, budget));
 
     
     int ma = budget->amount[today] / budget->periodicity.getMonths();

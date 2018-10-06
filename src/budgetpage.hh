@@ -25,6 +25,7 @@
 
 class Wallet;
 class HTLabel;
+class HTDisplay;
 class Budget;
 class FlowingGridLayout;
 
@@ -56,7 +57,7 @@ protected:
   HTLabel * top;
 
   /// The QLabel object displaying the rich text.
-  HTLabel * summary;
+  HTDisplay * summary;
 
   
 
