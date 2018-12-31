@@ -30,6 +30,7 @@
 #include <transaction.hh>
 
 #include <doctype.hh>
+#include <ofximport.hh>
 
 // for readPDF
 #include <pdftools.hh>
@@ -237,6 +238,12 @@ static void testXML(const QStringList & )
   
 }
 
+// First, the handlers
+static void testOFX(const QStringList & s)
+{
+  OFXImport::testImport(s.first());
+}
+
 
 static CommandLineParser * parser = NULL;
 
@@ -302,6 +309,8 @@ static CommandLineParser * myParser()
 			     0, "List collections")
     << new CommandLineOption("--parse-qml", parseQML,
 			     1, "parse qml")
+    << new CommandLineOption("--test-ofx", testOFX,
+			     1, "test parsing OFX file")
     << new CommandLineOption("--list-plugins", showPlugins,
 			     0, "List available plugins")
     << new CommandLineOption("--help", showHelp,

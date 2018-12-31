@@ -40,11 +40,13 @@ public:
   QList<Account> accounts;
 
   /// Import the contents of a OFX file as an OFXImport.
-  static OFXImport importFromFile(QString file);
+  static OFXImport importFromFile(const QString &file);
 
   /// Import the contents of a OFX file as an OFXImport.
   static OFXImport importFromFile(QIODevice * stream);
 
+  /// Tests the import of a file
+  static void testImport(const QString & file);
 };
 
 

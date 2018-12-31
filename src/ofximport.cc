@@ -21,7 +21,7 @@
 
 #include <logstream.hh>
 
-OFXImport OFXImport::importFromFile(QString file)
+OFXImport OFXImport::importFromFile(const QString &file)
 {
   QFile f(file);
   LogStream log(Log::Info);
@@ -57,19 +57,26 @@ OFXImport OFXImport::importFromFile(QIODevice * stream)
 
   OFXImport retVal;
 
-  while(1) {
-    line = stream->readLine();
+
+  /// Reads up to but not including the next <
+  auto getNext = [&stream]() -> QByteArray {
+    QByteArray s;
+    char c;
+    while(stream->getChar(&c)) {
+      if(c == '<' && s.size() > 0) {
+        stream->ungetChar(c);
+        break;
+      }
+      s.append(c);
+    }
+    return s;
+  };
+  
+
+  while(true) {
+    line = getNext();
     if(line.isEmpty())
       break;
-    if(readingHeader) {
-      if(headerRE.indexIn(line) == 0) {
-	// debug << "Header tag: " << headerRE.cap(1)
-	//       << " -> " << headerRE.cap(2) << endl;
-	continue;
-      }
-      else
-	readingHeader = 0;
-    }
     if(tagRE.indexIn(line) == 0) {
       // debug << "Tag: " << tagRE.cap(1) << endl;
       // Now, we look what is the tag
@@ -158,4 +165,9 @@ OFXImport OFXImport::importFromFile(QIODevice * stream)
        << " transactions spanning " << retVal.accounts.size() 
        << " accounts" << endl;
   return retVal;
+}
+
+void OFXImport::testImport(const QString & file)
+{
+  importFromFile(file); 
 }
