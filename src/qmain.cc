@@ -70,6 +70,8 @@ int main(int argc, char ** argv)
   log.open(stdout, QIODevice::WriteOnly);
   Log::logger()->spy = &log;
 
+  srand(QDateTime::currentDateTime().toTime_t());
+  
   main.setApplicationName("eThunes");
 
   DocType::registerQMLTypes();

@@ -132,9 +132,11 @@ int Linkable::getFreeID()
   if(! targets)
     targets = new QHash<int, QSet<Linkable * > >;
   
-  for(int i = 0; i <= targets->size(); i++)
-    if(! targets->contains(i))
-      return i;
+  while(true) {
+    int t = rand();
+    if(! targets->contains(t))
+      return t;
+  }
   Q_ASSERT(false);              // This should never be reached
   return targets->size();
 }
