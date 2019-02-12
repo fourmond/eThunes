@@ -27,6 +27,8 @@
 
 #include <statisticswidget.hh>
 
+#include <budgetdw.hh>
+
 #include <httarget-templates.hh>
 #include <htlabel.hh>
 
@@ -39,6 +41,10 @@ CabinetPage::CabinetPage(Cabinet * c) : cabinet(c)
   QHBoxLayout * hb = new QHBoxLayout();
   walletDW = new WalletDW(cabinet);
   hb->addWidget(walletDW);
+
+
+  budgetDW = new BudgetDW(&cabinet->wallet);
+  hb->addWidget(budgetDW);
 
   // collectionsDW = new CollectionsDW(cabinet);
   // hb->addWidget(collectionsDW);

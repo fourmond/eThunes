@@ -27,6 +27,7 @@
 
 class HTLabel;
 class StatisticsWidget;
+class BudgetDW;
 
 /// This NavigationPage displays a Cabinet.
 class CabinetPage : public NavigationPage {
@@ -53,11 +54,17 @@ protected:
   /// Very basic statistics
   StatisticsWidget * stats;
 
+  /// The summary of budgets
+  BudgetDW * budgetDW;
+
 public:
 
   /// The widget displaying the Wallet. \todo maybe this shouldn't be
   /// a public attribute ?
   WalletDW * walletDW;
+
+
+
 
   QString currentFileName() const {
     return cabinet->fullFilePath();
