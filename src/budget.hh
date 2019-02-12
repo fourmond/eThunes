@@ -115,17 +115,47 @@ public:
   void addTransaction(AtomicTransaction * transaction);
 
   /// Returns the planned amount corresponding to the period.
-  int amountPlanned();
+  int amountPlanned() const;
 
   /// Returns the amount realized in the transactions connected to
   /// this realization.
-  int amountRealized();
+  int amountRealized() const;
 
   /// Returns the transactions.
   TransactionPtrList transactions() const;
 
   static TransactionPtrList realizationLessTransactions(const TransactionPtrList & lst);
 
+};
+
+
+/// As of now -- 12/02/19, I don't really see the use of this class
+class BudgetStats {
+public:
+
+  class PeriodStats {
+  public:
+    Period period;
+    int planned = 0;
+    int realized = 0;
+  };
+
+  QList<PeriodStats> stats;
+
+  /// Adds the given realization to the period.
+  void addRealization(const BudgetRealization * realization);
+
+  /// Adds the given planned, realizationless, budget
+  void addBudget(const Budget * budget, const Period & period);
+
+  /// Returns the total realized budget
+  int realized() const;
+
+  /// Returns the total planned budget
+  int planned() const;
+
+  /// Returns the effective budget, with respect to the given date
+  int effective(const QDate & ref) const;
 };
 
 

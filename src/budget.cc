@@ -146,13 +146,13 @@ TransactionPtrList BudgetRealization::transactions() const
   return lst;
 }
 
-int BudgetRealization::amountPlanned()
+int BudgetRealization::amountPlanned() const
 {
   return budget->amount[period.startDate];
 }
 
 
-int BudgetRealization::amountRealized()
+int BudgetRealization::amountRealized() const
 {
   int rv = 0;
   QList<AtomicTransaction*> transactions =
@@ -177,3 +177,66 @@ TransactionPtrList BudgetRealization::realizationLessTransactions(const Transact
   return rv;    
 }
   
+//////////////////////////////////////////////////////////////////////
+
+void BudgetStats::addRealization(const BudgetRealization * realization)
+{
+  PeriodStats s;
+  s.period = realization->period;
+  s.planned = realization->amountPlanned();
+  s.realized = realization->amountRealized();
+  stats << s;
+}
+
+void BudgetStats::addBudget(const Budget * budget, const Period & period)
+{
+  PeriodStats s;
+  s.period = period;
+  s.planned = budget->amount[period.startDate];
+  s.realized = 0;
+  stats << s;
+}
+
+int BudgetStats::realized() const
+{
+  int rv = 0;
+  for(const PeriodStats & s : stats)
+    rv += s.realized;
+  return rv;
+}
+
+int BudgetStats::planned() const
+{
+  int rv = 0;
+  for(const PeriodStats & s : stats)
+    rv += s.planned;
+  return rv;
+}
+
+int BudgetStats::effective(const QDate & ref) const
+{
+  int effective = 0;
+  for(const PeriodStats & s : stats) {
+    if(s.period.startDate > ref) {
+      // planification
+      effective += s.planned;
+    }
+    else if(s.period.endDate < ref) {
+      // past
+      effective += s.realized;
+    }
+    else {
+      // current
+      if(s.planned > 0) {
+        effective += std::max(s.realized, s.planned);
+      }
+      else if(s.planned < 0) {
+        effective += std::min(s.realized, s.planned);
+      }
+      else
+        effective += s.realized;
+    }
+  }
+  return effective;
+}
+
