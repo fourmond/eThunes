@@ -47,7 +47,6 @@ void BudgetDW::updateSummary()
   QString txt = "<h2>Budgets</h2>\n";
 
 
-  txt += "<table>";
 
   QDate cd = QDate::currentDate();
 
@@ -55,38 +54,60 @@ void BudgetDW::updateSummary()
 
   int cols = 1;
 
+  class BudgetSummary {
+  public:
+    QString name;
+    QDate end;
+    int planned;
+    int realized;
+  };
+
+  QHash<QDate, QList<BudgetSummary> > s;
+
   for(Budget & b : wallet->budgets) {
     if(b.exceptional)
       continue;                 // Don't mention it ;-)
     BudgetRealization * r = b.realizationForDate(cd);
 
-    int planned = r->amountPlanned();
-    int realized = r->amountRealized();
-    if(planned == 0 && realized == 0)
+    BudgetSummary sm;
+    sm.end = r->period.endDate;
+    sm.name = b.name;
+    sm.planned = r->amountPlanned();
+    sm.realized = r->amountRealized();
+    if(sm.planned == 0 && sm.realized == 0)
       continue;                 // nothing to say !
-    
-    if(nb % cols == 0)
-      txt += "<tr>";
 
-    QString cur = realized >= planned ?
-      "<font color='green'>%1</font>" : 
-      "<b><font color='red'>%1</font></b>";
-    cur = cur.arg(Transaction::formatAmount(realized));
+    if(! s.contains(r->period.endDate))
+      s[r->period.endDate] = QList<BudgetSummary>();
 
-
-    txt += QString("<td>%1</td><td>%2/%3</td><td> -> %4</td>").
-      arg(b.name).
-      arg(cur).arg(Transaction::formatAmount(planned)).
-      arg(r->period.endDate.toString("dd MMM"));
-
-    nb += 1;
-    if(nb % cols == 0)
-      txt += "</tr>\n";
-    else
-      txt += "<td></td>";
+    s[r->period.endDate].append(sm);
   }
 
-  txt += "</table>";
+  QList<QDate> dates = s.keys();
+  qSort(dates);
+
+  for(const QDate & end : dates) {
+    txt += QString("<h3>%1</h3>").
+      arg(end.toString("dd MMM"));
+    txt += "<table>";
+
+    QList<BudgetSummary> ss = s[end];
+    qSort(ss.begin(), ss.end(),
+          [](const BudgetSummary & a, const BudgetSummary & b) -> bool {
+        return a.name < b.name;
+      });
+    
+    for(BudgetSummary & sm : ss) {
+      QString cur = sm.realized >= sm.planned ?
+        "<font color='green'>%1</font>" : 
+        "<b><font color='red'>%1</font></b>";
+      cur = cur.arg(Transaction::formatAmount(sm.realized));
+      txt += QString("<tr><td>%1</td><td>%2</td><td>/</td><td>%3</td></tr>\n").
+        arg(sm.name).
+        arg(cur).arg(Transaction::formatAmount(sm.planned));
+    }
+    txt += "</table>";
+  }
 
   summary->setText(txt);
 }
