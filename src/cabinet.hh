@@ -56,6 +56,9 @@ public:
   /// The list of Documents
   DocumentList documents;
 
+  /// Returns the list of all potential Link targets.
+  QList<Linkable *> allTargets() const;
+
   /// All plugins. Please note these are stored as pointers, not
   /// objects...
   ///

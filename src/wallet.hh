@@ -65,6 +65,10 @@ public:
   /// The list of Budget objects
   WatchableList<Budget> budgets;
 
+  /// Returns the list of all potential Link targets.
+  QList<Linkable *> allTargets() const;
+
+
   /// Runs the filters on the given transaction list
   void runFilters(TransactionList * list);
 
@@ -93,6 +97,9 @@ public:
   /// \p parents is true (default), then we also look for category in
   /// the transactions ancestry.
   TransactionPtrList taggedTransactions(const Tag * tag);
+
+  /// Returns all the transactions
+  TransactionPtrList allTransactions() const;
 
   /// @}
 

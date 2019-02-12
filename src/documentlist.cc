@@ -77,3 +77,8 @@ void DocumentList::addDocument(Document * doc)
     throw "Not replacing";
   documents[fn] = doc;
 }
+
+QList<Document *> DocumentList::allDocuments() const
+{
+  return documents.values();
+}

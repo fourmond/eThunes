@@ -55,6 +55,9 @@ public:
   /// Document.
   void addDocument(Document * document);
 
+  /// Returns the list of all the documents
+  QList<Document*> allDocuments() const;
+
   /// Renames the given document.
   bool renameDocument(Document * doc, const QString & newName);
 

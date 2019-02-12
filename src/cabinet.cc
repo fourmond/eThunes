@@ -20,6 +20,7 @@
 #include <cabinet.hh>
 #include <plugin.hh>
 #include <xmlreader.hh>
+#include <document.hh>
 
 #include <serializable-pointers.hh>
 
@@ -57,6 +58,16 @@ SerializationAccessor * Cabinet::serializationAccessor()
   ac->addAttribute("wallet", &wallet);
   ac->addAttribute("documents", &documents);
   return ac;
+}
+
+QList<Linkable *> Cabinet::allTargets() const
+{
+  QList<Linkable * > ret = wallet.allTargets();
+
+  for(Document * doc : documents.allDocuments())
+    ret << doc;
+
+  return ret;
 }
 
 void Cabinet::saveToFile(QString name)
@@ -125,7 +136,9 @@ void Cabinet::finishedSerializationRead()
   cabinetBeingSerialized = NULL;
   // rebuildDocumentsHash();
   /// \todo Idem for transactions one day ?
-  Link::finalizePendingLinks(this);
+
+  for(Linkable * lnk : allTargets())
+    lnk->ensureBidirectionnalLinks();
 
   // Set the cabinet linkback to the plugins
   for(int i = 0; i < plugins.size(); i++)

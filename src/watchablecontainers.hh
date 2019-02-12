@@ -111,7 +111,15 @@ public:
     return data.begin();
   };
 
+  typename QList<T>::const_iterator begin() const {
+    return data.begin();
+  };
+
   typename QList<T>::iterator end() {
+    return data.end();
+  };
+  
+  typename QList<T>::const_iterator end() const {
     return data.end();
   };
 

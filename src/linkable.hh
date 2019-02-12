@@ -131,6 +131,13 @@ public:
   /// The number of named links:
   int hasNamedLinks(const QString & name) const;
 
+
+  /// Returns the index of the first link with the given name to the
+  /// given target, or, if name is empty, just the first name.
+  ///
+  /// Returns -1 if no such link exists.
+  int linkIndex(Linkable * target, const QString & name) const;
+
   /// Returns the (internal) type of the object. It should match the
   /// one that LinksHandler recognizes.
   virtual QString typeName() const = 0;
@@ -150,6 +157,9 @@ public:
   /// Categorizable::fillMenuWithCategorizableActions, it is not a
   /// static function, because there is only one target.
   void fillMenuWithLinkableActions(QMenu *menu);
+
+  /// Ensure that all the links
+  void ensureBidirectionnalLinks();
 };
 
 #endif

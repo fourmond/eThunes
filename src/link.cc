@@ -81,6 +81,7 @@ int Link::finalizePendingLinks(Cabinet * cabinet)
 
   /// @todo This should be put back, as dangling links can become
   /// bothersome !
+  
 
   // int dangling = 0;
   // QList<Linkable *> targets;

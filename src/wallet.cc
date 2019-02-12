@@ -20,11 +20,30 @@
 #include <wallet.hh>
 #include <periodic.hh>
 
+#include <budget.hh>
+
 Wallet::Wallet()
 {
   watchChild(&accounts, "accounts");
   watchChild(&filters, "filters");
   watchChild(&accountGroups, "groups");
+}
+
+QList<Linkable *> Wallet::allTargets() const
+{
+  QList<Linkable * > ret;
+  TransactionPtrList lst = allTransactions();
+  for(AtomicTransaction * t : lst)
+    ret << t;
+
+  for(const Budget & b: budgets) {
+    for(const BudgetRealization & r : b.realizations) {
+      const Linkable * l = &r;
+      ret << const_cast<Linkable*>(l);
+    }
+  }
+  
+  return ret;
 }
 
 void Wallet::importAccountData(const OFXImport & data, bool runFilters)
@@ -127,6 +146,16 @@ TransactionPtrList Wallet::categoryTransactions(const Category * category,
   TransactionPtrList vals;
   for(int i = 0; i < accounts.size(); i++)
     vals.append(accounts[i].categoryTransactions(category, parents));
+  return vals;
+}
+
+TransactionPtrList Wallet::allTransactions() const
+{
+  TransactionPtrList vals;
+  for(int i = 0; i < accounts.size(); i++) {
+    Account * ac = const_cast<Account *>(&accounts[i]);
+    vals.append(ac->allTransactions());
+  }
   return vals;
 }
 

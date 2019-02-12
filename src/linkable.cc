@@ -34,21 +34,50 @@ void Linkable::addLink(Linkable * target, const QString & name)
   target->links.addLink(this, name);
 }
 
-int Linkable::removeLink(Linkable * target, const QString & name)
+int Linkable::linkIndex(Linkable * target, const QString & name) const
 {
-  int nb = 0;
   for(int i = 0; i < links.size(); i++) {
     const Link & lnk = links[i];
     if(lnk.linkTarget() == target) {
-      if(name.isEmpty() || name == lnk.linkName) {
-        QString name = lnk.linkName;
-        links.takeAt(i--);
-        nb++;
-        lnk.linkTarget()->removeLink(this, name);
-      }
+      if(name.isEmpty() || name == lnk.linkName)
+        return i;
     }
   }
+  return -1;
+}
+
+int Linkable::removeLink(Linkable * target, const QString & name)
+{
+  int nb = 0;
+  int fnd;
+  while((fnd = linkIndex(target, name)), fnd >= 0) {
+    const Link & lnk = links[fnd];
+    QString n = lnk.linkName;
+    links.takeAt(fnd);
+    nb++;
+    target->removeLink(this, n);
+  }
   return nb;
+}
+
+void Linkable::ensureBidirectionnalLinks()
+{
+  // This function really is a patch and should never do something,
+  // but may help repair mistakes and partially damaged data.
+
+  QTextStream o(stdout);        // Hmmm
+  for(const Link & lnk : links) {
+    if(lnk.linkTarget()->linkIndex(this, lnk.linkName) < 0) {
+      Linkable * tgt = lnk.linkTarget();
+      QString tgtn = lnk.linkTarget()->publicLinkName();
+      o << "Found dangling link named " << lnk.linkName
+        << " from: " << this << "(" << publicLinkName() << ")"
+        << " -> " << lnk.linkTarget()
+        << "(" << tgtn << ")" << endl;
+      // Fixing it
+      tgt->addLink(this, lnk.linkName);
+    }
+  }
 }
 
 int Linkable::hasNamedLinks(const QString & name) const
@@ -126,6 +155,7 @@ void Linkable::unregisterSelf() const
 {
   if(objectID < 0)
     return;
+  QMutexLocker l(&targetsLock);
   (*targets)[objectID].remove(const_cast<Linkable*>(this));
 }
 
