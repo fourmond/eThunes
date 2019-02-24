@@ -105,6 +105,9 @@ public:
   /// Returns the name of the document type (or nothing)
   QString docTypeName() const;
 
+  /// Sets the doc type name, and the doc type if we can find it
+  void setDocTypeName(const QString & type);
+
   virtual SerializationAccessor * serializationAccessor() override;
 
   /// @Name Transaction-matching capacities

@@ -50,6 +50,12 @@ QString Document::docTypeName() const
   return m_DocTypeName;
 }
 
+void Document::setDocTypeName(const QString & name)
+{
+  m_DocTypeName = name;
+  m_DocType = DocType::namedType(name);
+}
+
 DocType * Document::docType() const
 {
   return m_DocType;
@@ -82,6 +88,9 @@ SerializationAccessor * Document::serializationAccessor()
 {
   SerializationAccessor * ac = new SerializationAccessor(this);
   ac->addScalarAttribute("name", &m_FileName);
+  ac->addAccessorsAttribute("type", this,
+                            &Document::setDocTypeName,
+                            &Document::docTypeName);
   ac->addAttribute("attributes", &attributes);
   addLinkAttributes(ac);
   addCategoriesSerialization(ac);
