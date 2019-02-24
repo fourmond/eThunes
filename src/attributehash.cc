@@ -23,7 +23,7 @@
 #include <xmlreader.hh>
 
 const char * AttributeHash::typeNames[] = {
-  "string", "number", "time", 0
+  "string", "number", "date", "time", 0
 };
 
 AttributeHash::HandledType AttributeHash::variantType(const QVariant &variant)
@@ -90,6 +90,9 @@ void AttributeHash::readXML(XmlReader * reader)
     return;
   case Number:
     operator[](name) = QVariant(value.toLongLong());
+    return;
+  case Date:
+    operator[](name) = QDate::fromString(value, Qt::ISODate);
     return;
   case Time:
     operator[](name) = QDateTime::fromString(value, Qt::ISODate);
