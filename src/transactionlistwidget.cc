@@ -266,7 +266,11 @@ void TransactionListWidget::fillMenuWithBudgets(QMenu * menu, QList<Budget *> bu
     });
   for(int i = 0; i < budgets.size(); i++) {
     Budget * budget = budgets[i];
-    QAction * action = new QAction(budget->name, this);
+    QMenu * subMenu = new QMenu(tr("%1").arg(budget->name));
+    menu->addMenu(subMenu);
+    Period curPeriod = budget->periodicity.periodForDate(curDate);
+    QAction * action = new QAction(budget->periodicity.periodName(curPeriod),
+                                   this);
     connect(action, &QAction::triggered, [this, budget](bool) {
         TransactionPtrList selected = selectedTransactions();
         for(int j = 0; j < selected.size(); j++) {
@@ -274,14 +278,16 @@ void TransactionListWidget::fillMenuWithBudgets(QMenu * menu, QList<Budget *> bu
           rel->addTransaction(selected[j]);
         }
       });
-    menu->addAction(action);
-    QMenu * subMenu = new QMenu(tr("%1 at...").arg(budget->name));
-    menu->addMenu(subMenu);
+    subMenu->addAction(action);
+    subMenu->addSeparator();
+
     QList<Period> periods;
-    periods << budget->periodicity.periodForDate(curDate);
+    // periods << budget->periodicity.periodForDate(curDate);
     for(int i = 0; i < 2; i++) {
-      periods.insert(0, budget->periodicity.previousPeriod(periods[0]));
-      periods.append(budget->periodicity.nextPeriod(periods.last()));
+      periods.insert(0, budget->periodicity.
+                     previousPeriod(i > 0 ? periods[0] : curPeriod));
+      periods.append(budget->periodicity.
+                     nextPeriod(i > 0 ? periods.last() : curPeriod));
     }
     for(int i = 0; i < periods.size(); i++) {
       Period p = periods[i];
