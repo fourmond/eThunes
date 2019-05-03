@@ -81,6 +81,11 @@ protected slots:
                                 const QModelIndex &previous);
 
   void onDocumentActivated(const QModelIndex & index);
+
+  void ensureEditorsOn(const QModelIndex &tl,
+                       const QModelIndex &br);
+
+  void onItemExpanded(const QModelIndex &item);
 };
 
 #endif

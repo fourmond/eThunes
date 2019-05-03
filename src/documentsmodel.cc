@@ -96,8 +96,14 @@ QVariant DocumentsModel::data(const QModelIndex &index, int role) const
       return QVariant();
     }
     case LinksColumn:
-      if(doc)
-        return doc->linksData(role);
+      if(doc) {
+        QTextStream o(stdout);
+        QVariant d = doc->linksData(role);
+        o << "Getting data for doc " << doc << " and role " << role
+          << "/" << Qt::EditRole 
+          << " -> " << d.toString() << endl;
+        return d;
+      }
     case DateColumn:
       if(doc) {
         if(role == Qt::DisplayRole || role == Qt::EditRole)

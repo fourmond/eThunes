@@ -45,6 +45,12 @@ DocumentsPage::DocumentsPage(Cabinet * c) : cabinet(c)
                                      DocumentsModel::CategoryColumn,
                                      new AccountItemDelegate(&cabinet->wallet));
 
+
+  treeView->setItemDelegateForColumn(model->nativeColumns +
+                                     DocumentsModel::LinksColumn,
+                                     new LinksItemDelegate);
+
+
   
   treeView->setAlternatingRowColors(true);
 
@@ -62,7 +68,17 @@ DocumentsPage::DocumentsPage(Cabinet * c) : cabinet(c)
   connect(treeView->selectionModel(),
           SIGNAL(currentChanged(const QModelIndex &, const QModelIndex &)),
           SLOT(onCurrentDocumentChanged(const QModelIndex &,const QModelIndex &)));
-  
+
+  // Handling of the display of the link column:
+  connect(model, 
+          SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)),
+          SLOT(ensureEditorsOn(const QModelIndex &, const QModelIndex &)));
+
+  connect(treeView, SIGNAL(expanded(const QModelIndex &)),
+	  SLOT(onItemExpanded(const QModelIndex &)));
+
+
+  onItemExpanded(model->root());
 
   documentWidget = new DocumentWidget(cabinet);
   
@@ -73,6 +89,36 @@ DocumentsPage::DocumentsPage(Cabinet * c) : cabinet(c)
 
 DocumentsPage::~DocumentsPage()
 {
+}
+
+
+void DocumentsPage::ensureEditorsOn(const QModelIndex & tl, 
+                                    const QModelIndex & bl)
+{
+  QTextStream o(stdout);
+  o << "Stuf..." << endl;
+  if(! (tl.isValid() && bl.isValid()))
+    return;                     // Doesn't make sense.
+  QModelIndex idx = tl.sibling(tl.row(),
+                               model->nativeColumns + DocumentsModel::LinksColumn);
+  o << "Editors..." << endl;
+  while(idx.isValid() && (idx < bl || idx == bl)) {
+    o << "Idx: " << idx.row() << endl;
+    QString s = idx.data(Qt::EditRole).toString();
+    if(! s.isEmpty())
+      treeView->openPersistentEditor(idx);
+    idx = idx.sibling(idx.row() + 1, model->nativeColumns + DocumentsModel::LinksColumn);
+  }
+}
+
+void DocumentsPage::onItemExpanded(const QModelIndex & idx)
+{
+  if(idx.isValid()) {
+    // Make sure the persistent editors are opened
+    int rc = idx.model()->rowCount(idx);
+    ensureEditorsOn(idx.child(0, 0),
+                    idx.child(rc-1, 0));
+  }
 }
 
 AtomicTransaction * DocumentsPage::findMatchingTransaction(const Document * doc)
@@ -206,6 +252,15 @@ void DocumentsPage::treeViewContextMenu(const QPoint & pos)
     }
     );
   menu.addAction(a);
+
+  // OK, this should work !
+  // QMenu * sb = new QMenu(tr("Test"));
+  // QObject::connect(sb, &QMenu::aboutToShow, [this, sb]() {
+  //     sb->addAction("Bidule");
+  //   }
+  //   );
+
+  // menu.addMenu(sb);
 
   a = new QAction(tr("Rename"));
   QObject::connect(a, &QAction::triggered, [this, docs](bool) {
