@@ -218,7 +218,7 @@ void Loan::promptForRate()
                             arg(name),
                             QObject::tr("Enter the interest rate of loan %1 "
                                         "(in percents)").
-                            arg(name), yearlyRate);
+                            arg(name), yearlyRate*100, -100, 100, 3);
   yearlyRate = na * 0.01;
   updatePage();
 }
@@ -242,7 +242,7 @@ void Loan::findMatchingTransactions()
 {
   Period p;
   p.endDate = QDate::currentDate();
-  p.startDate = dateContracted.addMonths(1);
+  p.startDate = dateContracted;
   TransactionPtrList transactions = 
     targetPlugin->cabinet->wallet.
     transactionsForPeriod(p);
@@ -254,7 +254,8 @@ void Loan::findMatchingTransactions()
 
     // Very simple ?
     if(t->getMemo().contains(matcher) || 
-       t->getName().contains(matcher)
+       t->getName().contains(matcher) ||
+       t->getComment().contains(matcher)
        )
       addLink(t, "loan-payment");
   }
@@ -276,11 +277,15 @@ void Loan::computeDebt()
   matchingTransactions.clear();
 
   for(int i = 0; i < tr.size(); i++) {
-    Transaction * t = dynamic_cast<Transaction *>(tr[i]->linkTarget());
+    AtomicTransaction * t = dynamic_cast<AtomicTransaction *>(tr[i]->linkTarget());
     if(t)
       matchingTransactions << t;
   }
   matchingTransactions.sortByDate();
+
+  /// @todo This shows that this function is called way way too often.
+  // QTextStream o(stdout);
+  // o << "Found " << matchingTransactions.size() << " transations" << endl;
 
   amountLeft = amount;
   totalPaid = 0;
