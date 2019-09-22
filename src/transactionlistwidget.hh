@@ -33,6 +33,7 @@ class Budget;
 class TransactionListWidget : public QWidget {
 
   Q_OBJECT;
+
 protected:
   /// \todo Find a way to disable columns on demand.
   void setupFrame();
@@ -76,6 +77,9 @@ public:
   /// And the widget to actually display stuff
   QTreeView * view;
 
+  /// The label for displaying the sum
+  QLabel * label;
+
   ~TransactionListWidget();
 
   /// Returns the natural width of the widget, ie the one it would
@@ -92,6 +96,7 @@ public:
 
   /// Returns the Wallet associated
   Wallet * wallet() const;
+
 
 signals:
 

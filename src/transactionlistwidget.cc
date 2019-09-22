@@ -61,6 +61,8 @@ void TransactionListWidget::showTransactions(TransactionList *transactions)
     acs << transactions->value(i).getAccount();
   accounts = acs.toList();
   setupTreeView(true);
+
+  label->hide();
 }
 
 void TransactionListWidget::showTransactions(TransactionPtrList *transactions)
@@ -70,15 +72,23 @@ void TransactionListWidget::showTransactions(TransactionPtrList *transactions)
   else
     model->setList(transactions);
   QSet<Account * > acs;
-  for(int i = 0; i < transactions->size(); i++)
+  int total = 0;
+  for(int i = 0; i < transactions->size(); i++) {
     acs << transactions->value(i)->getAccount();
+    total += transactions->value(i)->getAmount();
+  }
   accounts = acs.toList();
 
   setupTreeView();
+  label->setText(QString("%1,transactions, total amount: %2").
+                 arg(transactions->size()).
+                 arg(Transaction::formatAmount(total)));
 
   // By default, we hide the balance, as it usually doesnt make sense
   // for PtrLists
   hideBalance();
+
+  label->show();
 }
 
 
@@ -88,6 +98,9 @@ void TransactionListWidget::setupFrame()
 
   view = new QTreeView(this);
   layout->addWidget(view);
+
+  label = new QLabel;
+  layout->addWidget(label);
 }
 
 void TransactionListWidget::setupTreeView(bool decorate)
