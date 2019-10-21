@@ -155,7 +155,7 @@ QString BudgetPage::summaryTableForYear(int year)
     text += tr("<th>%1 %2</th>").
       arg(QDate::shortMonthName(i)).arg(year);
 
-  text += tr("<th>Total</th></tr>\n");
+  text += tr("<th>Total</th><th>(monthly)</th></tr>\n");
   
   for(int i = 0; i < budgets.size(); i++) {
     Budget * budget = budgets[i];
@@ -242,6 +242,12 @@ QString BudgetPage::summaryTableForYear(int year)
     cur = cur.arg(Transaction::formatAmount(te));
     text += QString("<td align='center' style='padding: 1px 3px;'>%1/%2</td>").
       arg(cur).arg(Transaction::formatAmount(tp));
+    cur =  te >= tp ?
+      "<font color='green'>%1</font>" : 
+      "<b><font color='red'>%1</font></b>";
+    cur = cur.arg(Transaction::formatAmount(te/12));
+    text += QString("<td align='center' style='padding: 1px 3px;'>%1/%2</td>").
+      arg(cur).arg(Transaction::formatAmount(tp/12));
     text += "</tr>\n";
   }
 
@@ -276,6 +282,14 @@ QString BudgetPage::summaryTableForYear(int year)
     cur = cur.arg(Transaction::formatAmount(am));
     text += QString("<td align='center' style='padding: 1px 3px;'>%1</td>").
       arg(cur);
+    if(i == 12) {
+      cur =  am >= 0 ?
+        "<font color='green'>%1</font>" : 
+        "<b><font color='red'>%1</font></b>";
+      cur = cur.arg(Transaction::formatAmount(am/12));
+      text += QString("<td align='center' style='padding: 1px 3px;'>%1</td>").
+        arg(cur);
+    }
   }
 
   text += tr("</tr><tr><th>Total</th>");
@@ -287,6 +301,14 @@ QString BudgetPage::summaryTableForYear(int year)
     cur = cur.arg(Transaction::formatAmount(am));
     text += QString("<td align='center' style='padding: 1px 3px;'>%1</td>").
       arg(cur);
+    if(i == 12) {
+      cur =  am >= 0 ?
+        "<font color='green'>%1</font>" : 
+        "<b><font color='red'>%1</font></b>";
+      cur = cur.arg(Transaction::formatAmount(am/12));
+      text += QString("<td align='center' style='padding: 1px 3px;'>%1</td>").
+        arg(cur);
+    }
   }
 
   text += tr("</tr><tr><th>(all-inclusive) Total</th>");
@@ -298,6 +320,14 @@ QString BudgetPage::summaryTableForYear(int year)
     cur = cur.arg(Transaction::formatAmount(am));
     text += QString("<td align='center' style='padding: 1px 3px;'>%1</td>").
       arg(cur);
+    if(i == 12) {
+      cur =  am >= 0 ?
+        "<font color='green'>%1</font>" : 
+        "<b><font color='red'>%1</font></b>";
+      cur = cur.arg(Transaction::formatAmount(am/12));
+      text += QString("<td align='center' style='padding: 1px 3px;'>%1</td>").
+        arg(cur);
+    }
   }
   text += "</tr>\n</table>\n";
 
