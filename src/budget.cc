@@ -124,6 +124,11 @@ bool BudgetRealization::contains(const QDate & date) const
 
 void BudgetRealization::addTransaction(AtomicTransaction * transaction)
 {
+  // We first remove any link that exists previously
+  QList<BudgetRealization*> previousBudgets =
+    transaction->links.typedLinks<BudgetRealization>("budget-realization");
+  for(BudgetRealization * tg : previousBudgets)
+    transaction->removeLink(tg, "budget-realization");
   addLink(transaction, "budget-realization");
 }
 
