@@ -64,7 +64,9 @@ void AccountPage::updateAccountSummary()
                                         &TransactionListDialog::showChecks,
                                         account)
     + " " + HTTarget::linkToMember("(display balance)", this,
-                                   &AccountPage::displayBalance);
+                                   &AccountPage::displayBalance)
+    + " " + HTTarget::linkToMember("(add previsional)", this,
+                                   &AccountPage::addPrevisionalTransaction);
 
   accountSummary->setText(str);
 }
@@ -98,3 +100,10 @@ void AccountPage::displayBalance()
   dlg->show();
 }
 
+void AccountPage::addPrevisionalTransaction()
+{
+  account->transactions << Transaction();
+  Transaction & lst = account->transactions.last();
+  lst.setDate(QDate::currentDate());
+  lst.makePrevisional();
+}

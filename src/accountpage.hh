@@ -71,6 +71,9 @@ public slots:
   /// Displays the balance
   void displayBalance();
 
+  /// Adds a previsional transaction (dated today)
+  void addPrevisionalTransaction();
+
 public:
 
   /// Returns the AccountPage for the given account, or create it if

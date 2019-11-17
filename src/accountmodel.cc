@@ -35,6 +35,10 @@ static QVariant transactionData(AtomicTransaction * t,
   if(! t)
     return QVariant();
 
+  if(role == Qt::BackgroundRole && t->isPrevisional()) {
+    return QBrush(QColor(220,220,255));
+  }
+
   if(column == AccountModel::LinksColumn)
     return t->linksData(role);
 
@@ -69,9 +73,12 @@ static QVariant transactionData(AtomicTransaction * t,
   }
   if(role == Qt::EditRole) {
     switch(column) {
-    case AccountModel::CommentColumn: return t->getComment();
+    case AccountModel::CommentColumn:
+      return t->getComment();
     case AccountModel::AmountColumn: 
       return t->getAmount();
+    case AccountModel::DateColumn:
+      return QVariant(t->getDate());
     default:
       return QVariant();
     }
@@ -112,13 +119,6 @@ static QVariant transactionData(AtomicTransaction * t,
     }
     return QVariant();
   }
-  // if(role == Qt::BackgroundRole) {
-  //   QColor background;
-  //   int month = t->date.month() - 1;
-  //   background.setHsv(month * 170 % 360, 0,
-  // 		      (index.row() % 2 ? 220 : 240));
-  //   return QBrush(background);
-  // }
   if(role == Qt::ForegroundRole) {
     if(column == AccountModel::DateColumn) {
       QColor color;
@@ -147,7 +147,7 @@ static QVariant transactionData(AtomicTransaction * t,
 }
 
 static Qt::ItemFlags transactionFlags(AtomicTransaction * t, 
-                                 int column, bool full = true)
+                                      int column, bool full = true)
 {
   // Returns the flags for the given transaction.
 
@@ -161,7 +161,11 @@ static Qt::ItemFlags transactionFlags(AtomicTransaction * t,
     return Qt::ItemIsSelectable|
       Qt::ItemIsEnabled|Qt::ItemIsEditable;
   case AccountModel::AmountColumn:
-    if(t->baseTransaction)
+    if(t->baseTransaction || t->isPrevisional())
+      return Qt::ItemIsSelectable|
+        Qt::ItemIsEnabled|Qt::ItemIsEditable;
+  case AccountModel::DateColumn:
+    if(t->isPrevisional())
       return Qt::ItemIsSelectable|
         Qt::ItemIsEnabled|Qt::ItemIsEditable;
   default:
@@ -318,6 +322,13 @@ bool FullTransactionItem::setData(int column, const QVariant & value,
       emit(itemChanged(this, column, column));
       return true;
     }
+  case AccountModel::AmountColumn:
+    if(role == Qt::EditRole && t->isPrevisional()) {
+      t->setAmount(value.toInt());
+      emit(itemChanged(this, column, column));
+      return true;
+    }
+
   default:
     return false;
   }

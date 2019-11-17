@@ -173,6 +173,10 @@ public:
     return date;
   };
 
+  void setDate(const QDate & d) {
+    setAttribute(date, d, "date");
+  };
+
   /// Returns the name of the transaction.
   virtual QString getName() const {
     return name;

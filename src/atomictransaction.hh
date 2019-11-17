@@ -42,6 +42,11 @@ protected:
   /// A user-set comment
   QString comment;
 
+  /// Previsional. When this is true, then the transaction is not "set
+  /// in stone", but it is here as a placeholder for a "true"
+  /// transaction to come later.
+  bool previsional;
+
 public:
 
   /// The transaction this one is derived from. If not NULL, then this
@@ -69,6 +74,17 @@ public:
     return monthID(QDate::currentDate()) - 1; /// \todo hard-wired to
 					      /// the representation
 					      /// of monthID
+  };
+
+  /// Returns true if the transaction is only previsional.
+  bool isPrevisional() const {
+    return previsional;
+  };
+
+  /// Makes the transaction previsional. Should only be used once, I
+  /// think...
+  void makePrevisional() {
+    previsional = true;
   };
 
   AtomicTransaction(int amount = 0, Transaction * bt = NULL);

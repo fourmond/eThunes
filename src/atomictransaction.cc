@@ -23,7 +23,7 @@
 
 
 AtomicTransaction::AtomicTransaction(int am, Transaction * bt) :
-  amount(am), baseTransaction(bt)
+  amount(am), baseTransaction(bt), previsional(false)
 {
 }
 
@@ -32,6 +32,7 @@ SerializationAccessor * AtomicTransaction::serializationAccessor()
   SerializationAccessor * ac = new SerializationAccessor(this);
   ac->addScalarAttribute("amount", &amount);
   ac->addScalarAttribute("comment", &comment);
+  ac->addScalarAttribute("previsional", &previsional);
   addLinkAttributes(ac);
   addCategoriesSerialization(ac);
   return ac;
