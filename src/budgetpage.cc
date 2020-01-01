@@ -135,6 +135,7 @@ QString BudgetPage::summaryTableForYear(int year)
   QDate cd = QDate::currentDate();
   int amounts[13];              // leaving out the "exceptional stuff"
   int budgeted[13];             // the purely budgeted thing
+  int expenses[13];             // the budgeted expenses
   int overallAmounts[13];       // not leaving them out
   QString text;
 
@@ -147,6 +148,7 @@ QString BudgetPage::summaryTableForYear(int year)
     amounts[i] = 0;
     overallAmounts[i] = 0;
     budgeted[i] = 0;
+    expenses[i] = 0;
   }
 
   // Now, a summary of the realizations, for the current year
@@ -225,6 +227,11 @@ QString BudgetPage::summaryTableForYear(int year)
       budgeted[0] += planned;
       for(int i = p.startDate.month(); i <= p.endDate.month(); i++)
         budgeted[i] += planned/p.months();
+      if(planned < 0 && ! budget->exceptional) {
+        expenses[0] += planned;
+        for(int i = p.startDate.month(); i <= p.endDate.month(); i++)
+          expenses[i] += planned/p.months();
+      }
       
       QString cur = display >= planned ?
         "<font color='green'>%1</font>" : 
@@ -274,6 +281,23 @@ QString BudgetPage::summaryTableForYear(int year)
   }
 
   text += "<tr></tr>";
+
+
+  text += tr("<tr><th>Expenses</th>");
+  for(int i = 0; i <= 12; i++) {
+    int am = expenses[(i + 1) % 13]; // so that last is amounts[0]
+    QString cur = Transaction::formatAmount(am);
+    text += QString("<td align='center' style='padding: 1px 3px;'>%1</td>").
+      arg(cur);
+    if(i == 12) {
+      cur =  am >= 0 ?
+        "<font color='green'>%1</font>" : 
+        "<b><font color='red'>%1</font></b>";
+      cur = cur.arg(Transaction::formatAmount(am/12));
+      text += QString("<td align='center' style='padding: 1px 3px;'>%1</td>").
+        arg(cur);
+    }
+  }
 
   text += tr("<tr><th>Budget</th>");
   for(int i = 0; i <= 12; i++) {
@@ -515,8 +539,11 @@ void BudgetPage::showStatistics()
   s+= "</tr>\n";
 
   for(Budget * budget : budgets) {
-    s += QString("<tr><td><b>%1</b></td>").
-      arg(budget->name);
+    QString n = QString(budget->exceptional ?
+                        "<i>%1</i>" :
+                        "<b>%1</b>").arg(budget->name);
+    s += QString("<tr><td>%1</td>").
+      arg(n);
     for(int y = fy; y <= ly; y++) {
       Period p = Period::year(y);
       int tot = 0;
