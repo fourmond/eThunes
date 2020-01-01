@@ -79,6 +79,9 @@ public:
 
   /// Returns all the transactions for all the budget's realizations.
   TransactionPtrList allTransactions() const;
+
+  /// Returns the earliest realization
+  QDate earliestDate() const;
 };
 
 /// This class represents the realization of a budget, i.e. all the

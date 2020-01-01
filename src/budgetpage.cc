@@ -26,6 +26,8 @@
 #include <flowinggridlayout.hh>
 #include <evolvingitemwidget.hh>
 
+#include <statistics.hh>
+
 BudgetPage::BudgetPage(Wallet * w) : wallet(w)
 {
 
@@ -356,16 +358,19 @@ void BudgetPage::updateSummary()
   
   for(int i = 0; i < budgets.size(); i++) {
     Budget * budget = budgets[i];
-    text = tr("<h4>%1 %2 (ex: %3)</h4>").
+    text = tr("<h4>%1 %2 %4 (ex: %3)</h4>").
       arg(budget->name).
-      arg(HTTarget::linkToMember(tr("(change name)"),
+      arg(HTTarget::linkToMember(tr("(rename)"),
                                  this, &BudgetPage::promptNewName, budget)).
       arg(HTTarget::linkToMember(budget->exceptional ? "yes" : "no",
-                                 this, &BudgetPage::toggleExceptional, budget));
+                                 this, &BudgetPage::toggleExceptional, budget)).
+      arg(HTTarget::linkToMember("(S)",
+                                 this, &BudgetPage::showStatistics, budget));
+    ;
 
     text += tr("Amount: %1 %2<br>").
       arg(budget->amount.toString(&Transaction::formatAmount)).
-      arg(HTTarget::linkToMember(tr("(change amount)"),
+      arg(HTTarget::linkToMember(tr("(change)"),
                                  this, &BudgetPage::promptNewAmount, budget));
 
     text += tr("Periodicity: %1 months %2").
@@ -457,9 +462,9 @@ void BudgetPage::promptNewMonths(Budget * budget)
   bool ok = false;
   int nm =
     QInputDialog::getInt(this, tr("New budget periodicity"),
-                         tr("Periodicity for the butget in months"),
+                         tr("Periodicity for the budget in months"),
                          budget->periodicity.months,
-                         -2147483647, 2147483647, 1, &ok);
+                         1, 2147483647, 1, &ok);
   if(ok) {
     budget->periodicity.months = nm;
     updateSummary();
@@ -471,4 +476,60 @@ void BudgetPage::showYear(const QString & year)
 {
   int y = year.toInt();
   summary->setText(summaryTableForYear(y));
+}
+
+void BudgetPage::showStatistics(Budget * budget)
+{
+  int fy = budget->earliestDate().year();
+  int ly = QDate::currentDate().year();
+  QTextStream o(stdout);
+  o << "Found years: " << fy << endl;
+
+  QHash<int, CategorizedStatistics> stats;
+  while(fy <= ly) {
+    Period p = Period::year(fy);
+    for(BudgetRealization * r : budget->realizationsForPeriod(p).values()) {
+      if(r) {
+        for(const AtomicTransaction * t : r->transactions())
+          stats[fy].addTransaction(t, false);
+      }
+    }
+    ++fy;
+  }
+
+  QString s;
+  s += QString("<h3>%1</h3>").arg(budget->name);
+  s += "\n<table>";
+
+  QList<int> years = stats.keys();
+  QHash<int,QStringList> rows;
+  std::sort(years.begin(), years.end());
+  s += "<tr>";
+  int nb = 0;
+  for(int y : years) {
+    s += QString("<th>%1</th><th></th>").arg(y);
+    int t = 0;
+    for(auto i : stats[y].categorize()) {
+      rows[y] << QString("<td>%1</td><td>%2</td>").
+        arg(i.category).
+        arg(Transaction::formatAmount(i.amount));
+      t += i.amount;
+    }
+    rows[y].insert(0, QString("<td><b>Total</b></td><td>%1</td>").
+                   arg(Transaction::formatAmount(t)));
+    if(nb < rows[y].size())
+      nb = rows[y].size();
+  }
+  s += "</tr>";
+
+  for(int i = 0; i < nb; i++) {
+    s += "<tr>";
+    for(int y : years)
+      s += rows[y].value(i, "<td></td><td></td>");
+    s += "</tr>\n";
+  }
+
+  s += "\n</table>";
+
+  (new WidgetWrapperDialog(new QLabel(s)))->exec();
 }

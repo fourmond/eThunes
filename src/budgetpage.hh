@@ -97,6 +97,10 @@ public slots:
 
   /// Toggles the "exceptional" flag
   void toggleExceptional(Budget * budget);
+
+  /// Shows year-by-year statistics for the given budget
+  void showStatistics(Budget * budget);
+
 };
 
 #endif

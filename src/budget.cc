@@ -87,6 +87,17 @@ TransactionPtrList Budget::allTransactions() const
 }
 
 
+QDate Budget::earliestDate() const
+{
+  QDate er;
+  for(const BudgetRealization & r : realizations) {
+    if((!er.isValid()) || (er > r.period.startDate))
+      er = r.period.startDate;
+  }
+  return er;
+}
+
+
 
 
 
