@@ -343,7 +343,9 @@ void BudgetPage::updateSummary()
     HTTarget::linkToMember(tr("(update)"),
                            this, &BudgetPage::updateSummary) +
     HTTarget::linkToMember(tr("(new budget)"),
-                           this, &BudgetPage::addBudget)
+                           this, &BudgetPage::addBudget) +
+    HTTarget::linkToMember(tr("(stats)"),
+                           this, &BudgetPage::showStatistics)
     + "<p>\n";
   top->setText(text);
 
@@ -476,6 +478,90 @@ void BudgetPage::showYear(const QString & year)
 {
   int y = year.toInt();
   summary->setText(summaryTableForYear(y));
+}
+
+void BudgetPage::showStatistics()
+{
+  int ly = QDate::currentDate().year();
+  int fy = ly;
+
+  QList<Budget *> budgets = wallet->budgets.pointerList();
+  std::sort(budgets.begin(), budgets.end(), [](Budget * a, Budget * b) -> bool {
+      return a->name < b->name;
+    });
+
+  for(Budget * budget : budgets) {
+    int y = budget->earliestDate().year();
+    if(y < fy)
+      fy = y;
+  }
+  // QTextStream o(stdout);
+  // o << "First and last: " << fy << " -- " << ly << endl;
+
+  QString s;
+  s += QString("<h3>Statistics</h3>");
+  s += "\n<table>";
+  s += "<tr><th></th>";
+  QHash<int, int> totals;
+  QHash<int, int> ovTotals;     // including exceptional stuff
+  for(int y = fy; y <= ly; y++) {
+    s += QString("<th>%1</th>").arg(y);
+    totals[y] = 0;
+    ovTotals[y] = 0;
+  }
+
+  // o << "First and last: " << fy << " -- " << ly << endl;
+
+  s+= "</tr>\n";
+
+  for(Budget * budget : budgets) {
+    s += QString("<tr><td><b>%1</b></td>").
+      arg(budget->name);
+    for(int y = fy; y <= ly; y++) {
+      Period p = Period::year(y);
+      int tot = 0;
+      for(BudgetRealization * r : budget->realizationsForPeriod(p).values()) {
+        if(r) {
+          for(const AtomicTransaction * t : r->transactions())
+            tot += t->getAmount();
+        }
+      }
+      s += QString("<td align='right'>%1</td>").arg(Transaction::formatAmount(tot));
+      if(! budget->exceptional)
+        totals[y] += tot;
+      ovTotals[y] += tot;
+    }
+    s += "</tr>\n";
+  }
+
+  s += QString("<tr><td><b>(unbudgeted)</b></td>");
+  for(int y = fy; y <= ly; y++) {
+    Period p = Period::year(y);
+    int tot = 0;
+    TransactionPtrList list = wallet->transactionsForPeriod(p);
+    for(const AtomicTransaction * t : BudgetRealization::realizationLessTransactions(list))
+      tot += t->getAmount();
+    s += QString("<td align='right'>%1</td>").arg(Transaction::formatAmount(tot));
+    totals[y] += tot;
+    ovTotals[y] += tot;
+  }
+  
+  s += "</tr>\n<tr></tr>\n";
+
+  s += QString("<tr><td><b>Total</b></td>");
+  for(int y = fy; y <= ly; y++)
+    s += QString("<td align='right'><b>%1</b></td>").
+      arg(Transaction::formatAmount(totals[y]));
+  
+  s += QString("</tr>\n<tr><td><b>All-inclusive</b></td>");
+  for(int y = fy; y <= ly; y++)
+    s += QString("<td align='right'><b>%1</b></td>").
+      arg(Transaction::formatAmount(ovTotals[y]));
+  s += "</tr>\n</table>\n";
+
+  // o << s << endl;
+
+  (new WidgetWrapperDialog(new QLabel(s)))->exec();
 }
 
 void BudgetPage::showStatistics(Budget * budget)

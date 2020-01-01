@@ -101,6 +101,9 @@ public slots:
   /// Shows year-by-year statistics for the given budget
   void showStatistics(Budget * budget);
 
+  /// Shows year-by-year statistics for all budgets
+  void showStatistics();
+
 };
 
 #endif
