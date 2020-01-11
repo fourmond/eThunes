@@ -152,12 +152,8 @@ HEADERS += src/account.hh src/mainwin.hh src/actions.hh \
 
 
 
+######################################################################
 # Plugins:
-
-        
-
-
-        
 
 # Loan tracker
 HEADERS += plugins/loans/loan.hh \
@@ -166,6 +162,15 @@ HEADERS += plugins/loans/loan.hh \
 
 SOURCES += plugins/loans/loan.cc \
         plugins/loans/loanpage.cc
+
+
+# Tracker for the car
+HEADERS += plugins/car/car.hh
+
+SOURCES += plugins/car/car.cc
+
+
+
 
 # Translations
 
