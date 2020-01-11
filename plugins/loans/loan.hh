@@ -100,6 +100,7 @@ public:
 
   virtual void followLink();
 
+
   LoanPlugin * targetPlugin;
 
   Loan();
@@ -144,6 +145,8 @@ public:
 
   /// A list of loans...
   QList<Loan> loans;
+
+  QList<QPair<QString, TransactionPtrList::Action> > transactionContextMenu() override;
 
   virtual NavigationPage * pageForPlugin();
 

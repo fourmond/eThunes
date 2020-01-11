@@ -262,6 +262,7 @@ void Loan::findMatchingTransactions()
   updatePage();
 }
 
+
 void Loan::updatePage()
 {
   LoanPage * page = (LoanPage *) targetPlugin->pageForPlugin();
@@ -398,4 +399,18 @@ int LoanPlugin::balance() const
     balance -= ln->amountLeft;
   }
   return balance;
+}
+
+QList<QPair<QString, TransactionPtrList::Action> > LoanPlugin::transactionContextMenu()
+{
+  QList<QPair<QString, TransactionPtrList::Action> > actions;
+  for(Loan & l : loans) {
+    Loan * loan = &l;
+    TransactionPtrList::Action act = [loan](const TransactionPtrList & list) -> void {
+      for(AtomicTransaction * t : list)
+        loan->addLink(t, "loan-payment");
+    };
+    actions << QPair<QString, TransactionPtrList::Action>(loan->name, act);
+  }
+  return actions;
 }

@@ -19,6 +19,8 @@
 #include <headers.hh>
 #include <account.hh>
 #include <wallet.hh>
+#include <cabinet.hh>
+#include <plugin.hh>
 #include <transactionlistwidget.hh>
 
 #include <transactionlistdialog.hh>
@@ -232,10 +234,29 @@ void TransactionListWidget::fireUpContextMenu(const QPoint & pos)
   }
 
   menu.addSeparator();
+  // Deal with plugins
+  int nb = 0;
+  for(Plugin * p : Cabinet::globalCabinet()->plugins) {
+    QList<QPair<QString, TransactionPtrList::Action> > actions = p->transactionContextMenu();
+    if(actions.size() > 0) {
+      ++nb;
+      QMenu * subMenu = new QMenu(tr("Plugin: %1").arg(p->getName()));
+      for(const QPair<QString, TransactionPtrList::Action> & t : actions) {
+        action = new QAction(t.first);
+        QObject::connect(action, &QAction::triggered, [t,selected](bool) {
+            t.second(selected);
+          }
+          );
+        subMenu->addAction(action);
+      }
+      menu.addMenu(subMenu);
+    }
+  }
 
+  if(nb > 0)
+    menu.addSeparator();
 
   
-  menu.addSeparator();
   action = new QAction(tr("Statistics"), this);
   action->setData(QStringList() << "stats");
   menu.addAction(action);

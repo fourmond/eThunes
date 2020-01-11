@@ -24,6 +24,7 @@
 
 #include <serializable.hh>
 #include <httarget.hh>
+#include <transactionlists.hh>
 
 class NavigationPage;
 
@@ -124,13 +125,7 @@ public:
   Cabinet * cabinet;
 
   Plugin() : cabinet(NULL) {;};
-
-
-  /// The type name
-  virtual QString typeName() const {
-    return "(null)";
-  };
-
+  
   /// Returns the user-given name for the plugin.
   QString getName() const {
     return name;
@@ -141,26 +136,8 @@ public:
     setAttribute(name, n, "name");
   };
 
-
-  /// Returns a NavigationPage suitable to interact with the Plugin.
-  ///
-  /// @todo Maybe we could add a QWidget/QDialog too ?
-  virtual NavigationPage * pageForPlugin() = 0;
-
   /// For serialization
   virtual SerializationAccessor * serializationAccessor();
-
-  /// The plugin system is somewhat disconnected from the
-  /// serialization system, in that the plugins are not required to
-  /// use XML for saving/loading. Instead, they rely on string
-  /// functions, that may in turn use the serialization functions
-  /// again or use a completely different mechanism (YAML could be
-  /// used for ruby, for instance).
-  ///
-  /// The default implementation is to wrap the object in a XML stream
-  /// again, and save it as CDATA.
-  virtual QString writeAsString();
-  virtual void readFromString(const QString & str);
 
   virtual ~Plugin();
 
@@ -181,6 +158,44 @@ public:
   static QList<const PluginDefinition *> availablePlugins();
 
   virtual void followLink();
+
+
+    /// @name Public interface
+  ///
+  /// Virtual functions that must be reimplemented by the plugin (and
+  /// also the balance functions)
+  /// 
+  /// @{
+
+  /// The type name
+  virtual QString typeName() const {
+    return "(null)";
+  };
+
+
+
+  /// Returns a NavigationPage suitable to interact with the Plugin.
+  ///
+  /// @todo Maybe we could add a QWidget/QDialog too ?
+  virtual NavigationPage * pageForPlugin() = 0;
+
+
+  /// The plugin system is somewhat disconnected from the
+  /// serialization system, in that the plugins are not required to
+  /// use XML for saving/loading. Instead, they rely on string
+  /// functions, that may in turn use the serialization functions
+  /// again or use a completely different mechanism (YAML could be
+  /// used for ruby, for instance).
+  ///
+  /// The default implementation is to wrap the object in a XML stream
+  /// again, and save it as CDATA.
+  virtual QString writeAsString();
+  virtual void readFromString(const QString & str);
+
+  /// Returns a list of actions for the TransactionListWidget menu
+  virtual QList<QPair<QString, TransactionPtrList::Action>> transactionContextMenu();
+
+  /// @}
 
   /// @name Balance-based functions
   ///

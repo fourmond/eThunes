@@ -198,3 +198,9 @@ void Plugin::readFromString(const QString & str)
 
 }
 
+
+QList<QPair<QString, TransactionPtrList::Action> > Plugin::transactionContextMenu()
+{
+  QList<QPair<QString, TransactionPtrList::Action> > actions;
+  return actions;
+}

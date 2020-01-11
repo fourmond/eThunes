@@ -108,6 +108,9 @@ public:
   /// Returns various interesting statistics about the list.
   TransactionListStatistics statistics() const;
 
+  /// The type for a function to work on TransactionPtrList
+  typedef std::function<void (const TransactionPtrList &)> Action;
+
   /// Browses through the TransactionList given here trying to find
   /// transaction that could correspond to both ends of the same
   /// operation, characterized by
