@@ -24,6 +24,10 @@
 #include <cabinet.hh>
 #include <attributehashwidget.hh>
 
+#include <poppler/qt5/poppler-qt5.h>
+#include <memory>
+
+
 DocumentWidget::DocumentWidget(Cabinet * c, QWidget * parent) :
   QWidget(parent), document(NULL), cabinet(c)
 {
@@ -38,7 +42,8 @@ DocumentWidget::~DocumentWidget()
 
 void DocumentWidget::setupFrame()
 {
-  QVBoxLayout * layout = new QVBoxLayout(this);
+  QWidget * left = new QWidget;
+  QVBoxLayout * layout = new QVBoxLayout(left);
   QHBoxLayout * hb = new QHBoxLayout;
   firstLine = new QLabel();
   hb->addWidget(firstLine, 1);
@@ -73,6 +78,50 @@ void DocumentWidget::setupFrame()
   layout->addWidget(attributesEditor);
 
   layout->addStretch(1);
+
+  splitter = new QSplitter;
+  splitter->addWidget(left);
+  layout = new QVBoxLayout(this);
+  layout->addWidget(splitter);
+
+  // Display code
+  pageArea = new QScrollArea;
+
+  
+
+  pageDisplay = new QLabel;
+  pageDisplay->setBackgroundRole(QPalette::Base);
+
+  pageArea->setBackgroundRole(QPalette::Dark);
+  pageArea->setWidget(pageDisplay);
+
+  splitter->addWidget(pageArea);
+  
+}
+
+void DocumentWidget::showPage(int page)
+{
+  QString af = Cabinet::globalCabinet()->
+    baseDirectory().absoluteFilePath(fileName);
+  std::unique_ptr<Poppler::Document> doc(Poppler::Document::load(af));
+  QTextStream o(stdout);
+  if(! doc || doc->isLocked()) {
+    o << "Failed to load document: " << af << endl;
+    return;
+  }
+  std::unique_ptr<Poppler::Page> pdfPage(doc->page(page));
+  // Document starts at page 0
+  if(! pdfPage)
+    return;
+
+  QScreen * scr = QGuiApplication::primaryScreen();
+
+  double res = scr->physicalDotsPerInch() * 0.8;
+  
+  QImage image = pdfPage->renderToImage(res, res);
+
+  pageDisplay->setPixmap(QPixmap::fromImage(image));
+  pageDisplay->resize(image.size());
 }
 
 void DocumentWidget::showDocument(const QString & str)
@@ -99,6 +148,7 @@ void DocumentWidget::showDocument(const QString & str)
     documentTypeCombo->setCurrentText("(none)");
     description->setText("");
   }
+  showPage(0);
 }
 
 void DocumentWidget::onTypeChanged(const QString & newType)

@@ -75,6 +75,8 @@
 #include <QMimeType>
 #include <QMimeDatabase>
 
+// Information about the screen
+#include <QScreen>
 
 // A rich text viewer (and editor?).
 // (not used)

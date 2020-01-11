@@ -39,6 +39,15 @@ class DocumentWidget : public QWidget {
   /// trying to modify anything.
   Document * document;
 
+  /// The horizontal splitter for the rendering of the
+  QSplitter * splitter;
+
+  /// The scroll area for the page display
+  QScrollArea * pageArea;
+
+  /// The label to display the page
+  QLabel * pageDisplay;
+
   /// First line (document path)
   QLabel * firstLine;
 
@@ -70,6 +79,9 @@ public slots:
 protected slots:
   /// Called on changing type
   void onTypeChanged(const QString & newType);
+
+  /// Shows the page
+  void showPage(int i);
 };
 
 
