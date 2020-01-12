@@ -38,16 +38,47 @@
 /// An even is linked to a single transaction.
 class CarEvent : public Linkable {
 
+public:
+
+  enum Type {
+    Purchase,
+    Refuel,
+    Repair,
+    Other
+  };
+
+  /// The type of the event
+  Type type;
+
   /// The kilometers at the event (-1 when unknown)
   int kilometers;
 
-  /// The amount of fuel (in 0.01 liters)
+  /// The amount of fuel (in 0.01 liters), -1 if unkown
   int fuel;
-public:
+
+  /// Whether the refuel corresponds to a full tank
+  bool fullTank;
+
+  /// The price per liter, -1 if unknown
+  int pricePerLiter;
+
+  virtual SerializationAccessor * serializationAccessor() override;
+  
+  virtual void followLink() override;
+
+  virtual QString typeName() const override;
 };
 
 /// This class represents a car
-class Car {
+class Car : public Serializable {
+public:
+
+  /// A public, user-defined name.
+  QString name;
+  
+  QList<CarEvent> events;
+
+  virtual SerializationAccessor * serializationAccessor() override;
 };
 
 
