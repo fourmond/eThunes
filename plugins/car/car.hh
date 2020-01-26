@@ -71,7 +71,8 @@ public:
   /// Whether the refuel corresponds to a full tank
   bool fullTank;
 
-  /// The price per liter, -1 if unknown
+  /// The price per liter, -1 if unknown.
+  /// Hmmm. Should perhaps have a better resolution ?
   int pricePerLiter;
 
   /// @}
@@ -138,6 +139,9 @@ public:
   virtual SerializationAccessor * serializationAccessor() override;
 
   void addEvents(const TransactionPtrList & events, CarEvent::Type type);
+
+  /// Updates the cache
+  void updateCache();
 };
 
 

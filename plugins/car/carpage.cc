@@ -118,8 +118,10 @@ public:
                         int nb = event->fuelPrice(&cpt);
                         if(nb < 0)
                           return QVariant();
-                        if(role == Qt::DisplayRole || role == Qt::EditRole)
+                        if(role == Qt::DisplayRole)
                           return Transaction::formatAmount(nb);
+                        if(role == Qt::EditRole)
+                          return nb;
                         if(role == Qt::ForegroundRole) {
                           if(cpt)
                             return QColor("gray");
@@ -127,15 +129,25 @@ public:
                             return QColor("black");
                         }
                         return QVariant();
-                      })
+                      },
+                      [](CarEvent * event, const QVariant & data) -> bool {
+                        QVariant d = data;
+                        if(! d.convert(QMetaType::Int))
+                          return false;
+                        event->pricePerLiter = d.toInt();
+                        return true;
+                      }
+                      )
             << Column("Liters", [](const CarEvent* event,
                                        int role) -> QVariant {
                         bool cpt = false;
                         int nb = event->fuelLiters(&cpt);
                         if(nb < 0)
                           return QVariant();
-                        if(role == Qt::DisplayRole || role == Qt::EditRole)
+                        if(role == Qt::DisplayRole)
                           return Transaction::formatAmount(nb);
+                        if(role == Qt::EditRole)
+                          return nb;
                         if(role == Qt::ForegroundRole) {
                           if(cpt)
                             return QColor("gray");
@@ -143,6 +155,13 @@ public:
                             return QColor("black");
                         }
                         return QVariant();
+                      },
+                      [](CarEvent * event, const QVariant & data) -> bool {
+                        QVariant d = data;
+                        if(! d.convert(QMetaType::Int))
+                          return false;
+                        event->fuel = d.toInt();
+                        return true;
                       })
       ;
 
@@ -279,5 +298,8 @@ void CarPage::updatePage()
   QString str;
   str += tr("<h1>Car: %1</h1>\n").
     arg(plugin->getName());
+  str += HTTarget::linkToMember("(update)", &(plugin->car),
+                                &Car::updateCache);
+
   summary->setText(str);
 }

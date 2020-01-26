@@ -23,7 +23,9 @@
 #include "car.hh"
 #include "carpage.hh"
 
-#include <httarget-templates.hh>
+// #include <httarget-templates.hh>
+
+#include <pointersafesort.hh>
 
 CarEvent::CarEvent() :
   type(Other),
@@ -91,7 +93,7 @@ int CarEvent::fuelPrice(bool * computed) const
     return pricePerLiter;
   *computed = true;
   if(fuel >= 0)
-    return amount()/fuel;
+    return amount()*100/fuel;
   return -1;
 }
 
@@ -104,7 +106,7 @@ int CarEvent::fuelLiters(bool * computed) const
     return fuel;
   *computed = true;
   if(pricePerLiter >= 0)
-    return amount()/pricePerLiter;
+    return amount()*100/pricePerLiter;
   return -1;
 }
 
@@ -126,9 +128,17 @@ SerializationAccessor * Car::serializationAccessor()
   return ac;
 }
 
+/// We need that to make g++ find the correct swap function.
+void qSwap(MyQListIterator<CarEvent>::PointedTo a, 
+           MyQListIterator<CarEvent>::PointedTo b) 
+{
+  MyQListIterator<CarEvent>::swap(a,b);
+}
+
 void Car::addEvents(const TransactionPtrList & transactions,
                     CarEvent::Type type)
 {
+  int nb = 0;
   for(AtomicTransaction * t : transactions) {
     if(! t->hasNamedLinks("car-event")) {
       events << CarEvent();
@@ -136,10 +146,40 @@ void Car::addEvents(const TransactionPtrList & transactions,
       ev.type = type;
       ev.plugin = plugin;
       ev.addLink(t, "car-event");
+      ++nb;
     }
-  };
+  }
+  if(nb > 0) {
+    pointerSafeSortList(&events.rawData());
+    updateCache();
+  }
 }
 
+void Car::updateCache()
+{
+  // Assumes the events are sorted by date.
+  int total = 0;
+  int lastkmpos = -1;
+  for(int i = 0; i < events.size(); i++) {
+    total += events[i].amount();
+    events[i].totalAmount = total;
+    events[i].interpolatedKilometers = -1;
+    if(events[i].kilometers > 0) {
+      if(lastkmpos >= 0) {
+        QDate old = events[lastkmpos].date();
+        int lastkm = events[lastkmpos].kilometers;
+        QDate cur = events[i].date();
+        int km = events[i].kilometers;
+        for(int k = lastkmpos+1; k < i; k++) {
+          events[k].interpolatedKilometers =
+            lastkm + (km - lastkm) * (old.daysTo(events[k].date()))/
+            (1.0*old.daysTo(cur));
+        }
+      }
+      lastkmpos = i;
+    }
+  }
+}
 
 //////////////////////////////////////////////////////////////////////
 
