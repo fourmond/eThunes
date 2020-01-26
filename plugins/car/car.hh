@@ -25,6 +25,7 @@
 #include <linkable.hh>
 #include <transactionlists.hh>
 
+class CarPlugin;
 
 /// An event is one of:
 /// @li purchase/sale of a car
@@ -37,8 +38,14 @@
 ///
 /// An even is linked to a single transaction.
 class CarEvent : public Linkable {
+protected:
+
+  /// Returns the transaction that defines this event.
+  AtomicTransaction * underlyingTransaction() const;
 
 public:
+
+  CarPlugin * plugin;
 
   enum Type {
     Purchase,
@@ -47,6 +54,10 @@ public:
     Other
   };
 
+  /// @name Attributes
+  ///
+  /// @{
+  
   /// The type of the event
   Type type;
 
@@ -62,10 +73,40 @@ public:
   /// The price per liter, -1 if unknown
   int pricePerLiter;
 
-  virtual SerializationAccessor * serializationAccessor() override;
-  
-  virtual void followLink() override;
+  /// @}
 
+  /// @name Cache attributes
+  ///
+  /// These attributes are set by the Car object, they are used for
+  /// caching.
+  ///
+  /// @{
+
+  /// The real kilometers or interpolated kilometers.
+  int interpolatedKilometers;
+
+  /// The total amount spent so far
+  int totalAmount;
+
+  /// @}
+  
+  
+
+  CarEvent();
+
+  /// Returns the date of the underlying transaction
+  QDate date() const;
+
+  /// Returns the amount of the underlying transaction
+  int amount() const;
+
+  /// Sorts by kilometers if both are available or by date otherwise.
+  /// Hmmm. Sorts just by date for now.
+  bool operator<(const CarEvent & other) const;
+  
+
+  virtual SerializationAccessor * serializationAccessor() override;
+  virtual void followLink() override;
   virtual QString typeName() const override;
 };
 
@@ -73,12 +114,17 @@ public:
 class Car : public Serializable {
 public:
 
-  /// A public, user-defined name.
-  QString name;
+  /// The base plugin.
+  CarPlugin * plugin;
+
+  // /// A public, user-defined name.
+  // QString name;
   
   QList<CarEvent> events;
 
   virtual SerializationAccessor * serializationAccessor() override;
+
+  void addEvents(const TransactionPtrList & events, CarEvent::Type type);
 };
 
 
@@ -92,20 +138,14 @@ public:
     return "car";
   };
 
-  /// A list of cars...
-  QList<Car> cars;
+  /// Just use a single car for now.
+  Car car;
 
   virtual NavigationPage * pageForPlugin();
-
   virtual SerializationAccessor * serializationAccessor();
-
-  virtual void finishedSerializationRead();
+  // virtual void finishedSerializationRead();
 
   CarPlugin();
-
-  virtual bool hasBalance() const;
-
-  virtual int balance() const;
 
 
 };

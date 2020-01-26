@@ -165,9 +165,11 @@ SOURCES += plugins/loans/loan.cc \
 
 
 # Tracker for the car
-HEADERS += plugins/car/car.hh
+HEADERS += plugins/car/car.hh \
+        plugins/car/carpage.hh
 
-SOURCES += plugins/car/car.cc
+SOURCES += plugins/car/car.cc \
+        plugins/car/carpage.cc
 
 
 

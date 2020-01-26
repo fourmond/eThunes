@@ -1,6 +1,6 @@
 /*
   car.cc: implementation of the Car plugin
-  Copyright 2011 by Vincent Fourmond
+  Copyright 2020 by Vincent Fourmond
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -20,21 +20,128 @@
 #include <utils.hh>
 #include <transaction.hh>
 
-#include <latexoutput.hh>
-#include <htlabel.hh>
-#include <latextable.hh>
-
-#include <navigationwidget.hh>
-
-#include <wallet.hh>
-#include <cabinet.hh>
-
 #include "car.hh"
-// #include "carpage.hh"
+#include "carpage.hh"
 
 #include <httarget-templates.hh>
 
-#include <QtCore/qmath.h>
-#include <math.h>
+CarEvent::CarEvent() :
+  type(Other),
+  kilometers(-1),
+  fuel(-1),
+  fullTank(false),
+  pricePerLiter(-1),
+  interpolatedKilometers(-1),
+  totalAmount(0)
+{
+}
 
-#include <periodic.hh>
+
+SerializationAccessor * CarEvent::serializationAccessor()
+{
+  SerializationAccessor * ac = new SerializationAccessor(this);
+  addLinkAttributes(ac);
+  ac->addScalarAttribute("type", (int*)&type);
+  ac->addScalarAttribute("kilometers", &kilometers);
+  ac->addScalarAttribute("fuel", &fuel);
+  ac->addScalarAttribute("full-trank", &fullTank);
+  ac->addScalarAttribute("price-per-liter", &pricePerLiter);
+  return ac;
+}
+
+void CarEvent::followLink()
+{
+  // TODO
+}
+
+QString CarEvent::typeName() const
+{
+  return "car-event";
+}
+
+AtomicTransaction * CarEvent::underlyingTransaction() const
+{
+  QList<AtomicTransaction*> trs =
+    links.typedLinks<AtomicTransaction>("car-event");
+  return trs.value(0, NULL);
+}
+
+QDate CarEvent::date() const
+{
+  AtomicTransaction * t = underlyingTransaction();
+  if(t)
+    return t->getDate();
+  return QDate();
+}
+
+int CarEvent::amount() const
+{
+  AtomicTransaction * t = underlyingTransaction();
+  if(t)
+    return t->getAmount();
+  return 0;
+}
+
+bool CarEvent::operator<(const CarEvent & other) const
+{
+  return date() < other.date();
+}
+
+
+
+//////////////////////////////////////////////////////////////////////
+
+SerializationAccessor * Car::serializationAccessor()
+{
+  SerializationAccessor * ac = new SerializationAccessor(this);
+  // ac->addScalarAttribute("name", &name);
+  ac->addListAttribute("event", &events);
+  return ac;
+}
+
+void Car::addEvents(const TransactionPtrList & transactions,
+                    CarEvent::Type type)
+{
+  for(AtomicTransaction * t : transactions) {
+    if(! t->hasNamedLinks("car-event")) {
+      events << CarEvent();
+      CarEvent & ev = events.last();
+      ev.type = type;
+      ev.plugin = plugin;
+      ev.addLink(t, "car-event");
+    }
+  };
+}
+
+
+//////////////////////////////////////////////////////////////////////
+
+CarPlugin::CarPlugin()
+{
+}
+
+SerializationAccessor * CarPlugin::serializationAccessor()
+{
+  SerializationAccessor * ac = new SerializationAccessor(this);
+  ac->addScalarAttribute("name", &name); // MUST NOT BE FORGOTTEN !
+  ac->addAttribute("car", &car);
+  return ac;
+}
+
+NavigationPage * CarPlugin::pageForPlugin()
+{
+  return CarPage::getCarPage(this);
+}
+
+
+//////////////////////////////////////////////////////////////////////
+
+
+static Plugin * carCreator(const QString &)
+{
+  return new CarPlugin();
+}
+
+static PluginDefinition car(carCreator, 
+                            "Car tracker",
+                            "");
