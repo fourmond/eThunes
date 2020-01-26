@@ -24,6 +24,7 @@
 #include <plugin.hh>
 #include <linkable.hh>
 #include <transactionlists.hh>
+#include <watchablecontainers.hh>
 
 class CarPlugin;
 
@@ -90,15 +91,27 @@ public:
 
   /// @}
   
-  
-
   CarEvent();
 
+  /// @name Accessors
+  ///
+  /// @{
+  
   /// Returns the date of the underlying transaction
   QDate date() const;
 
   /// Returns the amount of the underlying transaction
   int amount() const;
+
+  /// Returns the price per liter, and set the deduce flag if it was
+  /// computed from the rest. -1 means unkown.
+  int fuelPrice(bool * computed) const;
+
+  /// Returns the number of liters, and set the deduce flag if it was
+  /// computed from the rest. -1 means unkown
+  int fuelLiters(bool * computed) const;
+
+  /// @}
 
   /// Sorts by kilometers if both are available or by date otherwise.
   /// Hmmm. Sorts just by date for now.
@@ -120,7 +133,7 @@ public:
   // /// A public, user-defined name.
   // QString name;
   
-  QList<CarEvent> events;
+  WatchableList<CarEvent> events;
 
   virtual SerializationAccessor * serializationAccessor() override;
 

@@ -78,9 +78,36 @@ int CarEvent::amount() const
 {
   AtomicTransaction * t = underlyingTransaction();
   if(t)
-    return t->getAmount();
+    return -t->getAmount();     // We count expenses as positive
   return 0;
 }
+
+int CarEvent::fuelPrice(bool * computed) const
+{
+  if(type != Refuel)
+    return -1;
+  *computed = false;
+  if(pricePerLiter >= 0)
+    return pricePerLiter;
+  *computed = true;
+  if(fuel >= 0)
+    return amount()/fuel;
+  return -1;
+}
+
+int CarEvent::fuelLiters(bool * computed) const
+{
+  if(type != Refuel)
+    return -1;
+  *computed = false;
+  if(fuel >= 0)
+    return fuel;
+  *computed = true;
+  if(pricePerLiter >= 0)
+    return amount()/pricePerLiter;
+  return -1;
+}
+
 
 bool CarEvent::operator<(const CarEvent & other) const
 {

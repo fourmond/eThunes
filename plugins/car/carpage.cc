@@ -29,7 +29,7 @@
 
 /// The model class for displaying/editing the CarEvent
 class CarEventModel : public QAbstractTableModel {
-  QList<CarEvent> * events;
+  WatchableList<CarEvent> * events;
 
 public:
 
@@ -41,9 +41,14 @@ public:
     typedef std::function<QVariant (const CarEvent* event,
                                     int role)> DataFcn;
     DataFcn data;
-    
-    Column(const QString & n, const DataFcn & d) :
-      name(n), data(d) {;};
+
+    typedef std::function<bool (CarEvent* event,
+                                const QVariant & data)> SetDataFcn;
+    SetDataFcn setData;
+
+    Column(const QString & n, const DataFcn & d,
+           const SetDataFcn & s = 0) :
+      name(n), data(d), setData(s) {;};
   };
 
   QList<Column> columns;
@@ -51,11 +56,114 @@ public:
 
 public:
 
+  CarEventModel(WatchableList<CarEvent> * evs) :
+    events(evs)
+  {
+    columns << Column("Date", [](const CarEvent* event,
+                                 int role) -> QVariant {
+                        if(role == Qt::DisplayRole || role == Qt::EditRole)
+                          return event->date();
+                        return QVariant();
+                      })
+            << Column("Amount", [](const CarEvent* event,
+                                   int role) -> QVariant {
+                        if(role == Qt::DisplayRole || role == Qt::EditRole) 
+                          return Transaction::formatAmount(event->amount());
+                        return QVariant();
+                      })
+            << Column("Type", [](const CarEvent* event,
+                                 int role) -> QVariant {
+                        if(role == Qt::DisplayRole || role == Qt::EditRole) {
+                          switch(event->type) {
+                          case CarEvent::Purchase:
+                            return "Purchase";
+                          case CarEvent::Refuel:
+                            return "Refuel";
+                          case CarEvent::Repair:
+                            return "Repair";
+                          case CarEvent::Other:
+                            return "Other";
+                          }
+                        }
+                        return QVariant();
+                      })
+            << Column("Kilometers", [](const CarEvent* event,
+                                       int role) -> QVariant {
+                        if(role == Qt::DisplayRole || role == Qt::EditRole) {
+                          if(event->kilometers >= 0)
+                            return event->kilometers;
+                          if(event->interpolatedKilometers >=0)
+                            return event->interpolatedKilometers;
+                          return QVariant("??");
+                        }
+                        if(role == Qt::ForegroundRole) {
+                          if(event->kilometers >= 0)
+                            return QColor("black");
+                          else
+                            return QColor("gray");
+                        }
+                        return QVariant();
+                      },
+                      [](CarEvent * event, const QVariant & data) -> bool {
+                        QVariant d = data;
+                        if(! d.convert(QMetaType::Int))
+                          return false;
+                        event->kilometers = d.toInt();
+                        return true;
+                      }
+                      )
+            << Column("Fuel price", [](const CarEvent* event,
+                                       int role) -> QVariant {
+                        bool cpt = false;
+                        int nb = event->fuelPrice(&cpt);
+                        if(nb < 0)
+                          return QVariant();
+                        if(role == Qt::DisplayRole || role == Qt::EditRole)
+                          return Transaction::formatAmount(nb);
+                        if(role == Qt::ForegroundRole) {
+                          if(cpt)
+                            return QColor("gray");
+                          else
+                            return QColor("black");
+                        }
+                        return QVariant();
+                      })
+            << Column("Liters", [](const CarEvent* event,
+                                       int role) -> QVariant {
+                        bool cpt = false;
+                        int nb = event->fuelLiters(&cpt);
+                        if(nb < 0)
+                          return QVariant();
+                        if(role == Qt::DisplayRole || role == Qt::EditRole)
+                          return Transaction::formatAmount(nb);
+                        if(role == Qt::ForegroundRole) {
+                          if(cpt)
+                            return QColor("gray");
+                          else
+                            return QColor("black");
+                        }
+                        return QVariant();
+                      })
+      ;
+
+    connect(*events, SIGNAL(numberChanged(const Watchdog *)),
+            SIGNAL(layoutChanged()));
+  }
+
 
   QVariant data(const CarEvent * event, int col, int role) const {
     if(col < 0 || col >= columns.size())
       return QVariant();
-    return columns[col].data(event, role);
+    QVariant v = columns[col].data(event, role);
+    return v;
+  };
+
+  bool setData(CarEvent * event, int col, const QVariant & v) {
+    if(col < 0 || col >= columns.size())
+      return false;
+    if(columns[col].setData)
+      return columns[col].setData(event, v);
+    return false;
   };
 
   CarEvent * eventForIndex(const QModelIndex & idx) const {
@@ -68,15 +176,15 @@ public:
   /// @name Reimplemented interface
   ///
   /// @{
-  virtual int rowCount(const QModelIndex & parent = QModelIndex()) const {
+  virtual int rowCount(const QModelIndex & parent = QModelIndex()) const override {
     return events->size();
   }
 
-  virtual int columnCount(const QModelIndex & parent = QModelIndex()) const {
+  virtual int columnCount(const QModelIndex & parent = QModelIndex()) const override {
     return columns.size();
   };
 
-  virtual QVariant data(const QModelIndex & index, int role = Qt::DisplayRole) const {
+  virtual QVariant data(const QModelIndex & index, int role = Qt::DisplayRole) const override {
     int col = index.column();
     const CarEvent * ev = eventForIndex(index);
     if(! ev)
@@ -84,8 +192,17 @@ public:
     return data(ev, col, role);
   };
 
+  virtual bool setData(const QModelIndex & index, const QVariant & v,
+                           int role) override {
+    int col = index.column();
+    CarEvent * ev = eventForIndex(index);
+    if(! ev)
+      return false;
+    return setData(ev, col, v);
+  };
+
   virtual QVariant headerData(int section, Qt::Orientation orientation,
-                              int role) const {
+                              int role) const override {
     if(orientation == Qt::Horizontal) {
       if(role == Qt::DisplayRole) {
         return columns[section].name;
@@ -94,7 +211,22 @@ public:
     }
     return QVariant();
   }
+
+  virtual Qt::ItemFlags flags(const QModelIndex &index) const override {
+    int col = index.column();
+    if(col < 0 || col >= columns.size())
+      return Qt::NoItemFlags;
+    if(columns[col].setData)
+      return Qt::ItemIsEnabled|Qt::ItemIsSelectable|Qt::ItemIsEditable;
+    else
+      return Qt::ItemIsEnabled|Qt::ItemIsSelectable;
+  };
   /// @}
+
+  void update() {
+    emit(layoutChanged());
+  };
+
 
   
 };
@@ -123,6 +255,12 @@ CarPage::CarPage(CarPlugin * p) : plugin(p)
   summary = new HTLabel();
   layout->addWidget(summary);
 
+
+  QTableView * eventsView = new QTableView();
+  // eventsView->setContextMenuPolicy(Qt::CustomContextMenu);
+  CarEventModel * model = new CarEventModel(&(plugin->car.events));
+  eventsView->setModel(model);
+  layout->addWidget(eventsView);
 
   layout->addStretch();
   updatePage();

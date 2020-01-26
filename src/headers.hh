@@ -130,7 +130,9 @@
 
 // Item-model stuff
 #include <QAbstractItemModel>
+#include <QAbstractTableModel>
 #include <QTreeView>
+#include <QTableView>
 
 // XML-related classes
 #include <QXmlStreamWriter>
