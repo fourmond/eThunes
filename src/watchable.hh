@@ -69,6 +69,11 @@ private slots:
   
   /// Catch any change in objects underneath
   void catchChange(const Watchdog * source);
+
+public:
+  /// If set to true, disable the forwarding of signals. Used for
+  /// loading.
+  static bool disableWatching;
 };
 
 /// This is the base class for all classes that emit signals when they

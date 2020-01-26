@@ -45,6 +45,10 @@ CabinetPage::CabinetPage(Cabinet * c) : cabinet(c)
 
   budgetDW = new BudgetDW(&cabinet->wallet);
   hb->addWidget(budgetDW);
+  
+  connect(cabinet, SIGNAL(fileLoaded()),
+          budgetDW, SLOT(updateSummary()));
+
 
   // collectionsDW = new CollectionsDW(cabinet);
   // hb->addWidget(collectionsDW);
@@ -138,6 +142,7 @@ void CabinetPage::load()
 void CabinetPage::load(const QString & file)
 {
   cabinet->loadFromFile(file);
+  // puzzled why this isn't called, but...
 }
 
 void CabinetPage::showDocumentsPage()

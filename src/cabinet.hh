@@ -107,6 +107,9 @@ signals:
   /// \todo handle changing directory !
   void filenameChanged(const QString & filePath);
 
+  /// Emitted when the Cabinet contents were changed completely.
+  void fileLoaded();
+
 public slots:
   /// Sets the dirty flag
   void setDirty(bool dirty = true);

@@ -108,9 +108,12 @@ void Cabinet::loadFromFile(const QString &name)
     QCoreApplication::processEvents(QEventLoop::AllEvents, 10);
   };
   p.setValue(100);
-  
+
+  Watchdog::disableWatching = true;
   readXML(&w);
+  Watchdog::disableWatching = false;
   emit(filenameChanged(filePath));
+  emit(fileLoaded());
   setDirty(false);
 }
 

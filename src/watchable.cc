@@ -34,8 +34,13 @@ Watchdog::Watchdog() {
           SIGNAL(changed(const Watchdog *)));
 }
 
+
+bool Watchdog::disableWatching = false;
+
 void Watchdog::catchChange(const Watchdog * source)
 {
+  if(disableWatching)
+     return;
   QHash<const Watchdog*, QString>::const_iterator i = 
     watchedChildren.find(source);
   // QTextStream o(stdout);

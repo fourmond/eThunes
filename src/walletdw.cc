@@ -44,6 +44,9 @@ WalletDW::WalletDW(Cabinet * c) : wallet(&c->wallet), cabinet(c)
   connect(*wallet, SIGNAL(changed(const Watchdog *)),
 	  SLOT(updateSummary()));
 
+  connect(cabinet, SIGNAL(fileLoaded()),
+	  SLOT(updateSummary()));
+
   // We introduce contents into the summary.
   updateSummary();
 }
