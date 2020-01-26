@@ -1,6 +1,6 @@
 /*
   carpage.cc: Implementation of CarPage
-  Copyright 2011 by Vincent Fourmond
+  Copyright 2020 by Vincent Fourmond
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -19,13 +19,93 @@
 #include <headers.hh>
 #include <widgetwrapperdialog.hh>
 #include <utils.hh>
-#include <transaction.hh>
 
 
 #include <htlabel.hh>
 #include <httarget-templates.hh>
 
+#include "car.hh"
 #include "carpage.hh"
+
+/// The model class for displaying/editing the CarEvent
+class CarEventModel : public QAbstractTableModel {
+  QList<CarEvent> * events;
+
+public:
+
+  /// The column
+  class Column  {
+  public:
+    QString name;
+
+    typedef std::function<QVariant (const CarEvent* event,
+                                    int role)> DataFcn;
+    DataFcn data;
+    
+    Column(const QString & n, const DataFcn & d) :
+      name(n), data(d) {;};
+  };
+
+  QList<Column> columns;
+
+
+public:
+
+
+  QVariant data(const CarEvent * event, int col, int role) const {
+    if(col < 0 || col >= columns.size())
+      return QVariant();
+    return columns[col].data(event, role);
+  };
+
+  CarEvent * eventForIndex(const QModelIndex & idx) const {
+    int row = idx.row();
+    if(row < 0 || row >= events->size())
+      return NULL;
+    return &((*events)[row]);
+  };
+  
+  /// @name Reimplemented interface
+  ///
+  /// @{
+  virtual int rowCount(const QModelIndex & parent = QModelIndex()) const {
+    return events->size();
+  }
+
+  virtual int columnCount(const QModelIndex & parent = QModelIndex()) const {
+    return columns.size();
+  };
+
+  virtual QVariant data(const QModelIndex & index, int role = Qt::DisplayRole) const {
+    int col = index.column();
+    const CarEvent * ev = eventForIndex(index);
+    if(! ev)
+      return QVariant();
+    return data(ev, col, role);
+  };
+
+  virtual QVariant headerData(int section, Qt::Orientation orientation,
+                              int role) const {
+    if(orientation == Qt::Horizontal) {
+      if(role == Qt::DisplayRole) {
+        return columns[section].name;
+      }
+      return QVariant();
+    }
+    return QVariant();
+  }
+  /// @}
+
+  
+};
+
+
+
+
+
+
+
+//////////////////////////////////////////////////////////////////////
 
 QHash<CarPlugin *, CarPage *> CarPage::carPages;
 

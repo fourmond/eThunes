@@ -143,6 +143,9 @@ public:
 
   virtual NavigationPage * pageForPlugin();
   virtual SerializationAccessor * serializationAccessor();
+
+  virtual QList<QPair<QString, TransactionPtrList::Action> > transactionContextMenu();
+  
   // virtual void finishedSerializationRead();
 
   CarPlugin();

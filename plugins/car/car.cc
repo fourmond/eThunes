@@ -134,6 +134,26 @@ NavigationPage * CarPlugin::pageForPlugin()
 }
 
 
+QList<QPair<QString, TransactionPtrList::Action> > CarPlugin::transactionContextMenu()
+{
+  QList<QPair<QString, TransactionPtrList::Action> > actions;
+  Car * c = &car;
+
+  // Adds one action
+  auto f = [c, &actions](const QString & name, CarEvent::Type type) {
+    TransactionPtrList::Action act = [c, type](const TransactionPtrList & list) -> void {
+      c->addEvents(list, type);
+    };
+    actions << QPair<QString, TransactionPtrList::Action>(name, act);
+  };
+  f("Purchase", CarEvent::Purchase);
+  f("Fuel", CarEvent::Refuel);
+  f("Repair", CarEvent::Repair);
+  f("Other", CarEvent::Other);
+  return actions;
+}
+
+
 //////////////////////////////////////////////////////////////////////
 
 
