@@ -81,6 +81,8 @@ public:
                             return "Refuel";
                           case CarEvent::Repair:
                             return "Repair";
+                          case CarEvent::Toll:
+                            return "Toll";
                           case CarEvent::Other:
                             return "Other";
                           }
@@ -281,7 +283,7 @@ CarPage::CarPage(CarPlugin * p) : plugin(p)
   eventsView->setModel(model);
   layout->addWidget(eventsView);
 
-  layout->addStretch();
+  // layout->addStretch();
   updatePage();
 }
 
@@ -291,15 +293,43 @@ QString CarPage::pageTitle()
 }
 
 
+static QHash<CarEvent::Type, QString> names =
+  {
+    {CarEvent::Purchase, "Purchase"},
+    {CarEvent::Refuel, "Fuel"},
+    {CarEvent::Repair, "Repairs"},
+    {CarEvent::Toll, "Tolls"},
+    {CarEvent::Other, "Other"}
+  };
 
 void CarPage::updatePage()
 {
   // Here, we do various things, basically to update the main summary.
   QString str;
+  plugin->car.updateCache();
   str += tr("<h1>Car: %1</h1>\n").
     arg(plugin->getName());
-  str += HTTarget::linkToMember("(update)", &(plugin->car),
-                                &Car::updateCache);
+
+  int total = 0;
+  int km = plugin->car.kilometers();
+  str += tr("Kilometers: %1<br/>").arg(km);
+
+  for(CarEvent::Type t : ::names.keys()) {
+    int tot = plugin->car.totals.value(t,0);
+    total += tot;
+    int perkm = tot*100/km;
+    str += QString("<b>%1</b>: %2 total, %3 c per km <br/>").
+      arg(names[t]).
+      arg(Transaction::formatAmount(tot)).
+      arg(Transaction::formatAmount(perkm));
+  }
+
+  str += QString("<b>Overall</b>: %1 total, %2 c per km <br/>").
+    arg(Transaction::formatAmount(total)).
+    arg(Transaction::formatAmount(total*100/km));
+
+  str += HTTarget::linkToMember("(update)", this,
+                                &CarPage::updatePage);
 
   summary->setText(str);
 }

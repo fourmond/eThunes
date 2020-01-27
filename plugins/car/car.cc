@@ -33,8 +33,7 @@ CarEvent::CarEvent() :
   fuel(-1),
   fullTank(false),
   pricePerLiter(-1),
-  interpolatedKilometers(-1),
-  totalAmount(0)
+  interpolatedKilometers(-1)
 {
 }
 
@@ -158,11 +157,12 @@ void Car::addEvents(const TransactionPtrList & transactions,
 void Car::updateCache()
 {
   // Assumes the events are sorted by date.
-  int total = 0;
   int lastkmpos = -1;
+  totals.clear();
+  for(int i = 0; i <= CarEvent::Other; i++)
+    totals << 0;
   for(int i = 0; i < events.size(); i++) {
-    total += events[i].amount();
-    events[i].totalAmount = total;
+    totals[events[i].type] += events[i].amount();
     events[i].interpolatedKilometers = -1;
     if(events[i].kilometers > 0) {
       if(lastkmpos >= 0) {
@@ -179,6 +179,27 @@ void Car::updateCache()
       lastkmpos = i;
     }
   }
+  total = 0;
+  for(int nb : totals)
+    total += nb;
+}
+
+int Car::kilometers() const
+{
+  int kml = -1, kmu = -1;
+  for(int i = 0; i < events.size(); i++) {
+    if(events[i].kilometers >= 0) {
+      kml = events[i].kilometers;
+      break;
+    }
+  }
+  for(int i = events.size()-1; i >= 0; i--) {
+    if(events[i].kilometers >= 0) {
+      kmu = events[i].kilometers;
+      break;
+    }
+  }
+  return kmu - kml;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -216,6 +237,7 @@ QList<QPair<QString, TransactionPtrList::Action> > CarPlugin::transactionContext
   f("Purchase", CarEvent::Purchase);
   f("Fuel", CarEvent::Refuel);
   f("Repair", CarEvent::Repair);
+  f("Toll", CarEvent::Toll);
   f("Other", CarEvent::Other);
   return actions;
 }

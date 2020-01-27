@@ -52,6 +52,7 @@ public:
     Purchase,
     Refuel,
     Repair,
+    Toll,
     Other
   };
 
@@ -86,9 +87,6 @@ public:
 
   /// The real kilometers or interpolated kilometers.
   int interpolatedKilometers;
-
-  /// The total amount spent so far
-  int totalAmount;
 
   /// @}
   
@@ -126,6 +124,9 @@ public:
 
 /// This class represents a car
 class Car : public Serializable {
+  QList<int> totals;
+  int total;
+  friend class CarPage;
 public:
 
   /// The base plugin.
@@ -137,11 +138,15 @@ public:
   WatchableList<CarEvent> events;
 
   virtual SerializationAccessor * serializationAccessor() override;
+  // virtual void finishedSerializationRead() override;
 
   void addEvents(const TransactionPtrList & events, CarEvent::Type type);
 
   /// Updates the cache
   void updateCache();
+
+  /// The total number of kilometers so far.
+  int kilometers() const;
 };
 
 
@@ -163,7 +168,6 @@ public:
 
   virtual QList<QPair<QString, TransactionPtrList::Action> > transactionContextMenu();
   
-  // virtual void finishedSerializationRead();
 
   CarPlugin();
 
