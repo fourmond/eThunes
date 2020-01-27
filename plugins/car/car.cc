@@ -28,6 +28,7 @@
 #include <pointersafesort.hh>
 
 CarEvent::CarEvent() :
+  plugin(NULL),
   type(Other),
   kilometers(-1),
   fuel(-1),
@@ -93,6 +94,8 @@ int CarEvent::fuelPrice(bool * computed) const
   *computed = true;
   if(fuel >= 0)
     return amount()*100/fuel;
+  if(plugin)
+    return plugin->car.defaultPricePerLiter[date()];
   return -1;
 }
 
@@ -106,6 +109,11 @@ int CarEvent::fuelLiters(bool * computed) const
   *computed = true;
   if(pricePerLiter >= 0)
     return amount()*100/pricePerLiter;
+  if(plugin) {
+    int price = plugin->car.defaultPricePerLiter[date()];
+    if(price > 0)
+      return amount()*100/price;
+  }
   return -1;
 }
 
@@ -119,11 +127,16 @@ bool CarEvent::operator<(const CarEvent & other) const
 
 //////////////////////////////////////////////////////////////////////
 
+Car::Car() : plugin(NULL), defaultPricePerLiter(-1)
+{
+}
+
 SerializationAccessor * Car::serializationAccessor()
 {
   SerializationAccessor * ac = new SerializationAccessor(this);
   // ac->addScalarAttribute("name", &name);
   ac->addListAttribute("event", &events);
+  ac->addAttribute("default-price", &defaultPricePerLiter);
   return ac;
 }
 
@@ -161,8 +174,14 @@ void Car::updateCache()
   totals.clear();
   for(int i = 0; i <= CarEvent::Other; i++)
     totals << 0;
+  liters = 0;
+  bool dummy;
   for(int i = 0; i < events.size(); i++) {
+    events[i].plugin = plugin;
     totals[events[i].type] += events[i].amount();
+    int l = events[i].fuelLiters(&dummy);
+    if(l > 0)
+      liters += l;
     events[i].interpolatedKilometers = -1;
     if(events[i].kilometers > 0) {
       if(lastkmpos >= 0) {
@@ -202,10 +221,22 @@ int Car::kilometers() const
   return kmu - kml;
 }
 
+// void Car::finishedSerializationRead()
+// {
+//   for(CarEvent & ev : events)
+//     ev.plugin = plugin;
+// }
+
+
 //////////////////////////////////////////////////////////////////////
 
 CarPlugin::CarPlugin()
 {
+}
+
+void CarPlugin::finishedSerializationRead()
+{
+  car.plugin = this;
 }
 
 SerializationAccessor * CarPlugin::serializationAccessor()

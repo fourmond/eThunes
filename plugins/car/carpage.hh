@@ -55,6 +55,9 @@ public slots:
 
   /// Update the page.
   void updatePage();
+
+  /// Change default price
+  void editDefaultPrice();
 };
 
 #endif

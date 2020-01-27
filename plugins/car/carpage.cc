@@ -27,6 +27,8 @@
 #include "car.hh"
 #include "carpage.hh"
 
+#include <evolvingitemwidget.hh>
+
 /// The model class for displaying/editing the CarEvent
 class CarEventModel : public QAbstractTableModel {
   WatchableList<CarEvent> * events;
@@ -302,6 +304,21 @@ static QHash<CarEvent::Type, QString> names =
     {CarEvent::Other, "Other"}
   };
 
+
+void CarPage::editDefaultPrice()
+{
+  EvolvingItem<int> newAmount = plugin->car.defaultPricePerLiter;
+  WidgetWrapperDialog dlg(new EvolvingIntWidget(&newAmount),
+                          tr("Price per liter"),
+                          QDialogButtonBox::Ok|QDialogButtonBox::Cancel);
+  dlg.setAttribute(Qt::WA_DeleteOnClose, false);
+
+  if(dlg.exec() == QDialog::Accepted) {
+    plugin->car.defaultPricePerLiter = newAmount;
+    updatePage();
+  }
+}
+
 void CarPage::updatePage()
 {
   // Here, we do various things, basically to update the main summary.
@@ -328,6 +345,18 @@ void CarPage::updatePage()
     arg(Transaction::formatAmount(total)).
     arg(Transaction::formatAmount(total*100/km));
 
+  str += "<b>Default price:</b> " +
+    plugin->car.defaultPricePerLiter.toString(&Transaction::formatAmount)
+    + HTTarget::linkToMember("(change)", this,
+                             &CarPage::editDefaultPrice) + "<br/>\n";
+
+  str += "<b>Consumption:</b> " +
+    Transaction::formatAmount(plugin->car.liters) +
+    " (total), " +
+    Transaction::formatAmount(plugin->car.liters * 100/km) +
+    " (per 100 km)";
+
+  
   str += HTTarget::linkToMember("(update)", this,
                                 &CarPage::updatePage);
 

@@ -25,6 +25,7 @@
 #include <linkable.hh>
 #include <transactionlists.hh>
 #include <watchablecontainers.hh>
+#include <evolvingitem.hh>
 
 class CarPlugin;
 
@@ -126,12 +127,18 @@ public:
 class Car : public Serializable {
   QList<int> totals;
   int total;
+  int liters;
   friend class CarPage;
 public:
+
+  Car();
 
   /// The base plugin.
   CarPlugin * plugin;
 
+  /// The default price for the fuel
+  EvolvingItem<int> defaultPricePerLiter;
+  
   // /// A public, user-defined name.
   // QString name;
   
@@ -165,6 +172,7 @@ public:
 
   virtual NavigationPage * pageForPlugin();
   virtual SerializationAccessor * serializationAccessor();
+  virtual void finishedSerializationRead() override;
 
   virtual QList<QPair<QString, TransactionPtrList::Action> > transactionContextMenu();
   
