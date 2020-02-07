@@ -120,6 +120,8 @@ int CarEvent::fuelLiters(bool * computed) const
 
 bool CarEvent::operator<(const CarEvent & other) const
 {
+  if(kilometers > 0 && other.kilometers > 0)
+    return kilometers < other.kilometers;
   return date() < other.date();
 }
 

@@ -142,6 +142,18 @@
 #include <QTranslator>
 #include <QLibraryInfo>
 
+
+// Charts
+#include <QtCharts>
+using namespace QtCharts;
+
+#include <QChart>
+#include <QChartView>
+#include <QLineSeries>
+
+//////////////////////////////////////////////////////////////////////
+// Non-Qt headers
+
 // Poppler classes
 #include <poppler/qt5/poppler-qt5.h>
 

@@ -15,7 +15,11 @@ QT += xml network
 # QT5:
 QT +=  widgets
 
-QT += qml 
+QT += qml
+
+# We'll use the charts as well !
+
+QT += charts
 
 PRECOMPILED_HEADER = src/headers.hh
 

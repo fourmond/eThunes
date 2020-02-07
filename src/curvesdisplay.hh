@@ -37,10 +37,25 @@ protected:
 
   QLabel * topLabel;
 
-  /// The widget for displaying the curves
-  TimeBasedWidget * curvesWidget;
+  /// The chart
+  QChart * chart;
+
+  /// The chart view
+  QChartView * view;
+
+  /// The X axis
+  QDateTimeAxis * axisX;
+
+  /// The Y axis
+  QValueAxis * axisY;
+
+  
+  // /// The widget for displaying the curves
+  // TimeBasedWidget * curvesWidget;
 
   TimeBasedCurve * balanceForTransactionList(const TransactionList * transactions);
+
+  QLineSeries * seriesForTransactionList(const TransactionList * transactions) const;
 
   QVBoxLayout * checkBoxes;
 
@@ -53,7 +68,10 @@ public:
 
 public slots:
 
-  void addCurve(TimeBasedCurve * c, QString str = "");
+  //  void addCurve(TimeBasedCurve * c, QString str = "");
+
+  /// Adds a curve
+  void addCurve(QXYSeries * curve, const QString & legend = "");
 
   /// Setup the display to show the balance
   void displayBalance(const TransactionList * transactions,
@@ -69,14 +87,6 @@ public slots:
   void displayAllBalances(const Wallet * wallet);
 
 protected slots:
-
-  void zoomIn(const QSizeF & zF);
-  void hZoomIn(double fact = 2);
-  void hZoomOut(double fact = 2);
-  void vZoomIn(double fact = 2);
-  void vZoomOut(double fact = 2);
-
-  void cbClicked(int id);
 
 };
 

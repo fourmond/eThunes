@@ -29,42 +29,46 @@ CurvesDisplay::CurvesDisplay()
   topLabel = new QLabel();
   l1->addWidget(topLabel);
 
-  QHBoxLayout * hl = new QHBoxLayout();
-  QPushButton * bt;
-  bt = new QPushButton(tr("H zoom in"));
-  connect(bt, SIGNAL(clicked()), SLOT(hZoomIn()));
-  hl->addWidget(bt);
-  bt = new QPushButton(tr("H zoom out"));
-  connect(bt, SIGNAL(clicked()), SLOT(hZoomOut()));
-  hl->addWidget(bt);
-  bt = new QPushButton(tr("V zoom in"));
-  connect(bt, SIGNAL(clicked()), SLOT(vZoomIn()));
-  hl->addWidget(bt);
-  bt = new QPushButton(tr("V zoom out"));
-  connect(bt, SIGNAL(clicked()), SLOT(vZoomOut()));
-  hl->addWidget(bt);
-  bt = new QPushButton(tr("Auto"));
-  hl->addWidget(bt);
-  l1->addLayout(hl);
+  // QHBoxLayout * hl = new QHBoxLayout();
+  // QPushButton * bt;
+  // bt = new QPushButton(tr("H zoom in"));
+  // connect(bt, SIGNAL(clicked()), SLOT(hZoomIn()));
+  // hl->addWidget(bt);
+  // bt = new QPushButton(tr("H zoom out"));
+  // connect(bt, SIGNAL(clicked()), SLOT(hZoomOut()));
+  // hl->addWidget(bt);
+  // bt = new QPushButton(tr("V zoom in"));
+  // connect(bt, SIGNAL(clicked()), SLOT(vZoomIn()));
+  // hl->addWidget(bt);
+  // bt = new QPushButton(tr("V zoom out"));
+  // connect(bt, SIGNAL(clicked()), SLOT(vZoomOut()));
+  // hl->addWidget(bt);
+  // bt = new QPushButton(tr("Auto"));
+  // hl->addWidget(bt);
+  // l1->addLayout(hl);
 
-  hl = new QHBoxLayout();
-  curvesWidget = new TimeBasedWidget;
-  hl->addWidget(curvesWidget);
-  curvesWidget->setMinimumSize(QSize(400,200));
-  curvesWidget->connect(bt, SIGNAL(clicked()), SLOT(autoScale()));
+  chart = new QChart;
 
-  // Legends of the curves...
-  checkBoxes = new QVBoxLayout();
-  checkBoxes->addWidget(new QLabel(tr("<b>Legend</b>")));
+  // Axis setup
+  axisX = new QDateTimeAxis;
+  axisX->setTickCount(10);
+  axisX->setFormat("MMM yyyy");
+  axisX->setTitleText("Date");
+  chart->addAxis(axisX, Qt::AlignBottom);
 
-  hl->addLayout(checkBoxes);
-  cbGroup = new QButtonGroup;
-  cbGroup->setExclusive(false);
-  connect(cbGroup, SIGNAL(buttonClicked(int)), SLOT(cbClicked(int)));
+  axisY = new QValueAxis;
+  axisY->setTitleText("Balance");
+  axisY->setTickAnchor(0);
+  chart->addAxis(axisY, Qt::AlignLeft);
+  
 
-  l1->addLayout(hl);
+  
+  view = new QChartView(chart);
+  // view->setRubberBand(QChartView::RectangleRubberBand);
 
-  bt = new QPushButton(tr("Close"));
+  l1->addWidget(view);
+
+  QPushButton * bt = new QPushButton(tr("Close"));
   connect(bt, SIGNAL(clicked()), SLOT(close()));
   l1->addWidget(bt);
 
@@ -96,46 +100,90 @@ TimeBasedCurve * CurvesDisplay::balanceForTransactionList(const TransactionList 
   return c;
 }
 
+QLineSeries * CurvesDisplay::seriesForTransactionList(const TransactionList * transactions) const
+{
+  // We must assumed that they are sorted to some extent. The last
+  // transaction for one day is the balance for that day.
+
+  QLineSeries * series = new QLineSeries;
+  TimeBasedCurve * c = new TimeBasedCurve();
+  
+  QDate last;
+  int lastBalance;
+  for(int i = 0; i < transactions->size(); i++) {
+    const Transaction * t = &transactions->value(i);
+    if(last.isValid() && t->getDate() != last)
+      series->append(QDateTime(last).toMSecsSinceEpoch(), lastBalance*0.01);
+    last = t->getDate();
+    lastBalance = t->getBalance();
+  }
+  series->append(QDateTime(last).toMSecsSinceEpoch(), lastBalance*0.01);
+  return series;
+}
+
 
 void CurvesDisplay::displayBalance(const TransactionList * transactions,
                                    const QString & str,
                                    QColor col)
 {
-  TimeBasedCurve * c = balanceForTransactionList(transactions);
-  if(! col.isValid())
-    col = curvesWidget->nextColor();
-  c->style = CurveStyle(col);
-  addCurve(c, str);
+  // TimeBasedCurve * c = balanceForTransactionList(transactions);
+  // if(! col.isValid())
+  //   col = curvesWidget->nextColor();
+  // c->style = CurveStyle(col);
+  // addCurve(c, str);
 }
 
 // We do two years
 void CurvesDisplay::displayBalance(const Wallet * w, 
                                    const QColor & col)
 {
-  TimeBasedCurve * c = new TimeBasedCurve(col);
+  // TimeBasedCurve * c = new TimeBasedCurve(col);
   
-  QDate now = QDate::currentDate();
-  QDate i = now.addYears(-2);
-  while(i < now) {
-    (*c) << DataPoint(i, w->balance(i));
-    i = i.addDays(1);
-  }
-  addCurve(c);
+  // QDate now = QDate::currentDate();
+  // QDate i = now.addYears(-2);
+  // while(i < now) {
+  //   (*c) << DataPoint(i, w->balance(i));
+  //   i = i.addDays(1);
+  // }
+  // addCurve(c);
 }
 
-void CurvesDisplay::addCurve(TimeBasedCurve * c, QString str)
+// void CurvesDisplay::addCurve(TimeBasedCurve * c, QString str)
+// {
+  // int id = curvesWidget->number();
+  // curvesWidget->addCurve(c);
+  // if(str.isEmpty())
+  //   str = QString("Data %1").arg(id + 1);
+  // QPixmap px(20,20);
+  // px.fill(c->style.brush.color());
+  // QCheckBox * cb = new QCheckBox(str);
+  // cb->setChecked(true);
+  // cb->setIcon(QIcon(px));
+  // checkBoxes->addWidget(cb);
+  // cbGroup->addButton(cb, id);
+// }
+
+void CurvesDisplay::addCurve(QXYSeries * curve, const QString & legend)
 {
-  int id = curvesWidget->number();
-  curvesWidget->addCurve(c);
-  if(str.isEmpty())
-    str = QString("Data %1").arg(id + 1);
-  QPixmap px(20,20);
-  px.fill(c->style.brush.color());
-  QCheckBox * cb = new QCheckBox(str);
-  cb->setChecked(true);
-  cb->setIcon(QIcon(px));
-  checkBoxes->addWidget(cb);
-  cbGroup->addButton(cb, id);
+  chart->addSeries(curve);
+  curve->attachAxis(axisX);
+  
+  curve->attachAxis(axisY);
+  axisY->applyNiceNumbers();
+
+  // It feels weird having to do that by hand...
+  QVector<QPointF> points = curve->pointsVector();
+  QDateTime date;
+  date.setMSecsSinceEpoch(points.first().x());
+  if(date < axisX->min())
+    axisX->setMin(date);
+
+  date.setMSecsSinceEpoch(points.last().x());
+  if(date > axisX->max())
+    axisX->setMax(date);
+
+  
+  curve->setName(legend);
 }
 
 /// @todo Fix this !
@@ -154,66 +202,37 @@ void CurvesDisplay::displayAllBalances(const Wallet * w)
     groups[&w->accountGroups[i]] = QList< QList<DataPoint> >();
   
   for(int i = 0; i < w->accounts.size(); i++) {
-    TimeBasedCurve * c = 
-      balanceForTransactionList(&(w->accounts[i].transactions));
-    c->style = CurveStyle(QColor(colors[nb++ % nbColors]));
+    QLineSeries * c = 
+      seriesForTransactionList(&(w->accounts[i].transactions));
+    // c->style = CurveStyle(QColor(colors[nb++ % nbColors]));
     addCurve(c, w->accounts[i].name());
-    curves << c->curveData();
+    // curves << c->curveData();
 
-    for(auto it = groups.begin(); it != groups.end(); it ++) {
-      if(it.key()->contains(&w->accounts[i]))
-        it.value() << c->curveData();
-    }
+    // for(auto it = groups.begin(); it != groups.end(); it ++) {
+    //   if(it.key()->contains(&w->accounts[i]))
+    //     it.value() << c->curveData();
+    // }
   }
 
   if(curves.size() == 0)
     return;
 
 
-  for(auto it = groups.begin(); it != groups.end(); it ++) {
-    TimeBasedCurve * c = new TimeBasedCurve();
-    c->style = CurveStyle(QColor(colors[nb++ % nbColors]));
-    c->setToSum(it.value());
-    addCurve(c, it.key()->name);
-  }
+  // for(auto it = groups.begin(); it != groups.end(); it ++) {
+  //   TimeBasedCurve * c = new TimeBasedCurve();
+  //   c->style = CurveStyle(QColor(colors[nb++ % nbColors]));
+  //   c->setToSum(it.value());
+  //   addCurve(c, it.key()->name);
+  // }
 
 
 
-  TimeBasedCurve * c = new TimeBasedCurve();
-  c->style = CurveStyle(QColor(colors[nb++ % nbColors]));
-  c->setToSum(curves);
+  // TimeBasedCurve * c = new TimeBasedCurve();
+  // c->style = CurveStyle(QColor(colors[nb++ % nbColors]));
+  // c->setToSum(curves);
 
-  addCurve(c, "Total");
+  // addCurve(c, "Total");
 }
 
 
 
-void CurvesDisplay::zoomIn(const QSizeF & zF)
-{
-  curvesWidget->zoomIn(zF);
-}
-
-void CurvesDisplay::hZoomIn(double fact)
-{
-  curvesWidget->zoomIn(QSizeF(fact, 1));
-}
-
-void CurvesDisplay::vZoomIn(double fact)
-{
-  curvesWidget->zoomIn(QSizeF(1, fact));
-}
-
-void CurvesDisplay::hZoomOut(double fact)
-{
-  curvesWidget->zoomIn(QSizeF(1/fact, 1));
-}
-
-void CurvesDisplay::vZoomOut(double fact)
-{
-  curvesWidget->zoomIn(QSizeF(1, 1/fact));
-}
-
-void CurvesDisplay::cbClicked(int id)
-{
-  curvesWidget->show(id, cbGroup->button(id)->isChecked());
-}
