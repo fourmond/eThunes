@@ -74,3 +74,9 @@ void WidgetWrapperDialog::resizeEvent(QResizeEvent * event)
   QDialog::resizeEvent(event);
   saveGeometry();
 }
+
+int WidgetWrapperDialog::run()
+{
+  setAttribute(Qt::WA_DeleteOnClose, false);
+  return exec();
+}

@@ -24,6 +24,8 @@
 #define __WIDGETWRAPPERDIALOG_HH
 
 /// Simple wrapper around one widget.
+///
+/// @warning By default, the WA_DeleteOnClose attribute is set. Use 
 class WidgetWrapperDialog : public QDialog {
 protected:
   Q_OBJECT;
@@ -50,6 +52,12 @@ public:
                       QDialogButtonBox::StandardButtons buttons = QDialogButtonBox::Ok,
                       const QString & name = "",
                       bool wrap = false);
+
+public slots:
+
+  /// Displays the dialog box, disabling the WA_DeleteOnClose
+  /// attribute first.
+  int run();
 
 protected slots:
   void saveGeometry();
