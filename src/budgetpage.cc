@@ -624,6 +624,7 @@ void BudgetPage::showStatistics()
     for(const AtomicTransaction * t : BudgetRealization::realizationLessTransactions(list))
       tot += t->getAmount();
     s += QString("<td align='right'>%1</td>").arg(Transaction::formatAmount(tot));
+    displayData[y]["(uncategorized)"] = tot;
     totals[y] += tot;
     ovTotals[y] += tot;
   }
