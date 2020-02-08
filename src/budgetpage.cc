@@ -504,10 +504,58 @@ void BudgetPage::showYear(const QString & year)
   summary->setText(summaryTableForYear(y));
 }
 
+
+static QChart * makeBarChart(const QHash<int, QHash<QString, int> > &displayData, double fact = 0.01)
+{
+  QStackedBarSeries * series = new QStackedBarSeries;
+  QList<int> years = displayData.keys();
+  std::sort(years.begin(), years.end());
+  QSet<QString> categories;
+  for(int y : years) {
+    for(const QString & c : displayData[y].keys())
+      categories.insert(c);
+  }
+            
+  
+  QStringList cs = categories.toList();
+  std::sort(cs.begin(), cs.end());
+  for(const QString & c : cs) {
+    QBarSet * set = new QBarSet(c);
+    for(int y : years) {
+      int v = displayData[y].value(c, 0);
+      *set << v * fact;
+    }
+    series->append(set);
+  }
+
+  QStringList ys;
+  for(int y : years)
+    ys << QString::number(y);
+
+  QChart * chart = new QChart();
+  chart->addSeries(series);
+
+  chart->legend()->setAlignment(Qt::AlignRight);
+
+  QBarCategoryAxis * axisX = new QBarCategoryAxis();
+  axisX->append(ys);
+  chart->addAxis(axisX, Qt::AlignBottom);
+  series->attachAxis(axisX);
+  
+  QValueAxis * axisY = new QValueAxis();
+  chart->addAxis(axisY, Qt::AlignLeft);
+  series->attachAxis(axisY);
+  axisY->applyNiceNumbers();
+
+  return chart;
+}
+
+
 void BudgetPage::showStatistics()
 {
   int ly = QDate::currentDate().year();
   int fy = ly;
+
 
   QList<Budget *> budgets = wallet->budgets.pointerList();
   std::sort(budgets.begin(), budgets.end(), [](Budget * a, Budget * b) -> bool {
@@ -521,6 +569,11 @@ void BudgetPage::showStatistics()
   }
   // QTextStream o(stdout);
   // o << "First and last: " << fy << " -- " << ly << endl;
+
+
+  QHash<int, QHash<QString, int> > displayData;
+  for(int y = fy; y <= ly; y++)
+    displayData[y] = QHash<QString, int>();
 
   QString s;
   s += QString("<h3>Statistics</h3>");
@@ -554,8 +607,10 @@ void BudgetPage::showStatistics()
         }
       }
       s += QString("<td align='right'>%1</td>").arg(Transaction::formatAmount(tot));
-      if(! budget->exceptional)
+      if(! budget->exceptional) {
         totals[y] += tot;
+        displayData[y][budget->name] = tot;
+      }
       ovTotals[y] += tot;
     }
     s += "</tr>\n";
@@ -588,7 +643,15 @@ void BudgetPage::showStatistics()
 
   // o << s << endl;
 
-  (new WidgetWrapperDialog(new QLabel(s)))->exec();
+  QTabWidget * tabs = new QTabWidget();
+  tabs->addTab(new QLabel(s), "Table");
+
+  QChart * chart = makeBarChart(displayData);
+
+  tabs->addTab(new QChartView(chart), "Graph");
+  
+  WidgetWrapperDialog dlg(tabs);
+  dlg.run();
 }
 
 void BudgetPage::showStatistics(Budget * budget)
@@ -616,7 +679,6 @@ void BudgetPage::showStatistics(Budget * budget)
   QHash<int,QStringList> rows;
   /// The data year -> category -> value
   QHash<int, QHash<QString, int> > displayData;
-  QSet<QString> categories;
   std::sort(years.begin(), years.end());
   s += "<tr>";
   int nb = 0;
@@ -630,7 +692,6 @@ void BudgetPage::showStatistics(Budget * budget)
         arg(i.category).
         arg(Transaction::formatAmount(i.amount));
       displayData[y][i.category] = i.amount;
-      categories.insert(i.category);
       t += i.amount;
     }
     rows[y].insert(0, QString("<td><b>Total</b></td><td>%1</td>").
@@ -650,41 +711,7 @@ void BudgetPage::showStatistics(Budget * budget)
 
   s += "\n</table>";
 
-  // Now the series
-  QStackedBarSeries * series = new QStackedBarSeries();
-  double fact = overallt < 0 ? -0.01 : 0.01;
-  QStringList cs = categories.toList();
-  std::sort(cs.begin(), cs.end());
-  for(const QString & c : cs) {
-    QBarSet * set = new QBarSet(c);
-    for(int y : years) {
-      int v = displayData[y].value(c, 0);
-      *set << v * fact;
-    }
-    series->append(set);
-  }
-
-  QStringList ys;
-  for(int y : years)
-    ys << QString::number(y);
-
-  QChart *chart = new QChart();
-  chart->addSeries(series);
-
-  chart->legend()->setAlignment(Qt::AlignRight);
-
-  QBarCategoryAxis * axisX = new QBarCategoryAxis();
-  axisX->append(ys);
-  chart->addAxis(axisX, Qt::AlignBottom);
-  series->attachAxis(axisX);
-  
-  QValueAxis * axisY = new QValueAxis();
-  chart->addAxis(axisY, Qt::AlignLeft);
-  series->attachAxis(axisY);
-  axisY->applyNiceNumbers();
-
-
-  
+  QChart * chart = makeBarChart(displayData, overallt < 0 ? -0.01 : 0.01);
 
   WidgetWrapperDialog dlg(new QChartView(chart));
   dlg.topLabel->setText(s);
