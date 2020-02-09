@@ -58,6 +58,12 @@ public slots:
 
   /// Change default price
   void editDefaultPrice();
+
+  /// Change CO2 emissions
+  void editCO2Emissions();
+
+  // /// Shows the kilometers over time
+  // void showKilometers();
 };
 
 #endif

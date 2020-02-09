@@ -71,6 +71,8 @@ public:
                                    int role) -> QVariant {
                         if(role == Qt::DisplayRole || role == Qt::EditRole) 
                           return Transaction::formatAmount(event->amount());
+                        if(role == Qt::TextAlignmentRole)
+                          return Qt::AlignRight;
                         return QVariant();
                       })
             << Column("Type", [](const CarEvent* event,
@@ -319,6 +321,14 @@ void CarPage::editDefaultPrice()
   }
 }
 
+void CarPage::editCO2Emissions()
+{
+  plugin->car.fuelCO2Emission = QInputDialog::getInt(NULL, "CO2 emissions",
+                                                     "Enter the amount of emitted CO2 per liter (in grams)");
+  
+  updatePage();
+}
+
 void CarPage::updatePage()
 {
   // Here, we do various things, basically to update the main summary.
@@ -354,8 +364,16 @@ void CarPage::updatePage()
     Transaction::formatAmount(plugin->car.liters) +
     " (total), " +
     Transaction::formatAmount(plugin->car.liters * 100/km) +
-    " (per 100 km)";
+    " (per 100 km) <br/>";
+  str += "<b>CO2 g per liter</b> "
+    + QString::number(plugin->car.fuelCO2Emission) + " " 
+    + HTTarget::linkToMember("(change)", this,
+                             &CarPage::editCO2Emissions)
+    + " total: " + QString::number(plugin->car.liters * 1e-8 *
+                                   plugin->car.fuelCO2Emission)
+    + " (tonnes) " + QString::number(plugin->car.liters * plugin->car.fuelCO2Emission * 0.01 / km) + " (g per km)<br/>";
 
+  
   
   str += HTTarget::linkToMember("(update)", this,
                                 &CarPage::updatePage);

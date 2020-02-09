@@ -133,6 +133,9 @@ public:
 
   Car();
 
+  /// The amount of emitted CO2 in grams
+  int fuelCO2Emission;
+
   /// The base plugin.
   CarPlugin * plugin;
 

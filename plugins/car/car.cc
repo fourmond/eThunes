@@ -129,7 +129,8 @@ bool CarEvent::operator<(const CarEvent & other) const
 
 //////////////////////////////////////////////////////////////////////
 
-Car::Car() : plugin(NULL), defaultPricePerLiter(-1)
+Car::Car() : fuelCO2Emission(0), plugin(NULL),
+             defaultPricePerLiter(-1)
 {
 }
 
@@ -139,6 +140,7 @@ SerializationAccessor * Car::serializationAccessor()
   // ac->addScalarAttribute("name", &name);
   ac->addListAttribute("event", &events);
   ac->addAttribute("default-price", &defaultPricePerLiter);
+  ac->addScalarAttribute("co2-per-liter", &fuelCO2Emission);
   return ac;
 }
 
