@@ -115,6 +115,10 @@ DocumentsPage::DocumentsPage(Cabinet * c) : cabinet(c)
   splitter->addWidget(documentWidget);
 
   // Actions
+  addCMAction("Rename", this, SLOT(renameSelected()),
+              QKeySequence(QString("Ctrl+R")));
+  addCMAction("Rename with pattern", this, SLOT(renameWithPattern()),
+              QKeySequence(QString("Ctrl+Shift+R")));
   addCMAction("Edit date", this, SLOT(editCurrentDate()),
               QKeySequence(QString("Ctrl+D")));
   addCMAction("Edit amount", this, SLOT(editCurrentAmount()),
@@ -289,55 +293,6 @@ void DocumentsPage::treeViewContextMenu(const QPoint & pos)
     );
   menu.addAction(a);
 
-  // OK, this should work !
-  // QMenu * sb = new QMenu(tr("Test"));
-  // QObject::connect(sb, &QMenu::aboutToShow, [this, sb]() {
-  //     sb->addAction("Bidule");
-  //   }
-  //   );
-
-  // menu.addMenu(sb);
-
-  a = new QAction(tr("Rename"));
-  QObject::connect(a, &QAction::triggered, [this, docs](bool) {
-      for(Document * d : docs) {
-        QString nn =
-          QInputDialog::getText(this, tr("Rename file"),
-                                tr("New name"), QLineEdit::Normal,
-                                d->fileName());
-        if(! nn.isEmpty() && nn != d->fileName())
-          cabinet->documents.renameDocument(d,nn);
-      }
-    }
-    );
-  menu.addAction(a);
-
-  a = new QAction(tr("Rename using pattern"));
-  QObject::connect(a, &QAction::triggered, [this, docs](bool) {
-      QString pattern =
-        QInputDialog::getText(this, tr("Rename pattern"),
-                              tr("Pattern"));
-
-      QHash<Document *, QString> renames;
-      QString rep = "<table>\n";
-      for(Document * d : docs) {
-        QString nn = d->attributes.formatString(pattern);
-        renames[d] = nn;
-        rep += "<tr><td>" + d->fileName() + "</td><td>" +
-          nn + "</td></tr>";
-      }
-      if(QMessageBox::question(this, tr("Rename all"),
-                               rep) == QMessageBox::Yes) {
-        QTextStream o(stdout);
-        for(Document * d : docs) {
-          o << "Renaming " << d << " (" << d->fileName() << ") -> "
-            << renames[d] << endl;
-          cabinet->documents.renameDocument(d, renames[d]);
-        }
-      }
-    }
-    );
-  menu.addAction(a);
 
   menu.addSeparator();
   for(QAction * a : cmActions)
@@ -381,4 +336,43 @@ void DocumentsPage::editCurrentColumn(int col)
   idx = idx.siblingAtColumn(col);
   if(idx.isValid())
     treeView->edit(idx);
+}
+
+void DocumentsPage::renameSelected()
+{
+  QList<Document *> docs = selectedDocuments();
+  for(Document * d : docs) {
+    QString nn =
+      QInputDialog::getText(this, tr("Rename file"),
+                            tr("New name"), QLineEdit::Normal,
+                            d->fileName());
+    if(! nn.isEmpty() && nn != d->fileName())
+      cabinet->documents.renameDocument(d,nn);
+  }
+}
+
+void DocumentsPage::renameWithPattern()
+{
+  QList<Document *> docs = selectedDocuments();
+  QString pattern =
+    QInputDialog::getText(this, tr("Rename pattern"),
+                          tr("Pattern"));
+
+  QHash<Document *, QString> renames;
+  QString rep = "<table>\n";
+  for(Document * d : docs) {
+    QString nn = d->attributes.formatString(pattern);
+    renames[d] = nn;
+    rep += "<tr><td>" + d->fileName() + "</td><td>" +
+      nn + "</td></tr>";
+  }
+  if(QMessageBox::question(this, tr("Rename all"),
+                           rep) == QMessageBox::Yes) {
+    QTextStream o(stdout);
+    for(Document * d : docs) {
+      o << "Renaming " << d << " (" << d->fileName() << ") -> "
+        << renames[d] << endl;
+      cabinet->documents.renameDocument(d, renames[d]);
+    }
+  }
 }

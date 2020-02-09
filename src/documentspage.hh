@@ -82,6 +82,12 @@ public slots:
   /// Show the context menu...
   void treeViewContextMenu(const QPoint & pos);
 
+  /// Renames the selected files one by one.
+  void renameSelected();
+
+  /// Renames the selected files using a pattern.
+  void renameWithPattern();
+
 protected slots:
 
   void onCurrentDocumentChanged(const QModelIndex &current,
