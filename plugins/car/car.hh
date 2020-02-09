@@ -27,6 +27,8 @@
 #include <watchablecontainers.hh>
 #include <evolvingitem.hh>
 
+#include <categorizable.hh>
+
 class CarPlugin;
 
 /// An event is one of:
@@ -39,7 +41,7 @@ class CarPlugin;
 /// comes first.
 ///
 /// An even is linked to a single transaction.
-class CarEvent : public Linkable {
+class CarEvent : public Linkable, public Categorizable {
 protected:
 
   /// Returns the transaction that defines this event.

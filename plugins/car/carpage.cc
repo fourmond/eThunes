@@ -169,6 +169,15 @@ public:
                         event->fuel = d.toInt();
                         return true;
                       })
+            << Column("Tags", [](const CarEvent* event,
+                                       int role) -> QVariant {
+                        return event->columnData(Categorizable::TagsColumn,
+                                                 role);
+                      },
+                      [](CarEvent * event, const QVariant & data) -> bool {
+                        return event->setColumnData(Categorizable::TagsColumn,
+                                                    data, Qt::EditRole);
+                      })
       ;
 
     connect(*events, SIGNAL(numberChanged(const Watchdog *)),

@@ -43,6 +43,7 @@ SerializationAccessor * CarEvent::serializationAccessor()
 {
   SerializationAccessor * ac = new SerializationAccessor(this);
   addLinkAttributes(ac);
+  addCategoriesSerialization(ac);
   ac->addScalarAttribute("type", (int*)&type);
   ac->addScalarAttribute("kilometers", &kilometers);
   ac->addScalarAttribute("fuel", &fuel);
