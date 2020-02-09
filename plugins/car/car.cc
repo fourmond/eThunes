@@ -181,6 +181,9 @@ void Car::updateCache()
     totals << 0;
   liters = 0;
   bool dummy;
+
+  lastTaggedEvent.clear();
+  
   for(int i = 0; i < events.size(); i++) {
     events[i].plugin = plugin;
     totals[events[i].type] += events[i].amount();
@@ -202,10 +205,15 @@ void Car::updateCache()
       }
       lastkmpos = i;
     }
+
+    // Deal with tags:
+    for(const Tag * t : events[i].tagList())
+      lastTaggedEvent[t] = i;
   }
   total = 0;
   for(int nb : totals)
     total += nb;
+  lastkm = events[lastkmpos].kilometers;
 }
 
 int Car::kilometers() const

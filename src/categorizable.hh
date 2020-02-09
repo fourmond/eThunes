@@ -71,6 +71,10 @@ public:
     tags.setTag(t);
   };
 
+  /// Returns the list of tags
+  QList<const Tag *> tagList() const;
+  
+
   /// Sets the given named tag
   void setTagFromName(const QString & str, Wallet * wallet = NULL);
 

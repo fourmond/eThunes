@@ -30,6 +30,15 @@ Categorizable::Categorizable() :
   watchChild(&tags, "tags");
 }
 
+
+QList<const Tag *> Categorizable::tagList() const
+{
+  QList<const Tag *> rv;
+  for(Tag * t : tags)
+    rv << t;
+  return rv;
+}
+
 void Categorizable::addCategoriesSerialization(SerializationAccessor * ac)
 {
   ac->addAccessorsAttribute("category",this, 

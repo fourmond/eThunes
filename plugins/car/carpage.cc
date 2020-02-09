@@ -286,8 +286,15 @@ CarPage * CarPage::getCarPage(CarPlugin * plugin)
 CarPage::CarPage(CarPlugin * p) : plugin(p)
 {
   QVBoxLayout * layout = new QVBoxLayout(this);
+
+  QHBoxLayout * l = new QHBoxLayout();
   summary = new HTLabel();
-  layout->addWidget(summary);
+  l->addWidget(summary);
+
+  lastTags = new HTLabel();
+  l->addWidget(lastTags);
+
+  layout->addLayout(l);
 
 
   QTableView * eventsView = new QTableView();
@@ -388,4 +395,23 @@ void CarPage::updatePage()
                                 &CarPage::updatePage);
 
   summary->setText(str);
+
+
+  // Now update the tags list
+  QList<const Tag *> tags = plugin->car.lastTaggedEvent.keys();
+  std::sort(tags.begin(), tags.end(), [](const Tag * a, const Tag * b) -> bool {
+      return a->name < b->name;
+    });
+
+  str = "<h3>Last events:</h3>\n";
+  for(const Tag * t : tags) {
+    const CarEvent & ev = plugin->car.
+      events[plugin->car.lastTaggedEvent[t]];
+    int kms = std::max(ev.kilometers, ev.interpolatedKilometers);
+    str += QString("<b>%1</b>: %2, km %3 -- %4 km ago<br/>\n").
+      arg(t->name).arg(ev.date().toString()).arg(kms).
+      arg(plugin->car.lastkm - kms);
+  }
+  lastTags->setText(str);
+            
 }

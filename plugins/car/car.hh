@@ -130,6 +130,12 @@ class Car : public Serializable {
   QList<int> totals;
   int total;
   int liters;
+
+  int lastkm;
+
+  /// Last events with the given tag
+  QHash<const Tag *, int> lastTaggedEvent;
+  
   friend class CarPage;
 public:
 

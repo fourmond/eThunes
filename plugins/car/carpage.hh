@@ -39,6 +39,9 @@ protected:
   /// The main summary (in the top ?)
   HTLabel * summary;
 
+    /// The main summary (in the top ?)
+  HTLabel * lastTags;
+
 public:
 
   CarPage(CarPlugin * plugin);
