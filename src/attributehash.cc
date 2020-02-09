@@ -305,7 +305,7 @@ void AttributeHash::connectEditorChanged(HandledType type, QWidget * editor,
     QDateEdit * de = dynamic_cast<QDateEdit *>(editor);
     if(! de)
       throw "Invalid editor...";
-    QObject::connect(de, SIGNAL(dateChanged(const QDateTime &)),
+    QObject::connect(de, SIGNAL(dateChanged(const QDate &)),
                      target, slot);
   }
   case Time: {

@@ -97,17 +97,23 @@ QVariant DocumentsModel::data(const QModelIndex &index, int role) const
     }
     case LinksColumn:
       if(doc) {
-        QTextStream o(stdout);
+        // QTextStream o(stdout);
         QVariant d = doc->linksData(role);
-        o << "Getting data for doc " << doc << " and role " << role
-          << "/" << Qt::EditRole 
-          << " -> " << d.toString() << endl;
+        // o << "Getting data for doc " << doc << " and role " << role
+        //   << "/" << Qt::EditRole 
+        //   << " -> " << d.toString() << endl;
         return d;
       }
     case DateColumn:
       if(doc) {
-        if(role == Qt::DisplayRole || role == Qt::EditRole)
+        if(role == Qt::DisplayRole)
           return doc->attributes["date"];
+        if(role == Qt::EditRole) {
+          QDate dt = doc->attributes["date"].toDate();
+          if(dt.isValid())
+            return dt;
+          return QDate::currentDate();
+        }
       }
     case AmountColumn:
       if(doc) {
@@ -116,6 +122,12 @@ QVariant DocumentsModel::data(const QModelIndex &index, int role) const
             int amount = doc->attributes["amount"].toInt();
             return Transaction::formatAmount(amount);
           }
+        }
+        if(role == Qt::EditRole) {
+          int amount = 0;
+          if(doc->attributes.contains("amount"))
+            amount = doc->attributes["amount"].toInt();
+          return amount;
         }
       }
     default:
@@ -141,6 +153,28 @@ bool DocumentsModel::setData(const QModelIndex &index, const QVariant &value, in
     }
 
     switch(col - nativeColumns) {
+    case DateColumn:
+      if(doc) {
+        if(role == Qt::DisplayRole || role == Qt::EditRole) {
+          QTextStream o(stdout);
+          QVariant v = value;
+          o << "Value: " << v.toString() << " -- " << v.type() << endl;
+          if(! v.convert(QMetaType::QDate)) {
+            QDate s = QDate::fromString(value.toString());
+            o << "Date: " << s.toString() << endl;
+            v = s;
+          }
+          doc->attributes["date"] = v;
+          return true;
+        }
+      }
+    case AmountColumn:
+      if(doc) {
+        if(role == Qt::DisplayRole || role == Qt::EditRole) {
+          doc->attributes["amount"] = value.toInt();
+          return true;
+        }
+      }
     default:
       return false;
     }
@@ -157,6 +191,8 @@ Qt::ItemFlags DocumentsModel::flags(const QModelIndex &index) const
     switch(col - nativeColumns) {
     case CategoryColumn:
     case TagsColumn:
+    case DateColumn:
+    case AmountColumn:
       return Qt::ItemIsSelectable|Qt::ItemIsEditable|Qt::ItemIsEnabled;
     default:
       return Qt::ItemIsSelectable|Qt::ItemIsEnabled;

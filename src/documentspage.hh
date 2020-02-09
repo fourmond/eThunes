@@ -54,9 +54,16 @@ protected:
 
   QList<Document*> selectedDocuments();
 
+  /// Additional actions to add to the context menu
+  QList<QAction*> cmActions;
+
 protected:
   /// Looks for a transaction matching the given document.
   AtomicTransaction * findMatchingTransaction(const Document * doc);
+  
+  void addCMAction(const QString & name, QObject * receiver, 
+                   const char * slot, 
+                   const QKeySequence & shortCut = QKeySequence());
 
 public:
 
@@ -86,6 +93,15 @@ protected slots:
                        const QModelIndex &br);
 
   void onItemExpanded(const QModelIndex &item);
+
+  /// Edits the current date
+  void editCurrentDate();
+
+  /// Edits the current amount
+  void editCurrentAmount();
+
+  /// Edits the current numbered column...
+  void editCurrentColumn(int col);
 };
 
 #endif

@@ -27,6 +27,36 @@
 #include <documentwidget.hh>
 #include <accountmodel.hh>
 
+
+static QAction * createAction(const QString & name, 
+                              QObject * receiver, 
+                              const char * slot, 
+                              const QKeySequence & shortCut,
+                              QObject * parent = NULL)
+{
+  QAction * ac = new QAction(name, parent);
+  receiver->connect(ac, SIGNAL(triggered()), slot);
+  if(! shortCut.isEmpty()) {
+    ac->setShortcut(shortCut);
+    ac->setShortcutContext(Qt::WindowShortcut);
+  }
+  return ac;
+}
+
+void DocumentsPage::addCMAction(const QString & name,
+                                QObject * receiver, 
+                                const char * slot, 
+                                const QKeySequence & shortCut)
+{
+  QString str = name;
+  if(! shortCut.isEmpty())
+    str += "   (" + shortCut.toString() + ")";
+  QAction * ac = ::createAction(name, receiver,
+                                slot, shortCut, this);
+  cmActions << ac;
+  QWidget::addAction(ac);
+}
+
 DocumentsPage::DocumentsPage(Cabinet * c) : cabinet(c)
 {
   QVBoxLayout * layout = new QVBoxLayout(this);
@@ -84,7 +114,13 @@ DocumentsPage::DocumentsPage(Cabinet * c) : cabinet(c)
   
   splitter->addWidget(documentWidget);
 
+  // Actions
+  addCMAction("Edit date", this, SLOT(editCurrentDate()),
+              QKeySequence(QString("Ctrl+D")));
+  addCMAction("Edit amount", this, SLOT(editCurrentAmount()),
+              QKeySequence(QString("Ctrl+A")));
 }
+
 
 
 DocumentsPage::~DocumentsPage()
@@ -303,6 +339,10 @@ void DocumentsPage::treeViewContextMenu(const QPoint & pos)
     );
   menu.addAction(a);
 
+  menu.addSeparator();
+  for(QAction * a : cmActions)
+    menu.addAction(a);
+
   menu.exec(treeView->viewport()->mapToGlobal(pos));
 
 }
@@ -323,4 +363,22 @@ void DocumentsPage::onDocumentActivated(const QModelIndex & index)
   if(info.isDir())
     return;
   QDesktopServices::openUrl(QUrl::fromLocalFile(s));
+}
+
+void DocumentsPage::editCurrentDate()
+{
+  editCurrentColumn(model->nativeColumns + DocumentsModel::DateColumn);
+}
+
+void DocumentsPage::editCurrentAmount()
+{
+  editCurrentColumn(model->nativeColumns + DocumentsModel::AmountColumn);
+}
+
+void DocumentsPage::editCurrentColumn(int col)
+{
+  QModelIndex idx = treeView->selectionModel()->currentIndex();
+  idx = idx.siblingAtColumn(col);
+  if(idx.isValid())
+    treeView->edit(idx);
 }
