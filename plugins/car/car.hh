@@ -91,6 +91,13 @@ public:
   /// The real kilometers or interpolated kilometers.
   int interpolatedKilometers;
 
+  /// The calculated consumption, or -1 if not computable
+  int consumption;
+
+  int kmSinceFull;
+
+  int litersSinceFull;
+
   /// @}
   
   CarEvent();

@@ -183,6 +183,21 @@ public:
                         }
                         return false;
                       }, true)
+            << Column("Consumption", [](const CarEvent* event,
+                                        int role) -> QVariant {
+                        if(role == Qt::DisplayRole || role == Qt::EditRole) {
+                          if(event->consumption >= 0)
+                            return Transaction::formatAmount(event->consumption);
+                        }
+                        if(role == Qt::ToolTipRole) {
+                          if(event->consumption >= 0)
+                            return QString("%1 kms, %2 liters").
+                              arg(event->kmSinceFull).
+                              arg(Transaction::formatAmount(event->
+                                                            litersSinceFull));
+                        }
+                        return QVariant();
+                      })
             << Column("Tags", [](const CarEvent* event,
                                        int role) -> QVariant {
                         return event->columnData(Categorizable::TagsColumn,

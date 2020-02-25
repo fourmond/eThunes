@@ -34,7 +34,8 @@ CarEvent::CarEvent() :
   fuel(-1),
   fullTank(false),
   pricePerLiter(-1),
-  interpolatedKilometers(-1)
+  interpolatedKilometers(-1),
+  consumption(-1)
 {
 }
 
@@ -204,6 +205,7 @@ void Car::updateCache()
         }
       }
       lastkmpos = i;
+
     }
 
     // Deal with tags:
@@ -214,6 +216,28 @@ void Car::updateCache()
   for(int nb : totals)
     total += nb;
   lastkm = events[lastkmpos].kilometers;
+
+  int lastfullpos = -1, fuelsincelast = 0;
+  for(int i = 0; i < events.size(); i++) {
+    int kms = events[i].kilometers >= 0 ?
+      events[i].kilometers : events[i].interpolatedKilometers;
+    bool tmp;
+    int ltrs = events[i].fuelLiters(&tmp);
+    events[i].consumption = -1;
+    if(ltrs > 0)
+      fuelsincelast += ltrs;
+
+    if(lastfullpos < 0 || events[i].fullTank) {
+      if(lastfullpos > 0) {
+        events[i].consumption = fuelsincelast*100/(kms - lastfullpos);
+        events[i].kmSinceFull = kms - lastfullpos;
+        events[i].litersSinceFull = fuelsincelast;
+      }
+      
+      lastfullpos = kms;
+      fuelsincelast = 0;
+    }
+  }
 }
 
 int Car::kilometers() const
