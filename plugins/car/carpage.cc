@@ -387,21 +387,25 @@ void CarPage::updatePage()
 
   int total = 0;
   int km = plugin->car.kilometers();
-  str += tr("Kilometers: %1<br/>").arg(km);
+  str += tr("<b>Kilometers</b>: %1<p/>").arg(km);
+
+  str += "<table>\n";
+  
 
   for(CarEvent::Type t : ::names.keys()) {
     int tot = plugin->car.totals.value(t,0);
     total += tot;
     int perkm = tot*100/km;
-    str += QString("<b>%1</b>: %2 total, %3 c per km <br/>").
+    str += QString("<tr><td><b>%1</b></td><td>%2 total</td><td>%3 c per km</td></tr>\n").
       arg(names[t]).
       arg(Transaction::formatAmount(tot)).
       arg(Transaction::formatAmount(perkm));
   }
 
-  str += QString("<b>Overall</b>: %1 total, %2 c per km <br/>").
+  str += QString("<tr><td><b>Overall</b></td><td>%1 total</td><td>%2 c per km</td></tr>\n").
     arg(Transaction::formatAmount(total)).
     arg(Transaction::formatAmount(total*100/km));
+  str += "</table><p/>\n";
 
   str += "<b>Default price:</b> " +
     plugin->car.defaultPricePerLiter.toString(&Transaction::formatAmount)
@@ -436,14 +440,16 @@ void CarPage::updatePage()
     });
 
   str = "<h3>Last events:</h3>\n";
+  str += "<table>\n";
   for(const Tag * t : tags) {
     const CarEvent & ev = plugin->car.
       events[plugin->car.lastTaggedEvent[t]];
     int kms = std::max(ev.kilometers, ev.interpolatedKilometers);
-    str += QString("<b>%1</b>: %2, km %3 -- %4 km ago<br/>\n").
+    str += QString("<tr><td><b>%1</b></td><td>%2</td><td>km %3</td><td>%4 km ago</td></tr>\n").
       arg(t->name).arg(ev.date().toString()).arg(kms).
       arg(plugin->car.lastkm - kms);
   }
+  str += "</table>\n";
   lastTags->setText(str);
             
 }
