@@ -64,6 +64,9 @@ public:
   /// Renames the given path. Makes the right thing about directories.
   void renamePath(const QString & oldPath, const QString & newPath);
 
+  /// Deletes the given file from disk and from the list of documents.
+  bool deleteDocument(const QString & path);
+
 
 protected:
 

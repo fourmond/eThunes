@@ -45,12 +45,14 @@ public:
     DataFcn data;
 
     typedef std::function<bool (CarEvent* event,
-                                const QVariant & data)> SetDataFcn;
+                                const QVariant & data, int role)> SetDataFcn;
     SetDataFcn setData;
 
+    bool checkable;
+
     Column(const QString & n, const DataFcn & d,
-           const SetDataFcn & s = 0) :
-      name(n), data(d), setData(s) {;};
+           const SetDataFcn & s = 0, bool chk = false) :
+      name(n), data(d), setData(s), checkable(chk) {;};
   };
 
   QList<Column> columns;
@@ -110,7 +112,7 @@ public:
                         }
                         return QVariant();
                       },
-                      [](CarEvent * event, const QVariant & data) -> bool {
+                      [](CarEvent * event, const QVariant & data, int) -> bool {
                         QVariant d = data;
                         if(! d.convert(QMetaType::Int))
                           return false;
@@ -136,7 +138,8 @@ public:
                         }
                         return QVariant();
                       },
-                      [](CarEvent * event, const QVariant & data) -> bool {
+                      [](CarEvent * event, const QVariant & data,
+                         int ) -> bool {
                         QVariant d = data;
                         if(! d.convert(QMetaType::Int))
                           return false;
@@ -160,23 +163,34 @@ public:
                           else
                             return QColor("black");
                         }
+                        if(role == Qt::CheckStateRole)
+                          return event->fullTank ? Qt::Checked : Qt::Unchecked;
                         return QVariant();
                       },
-                      [](CarEvent * event, const QVariant & data) -> bool {
+                      [](CarEvent * event, const QVariant & data,
+                         int role) -> bool {
                         QVariant d = data;
                         if(! d.convert(QMetaType::Int))
                           return false;
-                        event->fuel = d.toInt();
-                        return true;
-                      })
+                        int val = d.toInt();
+                        if(role == Qt::EditRole) {
+                          event->fuel = val;
+                          return true;
+                        }
+                        if(role == Qt::CheckStateRole) {
+                          event->fullTank = (d == Qt::Checked);
+                          return true;
+                        }
+                        return false;
+                      }, true)
             << Column("Tags", [](const CarEvent* event,
                                        int role) -> QVariant {
                         return event->columnData(Categorizable::TagsColumn,
                                                  role);
                       },
-                      [](CarEvent * event, const QVariant & data) -> bool {
+                      [](CarEvent * event, const QVariant & data, int r) -> bool {
                         return event->setColumnData(Categorizable::TagsColumn,
-                                                    data, Qt::EditRole);
+                                                    data, r);
                       })
       ;
 
@@ -192,11 +206,11 @@ public:
     return v;
   };
 
-  bool setData(CarEvent * event, int col, const QVariant & v) {
+  bool setData(CarEvent * event, int col, const QVariant & v, int role) {
     if(col < 0 || col >= columns.size())
       return false;
     if(columns[col].setData)
-      return columns[col].setData(event, v);
+      return columns[col].setData(event, v, role);
     return false;
   };
 
@@ -232,7 +246,7 @@ public:
     CarEvent * ev = eventForIndex(index);
     if(! ev)
       return false;
-    return setData(ev, col, v);
+    return setData(ev, col, v, role);
   };
 
   virtual QVariant headerData(int section, Qt::Orientation orientation,
@@ -250,8 +264,11 @@ public:
     int col = index.column();
     if(col < 0 || col >= columns.size())
       return Qt::NoItemFlags;
-    if(columns[col].setData)
+    if(columns[col].setData) {
+      if(columns[col].checkable)
+        return Qt::ItemIsEnabled|Qt::ItemIsSelectable|Qt::ItemIsEditable|Qt::ItemIsUserCheckable;
       return Qt::ItemIsEnabled|Qt::ItemIsSelectable|Qt::ItemIsEditable;
+    }
     else
       return Qt::ItemIsEnabled|Qt::ItemIsSelectable;
   };
