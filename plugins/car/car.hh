@@ -167,6 +167,9 @@ public:
 
   void addEvents(const TransactionPtrList & events, CarEvent::Type type);
 
+  /// Sorts the events
+  void sort();
+
   /// Updates the cache
   void updateCache();
 

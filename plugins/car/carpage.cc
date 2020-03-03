@@ -381,7 +381,7 @@ void CarPage::updatePage()
 {
   // Here, we do various things, basically to update the main summary.
   QString str;
-  plugin->car.updateCache();
+  plugin->car.sort();
   str += tr("<h1>Car: %1</h1>\n").
     arg(plugin->getName());
 

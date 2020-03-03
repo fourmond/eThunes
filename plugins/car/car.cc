@@ -122,9 +122,16 @@ int CarEvent::fuelLiters(bool * computed) const
 
 bool CarEvent::operator<(const CarEvent & other) const
 {
-  if(kilometers > 0 && other.kilometers > 0)
-    return kilometers < other.kilometers;
-  return date() < other.date();
+  if(kilometers > 0 && other.kilometers > 0) {
+    if(kilometers != other.kilometers)
+      return kilometers < other.kilometers;
+  }
+  if(date() != other.date())
+    return date() < other.date();
+  // Force total order (hmmm, still not...)
+  if(kilometers > 0 && other.kilometers < 0)
+    return true;
+  return false;               // Force
 }
 
 
@@ -168,9 +175,14 @@ void Car::addEvents(const TransactionPtrList & transactions,
     }
   }
   if(nb > 0) {
-    pointerSafeSortList(&events.rawData());
-    updateCache();
+    sort();
   }
+}
+
+void Car::sort()
+{
+  pointerSafeSortList(&events.rawData());
+  updateCache();
 }
 
 void Car::updateCache()
