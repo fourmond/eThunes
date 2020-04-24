@@ -58,7 +58,7 @@ CurvesDisplay::CurvesDisplay()
 
   axisY = new QValueAxis;
   axisY->setTitleText("Balance");
-  axisY->setTickAnchor(0);
+  // axisY->setTickAnchor(0);
   chart->addAxis(axisY, Qt::AlignLeft);
   
 
